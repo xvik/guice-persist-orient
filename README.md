@@ -1,5 +1,6 @@
 guice-persist-orient
 ====================
+[![Build Status](https://travis-ci.org/xvik/guice-persist-orient.svg?branch=master)](https://travis-ci.org/xvik/guice-persist-orient)
 
 Guice persist orient db integration
 
