@@ -1,0 +1,23 @@
+<configuration>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n
+            </pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <!-- switch off nasty warnings shown for memory db -->
+    <logger name="com.orientechnologies.orient.core.db.record.ODatabaseRecordAbstract" level="ERROR"/>
+
+    <logger name="ru.vyarus" level="TRACE"/>
+    <!-- @Transactional annotation handling -->
+    <logger name="ru.vyarus.guice.persist.orient.db.transaction.internal.TransactionInterceptor" level="DEBUG"/>
+    <!-- pools -->
+    <logger name="ru.vyarus.guice.persist.orient.db.pool" level="DEBUG"/>
+
+    <root level="DEBUG">
+        <appender-ref ref="STDOUT"/>
+    </root>
+</configuration>

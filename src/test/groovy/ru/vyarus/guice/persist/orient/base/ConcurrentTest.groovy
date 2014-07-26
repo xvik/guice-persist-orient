@@ -1,12 +1,12 @@
 package ru.vyarus.guice.persist.orient.base
 
+import com.orientechnologies.orient.object.db.OObjectDatabaseTx
 import ru.vyarus.guice.persist.orient.AbstractTest
 import ru.vyarus.guice.persist.orient.base.model.Model
 import ru.vyarus.guice.persist.orient.base.modules.SimpleModule
 import ru.vyarus.guice.persist.orient.base.service.InsertTransactionalService
 import ru.vyarus.guice.persist.orient.base.service.SelectTransactionalService
-import ru.vyarus.guice.persist.orient.internal.OrientPersistService
-import ru.vyarus.guice.persist.orient.template.TransactionalAction
+import ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxAction
 import spock.guice.UseModules
 
 import javax.inject.Inject
@@ -42,7 +42,8 @@ class ConcurrentTest extends AbstractTest {
     def "Check concurrent rw"() {
         when: "Insert and select record in 20 threads"
         List<Future<?>> executed = []
-        20.times({
+        int times = 20
+        times.times({
             executed << executor.submit(new Callable() {
                 @Override
                 Object call() throws Exception {
@@ -54,11 +55,11 @@ class ConcurrentTest extends AbstractTest {
         // lock until finish
         executed.each({ it.get() })
 
-        Long cnt = template.doWithTransaction({ db ->
+        Long cnt = template.doInTransaction({ db ->
             return db.countClass(Model.class)
-        } as TransactionalAction<Long>)
+        } as SpecificTxAction<Long, OObjectDatabaseTx>)
         then: "Db should contain 20 records"
-        !((OrientPersistService) persist).isTransactionActive()
-        cnt == 20
+        !transactionManager.isTransactionActive()
+        cnt == times
     }
 }

@@ -1,9 +1,9 @@
 package ru.vyarus.guice.persist.orient.base.modules
 
-import com.google.inject.AbstractModule
-import ru.vyarus.guice.persist.orient.ObjectOrientModule
-import ru.vyarus.guice.persist.orient.model.ModelInitializer
-import ru.vyarus.guice.persist.orient.model.autoscan.AutoscanModelInitializer
+import ru.vyarus.guice.persist.orient.db.scheme.SchemeInitializer
+import ru.vyarus.guice.persist.orient.db.scheme.autoscan.AutoScanSchemeInitializer
+import ru.vyarus.guice.persist.orient.support.AutoScanSchemeOrientModule
+import ru.vyarus.guice.persist.orient.support.PackageSchemeOrientModule
 
 /**
  * @author Vyacheslav Rusakov 
@@ -11,16 +11,18 @@ import ru.vyarus.guice.persist.orient.model.autoscan.AutoscanModelInitializer
  */
 class AutoScanModule extends SimpleModule {
 
+    String pkg;
+
     AutoScanModule() {
+        this("ru.vyarus.guice.persist.orient.base.model")
     }
 
     AutoScanModule(pkg) {
-        super(pkg)
+        this.pkg = pkg
     }
 
     @Override
     protected void configure() {
-        super.configure()
-        bind(ModelInitializer.class).to(AutoscanModelInitializer.class)
+        install(new AutoScanSchemeOrientModule("memory:test", "admin", "admin", pkg))
     }
 }

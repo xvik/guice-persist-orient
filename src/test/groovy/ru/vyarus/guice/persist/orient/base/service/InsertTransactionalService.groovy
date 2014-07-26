@@ -46,6 +46,6 @@ class InsertTransactionalService {
     public void rollbackSubtransaction() {
         insertRecord()
         // inline transaction cause rollback
-        rollbackCheck()
+        selectService.rollbackCheck()
     }
 }

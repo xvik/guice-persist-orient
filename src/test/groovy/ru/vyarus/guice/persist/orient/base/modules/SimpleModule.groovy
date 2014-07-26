@@ -1,7 +1,8 @@
 package ru.vyarus.guice.persist.orient.base.modules
 
 import com.google.inject.AbstractModule
-import ru.vyarus.guice.persist.orient.ObjectOrientModule
+import ru.vyarus.guice.persist.orient.OrientModule
+import ru.vyarus.guice.persist.orient.support.PackageSchemeOrientModule
 
 /**
  * @author Vyacheslav Rusakov 
@@ -21,6 +22,6 @@ class SimpleModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        install(new ObjectOrientModule("memory:test", "admin", "admin", pkg))
+        install(new PackageSchemeOrientModule("memory:test", "admin", "admin", pkg))
     }
 }
