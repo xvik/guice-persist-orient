@@ -1,25 +1,19 @@
 package ru.vyarus.guice.persist.orient;
 
 import com.google.common.base.Strings;
+import com.google.inject.Binder;
 import com.google.inject.multibindings.Multibinder;
 import com.google.inject.name.Names;
 import com.google.inject.persist.PersistModule;
 import com.google.inject.persist.PersistService;
 import com.google.inject.persist.UnitOfWork;
 import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx;
-import com.orientechnologies.orient.core.tx.OTransaction;
-import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
-import com.tinkerpop.blueprints.impls.orient.OrientBaseGraph;
-import com.tinkerpop.blueprints.impls.orient.OrientGraph;
-import com.tinkerpop.blueprints.impls.orient.OrientGraphNoTx;
 import org.aopalliance.intercept.MethodInterceptor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.vyarus.guice.persist.orient.db.DatabaseManager;
 import ru.vyarus.guice.persist.orient.db.PoolManager;
 import ru.vyarus.guice.persist.orient.db.pool.DocumentPool;
-import ru.vyarus.guice.persist.orient.db.pool.ObjectPool;
-import ru.vyarus.guice.persist.orient.db.pool.graph.GraphPool;
-import ru.vyarus.guice.persist.orient.db.pool.graph.OrientGraphNoTxProvider;
-import ru.vyarus.guice.persist.orient.db.pool.graph.OrientGraphProvider;
 import ru.vyarus.guice.persist.orient.db.transaction.TransactionManager;
 import ru.vyarus.guice.persist.orient.db.transaction.TxConfig;
 import ru.vyarus.guice.persist.orient.db.transaction.internal.TransactionInterceptor;
@@ -37,7 +31,8 @@ import javax.inject.Singleton;
  * <li>etc</li>
  * </ul></p>
  * <p/>
- * <p>Module initialize set of connection pools. By default its object, document and graph. Set of pools may be modified
+ * <p>Module initialize set of connection pools. By default its object, document and graph (but depends on available jars in classpath:
+ * if graph or object jars are not in classpath these pools will not be loaded). Set of pools may be modified
  * by overriding {@code #configurePools()} method.</p>
  * <p>To initialize (create or update) database schema register {@code ru.vyarus.guice.persist.orient.db.scheme.SchemeInitializer}
  * implementation. By default no-op implementation registered. Two implementations provided to automatically initialize scheme from
@@ -84,6 +79,7 @@ import javax.inject.Singleton;
  * @see ru.vyarus.guice.persist.orient.db.transaction.TransactionManager for details about transactions
  */
 public class OrientModule extends PersistModule {
+    private Logger logger = LoggerFactory.getLogger(OrientModule.class);
 
     private String uri;
     private String user;
@@ -127,7 +123,7 @@ public class OrientModule extends PersistModule {
      * @param user        database user
      * @param password    database password
      * @param basePackage package to use for scheme initializer
-     * @param txConfig      default transaction configuration
+     * @param txConfig    default transaction configuration
      */
     public OrientModule(final String uri, final String user, final String password,
                         final String basePackage, final TxConfig txConfig) {
@@ -168,12 +164,12 @@ public class OrientModule extends PersistModule {
      * transactional (OrientGraph) and not transactional (OrientGraphNoTx) connections.
      */
     protected void configurePools() {
-        bindPool(OObjectDatabaseTx.class, ObjectPool.class);
         bindPool(ODatabaseDocumentTx.class, DocumentPool.class);
 
-        bindPool(OrientBaseGraph.class, GraphPool.class);
-        bind(OrientGraph.class).toProvider(OrientGraphProvider.class);
-        bind(OrientGraphNoTx.class).toProvider(OrientGraphNoTxProvider.class);
+        // pools availability should depend on available jars in classpath
+        // this way object and graph dependencies are optional
+        loadOptionalPool("ru.vyarus.guice.persist.orient.support.compat.ObjectPoolBinder");
+        loadOptionalPool("ru.vyarus.guice.persist.orient.support.compat.GraphPoolBinder");
     }
 
     /**
@@ -198,6 +194,24 @@ public class OrientModule extends PersistModule {
         bind(pool).in(Singleton.class);
         poolsMultibinder.addBinding().to(pool);
         bind(type).toProvider(pool);
+    }
+
+    /**
+     * Allows to load pool only if required jars are in classpath.
+     * For example, no need for graph dependencies if only object db is used.
+     *
+     * @param poolBinder pool binder class
+     * @see ru.vyarus.guice.persist.orient.support.compat.ObjectPoolBinder as example
+     */
+    protected void loadOptionalPool(final String poolBinder) {
+        try {
+            Class.forName(poolBinder)
+                    .getConstructor(OrientModule.class, Binder.class).newInstance(this, binder());
+        } catch (Exception ignore) {
+            if (logger.isTraceEnabled()) {
+                logger.trace("Failed to process pool loader " + poolBinder, ignore);
+            }
+        }
     }
 
     @Override

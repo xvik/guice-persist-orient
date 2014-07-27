@@ -2,8 +2,8 @@ package ru.vyarus.guice.persist.orient.db;
 
 import com.google.common.base.Preconditions;
 import com.google.inject.persist.PersistService;
+import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx;
 import com.orientechnologies.orient.core.tx.OTransaction;
-import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vyarus.guice.persist.orient.db.data.DataInitializer;
@@ -109,7 +109,7 @@ public class DatabaseManager implements PersistService {
 
     protected void createIfRequired() {
         // create if required (without creation work with db is impossible)
-        OObjectDatabaseTx database = new OObjectDatabaseTx(uri);
+        ODatabaseDocumentTx database = new ODatabaseDocumentTx(uri);
         try {
             if (!database.exists()) {
                 logger.info("Creating database: '{}'", uri);

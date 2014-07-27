@@ -81,6 +81,7 @@ dependencies {
     compile 'com.google.inject.extensions:guice-persist:3.0'
     compile 'com.google.inject.extensions:guice-multibindings:3.0'
     compile 'org.slf4j:slf4j-api:1.7.7'
+    compile "com.orientechnologies:orientdb-core:1.7.6"
 
     optional "com.orientechnologies:orientdb-object:1.7.6"
     optional "com.orientechnologies:orientdb-graphdb:1.7.6"
