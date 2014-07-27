@@ -9,6 +9,7 @@ import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
  * <ul>
  * <li>Orient ignore package, so class may be moved between packages</li>
  * <li>When entity field removed, orient will hold all data already stored in records of that type</li>
+ * <li>When entity field type changes, it WILL NOT be migrated automatically.</li>
  * <li>When class renamed orient will register it as new entity and you will have to manually migrate old table
  * (or use sql commands to rename entity in db scheme)</li>
  * </ul></p>

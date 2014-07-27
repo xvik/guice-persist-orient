@@ -1,7 +1,9 @@
 package ru.vyarus.guice.persist.orient.db.transaction;
 
+import com.google.common.base.Objects;
 import com.orientechnologies.orient.core.tx.OTransaction;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -17,6 +19,7 @@ public class TxConfig {
     private OTransaction.TXTYPE txtype;
 
     public TxConfig() {
+        this(null, null, null);
     }
 
     /**
@@ -25,7 +28,7 @@ public class TxConfig {
      * @param txtype type to use within transaction (NOTX type disables transaction)
      */
     public TxConfig(final OTransaction.TXTYPE txtype) {
-        this.txtype = txtype;
+        this(null, null, txtype);
     }
 
     /**
@@ -47,9 +50,9 @@ public class TxConfig {
     public TxConfig(final List<Class<? extends Exception>> rollbackOn,
                     final List<Class<? extends Exception>> ignore,
                     final OTransaction.TXTYPE txtype) {
-        this.rollbackOn = rollbackOn;
-        this.ignore = ignore;
-        this.txtype = txtype;
+        this.rollbackOn = Objects.firstNonNull(rollbackOn, Collections.<Class<? extends Exception>>emptyList());
+        this.ignore = Objects.firstNonNull(ignore, Collections.<Class<? extends Exception>>emptyList());
+        this.txtype = Objects.firstNonNull(txtype, OTransaction.TXTYPE.OPTIMISTIC);
     }
 
     /**

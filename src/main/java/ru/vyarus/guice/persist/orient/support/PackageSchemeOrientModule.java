@@ -1,9 +1,9 @@
 package ru.vyarus.guice.persist.orient.support;
 
-import com.orientechnologies.orient.core.tx.OTransaction;
 import ru.vyarus.guice.persist.orient.OrientModule;
 import ru.vyarus.guice.persist.orient.db.scheme.PackageSchemeInitializer;
 import ru.vyarus.guice.persist.orient.db.scheme.SchemeInitializer;
+import ru.vyarus.guice.persist.orient.db.transaction.TxConfig;
 
 /**
  * Orient shortcut module with predefined "entities in package" scheme initializer.
@@ -14,12 +14,19 @@ import ru.vyarus.guice.persist.orient.db.scheme.SchemeInitializer;
  */
 public class PackageSchemeOrientModule extends OrientModule {
 
-    public PackageSchemeOrientModule(String uri, String user, String password, String basePackage) {
+    public PackageSchemeOrientModule(final String uri,
+                                     final String user,
+                                     final String password,
+                                     final String basePackage) {
         super(uri, user, password, basePackage);
     }
 
-    public PackageSchemeOrientModule(String uri, String user, String password, String basePackage, OTransaction.TXTYPE txtype) {
-        super(uri, user, password, basePackage, txtype);
+    public PackageSchemeOrientModule(final String uri,
+                                     final String user,
+                                     final String password,
+                                     final String basePackage,
+                                     final TxConfig txConfig) {
+        super(uri, user, password, basePackage, txConfig);
     }
 
     @Override

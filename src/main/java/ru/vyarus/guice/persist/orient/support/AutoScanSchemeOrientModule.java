@@ -1,9 +1,9 @@
 package ru.vyarus.guice.persist.orient.support;
 
-import com.orientechnologies.orient.core.tx.OTransaction;
 import ru.vyarus.guice.persist.orient.OrientModule;
 import ru.vyarus.guice.persist.orient.db.scheme.SchemeInitializer;
 import ru.vyarus.guice.persist.orient.db.scheme.autoscan.AutoScanSchemeInitializer;
+import ru.vyarus.guice.persist.orient.db.transaction.TxConfig;
 
 /**
  * Orient shortcut module with predefined "classpath scanning" scheme initializer.
@@ -15,12 +15,19 @@ import ru.vyarus.guice.persist.orient.db.scheme.autoscan.AutoScanSchemeInitializ
  */
 public class AutoScanSchemeOrientModule extends OrientModule {
 
-    public AutoScanSchemeOrientModule(String uri, String user, String password, String basePackage) {
+    public AutoScanSchemeOrientModule(final String uri,
+                                      final String user,
+                                      final String password,
+                                      final String basePackage) {
         super(uri, user, password, basePackage);
     }
 
-    public AutoScanSchemeOrientModule(String uri, String user, String password, String basePackage, OTransaction.TXTYPE txtype) {
-        super(uri, user, password, basePackage, txtype);
+    public AutoScanSchemeOrientModule(final String uri,
+                                      final String user,
+                                      final String password,
+                                      final String basePackage,
+                                      final TxConfig txConfig) {
+        super(uri, user, password, basePackage, txConfig);
     }
 
     @Override

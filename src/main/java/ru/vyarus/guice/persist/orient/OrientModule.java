@@ -21,6 +21,7 @@ import ru.vyarus.guice.persist.orient.db.pool.graph.GraphPool;
 import ru.vyarus.guice.persist.orient.db.pool.graph.OrientGraphNoTxProvider;
 import ru.vyarus.guice.persist.orient.db.pool.graph.OrientGraphProvider;
 import ru.vyarus.guice.persist.orient.db.transaction.TransactionManager;
+import ru.vyarus.guice.persist.orient.db.transaction.TxConfig;
 import ru.vyarus.guice.persist.orient.db.transaction.internal.TransactionInterceptor;
 
 import javax.inject.Singleton;
@@ -88,7 +89,7 @@ public class OrientModule extends PersistModule {
     private String user;
     private String password;
     private String pkg;
-    private OTransaction.TXTYPE txtype;
+    private TxConfig txConfig;
 
     private Multibinder<PoolManager> poolsMultibinder;
     private MethodInterceptor interceptor;
@@ -116,7 +117,7 @@ public class OrientModule extends PersistModule {
      * @param basePackage package to use for scheme initializer
      */
     public OrientModule(final String uri, final String user, final String password, final String basePackage) {
-        this(uri, user, password, basePackage, OTransaction.TXTYPE.OPTIMISTIC);
+        this(uri, user, password, basePackage, null);
     }
 
     /**
@@ -126,15 +127,15 @@ public class OrientModule extends PersistModule {
      * @param user        database user
      * @param password    database password
      * @param basePackage package to use for scheme initializer
-     * @param txtype      default transaction type to use
+     * @param txConfig      default transaction configuration
      */
     public OrientModule(final String uri, final String user, final String password,
-                        final String basePackage, final OTransaction.TXTYPE txtype) {
+                        final String basePackage, final TxConfig txConfig) {
         this.uri = uri;
         this.user = user;
         this.password = password;
         this.pkg = basePackage;
-        this.txtype = txtype;
+        this.txConfig = txConfig;
     }
 
     @Override
@@ -147,7 +148,8 @@ public class OrientModule extends PersistModule {
         // if package not provided empty string will mean root package (search all classpath)
         // not required if provided scheme initialisers not used
         bindConstant().annotatedWith(Names.named("orient.model.package")).to(Strings.nullToEmpty(pkg));
-        bindConstant().annotatedWith(Names.named("orient.txtype")).to(txtype);
+        bind(TxConfig.class).annotatedWith(Names.named("orient.txconfig"))
+                .toInstance(txConfig == null ? new TxConfig() : txConfig);
 
         bind(TransactionManager.class);
 

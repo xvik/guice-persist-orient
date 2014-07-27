@@ -6,31 +6,28 @@ import com.orientechnologies.orient.core.tx.OTransaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vyarus.guice.persist.orient.db.PoolManager;
-import ru.vyarus.guice.persist.orient.db.transaction.TxConfig;
 import ru.vyarus.guice.persist.orient.db.transaction.TransactionManager;
+import ru.vyarus.guice.persist.orient.db.transaction.TxConfig;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
-import java.util.Collections;
 import java.util.Set;
 
 @Singleton
 public class DefaultTransactionManager implements TransactionManager {
     private final Logger logger = LoggerFactory.getLogger(DefaultTransactionManager.class);
 
-    private static final TxConfig defaultConfig = new TxConfig();
-
     private Set<PoolManager> pools;
     private ThreadLocal<TxConfig> transaction = new ThreadLocal<TxConfig>();
-    private OTransaction.TXTYPE defaultTxtype;
+    private TxConfig defaultConfig;
 
 
     @Inject
-    public DefaultTransactionManager(Set<PoolManager> pools,
-                                     @Named("orient.txtype") OTransaction.TXTYPE defaultTxtype) {
+    public DefaultTransactionManager(final Set<PoolManager> pools,
+                                     final @Named("orient.txconfig") TxConfig defaultConfig) {
         this.pools = pools;
-        this.defaultTxtype = defaultTxtype;
+        this.defaultConfig = defaultConfig;
     }
 
     @Override
@@ -44,12 +41,7 @@ public class DefaultTransactionManager implements TransactionManager {
             // transaction already in progress
             return;
         }
-        TxConfig cfg = Objects.firstNonNull(config, defaultConfig);
-        transaction.set(new TxConfig(
-                cfg.getRollbackOn() == null ? Collections.<Class<? extends Exception>>emptyList() : cfg.getRollbackOn(),
-                cfg.getIgnore() == null ? Collections.<Class<? extends Exception>>emptyList() : cfg.getIgnore(),
-                cfg.getTxtype() == null ? defaultTxtype : cfg.getTxtype()
-        ));
+        transaction.set(Objects.firstNonNull(config, defaultConfig));
     }
 
     @Override
@@ -126,8 +118,8 @@ public class DefaultTransactionManager implements TransactionManager {
     /**
      * Returns True if rollback DID NOT HAPPEN (i.e. if commit should continue).
      *
-     * @param config
-     * @param e          The exception to test for rollback
+     * @param config transaction configuration
+     * @param e      The exception to test for rollback
      */
     private boolean canRecover(final TxConfig config, Throwable e) {
         boolean commit = true;
