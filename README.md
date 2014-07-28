@@ -1,10 +1,10 @@
-#Guice integration for OrientDb
+#Guice integration for OrientDB
 [![Build Status](https://travis-ci.org/xvik/guice-persist-orient.svg?branch=master)](https://travis-ci.org/xvik/guice-persist-orient)
  [ ![Download](https://api.bintray.com/packages/vyarus/xvik/guice-persist-orient/images/download.png) ](https://bintray.com/vyarus/xvik/guice-persist-orient/_latestVersion)
 
 ### About
 
-[OrientDb](http://www.orientechnologies.com/orientdb/) is document, graph and object database ([see intro](http://www.orientechnologies.com/orientdb/)).
+[OrientDB](http://www.orientechnologies.com/orientdb/) is document, graph and object database ([see intro](https://www.youtube.com/watch?v=o_7NCiTLVis)).
 Underlying format is almost the same for all database types, which allows to use single database in any way. For example, schema creation and updates
 may be performed as object database (jpa style) and in complex cases use graph queries. 
 
