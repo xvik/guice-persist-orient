@@ -1,12 +1,12 @@
-package ru.vyarus.guice.persist.orient.base
+package ru.vyarus.guice.persist.orient.concurrent
 
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx
 import ru.vyarus.guice.persist.orient.AbstractTest
-import ru.vyarus.guice.persist.orient.base.model.Model
-import ru.vyarus.guice.persist.orient.base.modules.SimpleModule
-import ru.vyarus.guice.persist.orient.base.service.InsertTransactionalService
-import ru.vyarus.guice.persist.orient.base.service.SelectTransactionalService
 import ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxAction
+import ru.vyarus.guice.persist.orient.support.model.Model
+import ru.vyarus.guice.persist.orient.support.modules.PackageSchemeModule
+import ru.vyarus.guice.persist.orient.support.service.InsertTransactionalService
+import ru.vyarus.guice.persist.orient.support.service.SelectTransactionalService
 import spock.guice.UseModules
 
 import javax.inject.Inject
@@ -19,7 +19,7 @@ import java.util.concurrent.Future
  * @author Vyacheslav Rusakov 
  * @since 20.07.2014
  */
-@UseModules(SimpleModule.class)
+@UseModules(PackageSchemeModule)
 class ConcurrentTest extends AbstractTest {
 
     @Inject
@@ -56,7 +56,7 @@ class ConcurrentTest extends AbstractTest {
         executed.each({ it.get() })
 
         Long cnt = template.doInTransaction({ db ->
-            return db.countClass(Model.class)
+            return db.countClass(Model)
         } as SpecificTxAction<Long, OObjectDatabaseTx>)
         then: "Db should contain 20 records"
         !transactionManager.isTransactionActive()

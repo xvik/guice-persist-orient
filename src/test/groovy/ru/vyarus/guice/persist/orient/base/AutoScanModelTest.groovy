@@ -2,18 +2,18 @@ package ru.vyarus.guice.persist.orient.base
 
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx
 import ru.vyarus.guice.persist.orient.AbstractTest
-import ru.vyarus.guice.persist.orient.base.model.Model
-import ru.vyarus.guice.persist.orient.base.model.ModelAuto
-import ru.vyarus.guice.persist.orient.base.modules.AutoScanModule
 import ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxAction
+import ru.vyarus.guice.persist.orient.support.model.Model
+import ru.vyarus.guice.persist.orient.support.model.ModelAuto
+import ru.vyarus.guice.persist.orient.support.modules.AutoScanModule
 import spock.guice.UseModules
 
 /**
  * @author Vyacheslav Rusakov 
  * @since 18.07.2014
  */
-@UseModules(AutoScanModule.class)
-class AutoScanModelTest extends AbstractTest{
+@UseModules(AutoScanModule)
+class AutoScanModelTest extends AbstractTest {
 
     def "Check autoscan startup"() {
         final Collection<Class<?>> schemaEntries =
@@ -21,8 +21,8 @@ class AutoScanModelTest extends AbstractTest{
                     return db.entityManager.registeredEntities
                 } as SpecificTxAction<Collection<Class<?>>, OObjectDatabaseTx>)
 
-        expect:
-        schemaEntries.contains(ModelAuto.class)
-        !schemaEntries.contains(Model.class)
+        expect: "only annotated model loaded"
+        schemaEntries.contains(ModelAuto)
+        !schemaEntries.contains(Model)
     }
 }

@@ -14,13 +14,7 @@ import java.lang.reflect.Method;
  * @since 27.07.2014
  */
 public class ObjectPoolBinder {
-    public ObjectPoolBinder(final OrientModule module, final Binder binder) throws Exception {
-        Method bindPool = OrientModule.class.getDeclaredMethod("bindPool", Class.class, Class.class);
-        bindPool.setAccessible(true);
-        try {
-            bindPool.invoke(module, OObjectDatabaseTx.class, ObjectPool.class);
-        } finally {
-            bindPool.setAccessible(false);
-        }
+    public ObjectPoolBinder(final OrientModule module, final Method bindPool, final Binder binder) throws Exception {
+        bindPool.invoke(module, OObjectDatabaseTx.class, ObjectPool.class);
     }
 }

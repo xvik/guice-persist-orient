@@ -19,6 +19,7 @@ import ru.vyarus.guice.persist.orient.db.transaction.TxConfig;
 import ru.vyarus.guice.persist.orient.db.transaction.internal.TransactionInterceptor;
 
 import javax.inject.Singleton;
+import java.lang.reflect.Method;
 
 /**
  * Module provides integration for orient db with guice through guice-persist.
@@ -205,8 +206,15 @@ public class OrientModule extends PersistModule {
      */
     protected void loadOptionalPool(final String poolBinder) {
         try {
-            Class.forName(poolBinder)
-                    .getConstructor(OrientModule.class, Binder.class).newInstance(this, binder());
+            Method bindPool = OrientModule.class.getDeclaredMethod("bindPool", Class.class, Class.class);
+            bindPool.setAccessible(true);
+            try {
+                Class.forName(poolBinder)
+                        .getConstructor(OrientModule.class, Method.class, Binder.class)
+                        .newInstance(this, bindPool, binder());
+            } finally {
+                bindPool.setAccessible(false);
+            }
         } catch (Exception ignore) {
             if (logger.isTraceEnabled()) {
                 logger.trace("Failed to process pool loader " + poolBinder, ignore);

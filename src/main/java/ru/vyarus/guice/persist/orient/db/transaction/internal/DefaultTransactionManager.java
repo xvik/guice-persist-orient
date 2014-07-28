@@ -42,11 +42,13 @@ public class DefaultTransactionManager implements TransactionManager {
             return;
         }
         transaction.set(Objects.firstNonNull(config, defaultConfig));
+        logger.trace("Transaction opened");
     }
 
     @Override
     public void end() {
         Preconditions.checkState(isTransactionActive(), "No active transaction found to close");
+        logger.trace("Committing transaction");
         try {
             RuntimeException commitFailReason = null;
             // each pool maintains ots own transaction. we have to commit each of them
@@ -79,13 +81,16 @@ public class DefaultTransactionManager implements TransactionManager {
     @Override
     public void rollback(Throwable ex) {
         Preconditions.checkState(isTransactionActive(), "Call to rollback, when no active transaction");
-
+        logger.trace("Rollback transaction");
         if (ex != null) {
+            logger.trace("Exception caused rollback:", ex);
             if (canRecover(transaction.get(), ex)) {
+                logger.debug("Transaction recovered from exception: {}", ex.getClass());
                 end();
                 return;
             }
         }
+
 
         // performing actual rollback
         try {

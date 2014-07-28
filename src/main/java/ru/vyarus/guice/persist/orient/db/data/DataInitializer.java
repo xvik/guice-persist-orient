@@ -7,7 +7,7 @@ import com.google.inject.ImplementedBy;
  * Useful for db initialization in development or data migration after schema changes.
  * To register custom implementation simply register implementation in guice context.
  * By default no-op implementation will be used.
- * <p>NOTE: Will be called without transaction context, because you may need different transaction types, so its up to implementer
+ * <p>NOTE: Will be called WITHOUT transaction context, because you may need different transaction types, so its up to implementer
  * to define unit of work (e.g. by annotating implementation bean with @Transactional or using transaction template).
  * More than one unit of work may be used (again, it's up to implementer)</p>
  *

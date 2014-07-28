@@ -18,15 +18,9 @@ import java.lang.reflect.Method;
  * @since 27.07.2014
  */
 public class GraphPoolBinder {
-    public GraphPoolBinder(final OrientModule module, final Binder binder) throws Exception {
-        final Method bindPool = OrientModule.class.getDeclaredMethod("bindPool", Class.class, Class.class);
-        bindPool.setAccessible(true);
-        try {
-            binder.bind(OrientGraph.class).toProvider(OrientGraphProvider.class);
-            binder.bind(OrientGraphNoTx.class).toProvider(OrientGraphNoTxProvider.class);
-            bindPool.invoke(module, OrientBaseGraph.class, GraphPool.class);
-        } finally {
-            bindPool.setAccessible(false);
-        }
+    public GraphPoolBinder(final OrientModule module, final Method bindPool, final Binder binder) throws Exception {
+        binder.bind(OrientGraph.class).toProvider(OrientGraphProvider.class);
+        binder.bind(OrientGraphNoTx.class).toProvider(OrientGraphNoTxProvider.class);
+        bindPool.invoke(module, OrientBaseGraph.class, GraphPool.class);
     }
 }

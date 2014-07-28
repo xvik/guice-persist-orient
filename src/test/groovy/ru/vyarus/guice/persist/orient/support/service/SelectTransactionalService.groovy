@@ -1,10 +1,10 @@
-package ru.vyarus.guice.persist.orient.base.service
+package ru.vyarus.guice.persist.orient.support.service
 
 import com.google.inject.Provider
 import com.google.inject.persist.Transactional
 import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx
-import ru.vyarus.guice.persist.orient.base.model.Model
+import ru.vyarus.guice.persist.orient.support.model.Model
 
 import javax.inject.Inject
 

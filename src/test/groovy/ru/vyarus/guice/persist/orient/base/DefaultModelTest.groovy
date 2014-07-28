@@ -2,9 +2,9 @@ package ru.vyarus.guice.persist.orient.base
 
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx
 import ru.vyarus.guice.persist.orient.AbstractTest
-import ru.vyarus.guice.persist.orient.base.model.Model
-import ru.vyarus.guice.persist.orient.base.model.ModelAuto
-import ru.vyarus.guice.persist.orient.base.modules.SimpleModule
+import ru.vyarus.guice.persist.orient.support.model.Model
+import ru.vyarus.guice.persist.orient.support.model.ModelAuto
+import ru.vyarus.guice.persist.orient.support.modules.PackageSchemeModule
 import ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxAction
 import spock.guice.UseModules
 
@@ -12,7 +12,7 @@ import spock.guice.UseModules
  * @author Vyacheslav Rusakov 
  * @since 18.07.2014
  */
-@UseModules(SimpleModule.class)
+@UseModules(PackageSchemeModule)
 class DefaultModelTest extends AbstractTest {
 
     def "Check default startup"() {

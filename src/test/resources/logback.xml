@@ -12,6 +12,8 @@
     <logger name="com.orientechnologies.orient.core.db.record.ODatabaseRecordAbstract" level="ERROR"/>
 
     <logger name="ru.vyarus" level="TRACE"/>
+    <!-- transaction manager logs -->
+    <logger name="ru.vyarus.guice.persist.orient.db.transaction.internal.DefaultTransactionManager" level="DEBUG"/>
     <!-- @Transactional annotation handling -->
     <logger name="ru.vyarus.guice.persist.orient.db.transaction.internal.TransactionInterceptor" level="DEBUG"/>
     <!-- pools -->

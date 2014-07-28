@@ -1,7 +1,7 @@
 package ru.vyarus.guice.persist.orient.base
 
 import com.google.inject.persist.PersistService
-import ru.vyarus.guice.persist.orient.base.modules.SimpleModule
+import ru.vyarus.guice.persist.orient.support.modules.DefaultModule
 import spock.guice.UseModules
 import spock.lang.Specification
 
@@ -11,8 +11,8 @@ import javax.inject.Inject
  * @author Vyacheslav Rusakov 
  * @since 18.07.2014
  */
-@UseModules(SimpleModule.class)
-class StartupTest extends Specification{
+@UseModules(DefaultModule)
+class StartupTest extends Specification {
 
     @Inject
     PersistService persist;

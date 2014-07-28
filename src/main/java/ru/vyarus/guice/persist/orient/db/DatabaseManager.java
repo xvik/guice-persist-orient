@@ -114,9 +114,29 @@ public class DatabaseManager implements PersistService {
             if (!database.exists()) {
                 logger.info("Creating database: '{}'", uri);
                 database.create();
+            } else {
+                database.open(user, pass);
             }
+            initGraphDb(database);
         } finally {
             database.close();
+        }
+    }
+
+    /**
+     * Graph connection object performs schema check and can perform modifications.
+     * To safely use graph connections later, initializing it with notx transaction.
+     *
+     * @param db notx document connection
+     */
+    protected void initGraphDb(ODatabaseDocumentTx db) {
+        try {
+            Class.forName("com.tinkerpop.blueprints.impls.orient.OrientGraph")
+                    .getConstructor(ODatabaseDocumentTx.class).newInstance(db);
+        } catch (ClassNotFoundException ignore) {
+            // mean no graph support required
+        } catch (Exception ex) {
+            throw new IllegalStateException("Failed to init graph connection", ex);
         }
     }
 
