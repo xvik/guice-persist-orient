@@ -29,6 +29,6 @@ class SelectTransactionalService {
 
     @Transactional
     public void rollbackCheck() {
-        throw new IllegalStateException("Checking proper rollback")
+        throw new IllegalArgumentException("Checking proper rollback")
     }
 }

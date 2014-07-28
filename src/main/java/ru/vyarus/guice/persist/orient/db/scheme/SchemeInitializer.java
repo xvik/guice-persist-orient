@@ -3,16 +3,16 @@ package ru.vyarus.guice.persist.orient.db.scheme;
 import com.google.inject.ImplementedBy;
 
 /**
- * Initialize or update database schema just after database opening or creation.
+ * <p>Initialize or update database schema just after database opening or creation.
  * To register custom implementation simply register implementation in guice context.
- * By default no-op implementation will be used.
- * <p>There are two predefined implementations:
+ * By default no-op implementation will be used.</p>
+ * There are two predefined implementations:
  * <ul>
  *     <li>{@code ru.vyarus.guice.persist.orient.db.scheme.PackageSchemeInitializer} which update scheme from using all classes in defined package
  *     (more suitable for standard package by layer approach)</li>
  *     <li>{@code ru.vyarus.guice.persist.orient.db.scheme.autoscan.AutoScanSchemeInitializer} which update scheme from all annotated beans in classpath
  *     (more suitable for package by feature approach)</li>
- * </ul></p>
+ * </ul>
  * Schema modifications must be performed without transaction (orient requirement), and implementation will be called under predefined notx unit of work.
  *
  * @see ru.vyarus.guice.persist.orient.db.data.DataInitializer for data migration or default data initialization

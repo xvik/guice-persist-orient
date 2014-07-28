@@ -12,6 +12,7 @@ package ru.vyarus.guice.persist.orient.db.transaction.template;
 public interface SpecificTxAction<T, C> {
 
     /**
+     * @param db database connection instance
      * @return value (or null if T is Void)
      * @throws Throwable error thrown in action may cause rollback or commit, depending on transaction configuration
      */

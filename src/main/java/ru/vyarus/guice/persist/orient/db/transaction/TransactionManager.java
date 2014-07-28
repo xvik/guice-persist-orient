@@ -16,14 +16,14 @@ import ru.vyarus.guice.persist.orient.db.transaction.internal.DefaultTransaction
  * more different connection types; if during commit first transaction will fail, second transaction will be still committed and
  * rollback performed only on first one (that is because transactions are actually independent and transactional manager
  * simply provides easy way to gain all possible benefits of orient with the simplest usage.</p>
- * <p>Transaction could be defined with @Transactional annotation or using {@code ru.vyarus.guice.persist.orient.db.transaction.template.TxTemplate}
+ * Transaction could be defined with @Transactional annotation or using {@code ru.vyarus.guice.persist.orient.db.transaction.template.TxTemplate}
  * (or more specific {@code ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxTemplate}). For both cases you can
  * configure transaction with:
  * <ul>
  * <li>list of exception classes which will trigger or not trigger transaction rollback</li>
  * <li>type of transaction (orient support 3 types of transactions: no transaction, optimistic and pessimistic)</li>
  * </ul>
- * To change default transaction type when using annotations use @TxType annotation together with @Transactional.</p>
+ * To change default transaction type when using annotations use @TxType annotation together with @Transactional.
  * <p>Default transaction type is optimistic. This could be change in guice module.</p>
  * <p>Inline transactions are not supported: when unit of work is started with annotation or transaction template, and inside some other annotated method
  * or other transaction template appear its simply executed in scope of current transaction (it's specific config is ignored).</p>

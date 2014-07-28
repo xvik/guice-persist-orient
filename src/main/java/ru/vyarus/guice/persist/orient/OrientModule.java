@@ -22,20 +22,19 @@ import javax.inject.Singleton;
 import java.lang.reflect.Method;
 
 /**
- * Module provides integration for orient db with guice through guice-persist.
- * <p>Orient storage format is unified within database types (object, document, graph), so it's possible to use
+ * <p>Module provides integration for orient db with guice through guice-persist.</p>
+ * Orient storage format is unified within database types (object, document, graph), so it's possible to use
  * the same database as object, document or graph.
  * This provides different use-cases:
  * <ul>
  * <li>use object connection for schema initialization and graph connection to work with db</li>
  * <li>use graph connection for complex selects and object db for entities manipulation</li>
  * <li>etc</li>
- * </ul></p>
- * <p/>
+ * </ul>
  * <p>Module initialize set of connection pools. By default its object, document and graph (but depends on available jars in classpath:
  * if graph or object jars are not in classpath these pools will not be loaded). Set of pools may be modified
  * by overriding {@code #configurePools()} method.</p>
- * <p>To initialize (create or update) database schema register {@code ru.vyarus.guice.persist.orient.db.scheme.SchemeInitializer}
+ * To initialize (create or update) database schema register {@code ru.vyarus.guice.persist.orient.db.scheme.SchemeInitializer}
  * implementation. By default no-op implementation registered. Two implementations provided to automatically initialize scheme from
  * domain objects:
  * <ul>
@@ -51,7 +50,6 @@ import java.lang.reflect.Method;
  * <li>{@code ru.vyarus.guice.persist.orient.support.AutoScanSchemeOrientModule}</li>
  * </ul>
  * NOTE: it's better to not perform db updates in schema initializer, because schema updates must be performed in no-tx mode.
- * </p>
  * <p>To initialize or migrate database data you can define {@code ru.vyarus.guice.persist.orient.db.data.DataInitializer}. By default,
  * no-op implementation registered.</p>
  * <p>Each pool will maintain its own transaction, but all transactions are orchestrated with
@@ -65,7 +63,7 @@ import java.lang.reflect.Method;
  * {@code ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxTemplate}. To define transaction type
  * for specific transaction (or switch off transaction within unit of work) use @TxType annotation.
  * Also this could be done with transaction templates.</p>
- * <p>To obtain database connection in application beans use provider:
+ * To obtain database connection in application beans use provider:
  * <ul>
  * <li>Provider&lt;OObjectDatabaseTx&gt; for object db connection</li>
  * <li>Provider&lt;ODatabaseDocumentTx&gt; for document db connection</li>
@@ -73,7 +71,7 @@ import java.lang.reflect.Method;
  * <li>Provider&lt;OrientGraph&gt; for transactional graph db connection (will fail if notx transaction type)</li>
  * <li>Provider&lt;OrientGraphNoTx&gt; for non transactional graph db connection (will provide only for notx transaction type, otherwise fail)</li>
  * </ul>
- * Provider will fail to provide connection if unit of work is not defined (using annotation or transactional template)</p>
+ * Provider will fail to provide connection if unit of work is not defined (using annotation or transactional template)
  * <p>Persistent service must be manually started or stopped: obtain PersistService and call .start() and .stop() when appropriate.
  * This will start/stop all registered pools. Without initialization any try to obtain connection will fail.</p>
  *

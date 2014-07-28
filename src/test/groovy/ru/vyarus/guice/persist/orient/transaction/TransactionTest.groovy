@@ -1,5 +1,6 @@
 package ru.vyarus.guice.persist.orient.transaction
 
+import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx
 import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery
 import com.orientechnologies.orient.core.tx.OTransaction
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx
@@ -55,7 +56,7 @@ class TransactionTest extends AbstractTest {
         when: "Insert record and fail causing rollback"
         insertService.rollbackSubtransaction()
         then: "Expect exception and no stored object in db"
-        thrown(IllegalStateException)
+        thrown(IllegalArgumentException)
         !transactionManager.isTransactionActive()
         selectService.select() == null
     }
@@ -94,5 +95,38 @@ class TransactionTest extends AbstractTest {
         } as SpecificTxAction<Void, OObjectDatabaseTx>)
         then: "everything ok"
         true
+    }
+
+    def "Check rollback recover"() {
+        when: "Insert record and fail not causing rollback"
+        template.doInTransaction(new TxConfig([], [IllegalStateException]), {db ->
+            insertService.rollbackCheck()
+        } as SpecificTxAction<Void, OObjectDatabaseTx>)
+        then: "Expect successful commit, object in db and exception"
+        thrown(IllegalStateException)
+        !transactionManager.isTransactionActive()
+        selectService.select() != null
+    }
+
+    def "Check rollback on exception type"() {
+        when: "Insert record and fail causing rollback"
+        template.doInTransaction(new TxConfig([IllegalArgumentException], []), {db ->
+            insertService.rollbackSubtransaction()
+        } as SpecificTxAction<Void, OObjectDatabaseTx>)
+        then: "Expect exception and no stored object in db"
+        thrown(IllegalArgumentException)
+        !transactionManager.isTransactionActive()
+        selectService.select() == null
+    }
+
+    def "Check rollback on specific exception type"() {
+        when: "Insert record and fail not causing rollback"
+        template.doInTransaction(new TxConfig([IllegalStateException], []), {db ->
+            insertService.rollbackSubtransaction()
+        } as SpecificTxAction<Void, OObjectDatabaseTx>)
+        then: "Expect exception and no stored object in db"
+        thrown(IllegalArgumentException)
+        !transactionManager.isTransactionActive()
+        selectService.select() != null
     }
 }
