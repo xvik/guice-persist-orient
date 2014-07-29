@@ -26,7 +26,12 @@ and then to maven central (require few days after release to be published).
 Gradle:
 
 ```groovy
-compile 'ru.vyarus:guice-persist-orient:0.9.0'
+compile ('ru.vyarus:guice-persist-orient:0.9.0'){
+    // gradle include optional dependencies.. fixing
+    exclude module: 'orientdb-graphdb'
+    exclude module: 'orientdb-object'
+    exclude module: 'reflections'          
+}
 ```
 
 By default, only document database support is enabled. 
@@ -47,7 +52,7 @@ To use classpath scanning for entities mapping (see 'Schema initialization' sect
 
 ```groovy
 compile ("org.reflections:reflections:0.9.8") {
-    exclude group: 'javassist' //orient is very sensible for javassist version (object db)
+    exclude group: 'javassist' //orient orbject db is very sensible for javassist version
 }
 ```
 
