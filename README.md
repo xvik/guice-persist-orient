@@ -9,8 +9,9 @@ Underlying format is almost the same for all database types, which allows to use
 may be performed as object database (jpa style) and in complex cases use graph queries. 
 
 Features:
+
 * Integration through [guice-persist](https://github.com/google/guice/wiki/GuicePersist) (UnitOfWork, PersistService, @Transactional annotation supported)
-* Support for [Document](https://github.com/orientechnologies/orientdb/wiki/Document-Database), [object](https://github.com/orientechnologies/orientdb/wiki/Object-Database) and
+* Support for [document](https://github.com/orientechnologies/orientdb/wiki/Document-Database), [object](https://github.com/orientechnologies/orientdb/wiki/Object-Database) and
 [graph](https://github.com/orientechnologies/orientdb/wiki/Graph-Database-Tinkerpop) databases
 * Database types support according to classpath (object and graph db support activated by adding jars to classpath)
 * Auto mapping entities in package to db scheme or using classpath scanning to map annotated entities
@@ -64,6 +65,7 @@ install(new OrientModule(url, user, password));
 
 See [orient documentation](https://github.com/orientechnologies/orientdb/wiki/Concepts#database_url) for supported db types.
 In short:
+
 * 'memory:dbname' to use in-memory database
 * 'plocal:dbname' to use embedded database (no server required, local fs folder will be used); db name must be local fs path
 * 'remote:dbname' to use remote db (you need to start server to use it)
@@ -103,7 +105,8 @@ public void onAppShutdown(){
 
 ##### Unit of work (transaction)
 
-To define unit of work use: 
+To define unit of work use:
+ 
 * @Transactional annotation on guice bean or single method (additional @TxType annotation allows to define different transaction type for specific unit of work)
 * Inject TxTemplate or SpecificTxTemplate beans into your service and use them
 
@@ -140,7 +143,7 @@ txTemplate.doInTransaction(new TxConfig(OTransaction.TXTYPE.NOTX), new TxAction<
 ```
 
 TxTemplate is a generic template to define unit of work, but you will need to use provider to obtain connection.
-If you need onl specific connection type, use specific template:
+If you need only specific connection type, use specific template:
 
 ```java
 specificTxTemplate.doInTransaction(new SpecificTxAction<Object, OObjectDatabaseTx>() {
@@ -153,11 +156,12 @@ specificTxTemplate.doInTransaction(new SpecificTxAction<Object, OObjectDatabaseT
 ```
 
 To obtain connection use one of providers:
-* Provider<OObjectDatabaseTx> for object database connection
-* Provider<ODatabaseDocumentTx> for document database connection
-* Provider<OrientBaseGraph> for graph database connection (transactional or not)
-* Provider<OrientGraph> for transactional graph database connection (will fail if notx transaction type)
-* Provider<OrientGraphNoTx> for non transactional graph database connection (will provide only for notx transaction type, otherwise fail)
+
+* Provider&lt;OObjectDatabaseTx&gt; for object database connection
+* Provider&lt;ODatabaseDocumentTx&gt; for document database connection
+* Provider&lt;OrientBaseGraph&gt; for graph database connection (transactional or not)
+* Provider&lt;OrientGraph&gt; for transactional graph database connection (will fail if notx transaction type)
+* Provider&lt;OrientGraphNoTx&gt; for non transactional graph database connection (will provide only for notx transaction type, otherwise fail)
 
 
 ### Schema initialization
@@ -173,6 +177,7 @@ ru.vyarus.guice.persist.orient.db.scheme.SchemeInitializer
 By default, no-op implementation enabled.
 
 Two default implementations provided for schema initialization from pojos (hibernate like):
+
 * PackageSchemeInitializer - use all classes in package to init or update scheme (package should be specified as module constructor argument)
 * AutoScanSchemeInitializer - search classpath for entities annotated with @Persistent annotation and use them to create/update scheme 
 (search scope may be reduced by specifying package in module constructor). Requires additional dependency on 'reflections' library.
@@ -185,6 +190,7 @@ bind(SchemeInitializer.class).to(PackageSchemeInitializer.class);
 ```
 
 Also, there are predefined modules for each initializer:
+
 * PackageSchemeOrientModule
 * AutoScanSchemeOrientModule
 
