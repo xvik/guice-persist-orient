@@ -9,7 +9,6 @@ Underlying format is almost the same for all database types, which allows to use
 may be performed as object database (jpa style) and in complex cases use graph queries. 
 
 Features:
-
 * Integration through [guice-persist](https://github.com/google/guice/wiki/GuicePersist) (UnitOfWork, PersistService, @Transactional annotation supported)
 * Support for [document](https://github.com/orientechnologies/orientdb/wiki/Document-Database), [object](https://github.com/orientechnologies/orientdb/wiki/Object-Database) and
 [graph](https://github.com/orientechnologies/orientdb/wiki/Graph-Database-Tinkerpop) databases
@@ -65,7 +64,6 @@ install(new OrientModule(url, user, password));
 
 See [orient documentation](https://github.com/orientechnologies/orientdb/wiki/Concepts#database_url) for supported db types.
 In short:
-
 * 'memory:dbname' to use in-memory database
 * 'plocal:dbname' to use embedded database (no server required, local fs folder will be used); db name must be local fs path
 * 'remote:dbname' to use remote db (you need to start server to use it)
@@ -105,8 +103,7 @@ public void onAppShutdown(){
 
 ##### Unit of work (transaction)
 
-To define unit of work use:
- 
+To define unit of work use: 
 * @Transactional annotation on guice bean or single method (additional @TxType annotation allows to define different transaction type for specific unit of work)
 * Inject TxTemplate or SpecificTxTemplate beans into your service and use them
 
@@ -156,7 +153,6 @@ specificTxTemplate.doInTransaction(new SpecificTxAction<Object, OObjectDatabaseT
 ```
 
 To obtain connection use one of providers:
-
 * Provider&lt;OObjectDatabaseTx&gt; for object database connection
 * Provider&lt;ODatabaseDocumentTx&gt; for document database connection
 * Provider&lt;OrientBaseGraph&gt; for graph database connection (transactional or not)
@@ -177,7 +173,6 @@ ru.vyarus.guice.persist.orient.db.scheme.SchemeInitializer
 By default, no-op implementation enabled.
 
 Two default implementations provided for schema initialization from pojos (hibernate like):
-
 * PackageSchemeInitializer - use all classes in package to init or update scheme (package should be specified as module constructor argument)
 * AutoScanSchemeInitializer - search classpath for entities annotated with @Persistent annotation and use them to create/update scheme 
 (search scope may be reduced by specifying package in module constructor). Requires additional dependency on 'reflections' library.
@@ -190,7 +185,6 @@ bind(SchemeInitializer.class).to(PackageSchemeInitializer.class);
 ```
 
 Also, there are predefined modules for each initializer:
-
 * PackageSchemeOrientModule
 * AutoScanSchemeOrientModule
 
