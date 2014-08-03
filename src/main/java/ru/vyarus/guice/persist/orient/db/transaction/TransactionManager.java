@@ -12,10 +12,10 @@ import ru.vyarus.guice.persist.orient.db.transaction.internal.DefaultTransaction
  * <p>For example, you can use graph connection to perform complex searches and object connection to perform changes.
  * Or you can modify different classes within different connections (and it will be ok within single unit of work).</p>
  * <p>Most likely, for most cases you will use single type of connection and so single orient transaction.</p>
- * <p>Commit and rollback operations have specific because of multi transaction unit of work: for example you use two or
+ * <p>Commit and rollback operations have specifics, because of multi transaction unit of work: for example you use two or
  * more different connection types; if during commit first transaction will fail, second transaction will be still committed and
  * rollback performed only on first one (that is because transactions are actually independent and transactional manager
- * simply provides easy way to gain all possible benefits of orient with the simplest usage.</p>
+ * simply provides easy way to gain all possible benefits of orient with the simplest usage).</p>
  * Transaction could be defined with @Transactional annotation or using {@code ru.vyarus.guice.persist.orient.db.transaction.template.TxTemplate}
  * (or more specific {@code ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxTemplate}). For both cases you can
  * configure transaction with:
@@ -64,7 +64,7 @@ public interface TransactionManager extends UnitOfWork {
      * Rollbacks current transaction (also ends unit of work). Fails if no active transaction found (double call not allowed).
      * Fail performed to catch wrong bound for unit of work in application eagerly and should lead to better
      * transactions architecture.
-     * <p>If one or more pools rollback failed with errors, errors will be logged and general exception thrown to indicate problem.
+     * <p>If one or more pools rollback failed with errors, errors will be just logged without exception propagation.
      * (rollback operation is not recoverable, so there is no need to know exact reason in code)</p>
      */
     void rollback();

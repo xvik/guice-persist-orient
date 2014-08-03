@@ -10,7 +10,6 @@ import ru.vyarus.guice.persist.orient.support.service.SelectTransactionalService
 import spock.guice.UseModules
 
 import javax.inject.Inject
-import java.util.concurrent.Callable
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.Future
@@ -44,12 +43,9 @@ class ConcurrentTest extends AbstractTest {
         List<Future<?>> executed = []
         int times = 20
         times.times({
-            executed << executor.submit(new Callable() {
-                @Override
-                Object call() throws Exception {
-                    insertService.subtransaction()
-                    return null
-                }
+            executed << executor.submit({
+                insertService.subtransaction()
+                return null
             })
         })
         // lock until finish

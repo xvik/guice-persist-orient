@@ -2,6 +2,8 @@ package ru.vyarus.guice.persist.orient.db.scheme;
 
 import com.google.inject.Provider;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -17,6 +19,7 @@ import javax.inject.Singleton;
  */
 @Singleton
 public class PackageSchemeInitializer extends AbstractObjectInitializer {
+    private Logger logger = LoggerFactory.getLogger(PackageSchemeInitializer.class);
 
     private String modelPkg;
 
@@ -29,6 +32,7 @@ public class PackageSchemeInitializer extends AbstractObjectInitializer {
 
     @Override
     public void init(final OObjectDatabaseTx db) {
+        logger.info("Initializing database scheme from classes in package: {}", modelPkg);
         // auto create schema for new classes
         db.setAutomaticSchemaGeneration(true);
         // register all classes in package (native orient feature)

@@ -43,4 +43,9 @@ public interface PoolManager<T> extends Provider<T> {
      * Must do nothing if no connection where opened by pool (pool wasn't used)
      */
     void rollback();
+
+    /**
+     * @return pool type
+     */
+    DbType getType();
 }

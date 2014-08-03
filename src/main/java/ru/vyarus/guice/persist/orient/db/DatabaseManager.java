@@ -1,6 +1,8 @@
 package ru.vyarus.guice.persist.orient.db;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 import com.google.inject.persist.PersistService;
 import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx;
 import com.orientechnologies.orient.core.tx.OTransaction;
@@ -39,6 +41,7 @@ public class DatabaseManager implements PersistService {
 
     // used to allow multiple start/stop calls (could be if service managed directly and PersistFilter registered)
     private boolean initialized = false;
+    private Set<DbType> supportedTypes;
 
     @Inject
     public DatabaseManager(
@@ -66,13 +69,14 @@ public class DatabaseManager implements PersistService {
     @Override
     public void start() {
         if (initialized) {
-            logger.warn("Duplicate initialization prevented");
+            logger.warn("Duplicate initialization prevented. Check your initialization logic: " +
+                    "persistent service should not be started two or more times");
             return;
         }
 
         createIfRequired();
         startPools();
-
+        logger.debug("Registered types: {}", supportedTypes);
         logger.debug("Initializing database: '{}'", uri);
         // no tx (because of schema update - orient requirement)
         try {
@@ -107,6 +111,21 @@ public class DatabaseManager implements PersistService {
         stopPools();
     }
 
+    /**
+     * @return set of supported database types (according to registered pools)
+     */
+    public Set<DbType> getSupportedTypes() {
+        return ImmutableSet.copyOf(supportedTypes);
+    }
+
+    /**
+     * @param type db type to check
+     * @return true if db tpe supported (supporting pool regisntered), false otherwise
+     */
+    public boolean isTypeSupported(DbType type) {
+        return supportedTypes.contains(type);
+    }
+
     protected void createIfRequired() {
         // create if required (without creation work with db is impossible)
         ODatabaseDocumentTx database = new ODatabaseDocumentTx(uri);
@@ -134,15 +153,18 @@ public class DatabaseManager implements PersistService {
             Class.forName("com.tinkerpop.blueprints.impls.orient.OrientGraph")
                     .getConstructor(ODatabaseDocumentTx.class).newInstance(db);
         } catch (ClassNotFoundException ignore) {
-            // mean no graph support required
+            // no graph support required
         } catch (Exception ex) {
             throw new IllegalStateException("Failed to init graph connection", ex);
         }
     }
 
     protected void startPools() {
+        supportedTypes = Sets.newHashSet();
         for (PoolManager<?> pool : pools) {
+            // if pool start failed, entire app start should fail (no catch here)
             pool.start(uri, user, pass);
+            supportedTypes.add(pool.getType());
         }
     }
 
@@ -152,7 +174,7 @@ public class DatabaseManager implements PersistService {
                 pool.stop();
             } catch (Throwable ex) {
                 // continue to properly shutdown all pools
-                logger.error("Pool '" + pool.getClass() + "' shutdown failed", ex);
+                logger.error("Pool '" + pool.getType() + "' shutdown failed ("+pool.getClass()+")", ex);
             }
         }
     }

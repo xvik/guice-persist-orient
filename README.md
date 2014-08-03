@@ -203,7 +203,7 @@ See [orient object mapping documentation](https://github.com/orientechnologies/o
 (it's possible to use sql commands to rename entity in scheme)
 * To use entity within optimistic transaction, it must have version field (annotated with @Version). You should add field manually or extend all entities from 
 provided base class: VersionedEntity
-* JPA annotations can be used to define cascades
+* JPA annotations can be used to (define cascades)[https://github.com/orientechnologies/orientdb/wiki/Object-Database#cascade-deleting]
 
 ### Data initialization
 
@@ -263,6 +263,32 @@ You can fine-tune transaction to rollback only in soecific exceptions or not rol
 
 Read more about [orient transactions](https://github.com/orientechnologies/orientdb/wiki/Transactions)
 
+Default transaction manager implementation could be overridden by simply registering different implementation of TransactionManager interface:
+
+```java
+bind(TransactionManager.class).to(CustomTransactionManagerImpl.class)
+```
+
+Pools implementation could also be changed. For example, current graph pool is actually document pool (because graph api 'sits' above document connection).
+So it is possible to share document and graph connections: just implement graph pool to acquire connection from document pool.
+It wasn't done, because of inconsistency: document and object transactions would be different and graph will share document transaction.. a bit confusing.
+
+Custom pools registration example:
+
+```java
+public class MyOrientModule extends OrientModule {
+
+    @Override
+    protected void configurePools() {
+        bindPool(ODatabaseDocumentTx.class, DocumentPool.class);
+        bindPool(OObjectDatabaseTx.class, ObjectPool.class);
+        bindPool(OrientGraph.class, MyCustomGraphPool.class);
+        // note that for graph few entities could be provided: OrientGraph, OrientGraphNoTx, OrientBaseGraph.
+        // default implementation registers additional providers to handle all cases
+        // see ru.vyarus.guice.persist.orient.support.pool.GraphPoolBinder
+    }
+}
+```
 
 ### Orient configuration
 

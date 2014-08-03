@@ -8,6 +8,7 @@ import com.orientechnologies.orient.core.tx.OTransaction;
 import com.tinkerpop.blueprints.impls.orient.OrientBaseGraph;
 import com.tinkerpop.blueprints.impls.orient.OrientGraph;
 import com.tinkerpop.blueprints.impls.orient.OrientGraphNoTx;
+import ru.vyarus.guice.persist.orient.db.DbType;
 import ru.vyarus.guice.persist.orient.db.pool.AbstractPool;
 import ru.vyarus.guice.persist.orient.db.transaction.TransactionManager;
 
@@ -45,9 +46,9 @@ public class GraphPool extends AbstractPool<OrientBaseGraph> {
     @Override
     protected OrientBaseGraph convertDbInstance(final ODatabaseComplex<?> db) {
         if (transaction.get() == null) {
+            ODatabaseDocumentTx documentDb = (ODatabaseDocumentTx) db;
             final OrientBaseGraph graph = transactionManager.getActiveTransactionType() == OTransaction.TXTYPE.NOTX ?
-                    new OrientGraphNoTx((ODatabaseDocumentTx) db)
-                    : new OrientGraph((ODatabaseDocumentTx) db);
+                    new OrientGraphNoTx(documentDb) : new OrientGraph(documentDb);
             transaction.set(graph);
         }
         return transaction.get();
@@ -63,5 +64,10 @@ public class GraphPool extends AbstractPool<OrientBaseGraph> {
     public void rollback() {
         super.rollback();
         transaction.remove();
+    }
+
+    @Override
+    public DbType getType() {
+        return DbType.GRAPH;
     }
 }

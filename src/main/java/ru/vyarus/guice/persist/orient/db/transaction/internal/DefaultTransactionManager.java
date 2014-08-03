@@ -42,7 +42,7 @@ public class DefaultTransactionManager implements TransactionManager {
             return;
         }
         transaction.set(Objects.firstNonNull(config, defaultConfig));
-        logger.trace("Transaction opened");
+        logger.trace("Transaction opened: {}", transaction.get());
     }
 
     @Override
@@ -59,6 +59,8 @@ public class DefaultTransactionManager implements TransactionManager {
                 try {
                     pool.commit();
                 } catch (RuntimeException th) {
+                    logger.debug("Pool " + pool.getType() + " commit failed. Exception will be propagated");
+                    logger.trace("Pool " + pool.getType() + " commit fail cause", th);
                     if (commitFailReason != null) {
                         logger.error("More than one pool commit fail. Previous fail will not be propagated", commitFailReason);
                     }
@@ -66,9 +68,11 @@ public class DefaultTransactionManager implements TransactionManager {
                 }
             }
             if (commitFailReason != null) {
+                rollback();
                 throw commitFailReason;
             }
         } finally {
+            logger.trace("Transaction committed");
             transaction.remove();
         }
     }
@@ -81,7 +85,7 @@ public class DefaultTransactionManager implements TransactionManager {
     @Override
     public void rollback(Throwable ex) {
         Preconditions.checkState(isTransactionActive(), "Call to rollback, when no active transaction");
-        logger.trace("Rollback transaction");
+        logger.trace("Rollback transaction: {}", transaction.get());
         if (ex != null) {
             logger.trace("Exception caused rollback:", ex);
             if (canRecover(transaction.get(), ex)) {
@@ -94,18 +98,20 @@ public class DefaultTransactionManager implements TransactionManager {
 
         // performing actual rollback
         try {
-            boolean rollbackSuccess = true;
             // it's very unlikely for rollback to fail because of db, but may happen because of db impl
             for (PoolManager<?> pool : pools) {
                 try {
                     pool.rollback();
                 } catch (Throwable th) {
-                    rollbackSuccess = false;
-                    logger.error("Failed to rollback transaction", th);
+                    if (ex != null) {
+                        // logging second time but with higher level, it may be important
+                        logger.warn("Exception caused transaction rollback:", ex);
+                    }
+                    logger.error("Failed to rollback pool " + pool.getType() + " transaction", th);
                 }
             }
-            Preconditions.checkState(rollbackSuccess, "Rollback failed with errors. See logs for details");
         } finally {
+            logger.trace("Transaction rolled back");
             transaction.remove();
         }
     }
@@ -127,7 +133,7 @@ public class DefaultTransactionManager implements TransactionManager {
      * @param e      The exception to test for rollback
      */
     private boolean canRecover(final TxConfig config, Throwable e) {
-        boolean commit = true;
+        boolean commit = config.getRollbackOn().size() > 0;
 
         //check rollback clauses
         for (Class<? extends Exception> rollBackOn : config.getRollbackOn()) {
@@ -135,16 +141,16 @@ public class DefaultTransactionManager implements TransactionManager {
             //if one matched, try to perform a rollback
             if (rollBackOn.isInstance(e)) {
                 commit = false;
+                break;
+            }
+        }
 
-                //check ignore clauses (supercedes rollback clause)
-                for (Class<? extends Exception> exceptOn : config.getIgnore()) {
-                    //An exception to the rollback clause was found, DON'T rollback
-                    // (i.e. commit and throw anyway)
-                    if (exceptOn.isInstance(e)) {
-                        commit = true;
-                        break;
-                    }
-                }
+        //check ignore clauses (supercedes rollback clause)
+        for (Class<? extends Exception> exceptOn : config.getIgnore()) {
+            //An exception to the rollback clause was found, DON'T rollback
+            // (i.e. commit and throw anyway)
+            if (exceptOn.isInstance(e)) {
+                commit = true;
                 break;
             }
         }

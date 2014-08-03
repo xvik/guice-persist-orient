@@ -1,4 +1,4 @@
-package ru.vyarus.guice.persist.orient.support.compat;
+package ru.vyarus.guice.persist.orient.support.pool;
 
 import com.google.inject.Binder;
 import com.tinkerpop.blueprints.impls.orient.OrientBaseGraph;

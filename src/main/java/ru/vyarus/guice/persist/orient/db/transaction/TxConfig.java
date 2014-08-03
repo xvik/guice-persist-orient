@@ -75,4 +75,11 @@ public class TxConfig {
     public OTransaction.TXTYPE getTxtype() {
         return txtype;
     }
+
+    @Override
+    public String toString() {
+        return "{type " + txtype +
+                (rollbackOn.size() > 0 ? " rollbackOn " + rollbackOn : "") +
+                (ignore.size() > 0 ? " ignore " + ignore : "") + "}";
+    }
 }

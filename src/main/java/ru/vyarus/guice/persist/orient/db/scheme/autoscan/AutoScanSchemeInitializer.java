@@ -22,6 +22,7 @@ import java.util.Set;
  * <p>Requires "orient.model.package" guice constant (defined in module), for package name where to scan entities (to reduce scanning scope)</p>
  * <p>Useful for package by feature approach when many packages could contain model classes</p>
  * <p>Note: Package is not important for orient, so classes may move between runs. But pay attention to class names to avoid collisions.</p>
+ *
  * @author Vyacheslav Rusakov
  * @since 18.07.2014
  */
@@ -41,6 +42,7 @@ public class AutoScanSchemeInitializer extends AbstractObjectInitializer {
 
     @Override
     public void init(final OObjectDatabaseTx db) {
+        logger.info("Initializing database scheme by searching annotated classes in package: {}", appPkg);
         // auto create schema for new classes
         db.setAutomaticSchemaGeneration(true);
 
@@ -56,7 +58,7 @@ public class AutoScanSchemeInitializer extends AbstractObjectInitializer {
                 "No model classes found in classpath with base package '" + appPkg + "'");
 
         for (Class<?> modelClazz : model) {
-            logger.info("Orient model class found: {}", modelClazz.getName());
+            logger.info("Registering model class: {}", modelClazz.getName());
             db.getEntityManager().registerEntityClass(modelClazz);
         }
     }

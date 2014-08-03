@@ -10,4 +10,5 @@ import ru.vyarus.guice.persist.orient.model.VersionedEntity
 class Model extends VersionedEntity {
     String name
     String nick
+    int cnt
 }

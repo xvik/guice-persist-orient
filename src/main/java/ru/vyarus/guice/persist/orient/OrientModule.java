@@ -85,6 +85,7 @@ public class OrientModule extends PersistModule {
     private String password;
     private String pkg;
     private TxConfig txConfig;
+    //todo option for graph compatible scheme creation
 
     private Multibinder<PoolManager> poolsMultibinder;
     private MethodInterceptor interceptor;
@@ -123,7 +124,7 @@ public class OrientModule extends PersistModule {
      * @param password    database password
      * @param basePackage package to use for scheme initializer
      * @param txConfig    default transaction configuration
-     */
+     */ //todo extract package and txtype as builder methods
     public OrientModule(final String uri, final String user, final String password,
                         final String basePackage, final TxConfig txConfig) {
         this.uri = uri;
@@ -141,7 +142,7 @@ public class OrientModule extends PersistModule {
         bindConstant().annotatedWith(Names.named("orient.user")).to(user);
         bindConstant().annotatedWith(Names.named("orient.password")).to(password);
         // if package not provided empty string will mean root package (search all classpath)
-        // not required if provided scheme initialisers not used
+        // not required if provided scheme initializers not used
         bindConstant().annotatedWith(Names.named("orient.model.package")).to(Strings.nullToEmpty(pkg));
         bind(TxConfig.class).annotatedWith(Names.named("orient.txconfig"))
                 .toInstance(txConfig == null ? new TxConfig() : txConfig);
@@ -167,8 +168,8 @@ public class OrientModule extends PersistModule {
 
         // pools availability should depend on available jars in classpath
         // this way object and graph dependencies are optional
-        loadOptionalPool("ru.vyarus.guice.persist.orient.support.compat.ObjectPoolBinder");
-        loadOptionalPool("ru.vyarus.guice.persist.orient.support.compat.GraphPoolBinder");
+        loadOptionalPool("ru.vyarus.guice.persist.orient.support.pool.ObjectPoolBinder");
+        loadOptionalPool("ru.vyarus.guice.persist.orient.support.pool.GraphPoolBinder");
     }
 
     /**
@@ -200,7 +201,7 @@ public class OrientModule extends PersistModule {
      * For example, no need for graph dependencies if only object db is used.
      *
      * @param poolBinder pool binder class
-     * @see ru.vyarus.guice.persist.orient.support.compat.ObjectPoolBinder as example
+     * @see ru.vyarus.guice.persist.orient.support.pool.ObjectPoolBinder as example
      */
     protected void loadOptionalPool(final String poolBinder) {
         try {
