@@ -1,6 +1,6 @@
 package ru.vyarus.guice.persist.orient.support.model
 
-import ru.vyarus.guice.persist.orient.db.scheme.autoscan.Persistent
+import ru.vyarus.guice.persist.orient.db.scheme.annotation.Persistent
 import ru.vyarus.guice.persist.orient.model.VersionedEntity
 
 /**

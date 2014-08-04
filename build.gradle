@@ -77,20 +77,16 @@ apply from: 'gradle/maven.gradle'
 apply from: 'gradle/bintray.gradle'
 
 dependencies {
-    compile 'com.google.inject:guice:3.0'
-    compile 'com.google.inject.extensions:guice-persist:3.0'
-    compile 'com.google.inject.extensions:guice-multibindings:3.0'
+    compile 'com.google.inject:guice:4.0-beta4'
+    compile 'com.google.inject.extensions:guice-persist:4.0-beta4'
+    compile 'com.google.inject.extensions:guice-multibindings:4.0-beta4'
     compile 'org.slf4j:slf4j-api:1.7.7'
     compile "com.orientechnologies:orientdb-core:1.7.7"
 
     optional "com.orientechnologies:orientdb-object:1.7.7"
-    optional ("com.orientechnologies:orientdb-graphdb:1.7.7"){
+    optional("com.orientechnologies:orientdb-graphdb:1.7.7") {
+        // excluded to remove old groovy dependency
         exclude module: 'gremlin-groovy'
-    }
-
-    // classpath scanning for automatic registration of annotated entities
-    optional ("org.reflections:reflections:0.9.8") {
-        exclude group: 'javassist' //orient is very sensible for javassist version
     }
 
 
@@ -141,7 +137,7 @@ task localInstall(dependsOn: 'install', description: 'install to local maven rep
     logger.warn "INSTALLED $project.group:$project.name:$project.version"
 }
 
-task release(dependsOn: [bintrayUpload,bintrayPublish], description: 'publish version to bintray and sign all jars') << {
+task release(dependsOn: [bintrayUpload, bintrayPublish], description: 'publish version to bintray and sign all jars') << {
     logger.warn "RELEASED $project.group:$project.name:$project.version"
 }
 

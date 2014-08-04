@@ -10,7 +10,7 @@ import com.google.inject.ImplementedBy;
  * <ul>
  *     <li>{@code ru.vyarus.guice.persist.orient.db.scheme.PackageSchemeInitializer} which update scheme from using all classes in defined package
  *     (more suitable for standard package by layer approach)</li>
- *     <li>{@code ru.vyarus.guice.persist.orient.db.scheme.autoscan.AutoScanSchemeInitializer} which update scheme from all annotated beans in classpath
+ *     <li>{@code ru.vyarus.guice.persist.orient.db.scheme.AutoScanSchemeInitializer} which update scheme from all annotated beans in classpath
  *     (more suitable for package by feature approach)</li>
  * </ul>
  * Schema modifications must be performed without transaction (orient requirement), and implementation will be called under predefined notx unit of work.

@@ -15,169 +15,202 @@ import org.slf4j.LoggerFactory;
 import ru.vyarus.guice.persist.orient.db.DbType;
 import ru.vyarus.guice.persist.orient.finder.FinderExecutor;
 import ru.vyarus.guice.persist.orient.finder.Use;
+import ru.vyarus.guice.persist.orient.finder.result.ResultType;
 
+import javax.inject.Singleton;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.locks.ReentrantLock;
 
-import static ru.vyarus.guice.persist.orient.finder.internal.FinderDescriptor.ReturnType.*;
+import static ru.vyarus.guice.persist.orient.finder.result.ResultType.*;
 
 /**
+ * Analyze annotated method and provides descriptor.
+ *
  * @author Vyacheslav Rusakov
  * @since 30.07.2014
  */
+@Singleton
 public class FinderDescriptorFactory {
-    private final static Logger LOGGER = LoggerFactory.getLogger(FinderDescriptorFactory.class);
+    private final Logger logger = LoggerFactory.getLogger(FinderDescriptorFactory.class);
     private final Map<Method, FinderDescriptor> finderCache = new MapMaker().weakKeys().makeMap();
 
     private Set<FinderExecutor> executors;
     private FinderExecutor defaultExecutor;
 
+    // lock will not affect performance for cached descriptors, just to make sure nothing was build two times
+    private ReentrantLock lock = new ReentrantLock();
+
     @Inject
-    public FinderDescriptorFactory(Set<FinderExecutor> executors,
-                                   @Named("orient.finder.default.connection") DbType type) {
+    public FinderDescriptorFactory(final Set<FinderExecutor> executors,
+                                   final @Named("orient.finder.default.connection") DbType type) {
         this.executors = executors;
         this.defaultExecutor = Preconditions.checkNotNull(find(type),
                 "No executor found for type " + type);
     }
 
-    public FinderDescriptor create(Method method) throws Throwable {
+    public FinderDescriptor create(final Method method) throws Throwable {
         FinderDescriptor descriptor = finderCache.get(method);
         if (null != descriptor) {
             return descriptor;
         }
 
-        Finder finderAnnotation = method.getAnnotation(Finder.class);
-        String functionName = Strings.emptyToNull(finderAnnotation.namedQuery());
-        String query = Strings.emptyToNull(finderAnnotation.query());
-        Preconditions.checkState(Strings.isNullOrEmpty(functionName) || Strings.isNullOrEmpty(query),
-                "Choose what to use named query or just query, but not both");
-        Class<? extends Collection> returnCollectionType = finderAnnotation.returnAs();
+        lock.lock();
+        try {
+            if (finderCache.get(method) != null) {
+                return finderCache.get(method);
+            }
+            final Finder finderAnnotation = method.getAnnotation(Finder.class);
 
-        descriptor = new FinderDescriptor();
-        descriptor.functionName = functionName;
-        descriptor.query = query;
-        descriptor.isFunctionCall = (functionName != null);
-        // todo annotation to guice pool selection
-        // todo bind to used pool in ambigous situation
-        analyzeReturnType(method, returnCollectionType, descriptor);
-        analyzeParameters(method, descriptor);
+            final String functionName = Strings.emptyToNull(finderAnnotation.namedQuery());
+            final String query = Strings.emptyToNull(finderAnnotation.query());
+            check(Strings.isNullOrEmpty(functionName) || Strings.isNullOrEmpty(query),
+                    "Choose what to use function or query, but not both");
 
-        finderCache.put(method, descriptor);
-        return descriptor;
+            final Class<? extends Collection> returnCollectionType = finderAnnotation.returnAs();
+
+            descriptor = new FinderDescriptor();
+            descriptor.functionName = functionName;
+            descriptor.query = query;
+            descriptor.isFunctionCall = (functionName != null);
+
+            analyzeReturnType(method,
+                    Collection.class.equals(returnCollectionType) ? null : returnCollectionType,
+                    descriptor);
+            analyzeParameters(method, descriptor);
+
+            // internal check
+            Preconditions.checkState(finderCache.get(method) == null,
+                    "Bad concurrency: descriptor already present in cache");
+            finderCache.put(method, descriptor);
+            return descriptor;
+        } finally {
+            lock.unlock();
+        }
     }
 
-    private void analyzeReturnType(Method method, Class<? extends Collection> returnCollectionType, FinderDescriptor descriptor) {
-        Class<?> returnClass = method.getReturnType();
-        FinderDescriptor.ReturnType type;
-        Class<?> analyzingClass;
-        if (Collection.class.isAssignableFrom(returnClass)) {
+    private void analyzeReturnType(final Method method,
+                                   final Class<? extends Collection> returnCollectionType,
+                                   final FinderDescriptor descriptor) {
+        final Class<?> returnClass = method.getReturnType();
+
+        if (returnCollectionType != null) {
+            check(returnClass.isAssignableFrom(returnCollectionType),
+                    String.format("Requested collection %s is incompatible with method return type %s",
+                            returnCollectionType, returnClass));
+            descriptor.expectType = returnCollectionType;
+        } else {
+            descriptor.expectType = returnClass;
+        }
+
+        ResultType type;
+        Class<?> entityClass;
+        if (Collection.class.isAssignableFrom(returnClass)
+                || Iterator.class.isAssignableFrom(returnClass)
+                || Iterable.class.isAssignableFrom(returnClass)) {
             type = COLLECTION;
-            if (!returnCollectionType.equals(Collection.class)) {
-                //todo wrong
-                Preconditions.checkArgument(returnClass.isAssignableFrom(returnCollectionType),
-                        "Return collection " + returnClass.getName() + " is not compatible with requested collection type " +
-                                returnCollectionType.getName());
-                descriptor.returnCollectionType = returnCollectionType;
-            }
-            analyzingClass = resolveRealObjectTypeFromCollection(method.getGenericReturnType());
+            entityClass = resolveRealObjectTypeFromCollection(method.getGenericReturnType(), method);
         } else if (returnClass.isArray()) {
             type = ARRAY;
-            analyzingClass = returnClass.getComponentType();
+            entityClass = returnClass.getComponentType();
         } else {
             type = PLAIN;
-            analyzingClass = returnClass;
+            entityClass = returnClass;
         }
 
         descriptor.returnType = type;
-        descriptor.returnEntity = analyzingClass;
+        descriptor.returnEntity = entityClass;
 
-        DbType requestedType = getRequestedConnectionType(method);
+        // @Use annotation
+        final DbType requestedType = getRequestedConnectionType(method);
 
-        // todo implement compatibility check between requested type and detected type
-        if (requestedType == null) {
-            for (FinderExecutor support : executors) {
-                if (support.accept(analyzingClass)) {
-                    descriptor.executor = support;
-                    break;
-                }
+        // even if annotation set trying to detect to later check compatibility
+        for (FinderExecutor support : executors) {
+            if (support.accept(entityClass)) {
+                descriptor.executor = support;
+                break;
             }
-            if (descriptor.executor == null) {
-                descriptor.executor = defaultExecutor;
-                LOGGER.trace("No executor found for class {}, retrieved from method return type {}. Using default: {}",
-                        analyzingClass, returnClass, defaultExecutor.getType());
+        }
+
+        // annotation guides just ambiguous cases
+        if (descriptor.executor != null && requestedType != null &&
+                !descriptor.executor.getType().equals(requestedType)) {
+            logger.warn("@Usa annotation ignored, because correct execution type recognized from return type " +
+                    "in finder method {}#{}", method.getDeclaringClass(), method.getName());
+        }
+
+        if (descriptor.executor == null) {
+            descriptor.executor = requestedType != null ? find(requestedType) : defaultExecutor;
+            // we may still use default connection here, but better fail because it's configuration error
+            // (and behaviour will be more predictable)
+            if (requestedType != null) {
+                check(descriptor.executor != null,
+                        "Executor not found for type set in @Use annotation " + requestedType);
             }
-        } else {
-            for (FinderExecutor support : executors) {
-                if (support.getType().equals(requestedType)) {
-                    descriptor.executor = support;
-                    break;
-                }
-            }
-            Preconditions.checkNotNull(descriptor.executor, "No executor found for specified type "+requestedType);
         }
     }
 
-    private DbType getRequestedConnectionType(Method method) {
+    private DbType getRequestedConnectionType(final Method method) {
         Use use = method.getAnnotation(Use.class);
         return use == null ? null : use.value();
     }
 
-    private Class resolveRealObjectTypeFromCollection(Type returnClass) {
+    private Class resolveRealObjectTypeFromCollection(final Type returnClass, final Method method) {
         if (returnClass == null || !(returnClass instanceof ParameterizedType)) {
-            LOGGER.warn("No generic provided for return type collection: {}.", returnClass);
+            logger.warn("Can't detect collection entity: no generic set in finder method return type: {}#{}.",
+                    method.getDeclaringClass(), method.getName());
             return Object.class;
         }
-        Type[] actual = ((ParameterizedType) returnClass).getActualTypeArguments();
+        final Type[] actual = ((ParameterizedType) returnClass).getActualTypeArguments();
         if (actual.length > 0) {
             return (Class) actual[0];
         } else {
-            LOGGER.warn("No generic provided for return type collection: {}.", returnClass);
+            logger.warn("Can't detect collection entity: no generic set in finder method return type: {}#{}.",
+                    method.getDeclaringClass(), method.getName());
             return Object.class;
         }
     }
 
-    private void analyzeParameters(Method method, FinderDescriptor descriptor) {
-        Annotation[][] parameterAnnotations = method.getParameterAnnotations();
+    private void analyzeParameters(final Method method, final FinderDescriptor descriptor) {
+        final Annotation[][] parameterAnnotations = method.getParameterAnnotations();
 
-        ParamsContext context = new ParamsContext();
+        final ParamsContext context = new ParamsContext();
         for (int i = 0; i < parameterAnnotations.length; i++) {
             // first parameter defines if we use named or ordinal parameters
-            Annotation[] annotations = parameterAnnotations[i];
+            final Annotation[] annotations = parameterAnnotations[i];
             boolean processed = false;
             for (Annotation annotation : annotations) {
                 Class<? extends Annotation> annotationType = annotation.annotationType();
                 if (Named.class.equals(annotationType)) {
                     Named namedAnnotation = (Named) annotation;
-                    bindParam(namedAnnotation.value(), i, context);
+                    bindParam(namedAnnotation.value(), i, context, method);
                     processed = true;
                     break;
                 } else if (javax.inject.Named.class.equals(annotationType)) {
                     javax.inject.Named namedAnnotation = (javax.inject.Named) annotation;
-                    bindParam(namedAnnotation.value(), i, context);
+                    bindParam(namedAnnotation.value(), i, context, method);
                     processed = true;
                     break;
                 } else if (FirstResult.class.equals(annotationType)) {
-                    Preconditions.checkArgument(descriptor.firstResultParamIndex == null, "Duplicate first result definition");
+                    check(descriptor.firstResultParamIndex == null, "Duplicate @FirstResult definition");
                     descriptor.firstResultParamIndex = i;
-                    isNumber(method.getParameterTypes()[i], "Number must be used as first result parameter");
+                    isNumber(method.getParameterTypes()[i], "Number must be used as @FirstResult parameter");
                     processed = true;
                     break;
                 } else if (MaxResults.class.equals(annotationType)) {
-                    Preconditions.checkArgument(descriptor.maxResultsParamIndex == null, "Duplicate max results definition");
+                    check(descriptor.maxResultsParamIndex == null, "Duplicate @MaxResults definition");
                     descriptor.maxResultsParamIndex = i;
-                    isNumber(method.getParameterTypes()[i], "Number must be used as max results parameter");
+                    isNumber(method.getParameterTypes()[i], "Number must be used as @MaxResults parameter");
                     processed = true;
                     break;
                 }
             }
             if (!processed) {
-                bindParam(null, i, context);
+                // positional parameter
+                bindParam(null, i, context, method);
             }
         }
 
@@ -188,6 +221,7 @@ public class FinderDescriptorFactory {
             return;
         }
 
+        // copy composed data into descriptor
         descriptor.useNamedParameters = !context.useOrdinalParams;
         if (descriptor.useNamedParameters) {
             descriptor.namedParametersIndex = context.namedParams;
@@ -197,8 +231,9 @@ public class FinderDescriptorFactory {
         }
     }
 
-    private void bindParam(String name, int position, ParamsContext context) {
+    private void bindParam(final String name, final int position, final ParamsContext context, final Method method) {
         if (context.useOrdinalParams == null) {
+            // type of params not recognized yet (recognizing by first parameter - either named or positional)
             context.useOrdinalParams = name == null;
             if (context.useOrdinalParams) {
                 context.params = Lists.newArrayList();
@@ -210,17 +245,21 @@ public class FinderDescriptorFactory {
         if (context.useOrdinalParams) {
             context.params.add(position);
             if (name != null) {
-                LOGGER.warn("Named parameter {} registered as ordinal. Either annotate all parameters or remove annotations", name);
+                // if first parameter without annotation, ignoring all other annotations
+                logger.warn("Named parameter {} registered as ordinal. Either annotate all parameters or remove annotations in " +
+                        "finder method {}#{}", name, method.getDeclaringClass(), method.getName());
             }
         } else {
-            Preconditions.checkNotNull(name, "Named parameter not annotated");
-            Preconditions.checkState(context.namedParams.get(name) == null, "Duplicate parameter " + name + "declaration");
+            // if first parameter was named all other must be named too (without duplicates)
+            check(name != null, "Named parameter not annotated at position " + position);
+            check(context.namedParams.get(name) == null, "Duplicate parameter " + name +
+                    " declaration at position " + position);
             context.namedParams.put(name, position);
         }
     }
 
-    private void isNumber(Class type, String message) {
-        Preconditions.checkArgument((type.isPrimitive() && (int.class.equals(type) || long.class.equals(type)))
+    private void isNumber(final Class type, final String message) {
+        check((type.isPrimitive() && (int.class.equals(type) || long.class.equals(type)))
                 || Number.class.isAssignableFrom(type), message);
     }
 
@@ -231,6 +270,14 @@ public class FinderDescriptorFactory {
             }
         }
         return null;
+    }
+
+    private void check(final boolean condition, final String message) {
+        if (!condition) error(message);
+    }
+
+    private void error(final String message) {
+        throw new IllegalStateException(message);
     }
 
     private static class ParamsContext {

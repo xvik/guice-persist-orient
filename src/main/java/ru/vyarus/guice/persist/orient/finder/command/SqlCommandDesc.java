@@ -3,6 +3,8 @@ package ru.vyarus.guice.persist.orient.finder.command;
 import java.util.Map;
 
 /**
+ * Sql command description (created for each execution, can't be cached).
+ *
  * @author Vyacheslav Rusakov
  * @since 31.07.2014
  */

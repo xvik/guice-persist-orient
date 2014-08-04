@@ -41,6 +41,8 @@ class FinderTest extends AbstractTest {
         Model model = finder.selectUnique();
         then:
         model != null
+        model.version != null
+        model.id != null
 
         when: "document select"
         List<ODocument> resDoc = finder.selectAllAsDocument();
@@ -105,7 +107,7 @@ class FinderTest extends AbstractTest {
         when: "named params wrong declaration"
         res = finder.parametersNames('John', 'Doe');
         then: "error"
-        thrown(NullPointerException)
+        thrown(IllegalStateException)
 
         when: "named params with duplicate"
         res = finder.parametersNamesDuplicateName('John', 'Doe');
@@ -125,17 +127,17 @@ class FinderTest extends AbstractTest {
         when: "paged select with wrong page definition"
         res = finder.parametersPagedDouble('John', 'Doe', 0, 1);
         then: "error"
-        thrown(IllegalArgumentException)
+        thrown(IllegalStateException)
 
         when: "paged select with wrong type"
         res = finder.parametersPagedWrongType('John', 'Doe', '0', 1);
         then: "error"
-        thrown(IllegalArgumentException)
+        thrown(IllegalStateException)
 
         when: "paged select with other wrong type"
         res = finder.parametersPagedWrongType2('John', 'Doe', 0, '1');
         then: "error"
-        thrown(IllegalArgumentException)
+        thrown(IllegalStateException)
 
         when: "paged select with null object"
         res = finder.parametersPagedObject('John', 'Doe', null, 1);
@@ -261,7 +263,7 @@ class FinderTest extends AbstractTest {
 
         template.doInTransaction({ db ->
             db.save(new Model(name: 'John', nick: 'Doe'))
-            db.command(new OCommandSQL("CREATE FUNCTION function1 \"select * from Model\" LANGUAGE SQL ")).execute();
+            db.command(new OCommandSQL("CREATE FUNCTION function1 \"select from Model\" LANGUAGE SQL ")).execute();
         } as SpecificTxAction)
 
         when: "calling function"

@@ -1,18 +1,26 @@
 package ru.vyarus.guice.persist.orient.base
 
-import ru.vyarus.guice.persist.orient.AbstractTest
+import com.google.inject.persist.PersistService
 import ru.vyarus.guice.persist.orient.support.modules.EmptyPackageModule
 import spock.guice.UseModules
+import spock.lang.Specification
+
+import javax.inject.Inject
 
 /**
  * @author Vyacheslav Rusakov 
  * @since 18.07.2014
  */
 @UseModules(EmptyPackageModule)
-class EmptyPackageModelTest extends AbstractTest{
+class EmptyPackageModelTest extends Specification {
 
-    def "Check empty model"(){
-        expect: "no errors - no model is not error"
-        true
+    @Inject
+    PersistService persist
+
+    def "Empty model check"() {
+        when: "initializing database"
+        persist.start()
+        then: "no model found"
+        thrown(IllegalStateException)
     }
 }

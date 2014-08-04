@@ -1,7 +1,6 @@
 package ru.vyarus.guice.persist.orient.finder.executor;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 import com.google.inject.Provider;
 import com.orientechnologies.orient.core.command.OCommandRequest;
 import com.tinkerpop.blueprints.Edge;
@@ -38,12 +37,6 @@ public class GraphFinderExecutor extends AbstractFinderExecutor {
     @Override
     protected OCommandRequest wrapCommand(OCommandRequest command) {
         return provider.get().command(command);
-    }
-
-    @Override
-    protected Object handleResult(Object result) {
-        // todo wrong (should be not here)
-        return Lists.newArrayList((Iterable) result);
     }
 
     @Override

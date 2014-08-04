@@ -24,26 +24,24 @@ public interface InterfaceFinder {
     // -------------------------------------------- db type recognition
 
     // object db
-    @Finder(query = "select * from Model")
+    @Finder(query = "select from Model")
     List<Model> selectAll()
 
     // object db
-    @Finder(query = "select * from Model")
+    @Finder(query = "select from Model")
     Model[] selectAllAsArray()
 
     // single element select
-    @Finder(query = "select * from Model")
+    @Finder(query = "select from Model")
     Model selectUnique()
 
     // document db
-    @Finder(query = "select * from Model")
+    @Finder(query = "select from Model")
     List<ODocument> selectAllAsDocument()
 
     // graph db
-    @Finder(query = "select * from Model")
+    @Finder(query = "select from Model")
     List<Vertex> selectAllAsVertex()
-
-    //todo iterator for graph
 
     // document db by default
     @Finder(query = "update Model set name='changed'")
@@ -63,11 +61,8 @@ public interface InterfaceFinder {
     Integer updateWithCountObject()
 
     // no generic - document db will be selected
-    @Finder(query = "select * from Model")
+    @Finder(query = "select from Model")
     List selectAllNoType()
-
-    //todo default connection binding
-    //todo annotation driven config
 
     // -------------------------------------------- function recognition
 
@@ -76,52 +71,48 @@ public interface InterfaceFinder {
     List<Model> function();
 
     // fail because of confusing definition
-    @Finder(namedQuery = "function1", query = "select * from Model")
+    @Finder(namedQuery = "function1", query = "select from Model")
     List<Model> functionWrongDefinition();
 
     // -------------------------------------------- parameters recognition
 
     // positional parameters
-    @Finder(query = "select * from Model where name=? and nick=?")
+    @Finder(query = "select from Model where name=? and nick=?")
     List<Model> parametersPositional(String name, String nick)
 
     // named parameters (using both possible annotations)
-    @Finder(query = "select * from Model where name=:name and nick=:nick")
+    @Finder(query = "select from Model where name=:name and nick=:nick")
     List<Model> parametersNamed(@Named("name") String name, @com.google.inject.name.Named("nick") String nick)
 
     // recognized as positional params because of first parameter
-    @Finder(query = "select * from Model where name=? and nick=?")
+    @Finder(query = "select from Model where name=? and nick=?")
     List<Model> parametersPositionalWithWarning(String name, @Named("nick") String nick)
 
     // error because all parameters expect to be named, because of first one
-    @Finder(query = "select * from Model where name=:name and nick=:nick")
+    @Finder(query = "select from Model where name=:name and nick=:nick")
     List<Model> parametersNames(@Named("name") String name, String nick)
 
     // error - duplicate parameter name
-    @Finder(query = "select * from Model where name=:name and nick=:nick")
+    @Finder(query = "select from Model where name=:name and nick=:nick")
     List<Model> parametersNamesDuplicateName(@Named("name") String name, @Named("name") String nick)
 
     // with page definition
-    @Finder(query = "select * from Model where name=? and nick=?")
+    @Finder(query = "select from Model where name=? and nick=?")
     List<Model> parametersPaged(String name, String nick, @FirstResult int start, @MaxResults int max);
 
     // with page definition (as objects)
-    @Finder(query = "select * from Model where name=? and nick=?")
+    @Finder(query = "select from Model where name=? and nick=?")
     List<Model> parametersPagedObject(String name, String nick, @FirstResult Long start, @MaxResults Long max);
 
     // error - not allowed duplicate definition
-    @Finder(query = "select * from Model where name=? and nick=?")
+    @Finder(query = "select from Model where name=? and nick=?")
     List<Model> parametersPagedDouble(String name, String nick, @FirstResult int start, @FirstResult int max);
 
     // error - page definition must be numbers
-    @Finder(query = "select * from Model where name=? and nick=?")
+    @Finder(query = "select from Model where name=? and nick=?")
     List<Model> parametersPagedWrongType(String name, String nick, @FirstResult String start, @MaxResults int max);
 
     // error - page definition must be numbers
-    @Finder(query = "select * from Model where name=? and nick=?")
+    @Finder(query = "select from Model where name=? and nick=?")
     List<Model> parametersPagedWrongType2(String name, String nick, @FirstResult int start, @MaxResults String max);
-
-    //todo vararg param test
-
-    //todo collection convert tests
 }

@@ -8,6 +8,11 @@ import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
 import javax.inject.Singleton;
 
 /**
+ * Default command builder implementation. Differentiate select/update queries by simply
+ * looking for "select" at query start (should cover most cases).
+ * <p>First result value appended to query as "SKIP num", max results value set directly to query object.
+ * For function call first result is ignored (api not support this)</p>
+ *
  * @author Vyacheslav Rusakov
  * @since 02.08.2014
  */
@@ -17,23 +22,24 @@ public class DefaultCommandBuilder implements CommandBuilder {
     @Override
     public OCommandRequest buildCommand(final SqlCommandDesc desc) {
         String query = desc.isFunctionCall ? desc.function : desc.query;
-        if (!desc.isFunctionCall) {
-            // no support for paging in functions
+        query = query.trim();
+        final boolean isQuery = !desc.isFunctionCall && query.toLowerCase().startsWith("select");
+        if (isQuery) {
+            // no support for skip in functions and update/insert
             if (desc.start > 0) {
                 query += " SKIP " + desc.start;
             }
         }
-        query = query.trim().intern();
 
-        OCommandRequest command = null;
+        OCommandRequest command;
         if (desc.isFunctionCall) {
             command = new OCommandFunction(desc.function);
         } else {
-            boolean isQuery = query.toLowerCase().startsWith("select");
             command = isQuery ? new OSQLSynchQuery<Object>(query) : new OCommandSQL(query);
         }
 
-        if (desc.max > 0) {
+        if (desc.max > 0 && (desc.isFunctionCall || isQuery) ) {
+            // must not be set for update command
             command.setLimit(desc.max);
         }
 

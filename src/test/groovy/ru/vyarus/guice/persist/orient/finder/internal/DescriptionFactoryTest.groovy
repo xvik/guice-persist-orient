@@ -8,6 +8,7 @@ import ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxAction
 import ru.vyarus.guice.persist.orient.finder.executor.DocumentFinderExecutor
 import ru.vyarus.guice.persist.orient.finder.executor.GraphFinderExecutor
 import ru.vyarus.guice.persist.orient.finder.executor.ObjectFinderExecutor
+import ru.vyarus.guice.persist.orient.finder.result.ResultType
 import ru.vyarus.guice.persist.orient.support.finder.InterfaceFinder
 import ru.vyarus.guice.persist.orient.support.model.Model
 import ru.vyarus.guice.persist.orient.support.modules.TestFinderModule
@@ -31,7 +32,7 @@ class DescriptionFactoryTest extends AbstractTest {
         FinderDescriptor desc = lookup(InterfaceFinder.getMethod("selectAll"))
         then: "object provider recognized"
         desc.executor.class == ObjectFinderExecutor
-        desc.returnType == FinderDescriptor.ReturnType.COLLECTION
+        desc.returnType == ResultType.COLLECTION
         desc.returnEntity == Model
         !desc.useNamedParameters
         desc.parametersIndex.length == 0
@@ -41,53 +42,53 @@ class DescriptionFactoryTest extends AbstractTest {
         desc = lookup(InterfaceFinder.getMethod("selectAllAsArray"))
         then: "object provider recognized"
         desc.executor.class == ObjectFinderExecutor
-        desc.returnType == FinderDescriptor.ReturnType.ARRAY
+        desc.returnType == ResultType.ARRAY
         desc.returnEntity == Model
 
         when: "object db method, single return"
         desc = lookup(InterfaceFinder.getMethod("selectUnique"))
         then: "object provider recognized"
         desc.executor.class == ObjectFinderExecutor
-        desc.returnType == FinderDescriptor.ReturnType.PLAIN
+        desc.returnType == ResultType.PLAIN
         desc.returnEntity == Model
 
         when: "document db method, detection by list generic"
         desc = lookup(InterfaceFinder.getMethod("selectAllAsDocument"))
         then: "document provider recognized"
         desc.executor.class == DocumentFinderExecutor
-        desc.returnType == FinderDescriptor.ReturnType.COLLECTION
+        desc.returnType == ResultType.COLLECTION
         desc.returnEntity == ODocument
 
         when: "graph db method, detection by list generic"
         desc = lookup(InterfaceFinder.getMethod("selectAllAsVertex"))
         then: "graph provider recognized"
         desc.executor.class == GraphFinderExecutor
-        desc.returnType == FinderDescriptor.ReturnType.COLLECTION
+        desc.returnType == ResultType.COLLECTION
         desc.returnEntity == Vertex
 
         when: "no return type, default document"
         desc = lookup(InterfaceFinder.getMethod("update"))
         then: "document provider recognized"
         desc.executor.class == DocumentFinderExecutor
-        desc.returnType == FinderDescriptor.ReturnType.PLAIN
+        desc.returnType == ResultType.PLAIN
 
         when: "primitive return type, default document"
         desc = lookup(InterfaceFinder.getMethod("updateWithCount"))
         then: "document provider recognized"
         desc.executor.class == DocumentFinderExecutor
-        desc.returnType == FinderDescriptor.ReturnType.PLAIN
+        desc.returnType == ResultType.PLAIN
 
         when: "primitive wrapper return type, default document"
         desc = lookup(InterfaceFinder.getMethod("updateWithCountObject"))
         then: "document provider recognized"
         desc.executor.class == DocumentFinderExecutor
-        desc.returnType == FinderDescriptor.ReturnType.PLAIN
+        desc.returnType == ResultType.PLAIN
 
         when: "list without generic"
         desc = lookup(InterfaceFinder.getMethod("selectAllNoType"))
         then: "document connection selected"
         desc.executor.class == DocumentFinderExecutor
-        desc.returnType == FinderDescriptor.ReturnType.COLLECTION
+        desc.returnType == ResultType.COLLECTION
     }
 
     def "Check function recognition"() {
@@ -126,7 +127,7 @@ class DescriptionFactoryTest extends AbstractTest {
         when: "named parameters incorrect declaration"
         lookup(InterfaceFinder.getMethod("parametersNames", String.class, String.class))
         then: "error"
-        thrown(NullPointerException)
+        thrown(IllegalStateException)
 
         when: "named parameters duplicate declaration"
         lookup(InterfaceFinder.getMethod("parametersNamesDuplicateName", String.class, String.class))
@@ -152,17 +153,17 @@ class DescriptionFactoryTest extends AbstractTest {
         when: "positional parameters with page definition as objects"
         lookup(InterfaceFinder.getMethod("parametersPagedDouble", String.class, String.class, int.class, int.class))
         then: "error"
-        thrown(IllegalArgumentException)
+        thrown(IllegalStateException)
 
         when: "positional parameters with page definition with wrong type"
         lookup(InterfaceFinder.getMethod("parametersPagedWrongType", String.class, String.class, String.class, int.class))
         then: "error"
-        thrown(IllegalArgumentException)
+        thrown(IllegalStateException)
 
         when: "positional parameters with page definition with wrong type"
         lookup(InterfaceFinder.getMethod("parametersPagedWrongType2", String.class, String.class, int.class, String.class))
         then: "error"
-        thrown(IllegalArgumentException)
+        thrown(IllegalStateException)
     }
 
     FinderDescriptor lookup(Method method) {

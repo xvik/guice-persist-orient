@@ -1,4 +1,4 @@
-package ru.vyarus.guice.persist.orient.db.scheme.autoscan;
+package ru.vyarus.guice.persist.orient.db.scheme.annotation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;

@@ -13,9 +13,26 @@ import ru.vyarus.guice.persist.orient.finder.command.SqlCommandDesc;
  */
 public interface FinderExecutor {
 
+    /**
+     * Called to detect connection to use for finder method. If executor accepts return type,
+     * then it will be called for execution.
+     *
+     * @param returnType finder return type (in case of collection it will be generic class)
+     * @return true if pool recognize return type, false otherwise
+     */
     boolean accept(Class<?> returnType);
 
+    /**
+     * Called to execute finder query.
+     * Implementation may use {@code ru.vyarus.guice.persist.orient.finder.command.CommandBuilder} for actual query building.
+     *
+     * @param desc query description
+     * @return query execution result
+     */
     Object executeQuery(SqlCommandDesc desc);
 
+    /**
+     * @return reference connection type
+     */
     DbType getType();
 }

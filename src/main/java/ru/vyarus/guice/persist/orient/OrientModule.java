@@ -40,9 +40,8 @@ import java.lang.reflect.Method;
  * <ul>
  * <li>{@code ru.vyarus.guice.persist.orient.db.scheme.PackageSchemeInitializer}.
  * Useful if all domain entities located in one package</li>
- * <li>{@code ru.vyarus.guice.persist.orient.db.scheme.autoscan.AutoScanSchemeInitializer}. Useful if domian model located in different packages
- * or to provide more control on which entities are mapped. Note that initialized required additional dependecy for 'reflections' library.
- * (for gradle: compile ("org.reflections:reflections:0.9.8") {exclude group: 'javassist' //orient is very sensible for javassist version })</li>
+ * <li>{@code ru.vyarus.guice.persist.orient.db.scheme.AutoScanSchemeInitializer}. Useful if domian model located in different packages
+ * or to provide more control on which entities are mapped.</li>
  * </ul>
  * There are predefined modules with predefined scheme initializers:
  * <ul>
@@ -85,53 +84,44 @@ public class OrientModule extends PersistModule {
     private String password;
     private String pkg;
     private TxConfig txConfig;
-    //todo option for graph compatible scheme creation
 
     private Multibinder<PoolManager> poolsMultibinder;
     private MethodInterceptor interceptor;
 
     /**
-     * The simplest module configuration, defines just credentials.
-     * Auto scan (if enabled) will use default package for scanning ("").
-     * {@code OTransaction.TXTYPE.OPTIMISTIC} used as default transaction type.
+     * Configures module with database credentials.
      *
      * @param uri      database uri
      * @param user     database user
      * @param password database password
      */
     public OrientModule(final String uri, final String user, final String password) {
-        this(uri, user, password, null);
-    }
-
-    /**
-     * Simple module configuration, defines just credentials and package for scheme initialization.
-     * {@code OTransaction.TXTYPE.OPTIMISTIC} used as default transaction type.
-     *
-     * @param uri         database uri
-     * @param user        database user
-     * @param password    database password
-     * @param basePackage package to use for scheme initializer
-     */
-    public OrientModule(final String uri, final String user, final String password, final String basePackage) {
-        this(uri, user, password, basePackage, null);
-    }
-
-    /**
-     * Module configuration, defines credentials, package for scheme initialization and default transaction type.
-     *
-     * @param uri         database uri
-     * @param user        database user
-     * @param password    database password
-     * @param basePackage package to use for scheme initializer
-     * @param txConfig    default transaction configuration
-     */ //todo extract package and txtype as builder methods
-    public OrientModule(final String uri, final String user, final String password,
-                        final String basePackage, final TxConfig txConfig) {
         this.uri = uri;
         this.user = user;
         this.password = password;
+    }
+
+    /**
+     * * Use if default object scheme initializers are used or your custom initializer depends on this options.
+     *
+     * @param basePackage package to use for scheme initializer
+     * @return module itself for chained calls
+     */
+    public OrientModule schemeMappingPackage(final String basePackage) {
         this.pkg = basePackage;
+        return this;
+    }
+
+    /**
+     * Use if you need to change transactions type globally or define some generic exceptions to rollback handling (see @Transactional annotation)
+     * By default, {@code OTransaction.TXTYPE.OPTIMISTIC} transactions enabled and no exceptions defined for rollback (every exception will lead to rollback).
+     *
+     * @param txConfig default tx config to use for transactions without explicit config definition.
+     * @return module itself for chained calls
+     */
+    public OrientModule defaultTransactionConfig(final TxConfig txConfig) {
         this.txConfig = txConfig;
+        return this;
     }
 
     @Override
@@ -141,13 +131,18 @@ public class OrientModule extends PersistModule {
         bindConstant().annotatedWith(Names.named("orient.uri")).to(uri);
         bindConstant().annotatedWith(Names.named("orient.user")).to(user);
         bindConstant().annotatedWith(Names.named("orient.password")).to(password);
+
         // if package not provided empty string will mean root package (search all classpath)
         // not required if provided scheme initializers not used
         bindConstant().annotatedWith(Names.named("orient.model.package")).to(Strings.nullToEmpty(pkg));
+
         bind(TxConfig.class).annotatedWith(Names.named("orient.txconfig"))
                 .toInstance(txConfig == null ? new TxConfig() : txConfig);
 
+        // extension points
         bind(TransactionManager.class);
+        // SchemeInitializer.class
+        // DataInitializer.class
 
         bind(PersistService.class).to(DatabaseManager.class);
         bind(UnitOfWork.class).to(TransactionManager.class);

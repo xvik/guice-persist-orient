@@ -27,10 +27,9 @@ Gradle:
 
 ```groovy
 compile ('ru.vyarus:guice-persist-orient:0.9.0'){
-    // gradle include optional dependencies.. fixing
+    // gradle includes optional dependencies.. fixing
     exclude module: 'orientdb-graphdb'
-    exclude module: 'orientdb-object'
-    exclude module: 'reflections'          
+    exclude module: 'orientdb-object'       
 }
 ```
 
@@ -39,21 +38,16 @@ By default, only document database support is enabled.
 To add object database support:
 
 ```groovy
-compile 'com.orientechnologies:orientdb-object:1.7.6'
+compile 'com.orientechnologies:orientdb-object:1.7.7'
 ```
+
+NOTE: It's very important for object db to use exact javassist version it depends on. If other libraries in 
+your classpath use javassist, check that newer or older version not appear in classpath.
 
 To add graph database support:
 
 ```groovy
-compile 'com.orientechnologies:orientdb-graphdb:1.7.6'
-```
-
-To use classpath scanning for entities mapping (see 'Schema initialization' section):
-
-```groovy
-compile ("org.reflections:reflections:0.9.8") {
-    exclude group: 'javassist' //orient orbject db is very sensible for javassist version
-}
+compile 'com.orientechnologies:orientdb-graphdb:1.7.7'
 ```
 
 ### Install the Guice module
@@ -172,10 +166,10 @@ ru.vyarus.guice.persist.orient.db.scheme.SchemeInitializer
 
 By default, no-op implementation enabled.
 
-Two default implementations provided for schema initialization from pojos (hibernate like):
+Two default implementations provided for schema initialization from pojos (jpa like):
 * PackageSchemeInitializer - use all classes in package to init or update scheme (package should be specified as module constructor argument)
 * AutoScanSchemeInitializer - search classpath for entities annotated with @Persistent annotation and use them to create/update scheme 
-(search scope may be reduced by specifying package in module constructor). Requires additional dependency on 'reflections' library.
+(search scope may be reduced by specifying package in module constructor).
 
 Example:
 
@@ -203,7 +197,7 @@ See [orient object mapping documentation](https://github.com/orientechnologies/o
 (it's possible to use sql commands to rename entity in scheme)
 * To use entity within optimistic transaction, it must have version field (annotated with @Version). You should add field manually or extend all entities from 
 provided base class: VersionedEntity
-* JPA annotations can be used to (define cascades)[https://github.com/orientechnologies/orientdb/wiki/Object-Database#cascade-deleting]
+* JPA annotations can be used to [define cascades](https://github.com/orientechnologies/orientdb/wiki/Object-Database#cascade-deleting)
 
 ### Data initialization
 
@@ -242,8 +236,8 @@ with proper scopes definition (use one connection type just for reads and other 
 different connection types or define smaller units of work). Each pool acquires connection and opens transaction only after
 requesting connection through appropriate provider.
 
-NOTE: in contrast to spring, in guice when you call bean method inside the same bean, annotation interceptor will still work.
-So its possible to define few units of work withing single bean using annotations when some bean method called:
+NOTE: in contrast to spring default proxies, in guice when you call bean method inside the same bean, annotation interceptor will still work.
+So it's possible to define few units of work withing single bean using annotations:
 
 ```java
 public void nonTxMethod(){

@@ -23,7 +23,7 @@ class SelectTransactionalService {
     public Model select() {
         // query object inserted by TransactionalService
         final OObjectDatabaseTx db = provider.get()
-        final List<Model> list = db.query(new OSQLSynchQuery<Object>("select * from Model where name = 'John'"))
+        final List<Model> list = db.query(new OSQLSynchQuery<Object>("select from Model where name = 'John'"))
         return list.empty ? null : list[0]
     }
 

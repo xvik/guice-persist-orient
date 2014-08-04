@@ -70,7 +70,7 @@ class MultiConnectionConcurrentTest extends AbstractTest {
         times.times({
             executed << executor.submit({
                 documentTemplate.doInTransaction({ db ->
-                    db.query(new OSQLSynchQuery<Object>("select * from Model"))
+                    db.query(new OSQLSynchQuery<Object>("select from Model"))
                 } as SpecificTxAction)
                 return null
             })
@@ -87,7 +87,7 @@ class MultiConnectionConcurrentTest extends AbstractTest {
         times.times({
             executed << executor.submit({
                 template.doInTransaction({ db ->
-                    db.query(new OSQLSynchQuery<Object>("select * from Model"))
+                    db.query(new OSQLSynchQuery<Object>("select from Model"))
                 } as SpecificTxAction)
                 return null
             })
@@ -104,7 +104,7 @@ class MultiConnectionConcurrentTest extends AbstractTest {
         times.times({
             executed << executor.submit({
                 graphTemplate.doInTransaction({ db ->
-                    db.command(new OSQLSynchQuery<Object>("select * from Model"))
+                    db.command(new OSQLSynchQuery<Object>("select from Model"))
                 } as SpecificTxAction)
                 return null
             })
@@ -117,7 +117,7 @@ class MultiConnectionConcurrentTest extends AbstractTest {
         List<Model> res;
         template.doInTransaction({ db ->
             cnt = db.countClass(Model)
-            res = db.query(new OSQLSynchQuery<Object>("select * from Model where name='John'"))
+            res = db.query(new OSQLSynchQuery<Object>("select from Model where name='John'"))
         } as SpecificTxAction)
         then: "db should contain 60 records"
         cnt == times * 3

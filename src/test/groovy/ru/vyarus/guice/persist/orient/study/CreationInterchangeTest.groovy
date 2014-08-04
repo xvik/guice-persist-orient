@@ -34,17 +34,17 @@ class CreationInterchangeTest extends AbstractTest {
             db.save(new Model(name: 'John', nick: 'Doe'))
         } as SpecificTxAction)
         List objects = template.doInTransaction({ db ->
-            db.query(new OSQLSynchQuery<Object>("select * from Model"))
+            db.query(new OSQLSynchQuery<Object>("select from Model"))
         } as SpecificTxAction<List, OObjectDatabaseTx>)
         List documents = documentTemplate.doInTransaction({ db ->
-            db.query(new OSQLSynchQuery<Object>("select * from Model"))
+            db.query(new OSQLSynchQuery<Object>("select from Model"))
         } as SpecificTxAction<List, ODatabaseDocumentTx>)
         List graphs = graphTemplate.doInTransaction({ db ->
-            // graph returns iterator
+            // graph returns iterable
             Lists.newArrayList(db.getVerticesOfClass(Model.simpleName))
         } as SpecificTxAction<List, OrientBaseGraph>)
         List graphsQuery = graphTemplate.doInTransaction({ db ->
-            Lists.newArrayList(db.command(new OSQLSynchQuery<Object>("select * from Model")))
+            Lists.newArrayList(db.command(new OSQLSynchQuery<Object>("select from Model")))
         } as SpecificTxAction<List, OrientBaseGraph>)
         then: "other connections see it"
         objects.size() == 1
@@ -62,17 +62,17 @@ class CreationInterchangeTest extends AbstractTest {
             db.save(doc)
         } as SpecificTxAction)
         List objects = template.doInTransaction({ db ->
-            db.query(new OSQLSynchQuery<Object>("select * from Model"))
+            db.query(new OSQLSynchQuery<Object>("select from Model"))
         } as SpecificTxAction<List, OObjectDatabaseTx>)
         List documents = documentTemplate.doInTransaction({ db ->
-            db.query(new OSQLSynchQuery<Object>("select * from Model"))
+            db.query(new OSQLSynchQuery<Object>("select from Model"))
         } as SpecificTxAction<List, ODatabaseDocumentTx>)
         List graphs = graphTemplate.doInTransaction({ db ->
-            // graph returns iterator
+            // graph returns iterable
             Lists.newArrayList(db.getVerticesOfClass(Model.simpleName))
         } as SpecificTxAction<List, OrientBaseGraph>)
         List graphsQuery = graphTemplate.doInTransaction({ db ->
-            Lists.newArrayList(db.command(new OSQLSynchQuery<Object>("select * from Model")))
+            Lists.newArrayList(db.command(new OSQLSynchQuery<Object>("select from Model")))
         } as SpecificTxAction<List, OrientBaseGraph>)
         then: "other connections see it"
         objects.size() == 1
@@ -96,17 +96,17 @@ class CreationInterchangeTest extends AbstractTest {
             db.addVertex("class:$Model.simpleName" as String, "name", "John", "nick", "Doe")
         } as SpecificTxAction)
         List objects = template.doInTransaction({ db ->
-            db.query(new OSQLSynchQuery<Object>("select * from Model"))
+            db.query(new OSQLSynchQuery<Object>("select from Model"))
         } as SpecificTxAction<List, OObjectDatabaseTx>)
         List documents = documentTemplate.doInTransaction({ db ->
-            db.query(new OSQLSynchQuery<Object>("select * from Model"))
+            db.query(new OSQLSynchQuery<Object>("select from Model"))
         } as SpecificTxAction<List, ODatabaseDocumentTx>)
         List graphs = graphTemplate.doInTransaction({ db ->
-            // graph returns iterator
+            // graph returns iterable
             Lists.newArrayList(db.getVerticesOfClass(Model.simpleName))
         } as SpecificTxAction<List, OrientBaseGraph>)
         List graphsQuery = graphTemplate.doInTransaction({ db ->
-            Lists.newArrayList(db.command(new OSQLSynchQuery<Object>("select * from Model")))
+            Lists.newArrayList(db.command(new OSQLSynchQuery<Object>("select from Model")))
         } as SpecificTxAction<List, OrientBaseGraph>)
         then: "other connections see it"
         objects.size() == 1

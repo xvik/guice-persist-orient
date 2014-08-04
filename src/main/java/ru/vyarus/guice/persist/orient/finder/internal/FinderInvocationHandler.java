@@ -14,6 +14,8 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 
 /**
+ * Handler for generated proxy for finder interface.
+ *
  * @author Vyacheslav Rusakov
  * @since 01.08.2014
  */
@@ -29,12 +31,13 @@ public class FinderInvocationHandler implements InvocationHandler {
     public Object invoke(final Object thisObject, final Method method, final Object[] args)
             throws Throwable {
 
+        // already inside transaction
         if (transactionManager.isTransactionActive()) {
             return process(thisObject, method, args);
         }
 
         // providing support for @Transactional annotations the same way as in other beans
-        TxConfig cfg = AnnotationTxConfigBuilder.buildConfig(method.getDeclaringClass(), method, false);
+        final TxConfig cfg = AnnotationTxConfigBuilder.buildConfig(method.getDeclaringClass(), method, false);
 
         // no tx defined
         if (cfg == null) {

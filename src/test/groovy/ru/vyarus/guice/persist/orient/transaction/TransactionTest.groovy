@@ -70,7 +70,7 @@ class TransactionTest extends AbstractTest {
             } as SpecificTxAction<Model, OObjectDatabaseTx>)
             // check we can perform actions (previous template not close connection
             List<Model> res = template.doInTransaction({ db2 ->
-                db2.query(new OSQLSynchQuery<Model>("select * from Model where name=?"), model.getName())
+                db2.query(new OSQLSynchQuery<Model>("select from Model where name=?"), model.getName())
             } as SpecificTxAction<List<Model>, OObjectDatabaseTx>)
 
             // check we can still use topmost connection

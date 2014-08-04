@@ -16,6 +16,7 @@ import ru.vyarus.guice.persist.orient.db.transaction.template.TxTemplate;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Singleton;
 import java.util.Set;
 
 /**
@@ -27,6 +28,7 @@ import java.util.Set;
  * @see ru.vyarus.guice.persist.orient.db.data.DataInitializer
  * @since 24.07.2014
  */
+@Singleton
 public class DatabaseManager implements PersistService {
     private final Logger logger = LoggerFactory.getLogger(DatabaseManager.class);
 

@@ -14,7 +14,7 @@ import ru.vyarus.guice.persist.orient.support.model.Model
 class BeanFinder {
 
     @Transactional
-    @Finder(query = "select * from Model")
+    @Finder(query = "select from Model")
     List<Model> selectAll() {
         throw new UnsupportedOperationException("Should be handled with finder interceptor");
     }

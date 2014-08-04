@@ -30,12 +30,8 @@ public abstract class AbstractFinderExecutor implements FinderExecutor {
             result = desc.params.length > 0 ?
                     command.execute(desc.params) : command.execute();
         }
-        return handleResult(result);
+        return result;
     }
 
     protected abstract OCommandRequest wrapCommand(OCommandRequest command);
-
-    protected Object handleResult(Object result) {
-        return result;
-    }
 }
