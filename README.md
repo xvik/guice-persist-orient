@@ -46,7 +46,7 @@ Maven:
 Gradle:
 
 ```groovy
-compile ('ru.vyarus:guice-persist-orient:1.0.0'){
+compile ('ru.vyarus:guice-persist-orient:1.0.1'){
     exclude module: 'orientdb-graphdb'
     exclude module: 'orientdb-object'       
 }
