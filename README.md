@@ -234,7 +234,7 @@ public List<Model> selectAll() {
 ##### Annotations
 
 `@Finder` allows you
-* to use stored function with `namedQuery` attribute (there are no named queries in orient, but functions are almost the same concept (if not better))
+* to use [function](https://github.com/orientechnologies/orientdb/wiki/Functions) with `namedQuery` attribute (there are no named queries in orient, but functions are close concept (but better))
 * define query with `query` attribute
 * override result collection implementation with `returnAs` attribute
 
@@ -268,16 +268,16 @@ Update query example:
 int updateWithCount(String name)
 ```
 
-Update query return type could be void, int, long, Integer, Long.
+Update query return type could be `void`, `int`, `long`, `Integer` and `Long`.
 
-`@FirstResult` and `@MaxResults` may be used to limit query results:
+`@FirstResult` and `@MaxResults` may be used to limit query results ([pagination](https://github.com/orientechnologies/orientdb/wiki/Pagination)):
 
 ```java
 @Finder(query = "select from Model where name=? and nick=?")
 List<Model> parametersPaged(String name, String nick, @FirstResult int start, @MaxResults int max)
 ```
 
-You can use Long, Integer, long and int for start/max values.
+You can use `Long`, `Integer`, `long` and `int` for start/max values.
 First result is used as orient `SKIP` declaration (you can think of it as first result, counting from 0)
 
 For function call only `@MaxResults` may be used.
@@ -344,6 +344,14 @@ To initialize (or migrate) scheme register implementation of
 
 ```java
 ru.vyarus.guice.persist.orient.db.scheme.SchemeInitializer
+
+```
+
+Example:
+
+```java
+install(new OrientModule(url, user, password));
+bind(SchemeInitializer.class).to(MySchemeInitializer.class);
 ```
 
 Scheme initializer is called in notx unit of work (orient requires database schema updates to be performed without transaction).
@@ -355,17 +363,11 @@ Two default implementations provided for schema initialization from pojos (jpa l
 * `AutoScanSchemeInitializer` - search classpath for entities annotated with `@Persistent` annotation and use them to create/update scheme 
 (search scope may be reduced by specifying package in module constructor).
 
-Example:
-
-```java
-install(new OrientModule(url, user, password, null, 'your.package.model');
-bind(SchemeInitializer.class).to(PackageSchemeInitializer.class);
-```
 
 There are predefined shortcut modules for each initializer: `PackageSchemeOrientModule` and `AutoScanSchemeOrientModule`
 
-Both initializers support grahp compatible entities creation. By default, you will be able just query stored records with graph connection.
-To be able to create graph vertixes and edges, schema types must extend V and E classes in scheme.
+Both initializers support grahp compatible entities creation (default orient scheme auto creation used). By default, you will be able just query stored records with graph connection.
+To be able to create graph vertixes and edges, classes must extend V and E classes in scheme.
 
 You can use special annotations on entities: 
 * `@VertexType` to make your type derive from `V` in scheme
