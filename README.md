@@ -335,6 +335,14 @@ To initialize (or migrate) scheme register implementation of
 
 ```java
 ru.vyarus.guice.persist.orient.db.scheme.SchemeInitializer
+
+```
+
+Example:
+
+```java
+install(new OrientModule(url, user, password));
+bind(SchemeInitializer.class).to(MySchemeInitializer.class);
 ```
 
 Scheme initializer is called in notx unit of work (orient requires database schema updates to be performed without transaction).
@@ -346,17 +354,11 @@ Two default implementations provided for schema initialization from pojos (jpa l
 * `AutoScanSchemeInitializer` - search classpath for entities annotated with `@Persistent` annotation and use them to create/update scheme 
 (search scope may be reduced by specifying package in module constructor).
 
-Example:
-
-```java
-install(new OrientModule(url, user, password, null, 'your.package.model');
-bind(SchemeInitializer.class).to(PackageSchemeInitializer.class);
-```
 
 There are predefined shortcut modules for each initializer: `PackageSchemeOrientModule` and `AutoScanSchemeOrientModule`
 
-Both initializers support grahp compatible entities creation. By default, you will be able just query stored records with graph connection.
-To be able to create graph vertixes and edges, schema types must extend V and E classes in scheme.
+Both initializers support grahp compatible entities creation (default orient scheme auto creation used). By default, you will be able just query stored records with graph connection.
+To be able to create graph vertixes and edges, classes must extend V and E classes in scheme.
 
 You can use special annotations on entities: 
 * `@VertexType` to make your type derive from `V` in scheme
