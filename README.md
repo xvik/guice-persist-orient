@@ -182,11 +182,11 @@ specificTxTemplate.doInTransaction(new SpecificTxAction<Object, OObjectDatabaseT
 ```
 
 To obtain connection use one of the following providers:
-* `Provider&lt;OObjectDatabaseTx&gt;` for object database connection
-* `Provider&lt;ODatabaseDocumentTx&gt;` for document database connection
-* `Provider&lt;OrientBaseGraph&gt;` for graph database connection (transactional or not)
-* `Provider&lt;OrientGraph&gt;` for transactional graph database connection (will fail if notx transaction type)
-* `Provider&lt;OrientGraphNoTx&gt;` for non transactional graph database connection (will provide only for notx transaction type, otherwise fail)
+* `Provider<OObjectDatabaseTx>` for object database connection
+* `Provider<ODatabaseDocumentTx>` for document database connection
+* `Provider<OrientBaseGraph>` for graph database connection (transactional or not)
+* `Provider<OrientGraph>` for transactional graph database connection (will fail if notx transaction type)
+* `Provider<OrientGraphNoTx>` for non transactional graph database connection (will provide only for notx transaction type, otherwise fail)
 
 NOTE: in contrast to spring default proxies, in guice when you call bean method inside the same bean, annotation interceptor will still work.
 So it's possible to define few units of work withing single bean using annotations:
@@ -268,7 +268,7 @@ Update query return type could be void, int, long, Integer, Long.
 List<Model> parametersPaged(String name, String nick, @FirstResult int start, @MaxResults int max)
 ```
 
-You can use Number (Long, Integer.. other number derivatives too.. but don't see much sense), long and int for start/max values.
+You can use Long, Integer, long and int for start/max values.
 First result is used as orient `SKIP` declaration (you can think of it as first result, counting from 0)
 
 For function call only `@MaxResults` may be used.
@@ -502,13 +502,13 @@ OGlobalConfiguration.MVRBTREE_NODE_PAGE_SIZE.setValue(2048);
 
 Read about [all configuration options](https://github.com/orientechnologies/orientdb/wiki/Configuration)
 
-### Licence
-
-MIT
-
 ### Might also like
 
 * [guice-validator](https://github.com/xvik/guice-validator) - hibernate validator integration for guice 
 (objects validation, method arguments and return type runtime validation)
 * [guice-ext-annotations](https://github.com/xvik/guice-ext-annotations) - @Log, @PostConstruct, @PreDestroy and
 utilities for adding new annotations support
+
+### Licence
+
+MIT
