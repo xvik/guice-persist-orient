@@ -225,7 +225,7 @@ public List<Model> selectAll() {
 ##### Annotations
 
 `@Finder` allows you
-* to use stored function with `namedQuery` attribute (there are no named queries in orient, but functions are almost the same concept (if not better))
+* to use [function](https://github.com/orientechnologies/orientdb/wiki/Functions) with `namedQuery` attribute (there are no named queries in orient, but functions are close concept (but better))
 * define query with `query` attribute
 * override result collection implementation with `returnAs` attribute
 
@@ -259,16 +259,16 @@ Update query example:
 int updateWithCount(String name)
 ```
 
-Update query return type could be void, int, long, Integer, Long.
+Update query return type could be `void`, `int`, `long`, `Integer` and `Long`.
 
-`@FirstResult` and `@MaxResults` may be used to limit query results:
+`@FirstResult` and `@MaxResults` may be used to limit query results ([pagination](https://github.com/orientechnologies/orientdb/wiki/Pagination)):
 
 ```java
 @Finder(query = "select from Model where name=? and nick=?")
 List<Model> parametersPaged(String name, String nick, @FirstResult int start, @MaxResults int max)
 ```
 
-You can use Long, Integer, long and int for start/max values.
+You can use `Long`, `Integer`, `long` and `int` for start/max values.
 First result is used as orient `SKIP` declaration (you can think of it as first result, counting from 0)
 
 For function call only `@MaxResults` may be used.
