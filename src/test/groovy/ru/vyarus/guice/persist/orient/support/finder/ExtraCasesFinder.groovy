@@ -2,7 +2,10 @@ package ru.vyarus.guice.persist.orient.support.finder
 
 import com.google.inject.persist.Transactional
 import com.google.inject.persist.finder.Finder
+import com.orientechnologies.orient.core.record.impl.ODocument
 import com.tinkerpop.blueprints.Vertex
+import ru.vyarus.guice.persist.orient.db.DbType
+import ru.vyarus.guice.persist.orient.finder.Use
 import ru.vyarus.guice.persist.orient.support.model.Model
 
 /**
@@ -39,4 +42,9 @@ interface ExtraCasesFinder {
     // just check vararg
     @Finder(query = "select from Model where name in ?")
     List<Model> findWithVararg(String... names);
+
+    //
+    @Finder(query = "select name from Model")
+    @Use(DbType.OBJECT)
+    List<ODocument> documentOverride();
 }

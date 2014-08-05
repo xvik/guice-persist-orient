@@ -1,6 +1,7 @@
 package ru.vyarus.guice.persist.orient.finder.internal
 
 import com.google.inject.Inject
+import com.orientechnologies.orient.core.record.impl.ODocument
 import com.tinkerpop.blueprints.Vertex
 import ru.vyarus.guice.persist.orient.AbstractTest
 import ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxAction
@@ -85,6 +86,14 @@ class ExtraCasesAnalysisTest extends AbstractTest {
         desc.returnEntity == Model
         desc.expectType == List
         desc.parametersIndex == [0]
+
+        when: "document overridden for object connection"
+        desc = lookup(ExtraCasesFinder.getMethod("documentOverride"))
+        then: "select object connection"
+        desc.executor.class == ObjectFinderExecutor
+        desc.returnType == ResultType.COLLECTION
+        desc.returnEntity == ODocument
+        desc.expectType == List
     }
 
     FinderDescriptor lookup(Method method) {

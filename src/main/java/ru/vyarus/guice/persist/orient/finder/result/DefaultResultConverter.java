@@ -63,9 +63,15 @@ public class DefaultResultConverter implements ResultConverter {
                 converted = array;
                 break;
             case PLAIN:
-                // if single type required convert from collection
-                // simple single type case will be handled on checking assignment (at the top)
-                converted = toIterator(result).next();
+                if (returnClass.equals(Long.class) && result instanceof Number) {
+                    converted = ((Number) result).longValue();
+                } else if (returnClass.equals(Integer.class) && result instanceof Number) {
+                    converted = ((Number) result).intValue();
+                } else {
+                    // if single type required convert from collection
+                    // simple single type case will be handled on checking assignment (at the top)
+                    converted = toIterator(result).next();
+                }
                 break;
             default:
                 throw new IllegalStateException("Unsupported return type " + desc.type);

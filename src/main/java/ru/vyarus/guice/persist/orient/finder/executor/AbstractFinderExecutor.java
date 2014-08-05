@@ -6,6 +6,8 @@ import ru.vyarus.guice.persist.orient.finder.command.CommandBuilder;
 import ru.vyarus.guice.persist.orient.finder.command.SqlCommandDesc;
 
 /**
+ * Base class for finder executors.
+ *
  * @author Vyacheslav Rusakov
  * @since 02.08.2014
  */
@@ -13,12 +15,12 @@ public abstract class AbstractFinderExecutor implements FinderExecutor {
 
     private CommandBuilder commandBuilder;
 
-    public AbstractFinderExecutor(CommandBuilder commandBuilder) {
+    public AbstractFinderExecutor(final CommandBuilder commandBuilder) {
         this.commandBuilder = commandBuilder;
     }
 
     @Override
-    public Object executeQuery(SqlCommandDesc desc) {
+    public Object executeQuery(final SqlCommandDesc desc) {
         OCommandRequest command = commandBuilder.buildCommand(desc);
         command = wrapCommand(command);
 
@@ -33,5 +35,11 @@ public abstract class AbstractFinderExecutor implements FinderExecutor {
         return result;
     }
 
+    /**
+     * Called to bind command to connection.
+     *
+     * @param command command
+     * @return command bound to connection
+     */
     protected abstract OCommandRequest wrapCommand(OCommandRequest command);
 }

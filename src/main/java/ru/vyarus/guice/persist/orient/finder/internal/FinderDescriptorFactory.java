@@ -150,6 +150,14 @@ public class FinderDescriptorFactory {
                 check(descriptor.executor != null,
                         "Executor not found for type set in @Use annotation " + requestedType);
             }
+        } else {
+            // special case, sometimes document connection could be overridden, for example:
+            // when querying for fields in object connection, documents returned, but still we can use object connection
+            if (descriptor.executor.getType().equals(DbType.DOCUMENT) && requestedType != null) {
+                descriptor.executor = find(requestedType);
+                check(descriptor.executor != null,
+                        "Executor not found for type set in @Use annotation " + requestedType);
+            }
         }
     }
 

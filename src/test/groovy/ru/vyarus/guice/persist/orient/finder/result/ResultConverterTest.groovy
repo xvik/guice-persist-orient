@@ -296,10 +296,23 @@ class ResultConverterTest extends AbstractTest {
                 entityClass: Integer))
         then: "null returned, even if actual result passed"
         res == null
-    }
 
-    def "Check arrays conversion"() {
+        when: "result is int and Long expected"
+        res = converter.convert(new ResultDesc(
+                result: 1 as int,
+                type: ResultType.PLAIN,
+                returnClass: Long,
+                entityClass: Long))
+        then: "int converted to long"
+        res == 1
 
-
+        when: "result is long and Integer expected"
+        res = converter.convert(new ResultDesc(
+                result: 1 as long,
+                type: ResultType.PLAIN,
+                returnClass: Integer,
+                entityClass: Integer))
+        then: "int converted to integer"
+        res == 1
     }
 }
