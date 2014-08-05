@@ -5,13 +5,10 @@ buildscript {
         jcenter()
         // rest plugin
         maven { url 'http://dl.bintray.com/content/noamt/gradle-plugins' }
-        // propdeps plugin
-        maven { url 'http://repo.spring.io/plugins-release' }
     }
     dependencies {
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:0.5'
         classpath 'org._10ne.gradle:rest-gradle-plugin:0.1.1'
-        classpath 'org.springframework.build.gradle:propdeps-plugin:0.0.7'
     }
 }
 
@@ -23,14 +20,12 @@ repositories {
 
 apply plugin: 'java'
 apply plugin: 'groovy'
-apply plugin: 'propdeps'
-apply plugin: 'propdeps-maven'
 apply plugin: 'rest'
 
 sourceCompatibility = 1.6
 targetCompatibility = 1.6
 
-version = '1.0.0'
+version = '1.0.1'
 group = 'ru.vyarus'
 description = 'Guice integration for OrientDB'
 
@@ -83,8 +78,8 @@ dependencies {
     compile 'org.slf4j:slf4j-api:1.7.7'
     compile "com.orientechnologies:orientdb-core:1.7.7"
 
-    optional "com.orientechnologies:orientdb-object:1.7.7"
-    optional("com.orientechnologies:orientdb-graphdb:1.7.7") {
+    compile "com.orientechnologies:orientdb-object:1.7.7"
+    compile("com.orientechnologies:orientdb-graphdb:1.7.7") {
         // excluded to remove old groovy dependency
         exclude module: 'gremlin-groovy'
     }
@@ -133,7 +128,7 @@ task wrapper(type: Wrapper) {
     gradleVersion = '2.0'
 }
 
-task localInstall(dependsOn: 'install', description: 'install to local maven repo only') << {
+task install(dependsOn: 'publishMavenJavaPublicationToMavenLocal', description: 'install to local maven repo only') << {
     logger.warn "INSTALLED $project.group:$project.name:$project.version"
 }
 

@@ -1,3 +1,7 @@
+### 1.0.1
+
+* Fix generated pom
+
 ### 1.0.0
 
 * Added dynamic finders (as separate module)

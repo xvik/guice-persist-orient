@@ -23,11 +23,30 @@ Features:
 Releases are published to [bintray jcenter](https://bintray.com/bintray/jcenter) (package appear immediately after release) 
 and then to maven central (require few days after release to be published). 
 
+Maven:
+
+```xml
+<dependency>
+<groupId>ru.vyarus</groupId>
+<artifactId>guice-persist-orient</artifactId>
+<version>1.0.1</version>
+<exclusions>
+  <exclusion>
+      <groupId>com.orientechnologies</groupId>
+      <artifactId>orientdb-graphdb</artifactId>
+  </exclusion>
+  <exclusion>
+      <groupId>com.orientechnologies</groupId>
+      <artifactId>orientdb-object</artifactId>
+  </exclusion>
+</exclusions>
+</dependency>
+```
+
 Gradle:
 
 ```groovy
 compile ('ru.vyarus:guice-persist-orient:1.0.0'){
-    // gradle includes optional dependencies.. fixing
     exclude module: 'orientdb-graphdb'
     exclude module: 'orientdb-object'       
 }
@@ -35,20 +54,10 @@ compile ('ru.vyarus:guice-persist-orient:1.0.0'){
 
 By default, only document database support is enabled. 
 
-To add object database support:
-
-```groovy
-compile 'com.orientechnologies:orientdb-object:1.7.7'
-```
+Remove exclusions to enable object and graph db support.
 
 NOTE: It's very important for object db to use exact `javassist` version it depends on. If other libraries in 
 your classpath use `javassist`, check that newer or older version not appear in classpath.
-
-To add graph database support:
-
-```groovy
-compile 'com.orientechnologies:orientdb-graphdb:1.7.7'
-```
 
 ### Install the Guice module
 

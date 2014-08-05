@@ -13,6 +13,15 @@ publishing {
             artifact javadocJar
 
             pom.withXml {
+                // gradle sets runtime scope for all dependencies.. fixing
+                asNode().dependencies.'*'.findAll() {
+                    it.scope.text() == 'runtime' && project.configurations.compile.allDependencies.find { dep ->
+                        dep.name == it.artifactId.text()
+                    }
+                }.each() {
+                    it.scope*.value = 'compile'
+                }
+
                 def root = asNode()
                 root.appendNode('name', project.name)
                 root.appendNode('description', project.description)
