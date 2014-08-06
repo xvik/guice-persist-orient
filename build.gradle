@@ -2,6 +2,7 @@ import org._10ne.gradle.rest.RestTask
 
 buildscript {
     repositories {
+        mavenCentral()
         jcenter()
         // rest plugin
         maven { url 'http://dl.bintray.com/content/noamt/gradle-plugins' }
@@ -9,6 +10,7 @@ buildscript {
     dependencies {
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:0.5'
         classpath 'org._10ne.gradle:rest-gradle-plugin:0.1.1'
+        classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:1.0.2'
     }
 }
 
@@ -21,6 +23,8 @@ repositories {
 apply plugin: 'java'
 apply plugin: 'groovy'
 apply plugin: 'rest'
+apply plugin: 'jacoco'
+apply plugin: 'com.github.kt3k.coveralls'
 
 sourceCompatibility = 1.6
 targetCompatibility = 1.6
@@ -90,6 +94,13 @@ dependencies {
     testCompile 'org.slf4j:jul-to-slf4j:1.7.7'
     testCompile 'org.spockframework:spock-core:0.7-groovy-2.0'
     testCompile 'org.spockframework:spock-guice:0.5-groovy-1.8'
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled = true // coveralls plugin depends on xml format report
+        html.enabled = true
+    }
 }
 
 // no way to do it from web ui and bintray plugin doesn't support it
