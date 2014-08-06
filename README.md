@@ -1,6 +1,7 @@
 #Guice integration for OrientDB
 [![License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](http://www.opensource.org/licenses/MIT)
 [![Build Status](http://img.shields.io/travis/xvik/guice-persist-orient.svg?style=flat&branch=master)](https://travis-ci.org/xvik/guice-persist-orient)
+[![Coverage Status](https://img.shields.io/coveralls/xvik/guice-persist-orient.svg?style=flat)](https://coveralls.io/r/xvik/guice-persist-orient?branch=master)
  [ ![Download](https://api.bintray.com/packages/vyarus/xvik/guice-persist-orient/images/download.png) ](https://bintray.com/vyarus/xvik/guice-persist-orient/_latestVersion)
 
 ### About
