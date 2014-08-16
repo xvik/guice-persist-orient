@@ -1,35 +1,11 @@
-import org._10ne.gradle.rest.RestTask
+import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
+import java.awt.*
 
 buildscript {
-    repositories {
-        mavenCentral()
-        jcenter()
-        // rest plugin
-        maven { url 'http://dl.bintray.com/content/noamt/gradle-plugins' }
-    }
-    dependencies {
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:0.5'
-        classpath 'org._10ne.gradle:rest-gradle-plugin:0.1.1'
-        classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:1.0.2'
-    }
+    apply from: "gradle/buildscript.gradle", to: buildscript
 }
 
-repositories {
-    mavenLocal()
-    jcenter()
-    mavenCentral()
-}
-
-apply plugin: 'java'
-apply plugin: 'groovy'
-apply plugin: 'rest'
-apply plugin: 'jacoco'
-apply plugin: 'com.github.kt3k.coveralls'
-
-sourceCompatibility = 1.6
-targetCompatibility = 1.6
-
-version = '1.0.1'
+version = '1.0.2'
 group = 'ru.vyarus'
 description = 'Guice integration for OrientDB'
 
@@ -42,12 +18,12 @@ project.ext {
         user = project.hasProperty('bintrayUser') ? bintrayUser : 'USER' // configured in ~/.gradle/gradle.properties
         key = project.hasProperty('bintrayKey') ? bintrayKey : 'KEY' // configured in ~/.gradle/gradle.properties
         repo = 'xvik'
+        tags = ['guice', 'guice-persist', 'orientdb']
         dryRun = false // whether to run this as dry-run, without deploying (TEST RUN)
         publish = true //If version should be auto published after an upload
     }
     license = 'MIT'
     licenseDesc = 'The MIT License'
-    tags = ['guice', 'guice-persist', 'orientdb']
     // extend pom for maven central acceptance
     pomConfig = {
         scm {
@@ -71,19 +47,35 @@ project.ext {
     }
 }
 
+apply plugin: 'java'
+apply plugin: 'groovy'
+apply plugin: 'com.github.ben-manes.versions'
+apply plugin: 'project-report'
+
+sourceCompatibility = 1.6
+targetCompatibility = 1.6
+
 apply from: 'gradle/github.gradle'
 apply from: 'gradle/maven.gradle'
 apply from: 'gradle/bintray.gradle'
+apply from: 'gradle/quality.gradle'
+
+
+repositories {
+    mavenLocal()
+    jcenter()
+    mavenCentral()
+}
 
 dependencies {
     compile 'com.google.inject:guice:4.0-beta4'
     compile 'com.google.inject.extensions:guice-persist:4.0-beta4'
     compile 'com.google.inject.extensions:guice-multibindings:4.0-beta4'
     compile 'org.slf4j:slf4j-api:1.7.7'
-    compile "com.orientechnologies:orientdb-core:1.7.7"
+    compile "com.orientechnologies:orientdb-core:1.7.8"
 
-    compile "com.orientechnologies:orientdb-object:1.7.7"
-    compile("com.orientechnologies:orientdb-graphdb:1.7.7") {
+    compile "com.orientechnologies:orientdb-object:1.7.8"
+    compile("com.orientechnologies:orientdb-graphdb:1.7.8") {
         // excluded to remove old groovy dependency
         exclude module: 'gremlin-groovy'
     }
@@ -93,59 +85,27 @@ dependencies {
     testCompile 'ch.qos.logback:logback-classic:1.1.2'
     testCompile 'org.slf4j:jul-to-slf4j:1.7.7'
     testCompile 'org.spockframework:spock-core:0.7-groovy-2.0'
-    testCompile 'org.spockframework:spock-guice:0.5-groovy-1.8'
+    testCompile 'org.spockframework:spock-guice:0.7-groovy-2.0'
 }
-
-jacocoTestReport {
-    reports {
-        xml.enabled = true // coveralls plugin depends on xml format report
-        html.enabled = true
-    }
-}
-
-// no way to do it from web ui and bintray plugin doesn't support it
-// NOTE: files wil remain unpublished so go to bintray and publish them, after that do maven central sync (on web ui)
-task bintraySignVersion(type: RestTask, description: 'Sign version files (auto sign bintray feature') {
-    httpMethod = 'post'
-    uri = bintray.signApiUrl
-    username = bintray.user
-    password = bintray.key
-}
-bintraySignVersion.doFirst {
-    // cancel task in dry run mode
-    if (bintray.dryRun) {
-        logger.warn('Skipping version signing in dry run mode')
-        throw new StopExecutionException()
-    }
-}
-
-task bintrayPublish(type: RestTask, dependsOn: 'bintraySignVersion', description: 'Sign version files and publish sign files') {
-    httpMethod = 'post'
-    uri = bintray.publishApiUrl
-    username = bintray.user
-    password = bintray.key
-}
-bintrayPublish.doFirst {
-    // cancel task in dry run mode
-    if (bintray.dryRun) {
-        logger.warn('Skipping version publishing in dry run mode')
-        throw new StopExecutionException()
-    }
-}
-
-bintrayPublish.mustRunAfter bintrayUpload
 
 task wrapper(type: Wrapper) {
     gradleVersion = '2.0'
 }
 
-task install(dependsOn: 'publishMavenJavaPublicationToMavenLocal', description: 'install to local maven repo only') << {
+task checkOutOfDate(type: DependencyUpdatesTask, description: 'Checks dependencies updates availability') {
+    revision 'release'
+}
+
+task showDependenciesTree(dependsOn: 'htmlDependencyReport', description:
+        'Generates dependencies tree report and opens it in browser (useful to analyze dependencies)') << {
+    Desktop.getDesktop().open(file('/build/reports/project/dependencies/root.html'))
+}
+
+
+task install(dependsOn: 'publishMavenJavaPublicationToMavenLocal', description: 'Install to local maven repository') << {
     logger.warn "INSTALLED $project.group:$project.name:$project.version"
 }
 
-task release(dependsOn: [bintrayUpload, bintrayPublish], description: 'publish version to bintray and sign all jars') << {
+task release(dependsOn: [bintrayUpload, bintraySign], description: 'Publish version to bintray') << {
     logger.warn "RELEASED $project.group:$project.name:$project.version"
 }
-
-
-

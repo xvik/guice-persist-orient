@@ -13,8 +13,8 @@ import java.util.List;
 
 /**
  * Finder module which able to scan classpath to dynamically find and register finder interfaces.
- * Anyway, ability to manually add interfaces still remain: part of classpath may be scanned and finders from other parts
- * may be added manually. The reason for this could be some optional classes in classpath, which will cause class
+ * Anyway, ability to manually add interfaces still remain: part of classpath may be scanned and finders from other
+ * parts may be added manually. The reason for this could be some optional classes in classpath, which will cause class
  * loading exception (e.g. some jars are absent).
  *
  * @author Vyacheslav Rusakov
@@ -24,7 +24,7 @@ public class AutoScanFinderModule extends FinderModule {
     private Logger logger = LoggerFactory.getLogger(AutoScanFinderModule.class);
     private String pkg;
 
-    public AutoScanFinderModule(String pkg) {
+    public AutoScanFinderModule(final String pkg) {
         super();
         this.pkg = Preconditions.checkNotNull(pkg, "Package is required to reduce classpath scanning scope.");
         registerFinders();
@@ -33,7 +33,8 @@ public class AutoScanFinderModule extends FinderModule {
     private void registerFinders() {
         final List<Class<?>> finderClasses = Lists.newArrayList();
         try {
-            final List<Class<?>> foundClasses = OReflectionHelper.getClassesFor(pkg, Thread.currentThread().getContextClassLoader());
+            final List<Class<?>> foundClasses = OReflectionHelper
+                    .getClassesFor(pkg, Thread.currentThread().getContextClassLoader());
             for (Class<?> cls : foundClasses) {
                 if (cls.isInterface()) {
                     // at least one method annotated with finder (complete check module will perform during binding)

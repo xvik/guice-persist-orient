@@ -52,7 +52,8 @@ public class TxTemplate {
             transactionManager.end();
             return res;
         } catch (Throwable th) {
-            // transaction may be not active if exception happened during commit and tm already performed rollback action
+            // transaction may be not active if exception happened during commit and
+            // tm already performed rollback action
             if (transactionManager.isTransactionActive()) {
                 // calling once for nested transactions (or in case it was done manually
                 transactionManager.rollback(th);

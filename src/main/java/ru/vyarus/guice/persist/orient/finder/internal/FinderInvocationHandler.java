@@ -22,14 +22,14 @@ import java.lang.reflect.Method;
 public class FinderInvocationHandler implements InvocationHandler {
     // field injection for delayed configuration (see module)
     @Inject
-    FinderProxy finderProxy;
+    private FinderProxy finderProxy;
     @Inject
-    TxTemplate template;
+    private TxTemplate template;
     @Inject
-    TransactionManager transactionManager;
+    private TransactionManager transactionManager;
 
-    public Object invoke(final Object thisObject, final Method method, final Object[] args)
-            throws Throwable {
+    public Object invoke(final Object thisObject, final Method method,
+                         final Object[] args) throws Throwable {
 
         // already inside transaction
         if (transactionManager.isTransactionActive()) {
@@ -61,26 +61,41 @@ public class FinderInvocationHandler implements InvocationHandler {
             return method.invoke(this, args);
         }
 
-        return finderProxy.invoke(new MethodInvocation() {
-            public Method getMethod() {
-                return method;
-            }
+        return finderProxy.invoke(new ProxyMethodInvocation(method, args, thisObject));
+    }
 
-            public Object[] getArguments() {
-                return null == args ? new Object[0] : args;
-            }
+    /**
+     * Proxy method invocation object.
+     */
+    private static class ProxyMethodInvocation implements MethodInvocation {
+        private final Method method;
+        private final Object[] args;
+        private final Object thisObject;
 
-            public Object proceed() throws Throwable {
-                return method.invoke(thisObject, args);
-            }
+        public ProxyMethodInvocation(final Method method, final Object[] args, final Object thisObject) {
+            this.method = method;
+            this.args = args;
+            this.thisObject = thisObject;
+        }
 
-            public Object getThis() {
-                throw new UnsupportedOperationException("Bottomless proxies don't expose a this.");
-            }
+        public Method getMethod() {
+            return method;
+        }
 
-            public AccessibleObject getStaticPart() {
-                throw new UnsupportedOperationException();
-            }
-        });
+        public Object[] getArguments() {
+            return null == args ? new Object[0] : args;
+        }
+
+        public Object proceed() throws Throwable {
+            return method.invoke(thisObject, args);
+        }
+
+        public Object getThis() {
+            throw new UnsupportedOperationException("Bottomless proxies don't expose a this.");
+        }
+
+        public AccessibleObject getStaticPart() {
+            throw new UnsupportedOperationException();
+        }
     }
 }

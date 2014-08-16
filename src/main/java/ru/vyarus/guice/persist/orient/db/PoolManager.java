@@ -6,15 +6,19 @@ import com.google.inject.Provider;
  * Manage pool of connections for specific connection type (e.g. object connections).
  * Pool also works as connection provider, but implementation should not allow to obtain connection outside transaction
  * (unit of work).
- * <p>While transaction manager defines global unit of work scope, each pool manager defines its own thread local transaction.
- * It is impossible in orient to share transaction between different connections (by design), but most likely in most cases only one pool will be used
+ * <p>While transaction manager defines global unit of work scope, each pool manager defines
+ * its own thread local transaction.
+ * It is impossible in orient to share transaction between different connections (by design),
+ * but most likely in most cases only one pool will be used
  * in transaction.</p>
  * <p>To change pool size use {@code OGlobalConfiguration.DB_POOL_MIN.setValue()} and
  * {@code OGlobalConfiguration.DB_POOL_MAX.setValue()}. By default pools it's 1-20.</p>
- * <p>Do not use global pools in implementations - always create new one to avoid possible collisions with other pools</p>
+ * <p>Do not use global pools in implementations - always create new one to avoid possible
+ * collisions with other pools</p>
  *
  * @author Vyacheslav Rusakov
  * @since 24.07.2014
+ * @param <T> pool connection type
  */
 public interface PoolManager<T> extends Provider<T> {
 

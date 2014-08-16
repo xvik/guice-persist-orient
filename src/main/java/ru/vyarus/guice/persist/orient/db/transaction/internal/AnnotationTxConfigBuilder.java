@@ -19,8 +19,11 @@ import java.util.List;
  */
 public final class AnnotationTxConfigBuilder {
 
+    private AnnotationTxConfigBuilder() {
+    }
+
     /**
-     * Build transaction config for type
+     * Build transaction config for type.
      *
      * @param type        type to analyze
      * @param method      method to analyze
@@ -55,7 +58,7 @@ public final class AnnotationTxConfigBuilder {
     }
 
     /**
-     * Avoid creation of empty list
+     * Avoid creation of empty list.
      *
      * @param list array of exceptions
      * @return converted list or null if array os empty
@@ -64,6 +67,9 @@ public final class AnnotationTxConfigBuilder {
         return list.length == 0 ? null : Arrays.asList(list);
     }
 
+    /**
+     * Default annotations definitions.
+     */
     @Transactional
     @TxType(OTransaction.TXTYPE.OPTIMISTIC)
     private static class Internal {

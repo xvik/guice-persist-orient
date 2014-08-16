@@ -15,5 +15,5 @@ public interface ResultConverter {
      * @param desc conversion descriptor
      * @return converted result
      */
-    public Object convert(ResultDesc desc);
+    Object convert(ResultDesc desc);
 }

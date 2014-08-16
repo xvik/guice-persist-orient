@@ -19,18 +19,18 @@ public class ObjectFinderExecutor extends AbstractFinderExecutor {
     private Provider<OObjectDatabaseTx> provider;
 
     @Inject
-    public ObjectFinderExecutor(Provider<OObjectDatabaseTx> provider, CommandBuilder commandBuilder) {
+    public ObjectFinderExecutor(final Provider<OObjectDatabaseTx> provider, final CommandBuilder commandBuilder) {
         super(commandBuilder);
         this.provider = provider;
     }
 
     @Override
-    public boolean accept(Class<?> returnType) {
+    public boolean accept(final Class<?> returnType) {
         return provider.get().getEntityManager().getRegisteredEntities().contains(returnType);
     }
 
     @Override
-    protected OCommandRequest wrapCommand(OCommandRequest command) {
+    protected OCommandRequest wrapCommand(final OCommandRequest command) {
         return provider.get().command(command);
     }
 

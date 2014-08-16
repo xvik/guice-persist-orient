@@ -30,8 +30,8 @@ public class OrientGraphNoTxProvider implements Provider<OrientGraphNoTx> {
     public OrientGraphNoTx get() {
         final OrientBaseGraph graph = provider.get();
         Preconditions.checkState(graph instanceof OrientGraphNoTx,
-                "You must use OrientGraph within transaction or disable transaction " +
-                        "(or use OrientBaseGraph as universal solution for all cases)");
+                "You must use OrientGraph within transaction or disable transaction "
+                        + "(or use OrientBaseGraph as universal solution for all cases)");
         return (OrientGraphNoTx) graph;
     }
 }

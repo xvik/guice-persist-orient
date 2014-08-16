@@ -24,7 +24,8 @@ public interface FinderExecutor {
 
     /**
      * Called to execute finder query.
-     * Implementation may use {@code ru.vyarus.guice.persist.orient.finder.command.CommandBuilder} for actual query building.
+     * Implementation may use {@code ru.vyarus.guice.persist.orient.finder.command.CommandBuilder}
+     * for actual query building.
      *
      * @param desc query description
      * @return query execution result

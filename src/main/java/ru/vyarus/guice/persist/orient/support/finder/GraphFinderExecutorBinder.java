@@ -13,7 +13,8 @@ import java.lang.reflect.Method;
  * @since 04.08.2014
  */
 public class GraphFinderExecutorBinder {
-    public GraphFinderExecutorBinder(final FinderModule module, final Method bindExecutor, final Binder binder) throws Exception {
+    public GraphFinderExecutorBinder(final FinderModule module, final Method bindExecutor,
+                                     final Binder binder) throws Exception {
         bindExecutor.invoke(module, GraphFinderExecutor.class);
     }
 }

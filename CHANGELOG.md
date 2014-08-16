@@ -1,3 +1,7 @@
+### 1.0.2
+
+* Fix pmd/checkstyle warnings
+
 ### 1.0.1
 
 * Fix generated pom

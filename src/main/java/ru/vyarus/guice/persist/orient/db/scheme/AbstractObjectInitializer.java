@@ -36,7 +36,8 @@ public abstract class AbstractObjectInitializer implements SchemeInitializer {
     // provider to avoid circular dependency
     private Provider<DatabaseManager> databaseManager;
 
-    protected AbstractObjectInitializer(Provider<OObjectDatabaseTx> dbProvider, Provider<DatabaseManager> databaseManager) {
+    protected AbstractObjectInitializer(final Provider<OObjectDatabaseTx> dbProvider,
+                                        final Provider<DatabaseManager> databaseManager) {
         this.dbProvider = dbProvider;
         this.databaseManager = databaseManager;
     }
@@ -54,7 +55,7 @@ public abstract class AbstractObjectInitializer implements SchemeInitializer {
     protected abstract void init(OObjectDatabaseTx db);
 
     /**
-     * If class annotated with @Edge or @Vertex will create
+     * If class annotated with @Edge or @Vertex will create.
      *
      * @param modelClass model class to map to scheme
      */
@@ -63,7 +64,8 @@ public abstract class AbstractObjectInitializer implements SchemeInitializer {
         logger.info("Registering model class: {}", modelClass);
         final VertexType vertex = (VertexType) modelClass.getAnnotation(VertexType.class);
         final EdgeType edge = (EdgeType) modelClass.getAnnotation(EdgeType.class);
-        Preconditions.checkState(vertex == null || edge == null, "You can't use both Vertex and Edge annotations together, choose one.");
+        Preconditions.checkState(vertex == null || edge == null,
+                "You can't use both Vertex and Edge annotations together, choose one.");
 
         if (vertex != null || edge != null) {
             registerEntityAsGraph(modelClass, vertex != null);
@@ -73,7 +75,7 @@ public abstract class AbstractObjectInitializer implements SchemeInitializer {
         db.getEntityManager().registerEntityClass(modelClass);
     }
 
-    private void registerEntityAsGraph(Class modelClass, boolean isVertex) {
+    private void registerEntityAsGraph(final Class modelClass, final boolean isVertex) {
         if (!databaseManager.get().isTypeSupported(DbType.GRAPH)) {
             logger.warn("Entity {} graph declaration ignored, because no graph database support available.",
                     modelClass);
@@ -82,25 +84,26 @@ public abstract class AbstractObjectInitializer implements SchemeInitializer {
         // hierarchy support (topmost class must be vertex)
         Class<?> supertype = modelClass;
         Class<?> baseType = modelClass;
-        while (!Object.class.equals(supertype = supertype.getSuperclass()) && supertype != null) {
+        while (!Object.class.equals(supertype) && supertype != null) {
             baseType = supertype;
+            supertype = supertype.getSuperclass();
         }
-
 
         final String targetSuper = isVertex ? "V" : "E";
         final OObjectDatabaseTx db = dbProvider.get();
         if (db.getMetadata().getSchema().existsClass(baseType.getSimpleName())) {
-            OClass cls = db.getMetadata().getSchema().getClass(baseType).getSuperClass();
-            Preconditions.checkState(cls != null,
-                    String.format("Model class %s can't be registered as extending %s, because %s already registered and can't be updated " +
-                                    "to support graph according to annotation",
-                            modelClass, targetSuper, baseType));
+            final OClass cls = db.getMetadata().getSchema().getClass(baseType).getSuperClass();
+            final String alreadyRegMsg =
+                    "Model class %s can't be registered as extending %s, because %s already registered ";
 
-            Preconditions.checkState(cls.getName().equals(targetSuper),
-                    String.format("Model class %s can't be registered as extending %s, because %s already registered " +
-                                    "with different superclass %s and can't be " +
-                                    "updated to support graph according to annotation",
-                            modelClass, targetSuper, baseType, cls.getName()));
+            Preconditions.checkState(cls != null, String.format(
+                    alreadyRegMsg + "and can't be updated to support graph according to annotation",
+                    modelClass, targetSuper, baseType));
+
+            Preconditions.checkState(cls.getName().equals(targetSuper), String.format(
+                    alreadyRegMsg + "with different superclass %s and can't be "
+                            + "updated to support graph according to annotation",
+                    modelClass, targetSuper, baseType, cls.getName()));
 
             // nothing to do - class already registered correctly
             return;

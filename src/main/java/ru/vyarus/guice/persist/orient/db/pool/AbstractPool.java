@@ -11,10 +11,12 @@ import ru.vyarus.guice.persist.orient.db.transaction.TransactionManager;
 /**
  * Base class for default pool implementations.
  * Connection may be obtained (using provider) only inside unit of work (defined transaction).
- * Because of multi-transaction paradigm inside single unit of work, transaction manager always calls commit and rollback
- * on all pools (no matter which one is really need it). Implementation handle it by ignoring redundant calls:
- * first commit or rollback finish pool transaction and all other calls to commit or rollback simply ignored.
+ * Because of multi-transaction paradigm inside single unit of work, transaction manager always calls
+ * commit and rollback on all pools (no matter which one is really need it). Implementation handle it
+ * by ignoring redundant calls: first commit or rollback finish pool transaction and all other calls
+ * to commit or rollback simply ignored.
  *
+ * @param <T> pool connection type
  * @author Vyacheslav Rusakov
  * @since 24.07.2014
  */
@@ -64,7 +66,8 @@ public abstract class AbstractPool<T> implements PoolManager<T> {
             checkOpened(db);
         }
         // may not cause actual commit/close because force parameter not used
-        // in case of commit exception, transaction manager must perform rollback (and close will take effect in rollback)
+        // in case of commit exception, transaction manager must perform rollback
+        // (and close will take effect in rollback)
         db.commit();
         db.close();
         transaction.remove();
@@ -75,9 +78,9 @@ public abstract class AbstractPool<T> implements PoolManager<T> {
     public void rollback() {
         final ODatabaseComplex db = transaction.get();
         if (db == null) {
-            // pool not participate in current transaction or already committed (may happen if one other pool's transaction fail:
-            // in this case all other transactions will be committed and after that transactional manager call rollback, which will affect
-            // only failed pool and others will simply ignore it)
+            // pool not participate in current transaction or already committed (may happen if one other pool's
+            // transaction fail: in this case all other transactions will be committed and after that
+            // transactional manager call rollback, which will affect only failed pool and others will simply ignore it)
             return;
         }
         try {
@@ -89,7 +92,8 @@ public abstract class AbstractPool<T> implements PoolManager<T> {
                 try {
                     // release connection back to pool in any case
                     db.close();
-                } catch (Throwable ignore) {
+                } catch (Throwable ignored) {
+                    logger.trace(String.format("Pool %s failed to close database", getType()), ignored);
                 }
             }
             transaction.remove();
@@ -98,30 +102,34 @@ public abstract class AbstractPool<T> implements PoolManager<T> {
 
     @Override
     public T get() {
-        // lazy get: pool transaction will start not together with TransactionManager one, but as soon as connection requested
-        // to avoid using connections of not used pools
-        Preconditions.checkNotNull(pool, "Pool " + getType() + " not initialized");
+        // lazy get: pool transaction will start not together with TransactionManager one, but as soon as
+        // connection requested to avoid using connections of not used pools
+        Preconditions.checkNotNull(pool, String.format("Pool %s not initialized", getType()));
         if (transaction.get() == null) {
-            Preconditions.checkState(transactionManager.isTransactionActive(),
-                    "Can't obtain connection from pool " + getType() + ": no transaction defined.");
+            Preconditions.checkState(transactionManager.isTransactionActive(), String.format(
+                    "Can't obtain connection from pool %s: no transaction defined.", getType()));
 
             // its definitely not normal that pool returns closed connections, but possible if used improperly
             ODatabaseComplex db = (ODatabaseComplex) pool.acquire();
             if (db.isClosed()) {
-                logger.warn("ATTENTION: Pool " + getType() + " return closed connection, restarting pool. " +
-                        "This is NOT normal situation: in spite of the fact that your logic will perform correctly, " +
-                        "you loose predefined connections which may be very harmful for performance " +
-                        "(especially if problem appear often). Most likely reason is closing underlying: " +
-                        "e.g. connection.commit().close() or connection.getUnderlying().close(). Check your code: " +
-                        "you should not call begin/commit/rollback/close (construct your own connection " +
-                        "if you need full control, otherwise trust to transaction manager).");
-                final String localUri = uri, localUser = user, localPass = password;
+                logger.warn("ATTENTION: Pool {} return closed connection, restarting pool. "
+                        + "This is NOT normal situation: in spite of the fact that your logic will perform "
+                        + "correctly, you loose predefined connections which may be very harmful for "
+                        + "performance (especially if problem appear often). Most likely reason is "
+                        + "closing underlying: e.g. connection.commit().close() or "
+                        + "connection.getUnderlying().close(). Check your code: you should not call "
+                        + "begin/commit/rollback/close (construct your own connection if you need "
+                        + "full control, otherwise trust to transaction manager).", getType());
+                final String localUri = uri;
+                final String localUser = user;
+                final String localPass = password;
                 stop();
                 start(localUri, localUser, localPass);
                 db = (ODatabaseComplex) pool.acquire();
             }
-            Preconditions.checkState(!db.isClosed(),
-                    "Pool " + getType() + " return closed connection, even pool restart didn't help.. something is terribly wrong");
+            Preconditions.checkState(!db.isClosed(), String.format(
+                    "Pool %s return closed connection, even pool restart didn't help.. "
+                            + "something is terribly wrong", getType()));
 
             db.begin(transactionManager.getActiveTransactionType());
             transaction.set(db);
@@ -131,7 +139,7 @@ public abstract class AbstractPool<T> implements PoolManager<T> {
     }
 
     /**
-     * Called to create correct orient pool instance (native orient pool)
+     * Called to create correct orient pool instance (native orient pool).
      *
      * @param uri  database url
      * @param user database user
@@ -146,7 +154,7 @@ public abstract class AbstractPool<T> implements PoolManager<T> {
      * if method not overridden in pool
      */
     @SuppressWarnings("unchecked")
-    protected T convertDbInstance(ODatabaseComplex<?> db) {
+    protected T convertDbInstance(final ODatabaseComplex<?> db) {
         return (T) db;
     }
 
@@ -158,10 +166,12 @@ public abstract class AbstractPool<T> implements PoolManager<T> {
      * @param db database connection instance
      * @return connection instance if its opened, otherwise error thrown
      */
-    private ODatabaseComplex checkOpened(ODatabaseComplex db) {
-        Preconditions.checkState(!db.isClosed(), "Inconsistent " + getType() + " pool state: thread-bound database closed! " +
-                "This may happen if close/commit/rollback was called directly on database connection " +
-                "object, which is not allowed (if you need full control on connection use manual setup and not pool managed connection)");
+    private ODatabaseComplex checkOpened(final ODatabaseComplex db) {
+        Preconditions.checkState(!db.isClosed(), String.format(
+                "Inconsistent %s pool state: thread-bound database closed! "
+                        + "This may happen if close/commit/rollback was called directly on "
+                        + "database connection object, which is not allowed (if you need full control "
+                        + "on connection use manual setup and not pool managed connection)", getType()));
         return db;
     }
 }

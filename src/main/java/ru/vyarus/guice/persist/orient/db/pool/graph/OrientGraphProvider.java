@@ -30,8 +30,8 @@ public class OrientGraphProvider implements Provider<OrientGraph> {
     public OrientGraph get() {
         final OrientBaseGraph graph = provider.get();
         Preconditions.checkState(graph instanceof OrientGraph,
-                "Transaction started in NOTX mode. You must use OrientGraphNoTx or enable transaction " +
-                        "(or use OrientBaseGraph as universal solution for all cases)");
+                "Transaction started in NOTX mode. You must use OrientGraphNoTx or enable transaction "
+                        + "(or use OrientBaseGraph as universal solution for all cases)");
         return (OrientGraph) graph;
     }
 }

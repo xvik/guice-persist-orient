@@ -13,7 +13,8 @@ import java.lang.reflect.Method;
  * @since 04.08.2014
  */
 public class ObjectFinderExecutorBinder {
-    public ObjectFinderExecutorBinder(final FinderModule module, final Method bindExecutor, final Binder binder) throws Exception {
+    public ObjectFinderExecutorBinder(final FinderModule module, final Method bindExecutor,
+                                      final Binder binder) throws Exception {
         bindExecutor.invoke(module, ObjectFinderExecutor.class);
     }
 }

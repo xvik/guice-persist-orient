@@ -23,19 +23,19 @@ public class DocumentFinderExecutor extends AbstractFinderExecutor {
     private Provider<ODatabaseDocumentTx> provider;
 
     @Inject
-    public DocumentFinderExecutor(Provider<ODatabaseDocumentTx> provider, CommandBuilder commandBuilder) {
+    public DocumentFinderExecutor(final Provider<ODatabaseDocumentTx> provider, final CommandBuilder commandBuilder) {
         super(commandBuilder);
         this.provider = provider;
     }
 
 
     @Override
-    public boolean accept(Class<?> returnType) {
+    public boolean accept(final Class<?> returnType) {
         return ACCEPT_TYPES.contains(returnType);
     }
 
     @Override
-    protected OCommandRequest wrapCommand(OCommandRequest command) {
+    protected OCommandRequest wrapCommand(final OCommandRequest command) {
         return provider.get().command(command);
     }
 

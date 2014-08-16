@@ -38,8 +38,9 @@ public class FinderProxy implements MethodInterceptor {
         try {
             descriptor = factory.create(method);
         } catch (Throwable th) {
-            throw new IllegalStateException("Failed to analyze finder method " +
-                    method.getDeclaringClass() + "#" + method.getName() + Arrays.toString(method.getParameterTypes()), th);
+            throw new IllegalStateException(String.format(
+                    "Failed to analyze finder method %s#%s%s",
+                    method.getDeclaringClass(), method.getName(), Arrays.toString(method.getParameterTypes())), th);
         }
 
         final SqlCommandDesc command = buildCommand(descriptor, methodInvocation.getArguments());
@@ -54,9 +55,10 @@ public class FinderProxy implements MethodInterceptor {
         try {
             return resultConverter.convert(desc);
         } catch (Throwable th) {
-            throw new IllegalStateException("Failed to convert execution result (" +
-                    (result == null ? null : result.getClass()) + ") of finder " +
-                    method.getDeclaringClass() + "#" + method.getName() + Arrays.toString(method.getParameterTypes()), th);
+            throw new IllegalStateException(String.format(
+                    "Failed to convert execution result (%s) of finder %s#%s%s",
+                    result == null ? null : result.getClass(), method.getDeclaringClass(),
+                    method.getName(), Arrays.toString(method.getParameterTypes())), th);
         }
     }
 
@@ -76,14 +78,14 @@ public class FinderProxy implements MethodInterceptor {
             case COLLECTION:
             case ARRAY:
                 if (descriptor.firstResultParamIndex != null) {
-                    Number rawStartValue = (Number) arguments[descriptor.firstResultParamIndex];
-                    Integer startValue = rawStartValue == null ? null : rawStartValue.intValue();
+                    final Number rawStartValue = (Number) arguments[descriptor.firstResultParamIndex];
+                    final Integer startValue = rawStartValue == null ? null : rawStartValue.intValue();
                     command.start = Objects.firstNonNull(startValue, 0);
                 }
 
                 if (descriptor.maxResultsParamIndex != null) {
-                    Number rawMaxValue = (Number) arguments[descriptor.maxResultsParamIndex];
-                    Integer maxValue = rawMaxValue == null ? null : rawMaxValue.intValue();
+                    final Number rawMaxValue = (Number) arguments[descriptor.maxResultsParamIndex];
+                    final Integer maxValue = rawMaxValue == null ? null : rawMaxValue.intValue();
                     command.max = Objects.firstNonNull(maxValue, -1);
                 }
                 break;

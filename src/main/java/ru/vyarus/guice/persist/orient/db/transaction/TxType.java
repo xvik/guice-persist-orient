@@ -12,14 +12,16 @@ import java.lang.annotation.*;
  * </p>
  * To switch of transaction within unit of work (defined by @Transactional annotation) use
  * {@code OTransaction.TXTYPE.NOTX}
- * <p>Additional annotation was chosen in order to not introduce new annotation for transaction and re-use guice-ersist one.
- * Moreover, transaction type definition should be a rear case (because if its not you should change default transaction
- * type in module and use @TxType annotation just for rear cases</p>
+ * <p>Additional annotation was chosen in order to not introduce new annotation for transaction and re-use
+ * guice-persist one. Moreover, transaction type definition should be a rear case (because if its not you should
+ * change default transaction type in module and use @TxType annotation just for rear cases</p>
  *
  * @author Vyacheslav Rusakov
  * @since 25.07.2014
  */
-@Target({ElementType.METHOD, ElementType.TYPE})
+@Target({
+        ElementType.METHOD, ElementType.TYPE
+})
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 public @interface TxType {

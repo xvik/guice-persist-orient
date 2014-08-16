@@ -17,12 +17,12 @@ import javax.inject.Inject;
 public class DocumentPool extends AbstractPool<ODatabaseDocumentTx> {
 
     @Inject
-    public DocumentPool(TransactionManager transactionManager) {
+    public DocumentPool(final TransactionManager transactionManager) {
         super(transactionManager);
     }
 
     @Override
-    protected ODatabasePoolBase createPool(String uri, String user, String pass) {
+    protected ODatabasePoolBase createPool(final String uri, final String user, final String pass) {
         return new ODatabaseDocumentPool(uri, user, pass);
     }
 

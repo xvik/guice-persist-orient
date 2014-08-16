@@ -14,6 +14,9 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 import java.util.Set;
 
+/**
+ * Default transaction manager implementation.
+ */
 @Singleton
 public class DefaultTransactionManager implements TransactionManager {
     private final Logger logger = LoggerFactory.getLogger(DefaultTransactionManager.class);
@@ -25,7 +28,7 @@ public class DefaultTransactionManager implements TransactionManager {
 
     @Inject
     public DefaultTransactionManager(final Set<PoolManager> pools,
-                                     final @Named("orient.txconfig") TxConfig defaultConfig) {
+                                     @Named("orient.txconfig") final TxConfig defaultConfig) {
         this.pools = pools;
         this.defaultConfig = defaultConfig;
     }
@@ -54,15 +57,17 @@ public class DefaultTransactionManager implements TransactionManager {
             // each pool maintains ots own transaction. we have to commit each of them
             // and only after that throw error to notify that something was failed
             // (there is no way to synchronize transaction between pools, but usually its not required because only
-            // one pool used most of the time, otherwise plan transaction architecture accordingly - make transactions more granular)
+            // one pool used most of the time, otherwise plan transaction architecture accordingly - make
+            // transactions more granular)
             for (PoolManager<?> pool : pools) {
                 try {
                     pool.commit();
                 } catch (RuntimeException th) {
-                    logger.debug("Pool " + pool.getType() + " commit failed. Exception will be propagated");
-                    logger.trace("Pool " + pool.getType() + " commit fail cause", th);
+                    logger.debug("Pool {} commit failed. Exception will be propagated", pool.getType());
+                    logger.trace(String.format("Pool %s commit fail cause", pool.getType()), th);
                     if (commitFailReason != null) {
-                        logger.error("More than one pool commit fail. Previous fail will not be propagated", commitFailReason);
+                        logger.error("More than one pool commit fail. Previous fail will not be propagated",
+                                commitFailReason);
                     }
                     commitFailReason = th;
                 }
@@ -83,7 +88,7 @@ public class DefaultTransactionManager implements TransactionManager {
     }
 
     @Override
-    public void rollback(Throwable ex) {
+    public void rollback(final Throwable ex) {
         Preconditions.checkState(isTransactionActive(), "Call to rollback, when no active transaction");
         logger.trace("Rollback transaction: {}", transaction.get());
         if (ex != null) {
@@ -132,7 +137,7 @@ public class DefaultTransactionManager implements TransactionManager {
      * @param config transaction configuration
      * @param e      The exception to test for rollback
      */
-    private boolean canRecover(final TxConfig config, Throwable e) {
+    private boolean canRecover(final TxConfig config, final Throwable e) {
         boolean commit = config.getRollbackOn().size() > 0;
 
         //check rollback clauses

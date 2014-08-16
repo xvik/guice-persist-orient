@@ -31,7 +31,7 @@ Maven:
 <dependency>
 <groupId>ru.vyarus</groupId>
 <artifactId>guice-persist-orient</artifactId>
-<version>1.0.1</version>
+<version>1.0.2</version>
 <exclusions>
   <exclusion>
       <groupId>com.orientechnologies</groupId>
@@ -48,7 +48,7 @@ Maven:
 Gradle:
 
 ```groovy
-compile ('ru.vyarus:guice-persist-orient:1.0.1'){
+compile ('ru.vyarus:guice-persist-orient:1.0.2'){
     exclude module: 'orientdb-graphdb'
     exclude module: 'orientdb-object'       
 }
@@ -521,3 +521,6 @@ Read about [all configuration options](https://github.com/orientechnologies/orie
 (objects validation, method arguments and return type runtime validation)
 * [guice-ext-annotations](https://github.com/xvik/guice-ext-annotations) - @Log, @PostConstruct, @PreDestroy and
 utilities for adding new annotations support
+
+-
+[![Slush java lib generator](http://img.shields.io/badge/Powered%20by-Slush%20java%20lib%20generator-orange.svg?style=flat-square)](https://github.com/xvik/slush-lib-java)

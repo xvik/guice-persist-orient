@@ -27,20 +27,25 @@ import java.util.Set;
 
 /**
  * Module provides support for dynamic finders. Must be used together with main orient module.
- * <p>Finders supported on interfaces and beans in context. Interfaces must be manually registered in module (see addFinder method).</p>
+ * <p>Finders supported on interfaces and beans in context. Interfaces must be manually registered in module
+ * (see addFinder method).</p>
  * <p>Named and position parameters may be used. To use named parameters use @Named annotation (defines parameter name).
  * Additional annotation @FirstResult and @MaxResults may be used to define pagination. NOTE: in contrast to jpa, where
- * first result defines first result to take, in orient it defines number of records to skip! (actually difference is just one 1 element,
+ * first result defines first result to take, in orient it defines number of records to skip!
+ * (actually difference is just one 1 element,
  * so you may think of it as first result, but counting from 0)</p>
  * <p>Supported return types: any collection, array, single element, Iterator and Iterable.
  * NOTE: document and object connections return lists, so to match other types finder will have to convert results.
  * Graph connection always return iterable implementation.</p>
- * <p>You can define specific collection implementation using annotation parameter. This may be used to get rid of orient internal collections
+ * <p>You can define specific collection implementation using annotation parameter.
+ * This may be used to get rid of orient internal collections
  * or to use some specific collection (for example, use TreeSet to avoid duplicates and sort results)</p>
- * <p>Finder also may call stored function instead of query execution if namedQuery attribute used (@Finder(namedQuery="")).
+ * <p>Finder also may call stored function instead of query execution if namedQuery attribute
+ * used (@Finder(namedQuery="")).
  * For functions only @MaxResults is supported, @FirstResult parameter will be ignored.</p>
  * <p>On execution return type will be analyzed to select proper connection type to use. If return type not informative
- * (e.g. for update query or if collection without) default connection will be used. By default document connection used,
+ * (e.g. for update query or if collection without) default connection will be used.
+ * By default document connection used,
  * but could be changed through module configuration. Connection type may be also changed using @Use annotation
  * together with @Finder annotation. Connection type annotation (@Use) will be used only if connection type couldn't be
  * detected according to return type (because otherwise finder will fail on type conversion after query)</p>
@@ -49,8 +54,10 @@ import java.util.Set;
  * <p>It is possible to replace default orient command building logic (conversion of query to orient sql command).
  * Simply register new implementation of CommandBuilder: bind(CommandBuilder.class).to(MyCommandBuilder.class)</p>
  * <p>Query result converter may be overridden too: bind(ResultConverter.class).to(MyResultConverter.class)</p>
- * <p>Also, there is predefined AutoScanFinderModule, which is able to find your finders automatically with classpath scanning</p>
+ * <p>Also, there is predefined AutoScanFinderModule, which is able to find your finders automatically
+ * with classpath scanning</p>
  * <p>Based on guice-persist jpa module com.google.inject.persist.jpa.JpaPersistModule</p>
+ *
  * @author Vyacheslav Rusakov
  * @since 30.07.2014
  */
@@ -68,9 +75,10 @@ public class FinderModule extends AbstractModule {
      *
      * @param finderInterface array of finder interfaces
      */
-    public FinderModule(Class<?>... finderInterface) {
-        if (finderInterface.length > 0)
+    public FinderModule(final Class<?>... finderInterface) {
+        if (finderInterface.length > 0) {
             dynamicFinders.addAll(Arrays.asList(finderInterface));
+        }
     }
 
     /**
@@ -98,7 +106,8 @@ public class FinderModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        bind(DbType.class).annotatedWith(Names.named("orient.finder.default.connection")).toInstance(defaultConnectionToUse);
+        bind(DbType.class).annotatedWith(Names.named("orient.finder.default.connection"))
+                .toInstance(defaultConnectionToUse);
 
         // extension points
         bind(CommandBuilder.class);
@@ -139,11 +148,11 @@ public class FinderModule extends AbstractModule {
     }
 
     /**
-     * Register executor for specific connection type
+     * Register executor for specific connection type.
      *
      * @param executor executor type
      */
-    protected void bindExecutor(Class<? extends FinderExecutor> executor) {
+    protected void bindExecutor(final Class<? extends FinderExecutor> executor) {
         bind(executor).in(Singleton.class);
         executorsMultibinder.addBinding().to(executor);
     }
@@ -157,7 +166,7 @@ public class FinderModule extends AbstractModule {
      */
     protected void loadOptionalExecutor(final String executorBinder) {
         try {
-            Method bindExecutor = FinderModule.class.getDeclaredMethod("bindExecutor", Class.class);
+            final Method bindExecutor = FinderModule.class.getDeclaredMethod("bindExecutor", Class.class);
             bindExecutor.setAccessible(true);
             try {
                 Class.forName(executorBinder)
@@ -182,8 +191,9 @@ public class FinderModule extends AbstractModule {
             return;
         }
 
-        @SuppressWarnings("unchecked") // Proxy must produce instance of type given.
-                T proxy = (T) Proxy
+        // Proxy must produce instance of type given.
+        @SuppressWarnings("unchecked")
+        final T proxy = (T) Proxy
                 .newProxyInstance(Thread.currentThread().getContextClassLoader(), new Class<?>[]{iface},
                         finderInvoker);
 
@@ -198,7 +208,7 @@ public class FinderModule extends AbstractModule {
         }
 
         for (Method method : iface.getMethods()) {
-            DynamicFinder finder = DynamicFinder.from(method);
+            final DynamicFinder finder = DynamicFinder.from(method);
             if (null == finder) {
                 addError("Dynamic Finder methods must be annotated with @Finder, but " + iface
                         + "." + method.getName() + " was not");

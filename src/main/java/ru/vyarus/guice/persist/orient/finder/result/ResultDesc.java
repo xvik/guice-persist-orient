@@ -1,11 +1,12 @@
 package ru.vyarus.guice.persist.orient.finder.result;
 
 /**
- * Result description for conversion
+ * Result description for conversion.
  *
  * @author Vyacheslav Rusakov
  * @since 04.08.2014
  */
+@SuppressWarnings("checkstyle:visibilitymodifier")
 public class ResultDesc {
     public Object result;
     public ResultType type;

@@ -24,18 +24,18 @@ public class GraphFinderExecutor extends AbstractFinderExecutor {
     private Provider<OrientBaseGraph> provider;
 
     @Inject
-    public GraphFinderExecutor(Provider<OrientBaseGraph> provider, CommandBuilder commandBuilder) {
+    public GraphFinderExecutor(final Provider<OrientBaseGraph> provider, final CommandBuilder commandBuilder) {
         super(commandBuilder);
         this.provider = provider;
     }
 
     @Override
-    public boolean accept(Class<?> returnType) {
+    public boolean accept(final Class<?> returnType) {
         return ACCEPT_TYPES.contains(returnType);
     }
 
     @Override
-    protected OCommandRequest wrapCommand(OCommandRequest command) {
+    protected OCommandRequest wrapCommand(final OCommandRequest command) {
         return provider.get().command(command);
     }
 

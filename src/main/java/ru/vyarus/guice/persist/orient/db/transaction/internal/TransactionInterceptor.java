@@ -13,6 +13,9 @@ import ru.vyarus.guice.persist.orient.db.transaction.template.TxTemplate;
 import javax.inject.Inject;
 import java.lang.reflect.Method;
 
+/**
+ * Implements @Transaction annotation interception logic.
+ */
 public class TransactionInterceptor implements MethodInterceptor {
     private final Logger logger = LoggerFactory.getLogger(TransactionInterceptor.class);
 

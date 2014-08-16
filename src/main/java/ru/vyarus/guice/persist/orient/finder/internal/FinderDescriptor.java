@@ -3,7 +3,6 @@ package ru.vyarus.guice.persist.orient.finder.internal;
 import ru.vyarus.guice.persist.orient.finder.FinderExecutor;
 import ru.vyarus.guice.persist.orient.finder.result.ResultType;
 
-import java.util.Collection;
 import java.util.Map;
 
 /**
@@ -14,6 +13,7 @@ import java.util.Map;
  * @author Vyacheslav Rusakov
  * @since 30.07.2014
  */
+@SuppressWarnings("checkstyle:visibilitymodifier")
 public class FinderDescriptor {
 
     // Finder.namedQuery

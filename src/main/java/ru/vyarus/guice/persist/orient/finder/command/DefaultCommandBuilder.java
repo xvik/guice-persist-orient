@@ -24,11 +24,9 @@ public class DefaultCommandBuilder implements CommandBuilder {
         String query = desc.isFunctionCall ? desc.function : desc.query;
         query = query.trim();
         final boolean isQuery = !desc.isFunctionCall && query.toLowerCase().startsWith("select");
-        if (isQuery) {
-            // no support for skip in functions and update/insert
-            if (desc.start > 0) {
-                query += " SKIP " + desc.start;
-            }
+        // no support for skip in functions and update/insert
+        if (isQuery && desc.start > 0) {
+            query += " SKIP " + desc.start;
         }
 
         OCommandRequest command;
@@ -38,7 +36,7 @@ public class DefaultCommandBuilder implements CommandBuilder {
             command = isQuery ? new OSQLSynchQuery<Object>(query) : new OCommandSQL(query);
         }
 
-        if (desc.max > 0 && (desc.isFunctionCall || isQuery) ) {
+        if (desc.max > 0 && (desc.isFunctionCall || isQuery)) {
             // must not be set for update command
             command.setLimit(desc.max);
         }

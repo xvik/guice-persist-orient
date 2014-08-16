@@ -23,7 +23,7 @@ public class TxConfig {
     }
 
     /**
-     * Changess default transaction type (specified in module)
+     * Changes default transaction type (specified in module).
      *
      * @param txtype type to use within transaction (NOTX type disables transaction)
      */
@@ -78,8 +78,8 @@ public class TxConfig {
 
     @Override
     public String toString() {
-        return "{type " + txtype +
-                (rollbackOn.size() > 0 ? " rollbackOn " + rollbackOn : "") +
-                (ignore.size() > 0 ? " ignore " + ignore : "") + "}";
+        return "{type " + txtype
+                + (rollbackOn.size() > 0 ? " rollbackOn " + rollbackOn : "")
+                + (ignore.size() > 0 ? " ignore " + ignore : "") + "}";
     }
 }

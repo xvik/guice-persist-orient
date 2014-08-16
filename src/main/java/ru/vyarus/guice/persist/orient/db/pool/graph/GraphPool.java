@@ -19,8 +19,8 @@ import javax.inject.Inject;
  * This pool works a bit differently from other pools: actually it maintains document connections pool and
  * creates graph connection instances when requested. If you look orient graph pool it works the same way.
  * <p>Also, one more thread local is used to mold created graph connection instances during transaction
- * (it's just to avoid redundant objects creation on every connection request; underlining transaction is handled by document connection,
- * controlled by abstract pool)</p>
+ * (it's just to avoid redundant objects creation on every connection request; underlining transaction
+ * is handled by document connection, controlled by abstract pool)</p>
  *
  * @author Vyacheslav Rusakov
  * @since 24.07.2014
@@ -46,9 +46,9 @@ public class GraphPool extends AbstractPool<OrientBaseGraph> {
     @Override
     protected OrientBaseGraph convertDbInstance(final ODatabaseComplex<?> db) {
         if (transaction.get() == null) {
-            ODatabaseDocumentTx documentDb = (ODatabaseDocumentTx) db;
-            final OrientBaseGraph graph = transactionManager.getActiveTransactionType() == OTransaction.TXTYPE.NOTX ?
-                    new OrientGraphNoTx(documentDb) : new OrientGraph(documentDb);
+            final ODatabaseDocumentTx documentDb = (ODatabaseDocumentTx) db;
+            final OrientBaseGraph graph = transactionManager.getActiveTransactionType() == OTransaction.TXTYPE.NOTX
+                    ? new OrientGraphNoTx(documentDb) : new OrientGraph(documentDb);
             transaction.set(graph);
         }
         return transaction.get();

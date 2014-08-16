@@ -20,8 +20,8 @@ import javax.inject.Singleton;
 import java.util.Set;
 
 /**
- * Responsible for database lifecycle. Creates db if necessary and call schema and data initializers for just opened database.
- * Also, responsible for pools lifecycle.
+ * Responsible for database lifecycle. Creates db if necessary and call schema and data initializers
+ * for just opened database. Also, responsible for pools lifecycle.
  *
  * @author Vyacheslav Rusakov
  * @see ru.vyarus.guice.persist.orient.db.scheme.SchemeInitializer
@@ -42,14 +42,14 @@ public class DatabaseManager implements PersistService {
     private TxTemplate txTemplate;
 
     // used to allow multiple start/stop calls (could be if service managed directly and PersistFilter registered)
-    private boolean initialized = false;
+    private boolean initialized;
     private Set<DbType> supportedTypes;
 
     @Inject
     public DatabaseManager(
-            final @Named("orient.uri") String uri,
-            final @Named("orient.user") String user,
-            final @Named("orient.password") String password,
+            @Named("orient.uri") final String uri,
+            @Named("orient.user") final String user,
+            @Named("orient.password") final String password,
             final Set<PoolManager> pools,
             final SchemeInitializer modelInitializer,
             final DataInitializer dataInitializer,
@@ -71,8 +71,8 @@ public class DatabaseManager implements PersistService {
     @Override
     public void start() {
         if (initialized) {
-            logger.warn("Duplicate initialization prevented. Check your initialization logic: " +
-                    "persistent service should not be started two or more times");
+            logger.warn("Duplicate initialization prevented. Check your initialization logic: "
+                    + "persistent service should not be started two or more times");
             return;
         }
 
@@ -124,13 +124,13 @@ public class DatabaseManager implements PersistService {
      * @param type db type to check
      * @return true if db tpe supported (supporting pool regisntered), false otherwise
      */
-    public boolean isTypeSupported(DbType type) {
+    public boolean isTypeSupported(final DbType type) {
         return supportedTypes.contains(type);
     }
 
     protected void createIfRequired() {
         // create if required (without creation work with db is impossible)
-        ODatabaseDocumentTx database = new ODatabaseDocumentTx(uri);
+        final ODatabaseDocumentTx database = new ODatabaseDocumentTx(uri);
         try {
             if (!database.exists()) {
                 logger.info("Creating database: '{}'", uri);
@@ -150,12 +150,12 @@ public class DatabaseManager implements PersistService {
      *
      * @param db notx document connection
      */
-    protected void initGraphDb(ODatabaseDocumentTx db) {
+    protected void initGraphDb(final ODatabaseDocumentTx db) {
         try {
             Class.forName("com.tinkerpop.blueprints.impls.orient.OrientGraph")
                     .getConstructor(ODatabaseDocumentTx.class).newInstance(db);
-        } catch (ClassNotFoundException ignore) {
-            // no graph support required
+        } catch (ClassNotFoundException ignored) {
+            logger.trace("No graph db support found", ignored);
         } catch (Exception ex) {
             throw new IllegalStateException("Failed to init graph connection", ex);
         }
@@ -176,7 +176,7 @@ public class DatabaseManager implements PersistService {
                 pool.stop();
             } catch (Throwable ex) {
                 // continue to properly shutdown all pools
-                logger.error("Pool '" + pool.getType() + "' shutdown failed ("+pool.getClass()+")", ex);
+                logger.error("Pool '" + pool.getType() + "' shutdown failed (" + pool.getClass() + ")", ex);
             }
         }
     }

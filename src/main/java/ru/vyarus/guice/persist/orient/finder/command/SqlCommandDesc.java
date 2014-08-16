@@ -8,6 +8,7 @@ import java.util.Map;
  * @author Vyacheslav Rusakov
  * @since 31.07.2014
  */
+@SuppressWarnings("checkstyle:visibilitymodifier")
 public class SqlCommandDesc {
     public boolean isFunctionCall;
     public String function;

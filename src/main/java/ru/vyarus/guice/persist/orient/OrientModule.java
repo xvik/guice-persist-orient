@@ -31,16 +31,19 @@ import java.lang.reflect.Method;
  * <li>use graph connection for complex selects and object db for entities manipulation</li>
  * <li>etc</li>
  * </ul>
- * <p>Module initialize set of connection pools. By default its object, document and graph (but depends on available jars in classpath:
+ * <p>Module initialize set of connection pools. By default its object, document and graph
+ * (but depends on available jars in classpath:
  * if graph or object jars are not in classpath these pools will not be loaded). Set of pools may be modified
  * by overriding {@code #configurePools()} method.</p>
- * To initialize (create or update) database schema register {@code ru.vyarus.guice.persist.orient.db.scheme.SchemeInitializer}
- * implementation. By default no-op implementation registered. Two implementations provided to automatically initialize scheme from
- * domain objects:
+ * To initialize (create or update) database schema register
+ * {@code ru.vyarus.guice.persist.orient.db.scheme.SchemeInitializer}
+ * implementation. By default no-op implementation registered. Two implementations provided to
+ * automatically initialize scheme from domain objects:
  * <ul>
  * <li>{@code ru.vyarus.guice.persist.orient.db.scheme.PackageSchemeInitializer}.
  * Useful if all domain entities located in one package</li>
- * <li>{@code ru.vyarus.guice.persist.orient.db.scheme.AutoScanSchemeInitializer}. Useful if domian model located in different packages
+ * <li>{@code ru.vyarus.guice.persist.orient.db.scheme.AutoScanSchemeInitializer}.
+ * Useful if domian model located in different packages
  * or to provide more control on which entities are mapped.</li>
  * </ul>
  * There are predefined modules with predefined scheme initializers:
@@ -48,15 +51,18 @@ import java.lang.reflect.Method;
  * <li>{@code ru.vyarus.guice.persist.orient.support.PackageSchemeOrientModule}</li>
  * <li>{@code ru.vyarus.guice.persist.orient.support.AutoScanSchemeOrientModule}</li>
  * </ul>
- * NOTE: it's better to not perform db updates in schema initializer, because schema updates must be performed in no-tx mode.
- * <p>To initialize or migrate database data you can define {@code ru.vyarus.guice.persist.orient.db.data.DataInitializer}. By default,
+ * NOTE: it's better to not perform db updates in schema initializer, because schema updates
+ * must be performed in no-tx mode.
+ * <p>To initialize or migrate database data you can define
+ * {@code ru.vyarus.guice.persist.orient.db.data.DataInitializer}. By default,
  * no-op implementation registered.</p>
  * <p>Each pool will maintain its own transaction, but all transactions are orchestrated with
- * {@code ru.vyarus.guice.persist.orient.db.transaction.TransactionManager}. Each pool maintains lazy transaction, so when transaction
- * manager starts new transaction, pool will not initialize connection, until connection will be requested. Most likely, most of the time
- * single connection type will be used and other pools will not do anything.</p>
- * <p>It's possible to override default transaction manager implementation: simply register new manager implementation of
- * {@code ru.vyarus.guice.persist.orient.db.transaction.TransactionManager}</p>
+ * {@code ru.vyarus.guice.persist.orient.db.transaction.TransactionManager}.
+ * Each pool maintains lazy transaction, so when transaction
+ * manager starts new transaction, pool will not initialize connection, until connection will be requested.
+ * Most likely, most of the time single connection type will be used and other pools will not do anything.</p>
+ * <p>It's possible to override default transaction manager implementation: simply register new manager
+ * implementation of {@code ru.vyarus.guice.persist.orient.db.transaction.TransactionManager}</p>
  * <p>Transaction could be initialized with @Transactional annotation or using transaction templates (
  * {@code ru.vyarus.guice.persist.orient.db.transaction.template.TxTemplate} or
  * {@code ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxTemplate}. To define transaction type
@@ -68,11 +74,13 @@ import java.lang.reflect.Method;
  * <li>Provider&lt;ODatabaseDocumentTx&gt; for document db connection</li>
  * <li>Provider&lt;OrientBaseGraph&gt; for graph db connection (transactional or not)</li>
  * <li>Provider&lt;OrientGraph&gt; for transactional graph db connection (will fail if notx transaction type)</li>
- * <li>Provider&lt;OrientGraphNoTx&gt; for non transactional graph db connection (will provide only for notx transaction type, otherwise fail)</li>
+ * <li>Provider&lt;OrientGraphNoTx&gt; for non transactional graph db connection (will provide only
+ * for notx transaction type, otherwise fail)</li>
  * </ul>
  * Provider will fail to provide connection if unit of work is not defined (using annotation or transactional template)
- * <p>Persistent service must be manually started or stopped: obtain PersistService and call .start() and .stop() when appropriate.
- * This will start/stop all registered pools. Without initialization any try to obtain connection will fail.</p>
+ * <p>Persistent service must be manually started or stopped: obtain PersistService and call .start() and .stop() when
+ * appropriate. This will start/stop all registered pools. Without initialization any try
+ * to obtain connection will fail.</p>
  *
  * @see ru.vyarus.guice.persist.orient.db.transaction.TransactionManager for details about transactions
  */
@@ -113,8 +121,10 @@ public class OrientModule extends PersistModule {
     }
 
     /**
-     * Use if you need to change transactions type globally or define some generic exceptions to rollback handling (see @Transactional annotation)
-     * By default, {@code OTransaction.TXTYPE.OPTIMISTIC} transactions enabled and no exceptions defined for rollback (every exception will lead to rollback).
+     * Use if you need to change transactions type globally or define some generic exceptions to rollback
+     * handling (see @Transactional annotation)
+     * By default, {@code OTransaction.TXTYPE.OPTIMISTIC} transactions enabled and no exceptions defined
+     * for rollback (every exception will lead to rollback).
      *
      * @param txConfig default tx config to use for transactions without explicit config definition.
      * @return module itself for chained calls
@@ -185,7 +195,7 @@ public class OrientModule extends PersistModule {
      * @param <T>  connection object type
      * @param <P>  pool type
      */
-    protected final <T, P extends PoolManager<T>> void bindPool(Class<T> type, Class<P> pool) {
+    protected final <T, P extends PoolManager<T>> void bindPool(final Class<T> type, final Class<P> pool) {
         bind(pool).in(Singleton.class);
         poolsMultibinder.addBinding().to(pool);
         bind(type).toProvider(pool);
@@ -200,7 +210,7 @@ public class OrientModule extends PersistModule {
      */
     protected void loadOptionalPool(final String poolBinder) {
         try {
-            Method bindPool = OrientModule.class.getDeclaredMethod("bindPool", Class.class, Class.class);
+            final Method bindPool = OrientModule.class.getDeclaredMethod("bindPool", Class.class, Class.class);
             bindPool.setAccessible(true);
             try {
                 Class.forName(poolBinder)
@@ -209,9 +219,9 @@ public class OrientModule extends PersistModule {
             } finally {
                 bindPool.setAccessible(false);
             }
-        } catch (Exception ignore) {
+        } catch (Exception ignored) {
             if (logger.isTraceEnabled()) {
-                logger.trace("Failed to process pool loader " + poolBinder, ignore);
+                logger.trace("Failed to process pool loader " + poolBinder, ignored);
             }
         }
     }

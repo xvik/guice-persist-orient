@@ -28,7 +28,7 @@ public class PackageSchemeInitializer extends AbstractObjectInitializer {
     private String modelPkg;
 
     @Inject
-    public PackageSchemeInitializer(final @Named("orient.model.package") String modelPkg,
+    public PackageSchemeInitializer(@Named("orient.model.package") final String modelPkg,
                                     final Provider<OObjectDatabaseTx> dbProvider,
                                     final Provider<DatabaseManager> databaseManager) {
         super(dbProvider, databaseManager);

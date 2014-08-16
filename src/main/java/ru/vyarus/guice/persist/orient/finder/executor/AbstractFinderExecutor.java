@@ -26,11 +26,11 @@ public abstract class AbstractFinderExecutor implements FinderExecutor {
 
         Object result;
         if (desc.useNamedParams) {
-            result = desc.namedParams.size() > 0 ?
-                    command.execute(desc.namedParams) : command.execute();
+            result = desc.namedParams.size() > 0
+                    ? command.execute(desc.namedParams) : command.execute();
         } else {
-            result = desc.params.length > 0 ?
-                    command.execute(desc.params) : command.execute();
+            result = desc.params.length > 0
+                    ? command.execute(desc.params) : command.execute();
         }
         return result;
     }
