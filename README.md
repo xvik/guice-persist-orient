@@ -12,8 +12,8 @@ may be performed as object database (jpa style) and graph queries for complex ca
 
 Features:
 * Integration through [guice-persist](https://github.com/google/guice/wiki/GuicePersist) (UnitOfWork, PersistService, @Transactional, dynamic finders supported)
-* Support for [document](https://github.com/orientechnologies/orientdb/wiki/Document-Database), [object](https://github.com/orientechnologies/orientdb/wiki/Object-Database) and
-[graph](https://github.com/orientechnologies/orientdb/wiki/Graph-Database-Tinkerpop) databases
+* Support for [document](http://www.orientechnologies.com/docs/last/orientdb.wiki/Document-Database.html), [object](http://www.orientechnologies.com/docs/last/orientdb.wiki/Object-Database.html) and
+[graph](http://www.orientechnologies.com/docs/last/orientdb.wiki/Graph-Database-Tinkerpop.html) databases
 * Database types support according to classpath (object and graph db support activated by adding jars to classpath)
 * Auto mapping entities in package to db scheme or using classpath scanning to map annotated entities
 * Auto db creation
@@ -67,7 +67,7 @@ your classpath use `javassist`, check that newer or older version not appear in 
 install(new OrientModule(url, user, password));
 ```
 
-See [orient documentation](https://github.com/orientechnologies/orientdb/wiki/Concepts#database_url) for supported db types.
+See [orient documentation](http://www.orientechnologies.com/docs/last/orientdb.wiki/Concepts.html#database-url) for supported db types.
 In short:
 * `'memory:dbname'` to use in-memory database
 * `'plocal:dbname'` to use embedded database (no server required, local fs folder will be used); db name must be local fs path
@@ -77,7 +77,7 @@ By default use 'admin/admin' user.
 
 Default transactions configuration may be specified as additional module parameter.
 By default, OPTIMISTIC transactions used (use optimistic locking based on object version, same way as hibernate optimistic locking). 
-NOTX mode disables transactions. Read more about [transactions in orient](https://github.com/orientechnologies/orientdb/wiki/Transactions)
+NOTX mode disables transactions. Read more about [transactions in orient](http://www.orientechnologies.com/docs/last/orientdb.wiki/Transactions.html)
 
 For example, to switch off transactions use:
 
@@ -236,7 +236,7 @@ public List<Model> selectAll() {
 ##### Annotations
 
 `@Finder` allows you
-* to use [function](https://github.com/orientechnologies/orientdb/wiki/Functions) with `namedQuery` attribute (there are no named queries in orient, but functions are close concept (but better))
+* to use [function](http://www.orientechnologies.com/docs/last/orientdb.wiki/Functions.html) with `namedQuery` attribute (there are no named queries in orient, but functions are close concept (but better))
 * define query with `query` attribute
 * override result collection implementation with `returnAs` attribute
 
@@ -272,7 +272,7 @@ int updateWithCount(String name)
 
 Update query return type could be `void`, `int`, `long`, `Integer` and `Long`.
 
-`@FirstResult` and `@MaxResults` may be used to limit query results ([pagination](https://github.com/orientechnologies/orientdb/wiki/Pagination)):
+`@FirstResult` and `@MaxResults` may be used to limit query results ([pagination](http://www.orientechnologies.com/docs/last/orientdb.wiki/Pagination.html)):
 
 ```java
 @Finder(query = "select from Model where name=? and nick=?")
@@ -385,18 +385,18 @@ So if you use `@VertexType` or `@EdgeType` annotations make sure their hierarchy
 
 ### Object mapping specifics
 
-See [orient object mapping documentation](https://github.com/orientechnologies/orientdb/wiki/Object-2-Record-Java-Binding) for object mapping
- ([and general object database page](https://github.com/orientechnologies/orientdb/wiki/Object-Database)).
+See [orient object mapping documentation](http://www.orientechnologies.com/docs/last/orientdb.wiki/Object-2-Record-Java-Binding.html) for object mapping
+ ([and general object database page](http://www.orientechnologies.com/docs/last/orientdb.wiki/Object-Database.html)).
 
 * Orient ignore package, so class may be moved between packages
 * When entity field removed, orient will hold all data already stored in records of that field
 * When entity field type changes, orient WILL NOT migrate automatically (you need to handle it manually, using custom scheme initializer or through
-[orient studio](https://github.com/orientechnologies/orientdb-studio/wiki)).
+[orient studio](http://www.orientechnologies.com/docs/last/orientdb-studio.wiki/Home-page.html)).
 * When class renamed orient will register it as new entity and you will have to manually migrate all data
 (it's possible to use sql commands to rename entity in scheme)
 * To use entity within optimistic transaction, it must have version field (annotated with @Version). You should add field manually or extend all entities from 
 provided base class: `VersionedEntity`
-* JPA annotations can be used to [define cascades](https://github.com/orientechnologies/orientdb/wiki/Object-Database#cascade-deleting)
+* JPA annotations can be used to [define cascades](http://www.orientechnologies.com/docs/last/orientdb.wiki/Object-Database.html#cascade-deleting)
 
 ### Data initialization
 
@@ -442,7 +442,7 @@ only on failed connection.
 
 You can fine-tune transaction to rollback only in soecific exceptions or not rollback on some exceptions (see @Transactional annotation and TxConfig).
 
-Read more about [orient transactions](https://github.com/orientechnologies/orientdb/wiki/Transactions)
+Read more about [orient transactions](http://www.orientechnologies.com/docs/last/orientdb.wiki/Transactions.html)
 
 Default transaction manager implementation could be overridden by simply registering different implementation of TransactionManager interface:
 
@@ -513,10 +513,11 @@ Or globally:
 OGlobalConfiguration.MVRBTREE_NODE_PAGE_SIZE.setValue(2048);
 ```
 
-Read about [all configuration options](https://github.com/orientechnologies/orientdb/wiki/Configuration)
+Read about [all configuration options](http://www.orientechnologies.com/docs/last/orientdb.wiki/Configuration.html)
 
 ### Might also like
 
+* [dropwizard-orient-server](https://github.com/xvik/dropwizard-orient-server) - embedded orientdb server for dropwizard
 * [guice-validator](https://github.com/xvik/guice-validator) - hibernate validator integration for guice 
 (objects validation, method arguments and return type runtime validation)
 * [guice-ext-annotations](https://github.com/xvik/guice-ext-annotations) - @Log, @PostConstruct, @PreDestroy and
