@@ -13,7 +13,7 @@ import ru.vyarus.guice.persist.orient.finder.command.SqlCommandDesc;
  */
 public abstract class AbstractFinderExecutor implements FinderExecutor {
 
-    private CommandBuilder commandBuilder;
+    private final CommandBuilder commandBuilder;
 
     public AbstractFinderExecutor(final CommandBuilder commandBuilder) {
         this.commandBuilder = commandBuilder;

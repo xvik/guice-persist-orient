@@ -14,7 +14,7 @@ import javax.inject.Singleton;
  */
 @Singleton
 public class TxTemplate {
-    private TransactionManager transactionManager;
+    private final TransactionManager transactionManager;
 
     @Inject
     public TxTemplate(final TransactionManager transactionManager) {
@@ -41,24 +41,26 @@ public class TxTemplate {
     public <T> T doInTransaction(final TxConfig config,
                                  final TxAction<T> action) throws Throwable {
 
+        T res;
         if (transactionManager.isTransactionActive()) {
             // execution inside of other transaction
-            return action.execute();
-        }
+            res = action.execute();
+        } else {
+            try {
+                transactionManager.begin(config);
+                res = action.execute();
+                transactionManager.end();
 
-        try {
-            transactionManager.begin(config);
-            final T res = action.execute();
-            transactionManager.end();
-            return res;
-        } catch (Throwable th) {
-            // transaction may be not active if exception happened during commit and
-            // tm already performed rollback action
-            if (transactionManager.isTransactionActive()) {
-                // calling once for nested transactions (or in case it was done manually
-                transactionManager.rollback(th);
+            } catch (Throwable th) {
+                // transaction may be not active if exception happened during commit and
+                // tm already performed rollback action
+                if (transactionManager.isTransactionActive()) {
+                    // calling once for nested transactions (or in case it was done manually
+                    transactionManager.rollback(th);
+                }
+                throw th;
             }
-            throw th;
         }
+        return res;
     }
 }

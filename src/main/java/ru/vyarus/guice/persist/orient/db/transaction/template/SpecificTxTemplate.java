@@ -18,8 +18,8 @@ import javax.inject.Singleton;
 @Singleton
 public class SpecificTxTemplate<C> {
 
-    private TxTemplate template;
-    private Provider<C> provider;
+    private final TxTemplate template;
+    private final Provider<C> provider;
 
     @Inject
     public SpecificTxTemplate(final TxTemplate template,

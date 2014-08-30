@@ -18,7 +18,7 @@ import javax.inject.Singleton;
 @Singleton
 public class OrientGraphNoTxProvider implements Provider<OrientGraphNoTx> {
 
-    private Provider<OrientBaseGraph> provider;
+    private final Provider<OrientBaseGraph> provider;
 
     @Inject
     public OrientGraphNoTxProvider(final Provider<OrientBaseGraph> provider) {

@@ -32,7 +32,7 @@ public class AutoScanSchemeInitializer extends AbstractObjectInitializer {
 
     private final Logger logger = LoggerFactory.getLogger(AutoScanSchemeInitializer.class);
 
-    private String appPkg;
+    private final String appPkg;
 
     @Inject
     public AutoScanSchemeInitializer(@Named("orient.model.package") final String appPkg,
@@ -61,7 +61,7 @@ public class AutoScanSchemeInitializer extends AbstractObjectInitializer {
         } catch (ClassNotFoundException e) {
             throw new IllegalStateException("Failed to resolve model classes from package: " + appPkg, e);
         }
-        Preconditions.checkState(modelClasses.size() > 0,
+        Preconditions.checkState(!modelClasses.isEmpty(),
                 "No model classes found in classpath with base package '" + appPkg + "'");
 
         for (Class<?> cls : modelClasses) {

@@ -21,9 +21,9 @@ import java.util.Set;
 public class DefaultTransactionManager implements TransactionManager {
     private final Logger logger = LoggerFactory.getLogger(DefaultTransactionManager.class);
 
-    private Set<PoolManager> pools;
-    private ThreadLocal<TxConfig> transaction = new ThreadLocal<TxConfig>();
-    private TxConfig defaultConfig;
+    private final Set<PoolManager> pools;
+    private final ThreadLocal<TxConfig> transaction = new ThreadLocal<TxConfig>();
+    private final TxConfig defaultConfig;
 
 
     @Inject
@@ -49,6 +49,7 @@ public class DefaultTransactionManager implements TransactionManager {
     }
 
     @Override
+    @SuppressWarnings("PMD.ExcessiveMethodLength")
     public void end() {
         Preconditions.checkState(isTransactionActive(), "No active transaction found to close");
         logger.trace("Committing transaction");
@@ -99,8 +100,6 @@ public class DefaultTransactionManager implements TransactionManager {
                 return;
             }
         }
-
-
         // performing actual rollback
         try {
             // it's very unlikely for rollback to fail because of db, but may happen because of db impl
@@ -128,7 +127,8 @@ public class DefaultTransactionManager implements TransactionManager {
 
     @Override
     public OTransaction.TXTYPE getActiveTransactionType() {
-        return isTransactionActive() ? transaction.get().getTxtype() : null;
+        Preconditions.checkState(isTransactionActive(), "Call for transaction type, when no active transaction");
+        return transaction.get().getTxtype();
     }
 
     /**

@@ -10,5 +10,6 @@ public class NoOpDataInitializer implements DataInitializer {
 
     @Override
     public void initializeData() {
+        // no-op impl
     }
 }

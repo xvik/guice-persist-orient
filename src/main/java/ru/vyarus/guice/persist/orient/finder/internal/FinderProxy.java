@@ -77,17 +77,7 @@ public class FinderProxy implements MethodInterceptor {
         switch (descriptor.returnType) {
             case COLLECTION:
             case ARRAY:
-                if (descriptor.firstResultParamIndex != null) {
-                    final Number rawStartValue = (Number) arguments[descriptor.firstResultParamIndex];
-                    final Integer startValue = rawStartValue == null ? null : rawStartValue.intValue();
-                    command.start = Objects.firstNonNull(startValue, 0);
-                }
-
-                if (descriptor.maxResultsParamIndex != null) {
-                    final Number rawMaxValue = (Number) arguments[descriptor.maxResultsParamIndex];
-                    final Integer maxValue = rawMaxValue == null ? null : rawMaxValue.intValue();
-                    command.max = Objects.firstNonNull(maxValue, -1);
-                }
+                assignPaginationParams(command, descriptor, arguments);
                 break;
             case PLAIN:
                 // implicitly limit query for single return result (for performance)
@@ -97,6 +87,21 @@ public class FinderProxy implements MethodInterceptor {
                 throw new IllegalStateException("Unsupported return type " + descriptor.returnType);
         }
         return command;
+    }
+
+    private void assignPaginationParams(final SqlCommandDesc command,
+                                        final FinderDescriptor descriptor, final Object[] arguments) {
+        if (descriptor.firstResultParamIndex != null) {
+            final Number rawStartValue = (Number) arguments[descriptor.firstResultParamIndex];
+            final Integer startValue = rawStartValue == null ? null : rawStartValue.intValue();
+            command.start = Objects.firstNonNull(startValue, 0);
+        }
+
+        if (descriptor.maxResultsParamIndex != null) {
+            final Number rawMaxValue = (Number) arguments[descriptor.maxResultsParamIndex];
+            final Integer maxValue = rawMaxValue == null ? null : rawMaxValue.intValue();
+            command.max = Objects.firstNonNull(maxValue, -1);
+        }
     }
 
     private Object[] getParams(final Integer[] positions, final Object[] arguments) {

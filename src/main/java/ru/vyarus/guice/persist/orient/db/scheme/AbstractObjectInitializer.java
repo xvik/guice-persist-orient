@@ -30,11 +30,14 @@ import ru.vyarus.guice.persist.orient.db.scheme.annotation.VertexType;
  * @since 24.07.2014
  */
 public abstract class AbstractObjectInitializer implements SchemeInitializer {
-    private Logger logger = LoggerFactory.getLogger(getClass());
+    private static final String MODEL_CLASS_EXIST_MESSAGE =
+            "Model class %s can't be registered as extending %s, because %s already registered ";
 
-    private Provider<OObjectDatabaseTx> dbProvider;
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+
+    private final Provider<OObjectDatabaseTx> dbProvider;
     // provider to avoid circular dependency
-    private Provider<DatabaseManager> databaseManager;
+    private final Provider<DatabaseManager> databaseManager;
 
     protected AbstractObjectInitializer(final Provider<OObjectDatabaseTx> dbProvider,
                                         final Provider<DatabaseManager> databaseManager) {
@@ -67,41 +70,33 @@ public abstract class AbstractObjectInitializer implements SchemeInitializer {
         Preconditions.checkState(vertex == null || edge == null,
                 "You can't use both Vertex and Edge annotations together, choose one.");
 
-        if (vertex != null || edge != null) {
-            registerEntityAsGraph(modelClass, vertex != null);
+        final boolean isVertex = vertex != null;
+        if (isVertex || edge != null) {
+            if (!databaseManager.get().isTypeSupported(DbType.GRAPH)) {
+                logger.warn("Entity {} graph declaration ignored, because no graph database support available.",
+                        modelClass);
+            } else {
+                registerEntityAsGraph(modelClass, isVertex);
+            }
         }
-
         final OObjectDatabaseTx db = dbProvider.get();
         db.getEntityManager().registerEntityClass(modelClass);
     }
 
     private void registerEntityAsGraph(final Class modelClass, final boolean isVertex) {
-        if (!databaseManager.get().isTypeSupported(DbType.GRAPH)) {
-            logger.warn("Entity {} graph declaration ignored, because no graph database support available.",
-                    modelClass);
-            return;
-        }
-        // hierarchy support (topmost class must be vertex)
-        Class<?> supertype = modelClass;
-        Class<?> baseType = modelClass;
-        while (!Object.class.equals(supertype) && supertype != null) {
-            baseType = supertype;
-            supertype = supertype.getSuperclass();
-        }
-
+        final Class<?> baseType = findRootType(modelClass);
         final String targetSuper = isVertex ? "V" : "E";
         final OObjectDatabaseTx db = dbProvider.get();
         if (db.getMetadata().getSchema().existsClass(baseType.getSimpleName())) {
             final OClass cls = db.getMetadata().getSchema().getClass(baseType).getSuperClass();
-            final String alreadyRegMsg =
-                    "Model class %s can't be registered as extending %s, because %s already registered ";
 
             Preconditions.checkState(cls != null, String.format(
-                    alreadyRegMsg + "and can't be updated to support graph according to annotation",
+                    MODEL_CLASS_EXIST_MESSAGE
+                            + "and can't be updated to support graph according to annotation",
                     modelClass, targetSuper, baseType));
 
             Preconditions.checkState(cls.getName().equals(targetSuper), String.format(
-                    alreadyRegMsg + "with different superclass %s and can't be "
+                    MODEL_CLASS_EXIST_MESSAGE + "with different superclass %s and can't be "
                             + "updated to support graph according to annotation",
                     modelClass, targetSuper, baseType, cls.getName()));
 
@@ -110,5 +105,16 @@ public abstract class AbstractObjectInitializer implements SchemeInitializer {
         }
         logger.debug("Creating model class scheme {} as extension to {}", baseType, targetSuper);
         db.command(new OCommandSQL("create class " + baseType.getSimpleName() + " extends " + targetSuper)).execute();
+    }
+
+    private Class<?> findRootType(final Class<?> type) {
+        // hierarchy support (topmost class must be vertex)
+        Class<?> supertype = type;
+        Class<?> baseType = type;
+        while (!Object.class.equals(supertype) && supertype != null) {
+            baseType = supertype;
+            supertype = supertype.getSuperclass();
+        }
+        return baseType;
     }
 }

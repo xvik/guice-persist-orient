@@ -23,9 +23,9 @@ import java.util.List;
  */
 @Singleton
 public class PackageSchemeInitializer extends AbstractObjectInitializer {
-    private Logger logger = LoggerFactory.getLogger(PackageSchemeInitializer.class);
+    private final Logger logger = LoggerFactory.getLogger(PackageSchemeInitializer.class);
 
-    private String modelPkg;
+    private final String modelPkg;
 
     @Inject
     public PackageSchemeInitializer(@Named("orient.model.package") final String modelPkg,
@@ -47,7 +47,7 @@ public class PackageSchemeInitializer extends AbstractObjectInitializer {
         } catch (ClassNotFoundException e) {
             throw new IllegalStateException("Failed to resolve model classes from package: " + modelPkg, e);
         }
-        Preconditions.checkState(modelClasses.size() > 0,
+        Preconditions.checkState(!modelClasses.isEmpty(),
                 "No model classes found in classpath with base package '" + modelPkg + "'");
         for (Class<?> cls : modelClasses) {
             registerClass(cls);

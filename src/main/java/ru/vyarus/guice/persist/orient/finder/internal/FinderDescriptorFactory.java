@@ -35,17 +35,18 @@ import static ru.vyarus.guice.persist.orient.finder.result.ResultType.*;
  * @since 30.07.2014
  */
 @Singleton
+@SuppressWarnings("PMD")
 public class FinderDescriptorFactory {
     private static final List<Class> PRIMITIVE_NUMBERS = ImmutableList.<Class>of(int.class, long.class);
 
     private final Logger logger = LoggerFactory.getLogger(FinderDescriptorFactory.class);
     private final Map<Method, FinderDescriptor> finderCache = new MapMaker().weakKeys().makeMap();
 
-    private Set<FinderExecutor> executors;
-    private FinderExecutor defaultExecutor;
+    private final Set<FinderExecutor> executors;
+    private final FinderExecutor defaultExecutor;
 
     // lock will not affect performance for cached descriptors, just to make sure nothing was build two times
-    private ReentrantLock lock = new ReentrantLock();
+    private final ReentrantLock lock = new ReentrantLock();
 
     @Inject
     public FinderDescriptorFactory(final Set<FinderExecutor> executors,
@@ -57,43 +58,48 @@ public class FinderDescriptorFactory {
 
     public FinderDescriptor create(final Method method) throws Throwable {
         FinderDescriptor descriptor = finderCache.get(method);
-        if (null != descriptor) {
-            return descriptor;
-        }
+        if (descriptor == null) {
+            lock.lock();
+            try {
+                if (finderCache.get(method) != null) {
+                    // finder could be created while thread wait for lock
+                    descriptor = finderCache.get(method);
+                } else {
 
-        lock.lock();
-        try {
-            if (finderCache.get(method) != null) {
-                return finderCache.get(method);
+                    descriptor = buildDescriptor(method);
+                    // internal check
+                    Preconditions.checkState(finderCache.get(method) == null,
+                            "Bad concurrency: descriptor already present in cache");
+                    finderCache.put(method, descriptor);
+                }
+            } finally {
+                lock.unlock();
             }
-            final Finder finderAnnotation = method.getAnnotation(Finder.class);
-
-            final String functionName = Strings.emptyToNull(finderAnnotation.namedQuery());
-            final String query = Strings.emptyToNull(finderAnnotation.query());
-            Preconditions.checkState(Strings.isNullOrEmpty(functionName) || Strings.isNullOrEmpty(query),
-                    "Choose what to use function or query, but not both");
-
-            final Class<? extends Collection> returnCollectionType = finderAnnotation.returnAs();
-
-            descriptor = new FinderDescriptor();
-            descriptor.functionName = functionName;
-            descriptor.query = query;
-            descriptor.isFunctionCall = functionName != null;
-
-            analyzeReturnType(method,
-                    Collection.class.equals(returnCollectionType) ? null : returnCollectionType,
-                    descriptor);
-            analyzeExecutor(method, descriptor);
-            analyzeParameters(method, descriptor);
-
-            // internal check
-            Preconditions.checkState(finderCache.get(method) == null,
-                    "Bad concurrency: descriptor already present in cache");
-            finderCache.put(method, descriptor);
-            return descriptor;
-        } finally {
-            lock.unlock();
         }
+        return descriptor;
+    }
+
+    private FinderDescriptor buildDescriptor(final Method method) {
+        final Finder finderAnnotation = method.getAnnotation(Finder.class);
+
+        final String functionName = Strings.emptyToNull(finderAnnotation.namedQuery());
+        final String query = Strings.emptyToNull(finderAnnotation.query());
+        check(Strings.isNullOrEmpty(functionName) || Strings.isNullOrEmpty(query),
+                "Choose what to use function or query, but not both");
+
+        final Class<? extends Collection> returnCollectionType = finderAnnotation.returnAs();
+
+        final FinderDescriptor descriptor = new FinderDescriptor();
+        descriptor.functionName = functionName;
+        descriptor.query = query;
+        descriptor.isFunctionCall = functionName != null;
+
+        analyzeReturnType(method,
+                Collection.class.equals(returnCollectionType) ? null : returnCollectionType,
+                descriptor);
+        analyzeExecutor(method, descriptor);
+        analyzeParameters(method, descriptor);
+        return descriptor;
     }
 
     private void analyzeReturnType(final Method method,
@@ -102,7 +108,7 @@ public class FinderDescriptorFactory {
         final Class<?> returnClass = method.getReturnType();
 
         if (returnCollectionType != null) {
-            Preconditions.checkState(returnClass.isAssignableFrom(returnCollectionType),
+            check(returnClass.isAssignableFrom(returnCollectionType),
                     String.format("Requested collection %s is incompatible with method return type %s",
                             returnCollectionType, returnClass));
             descriptor.expectType = returnCollectionType;
@@ -162,7 +168,7 @@ public class FinderDescriptorFactory {
                 executor = find(requestedType);
             }
         }
-        Preconditions.checkState(executor != null,
+        check(executor != null,
                 "Executor not found for type set in @Use annotation " + requestedType);
         descriptor.executor = executor;
     }
@@ -234,14 +240,12 @@ public class FinderDescriptorFactory {
             bindParam(namedAnnotation.value(), pos, context, method);
             return true;
         } else if (FirstResult.class.equals(annotationType)) {
-            Preconditions.checkState(descriptor.firstResultParamIndex == null,
-                    "Duplicate @FirstResult definition");
+            check(descriptor.firstResultParamIndex == null, "Duplicate @FirstResult definition");
             descriptor.firstResultParamIndex = pos;
             isNumber(method.getParameterTypes()[pos], "Number must be used as @FirstResult parameter");
             return true;
         } else if (MaxResults.class.equals(annotationType)) {
-            Preconditions.checkState(descriptor.maxResultsParamIndex == null,
-                    "Duplicate @MaxResults definition");
+            check(descriptor.maxResultsParamIndex == null, "Duplicate @MaxResults definition");
             descriptor.maxResultsParamIndex = pos;
             isNumber(method.getParameterTypes()[pos], "Number must be used as @MaxResults parameter");
             return true;
@@ -270,16 +274,16 @@ public class FinderDescriptorFactory {
             }
         } else {
             // if first parameter was named all other must be named too (without duplicates)
-            Preconditions.checkState(name != null, "Named parameter not annotated at position " + position);
-            Preconditions.checkState(context.namedParams.get(name) == null, String.format(
-                    "Duplicate parameter %s declaration at position %s", name, position));
+            check(name != null, "Named parameter not annotated at position %s", position);
+            check(context.namedParams.get(name) == null,
+                    "Duplicate parameter %s declaration at position %s", name, position);
             context.namedParams.put(name, position);
         }
     }
 
     private void isNumber(final Class type, final String message) {
         final boolean isPrimitiveNumber = type.isPrimitive() && PRIMITIVE_NUMBERS.contains(type);
-        Preconditions.checkState(isPrimitiveNumber || Number.class.isAssignableFrom(type), message);
+        check(isPrimitiveNumber || Number.class.isAssignableFrom(type), message);
     }
 
     private FinderExecutor find(final DbType type) {
@@ -289,6 +293,12 @@ public class FinderDescriptorFactory {
             }
         }
         return null;
+    }
+
+    private void check(final boolean condition, final String message, final Object... args) {
+        if (!condition) {
+            throw new FinderDefinitionException(String.format(message, args));
+        }
     }
 
     /**

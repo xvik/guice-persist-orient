@@ -23,8 +23,8 @@ import ru.vyarus.guice.persist.orient.db.transaction.TransactionManager;
 public abstract class AbstractPool<T> implements PoolManager<T> {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    private TransactionManager transactionManager;
-    private ThreadLocal<ODatabaseComplex> transaction = new ThreadLocal<ODatabaseComplex>();
+    private final TransactionManager transactionManager;
+    private final ThreadLocal<ODatabaseComplex> transaction = new ThreadLocal<ODatabaseComplex>();
     private ODatabasePoolBase pool;
     private String uri;
     private String user;
@@ -44,6 +44,7 @@ public abstract class AbstractPool<T> implements PoolManager<T> {
     }
 
     @Override
+    @SuppressWarnings("PMD.NullAssignment")
     public void stop() {
         if (pool != null) {
             pool.close();
@@ -109,27 +110,7 @@ public abstract class AbstractPool<T> implements PoolManager<T> {
             Preconditions.checkState(transactionManager.isTransactionActive(), String.format(
                     "Can't obtain connection from pool %s: no transaction defined.", getType()));
 
-            // its definitely not normal that pool returns closed connections, but possible if used improperly
-            ODatabaseComplex db = (ODatabaseComplex) pool.acquire();
-            if (db.isClosed()) {
-                logger.warn("ATTENTION: Pool {} return closed connection, restarting pool. "
-                        + "This is NOT normal situation: in spite of the fact that your logic will perform "
-                        + "correctly, you loose predefined connections which may be very harmful for "
-                        + "performance (especially if problem appear often). Most likely reason is "
-                        + "closing underlying: e.g. connection.commit().close() or "
-                        + "connection.getUnderlying().close(). Check your code: you should not call "
-                        + "begin/commit/rollback/close (construct your own connection if you need "
-                        + "full control, otherwise trust to transaction manager).", getType());
-                final String localUri = uri;
-                final String localUser = user;
-                final String localPass = password;
-                stop();
-                start(localUri, localUser, localPass);
-                db = (ODatabaseComplex) pool.acquire();
-            }
-            Preconditions.checkState(!db.isClosed(), String.format(
-                    "Pool %s return closed connection, even pool restart didn't help.. "
-                            + "something is terribly wrong", getType()));
+            final ODatabaseComplex db = checkAndRecoverConnection((ODatabaseComplex) pool.acquire());
 
             db.begin(transactionManager.getActiveTransactionType());
             transaction.set(db);
@@ -173,5 +154,36 @@ public abstract class AbstractPool<T> implements PoolManager<T> {
                         + "database connection object, which is not allowed (if you need full control "
                         + "on connection use manual setup and not pool managed connection)", getType()));
         return db;
+    }
+
+    /**
+     * Its definitely not normal that pool returns closed connections, but possible if used improperly.
+     * If connection closed, trying to recover by restarting entire pool.
+     *
+     * @param db connection to check
+     * @return connection itself or new valid connection
+     */
+    private ODatabaseComplex checkAndRecoverConnection(final ODatabaseComplex db) {
+        ODatabaseComplex res = db;
+        if (db.isClosed()) {
+            logger.warn("ATTENTION: Pool {} return closed connection, restarting pool. "
+                    + "This is NOT normal situation: in spite of the fact that your logic will perform "
+                    + "correctly, you loose predefined connections which may be very harmful for "
+                    + "performance (especially if problem appear often). Most likely reason is "
+                    + "closing underlying: e.g. connection.commit().close() or "
+                    + "connection.getUnderlying().close(). Check your code: you should not call "
+                    + "begin/commit/rollback/close (construct your own connection if you need "
+                    + "full control, otherwise trust to transaction manager).", getType());
+            final String localUri = uri;
+            final String localUser = user;
+            final String localPass = password;
+            stop();
+            start(localUri, localUser, localPass);
+            res = (ODatabaseComplex) pool.acquire();
+        }
+        Preconditions.checkState(!res.isClosed(), String.format(
+                "Pool %s return closed connection, even pool restart didn't help.. "
+                        + "something is terribly wrong", getType()));
+        return res;
     }
 }

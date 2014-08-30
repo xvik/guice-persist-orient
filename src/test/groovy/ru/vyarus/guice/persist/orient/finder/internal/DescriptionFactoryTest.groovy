@@ -101,7 +101,7 @@ class DescriptionFactoryTest extends AbstractTest {
         when: "ambiguous function call"
         lookup(InterfaceFinder.getMethod("functionWrongDefinition"))
         then: "error"
-        thrown(IllegalStateException)
+        thrown(FinderDefinitionException)
     }
 
     def "Check params recognition"() {
@@ -127,12 +127,12 @@ class DescriptionFactoryTest extends AbstractTest {
         when: "named parameters incorrect declaration"
         lookup(InterfaceFinder.getMethod("parametersNames", String.class, String.class))
         then: "error"
-        thrown(IllegalStateException)
+        thrown(FinderDefinitionException)
 
         when: "named parameters duplicate declaration"
         lookup(InterfaceFinder.getMethod("parametersNamesDuplicateName", String.class, String.class))
         then: "error"
-        thrown(IllegalStateException)
+        thrown(FinderDefinitionException)
 
         when: "positional parameters with page definition"
         desc = lookup(InterfaceFinder.getMethod("parametersPaged", String.class, String.class, int.class, int.class))
@@ -153,17 +153,17 @@ class DescriptionFactoryTest extends AbstractTest {
         when: "positional parameters with page definition as objects"
         lookup(InterfaceFinder.getMethod("parametersPagedDouble", String.class, String.class, int.class, int.class))
         then: "error"
-        thrown(IllegalStateException)
+        thrown(FinderDefinitionException)
 
         when: "positional parameters with page definition with wrong type"
         lookup(InterfaceFinder.getMethod("parametersPagedWrongType", String.class, String.class, String.class, int.class))
         then: "error"
-        thrown(IllegalStateException)
+        thrown(FinderDefinitionException)
 
         when: "positional parameters with page definition with wrong type"
         lookup(InterfaceFinder.getMethod("parametersPagedWrongType2", String.class, String.class, int.class, String.class))
         then: "error"
-        thrown(IllegalStateException)
+        thrown(FinderDefinitionException)
     }
 
     FinderDescriptor lookup(Method method) {

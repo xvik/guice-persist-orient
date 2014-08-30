@@ -9,6 +9,7 @@ import com.orientechnologies.orient.core.tx.OTransaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vyarus.guice.persist.orient.db.data.DataInitializer;
+import ru.vyarus.guice.persist.orient.db.scheme.SchemeInitializationException;
 import ru.vyarus.guice.persist.orient.db.scheme.SchemeInitializer;
 import ru.vyarus.guice.persist.orient.db.transaction.TxConfig;
 import ru.vyarus.guice.persist.orient.db.transaction.template.TxAction;
@@ -32,14 +33,14 @@ import java.util.Set;
 public class DatabaseManager implements PersistService {
     private final Logger logger = LoggerFactory.getLogger(DatabaseManager.class);
 
-    private String uri;
-    private String user;
-    private String pass;
+    private final String uri;
+    private final String user;
+    private final String pass;
 
-    private Set<PoolManager> pools;
-    private SchemeInitializer modelInitializer;
-    private DataInitializer dataInitializer;
-    private TxTemplate txTemplate;
+    private final Set<PoolManager> pools;
+    private final SchemeInitializer modelInitializer;
+    private final DataInitializer dataInitializer;
+    private final TxTemplate txTemplate;
 
     // used to allow multiple start/stop calls (could be if service managed directly and PersistFilter registered)
     private boolean initialized;
@@ -90,11 +91,7 @@ public class DatabaseManager implements PersistService {
                 }
             });
         } catch (Throwable throwable) {
-            if (throwable instanceof RuntimeException) {
-                throw (RuntimeException) throwable;
-            } else {
-                throw new RuntimeException("Failed to initialize schema", throwable);
-            }
+            throw new SchemeInitializationException("Failed to initialize scheme", throwable);
         }
 
         // db ready to work

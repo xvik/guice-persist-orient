@@ -27,32 +27,30 @@ public class DefaultResultConverter implements ResultConverter {
         // wrap primitive, because result will always be object
         final Class returnClass = desc.returnClass.isPrimitive() ? Primitives.wrap(desc.returnClass) : desc.returnClass;
 
-        if (result == null || VOID_TYPES.contains(returnClass)) {
-            // no result expected
-            return null;
+        Object res = null;
+        if (result != null && !VOID_TYPES.contains(returnClass)) {
+            res = returnClass.isAssignableFrom(result.getClass())
+                    ? result : convertResult(desc.type, returnClass, desc.entityClass, result);
         }
+        return res;
+    }
 
-        if (returnClass.isAssignableFrom(result.getClass())) {
-            // no need for conversion
-            return result;
-        }
-
+    private Object convertResult(final ResultType type, final Class returnClass,
+                                 final Class entityClass, final Object result) {
         Object converted;
-
-        switch (desc.type) {
+        switch (type) {
             case COLLECTION:
                 converted = handleCollection(result, returnClass);
                 break;
             case ARRAY:
-                converted = handleArray(result, desc.entityClass);
+                converted = handleArray(result, entityClass);
                 break;
             case PLAIN:
                 converted = handlePlain(result, returnClass);
                 break;
             default:
-                throw new IllegalStateException("Unsupported return type " + desc.type);
+                throw new FinderResultConversionException("Unsupported return type " + type);
         }
-
         return converted;
     }
 
@@ -68,13 +66,14 @@ public class DefaultResultConverter implements ResultConverter {
         } else if (!returnClass.isInterface()) {
             converted = convertToCollection(result, returnClass);
         } else {
-            throw new IllegalStateException(String.format(
+            throw new FinderResultConversionException(String.format(
                     "Incompatible result type requested %s for conversion from actual result %s",
                     returnClass, result.getClass()));
         }
         return converted;
     }
 
+    @SuppressWarnings("PMD.LooseCoupling")
     private Object handleArray(final Object result, final Class entityType) {
         final Collection res = result instanceof Collection
                 ? (Collection) result : convertToCollection(result, ArrayList.class);
@@ -101,13 +100,15 @@ public class DefaultResultConverter implements ResultConverter {
     }
 
     private Iterator toIterator(final Object result) {
+        Iterator res;
         if (result instanceof Iterator) {
-            return (Iterator) result;
+            res = (Iterator) result;
         } else if (result instanceof Iterable) {
-            return ((Iterable) result).iterator();
+            res = ((Iterable) result).iterator();
         } else {
-            throw new IllegalStateException("Can't convert " + result.getClass() + " to iterator");
+            throw new FinderResultConversionException("Can't convert " + result.getClass() + " to iterator");
         }
+        return res;
     }
 
     @SuppressWarnings("unchecked")
@@ -116,10 +117,10 @@ public class DefaultResultConverter implements ResultConverter {
         try {
             collection = (Collection) returnClass.newInstance();
         } catch (InstantiationException e) {
-            throw new RuntimeException(
+            throw new FinderResultConversionException(
                     "Specified finder's collection class could not be instantiated: " + returnClass, e);
         } catch (IllegalAccessException e) {
-            throw new RuntimeException(
+            throw new FinderResultConversionException(
                     "Specified finder's collection class could not be instantiated (do not have access privileges): "
                             + returnClass, e);
         }

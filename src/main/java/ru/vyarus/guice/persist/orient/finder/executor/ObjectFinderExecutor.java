@@ -16,7 +16,7 @@ import javax.inject.Singleton;
 @Singleton
 public class ObjectFinderExecutor extends AbstractFinderExecutor {
 
-    private Provider<OObjectDatabaseTx> provider;
+    private final Provider<OObjectDatabaseTx> provider;
 
     @Inject
     public ObjectFinderExecutor(final Provider<OObjectDatabaseTx> provider, final CommandBuilder commandBuilder) {

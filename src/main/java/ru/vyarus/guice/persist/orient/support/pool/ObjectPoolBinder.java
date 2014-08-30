@@ -14,6 +14,7 @@ import java.lang.reflect.Method;
  * @since 27.07.2014
  */
 public class ObjectPoolBinder {
+    @SuppressWarnings("PMD.UnusedFormalParameter")
     public ObjectPoolBinder(final OrientModule module, final Method bindPool, final Binder binder) throws Exception {
         bindPool.invoke(module, OObjectDatabaseTx.class, ObjectPool.class);
     }

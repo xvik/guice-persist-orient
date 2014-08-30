@@ -30,18 +30,21 @@ public class TransactionInterceptor implements MethodInterceptor {
     public Object invoke(final MethodInvocation invocation) throws Throwable {
         // checking directly to avoid redundant objects creation (simplify stacktrace)
         final Method method = invocation.getMethod();
+        Object res;
         if (transactionManager.isTransactionActive()) {
             logger.trace("Annotated method {} already in transaction", method.getName());
-            return invocation.proceed();
+            res = invocation.proceed();
+        } else {
+            final TxConfig config = AnnotationTxConfigBuilder
+                    .buildConfig(invocation.getThis().getClass(), method, true);
+            logger.trace("Starting transaction for annotated method {}", method.getName());
+            res = template.doInTransaction(config, new TxAction<Object>() {
+                @Override
+                public Object execute() throws Throwable {
+                    return invocation.proceed();
+                }
+            });
         }
-
-        final TxConfig config = AnnotationTxConfigBuilder.buildConfig(invocation.getThis().getClass(), method, true);
-        logger.trace("Starting transaction for annotated method {}", method.getName());
-        return template.doInTransaction(config, new TxAction<Object>() {
-            @Override
-            public Object execute() throws Throwable {
-                return invocation.proceed();
-            }
-        });
+        return res;
     }
 }

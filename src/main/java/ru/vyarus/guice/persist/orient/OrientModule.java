@@ -85,11 +85,11 @@ import java.lang.reflect.Method;
  * @see ru.vyarus.guice.persist.orient.db.transaction.TransactionManager for details about transactions
  */
 public class OrientModule extends PersistModule {
-    private Logger logger = LoggerFactory.getLogger(OrientModule.class);
+    private final Logger logger = LoggerFactory.getLogger(OrientModule.class);
 
-    private String uri;
-    private String user;
-    private String password;
+    private final String uri;
+    private final String user;
+    private final String password;
     private String pkg;
     private TxConfig txConfig;
 

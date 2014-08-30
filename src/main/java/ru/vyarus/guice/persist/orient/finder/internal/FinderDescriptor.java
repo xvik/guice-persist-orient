@@ -13,7 +13,10 @@ import java.util.Map;
  * @author Vyacheslav Rusakov
  * @since 30.07.2014
  */
-@SuppressWarnings("checkstyle:visibilitymodifier")
+@SuppressWarnings({
+        "checkstyle:visibilitymodifier",
+        "PMD.DefaultPackage"
+})
 public class FinderDescriptor {
 
     // Finder.namedQuery

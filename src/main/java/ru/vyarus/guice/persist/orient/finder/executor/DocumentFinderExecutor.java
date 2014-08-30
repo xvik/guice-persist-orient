@@ -20,7 +20,7 @@ import java.util.List;
 public class DocumentFinderExecutor extends AbstractFinderExecutor {
     private static final List<Class> ACCEPT_TYPES = ImmutableList.<Class>of(ODocument.class);
 
-    private Provider<ODatabaseDocumentTx> provider;
+    private final Provider<ODatabaseDocumentTx> provider;
 
     @Inject
     public DocumentFinderExecutor(final Provider<ODatabaseDocumentTx> provider, final CommandBuilder commandBuilder) {

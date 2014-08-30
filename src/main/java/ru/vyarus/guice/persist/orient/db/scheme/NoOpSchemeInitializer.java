@@ -10,5 +10,6 @@ public class NoOpSchemeInitializer implements SchemeInitializer {
 
     @Override
     public void initialize() {
+        // no-op impl
     }
 }

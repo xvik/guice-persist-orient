@@ -32,12 +32,13 @@ public final class AnnotationTxConfigBuilder {
      */
     public static TxConfig buildConfig(final Class<?> type, final Method method, final boolean useDefaults) {
         final Transactional transactional = findAnnotation(type, method, Transactional.class, useDefaults);
-        if (transactional == null) {
-            return null;
+        TxConfig res = null;
+        if (transactional != null) {
+            final TxType txType = findAnnotation(type, method, TxType.class, true);
+            res =  new TxConfig(wrapExceptions(transactional.rollbackOn()),
+                    wrapExceptions(transactional.ignore()), txType.value());
         }
-        final TxType txType = findAnnotation(type, method, TxType.class, true);
-        return new TxConfig(wrapExceptions(transactional.rollbackOn()),
-                wrapExceptions(transactional.ignore()), txType.value());
+        return res;
     }
 
     private static <T extends Annotation> T findAnnotation(final Class<?> type, final Method method,

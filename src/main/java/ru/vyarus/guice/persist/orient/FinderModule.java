@@ -3,7 +3,6 @@ package ru.vyarus.guice.persist.orient;
 import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
 import com.google.inject.AbstractModule;
-import com.google.inject.Binder;
 import com.google.inject.matcher.Matchers;
 import com.google.inject.multibindings.Multibinder;
 import com.google.inject.name.Names;
@@ -62,7 +61,7 @@ import java.util.Set;
  * @since 30.07.2014
  */
 public class FinderModule extends AbstractModule {
-    private Logger logger = LoggerFactory.getLogger(FinderModule.class);
+    private final Logger logger = LoggerFactory.getLogger(FinderModule.class);
 
     private final Set<Class<?>> dynamicFinders = Sets.newHashSet();
     private DbType defaultConnectionToUse = DbType.DOCUMENT;
@@ -170,8 +169,8 @@ public class FinderModule extends AbstractModule {
             bindExecutor.setAccessible(true);
             try {
                 Class.forName(executorBinder)
-                        .getConstructor(FinderModule.class, Method.class, Binder.class)
-                        .newInstance(this, bindExecutor, binder());
+                        .getConstructor(FinderModule.class, Method.class)
+                        .newInstance(this, bindExecutor);
             } finally {
                 bindExecutor.setAccessible(false);
             }

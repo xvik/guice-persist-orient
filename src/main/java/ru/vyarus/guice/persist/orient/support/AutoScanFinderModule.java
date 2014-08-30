@@ -21,8 +21,8 @@ import java.util.List;
  * @since 04.08.2014
  */
 public class AutoScanFinderModule extends FinderModule {
-    private Logger logger = LoggerFactory.getLogger(AutoScanFinderModule.class);
-    private String pkg;
+    private final Logger logger = LoggerFactory.getLogger(AutoScanFinderModule.class);
+    private final String pkg;
 
     public AutoScanFinderModule(final String pkg) {
         super();

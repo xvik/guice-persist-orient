@@ -29,8 +29,8 @@ public class GraphPool extends AbstractPool<OrientBaseGraph> {
 
     // underlying base pool maintains document connections;
     // this pool manage just wrapped instances to reduce number of created objects
-    private ThreadLocal<OrientBaseGraph> transaction = new ThreadLocal<OrientBaseGraph>();
-    private TransactionManager transactionManager;
+    private final ThreadLocal<OrientBaseGraph> transaction = new ThreadLocal<OrientBaseGraph>();
+    private final TransactionManager transactionManager;
 
     @Inject
     public GraphPool(final TransactionManager transactionManager) {

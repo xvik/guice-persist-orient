@@ -21,7 +21,7 @@ import java.util.List;
 public class GraphFinderExecutor extends AbstractFinderExecutor {
 
     private static final List<Class> ACCEPT_TYPES = ImmutableList.<Class>of(Vertex.class, Edge.class);
-    private Provider<OrientBaseGraph> provider;
+    private final Provider<OrientBaseGraph> provider;
 
     @Inject
     public GraphFinderExecutor(final Provider<OrientBaseGraph> provider, final CommandBuilder commandBuilder) {

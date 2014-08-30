@@ -20,27 +20,37 @@ import javax.inject.Singleton;
 public class DefaultCommandBuilder implements CommandBuilder {
 
     @Override
+    @SuppressWarnings("PMD.UseStringBufferForStringAppends")
     public OCommandRequest buildCommand(final SqlCommandDesc desc) {
-        String query = desc.isFunctionCall ? desc.function : desc.query;
-        query = query.trim();
-        final boolean isQuery = !desc.isFunctionCall && query.toLowerCase().startsWith("select");
-        // no support for skip in functions and update/insert
-        if (isQuery && desc.start > 0) {
-            query += " SKIP " + desc.start;
-        }
+        final boolean isFunction = desc.isFunctionCall;
+        // skip can't be applied to function
+        String query = isFunction
+                ? desc.function
+                : desc.query.trim();
 
-        OCommandRequest command;
-        if (desc.isFunctionCall) {
-            command = new OCommandFunction(desc.function);
-        } else {
-            command = isQuery ? new OSQLSynchQuery<Object>(query) : new OCommandSQL(query);
+        final boolean isQuery = !isFunction && query.toLowerCase().startsWith("select");
+        if (isQuery) {
+            query += desc.start > 0 ? " SKIP " + desc.start : "";
         }
+        final OCommandRequest command = createCommandInstance(isFunction, isQuery, query);
 
         if (desc.max > 0 && (desc.isFunctionCall || isQuery)) {
             // must not be set for update command
             command.setLimit(desc.max);
         }
 
+        return command;
+    }
+
+    private OCommandRequest createCommandInstance(final boolean isFunction,
+                                                  final boolean isQuery,
+                                                  final String query) {
+        OCommandRequest command;
+        if (isFunction) {
+            command = new OCommandFunction(query);
+        } else {
+            command = isQuery ? new OSQLSynchQuery<Object>(query) : new OCommandSQL(query);
+        }
         return command;
     }
 }
