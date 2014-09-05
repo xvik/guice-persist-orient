@@ -29,6 +29,7 @@ project.ext {
         scm {
             url github.scm
             connection github.scmConnection
+            developerConnection github.scmConnection
         }
         licenses {
             license {
@@ -82,7 +83,7 @@ dependencies {
     }
 
 
-    testCompile group: 'junit', name: 'junit', version: '4.11'
+    testCompile 'junit:junit:4.11'
     testCompile 'ch.qos.logback:logback-classic:1.1.2'
     testCompile 'org.slf4j:jul-to-slf4j:1.7.7'
     testCompile 'org.spockframework:spock-core:0.7-groovy-2.0'
