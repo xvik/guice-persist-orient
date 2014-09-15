@@ -15,7 +15,7 @@ Features:
 [graph](http://www.orientechnologies.com/docs/last/orientdb.wiki/Graph-Database-Tinkerpop.html) databases
 * Database types support according to classpath (object and graph db support activated by adding jars to classpath)
 * Auto mapping entities in package to db scheme or using classpath scanning to map annotated entities
-* Auto db creation
+* Auto db creation (for memory, local and plocal)
 * Hooks for schema migration and data initialization extensions
 * All three database types may be used in single unit of work (but each type will use its own transaction)
 
@@ -524,6 +524,14 @@ Read about [all configuration options](http://www.orientechnologies.com/docs/las
 (objects validation, method arguments and return type runtime validation)
 * [guice-ext-annotations](https://github.com/xvik/guice-ext-annotations) - @Log, @PostConstruct, @PreDestroy and
 utilities for adding new annotations support
+
+### Contribution
+
+Contributions are always welcome, but please check before patch submission:
+
+```bash
+$ gradlew check
+```
 
 -
 [![Slush java lib generator](http://img.shields.io/badge/Powered%20by-Slush%20java%20lib%20generator-orange.svg?style=flat-square)](https://github.com/xvik/slush-lib-java)

@@ -1,3 +1,7 @@
+### 1.0.3 (2014-09-15)
+
+* Fix remote connection support (avoid database creation)
+
 ### 1.0.2 (2014-08-16)
 
 * Fix pmd/checkstyle warnings
