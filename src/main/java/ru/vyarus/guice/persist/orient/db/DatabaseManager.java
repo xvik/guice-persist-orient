@@ -124,15 +124,16 @@ public class DatabaseManager implements PersistService {
     public boolean isTypeSupported(final DbType type) {
         return supportedTypes.contains(type);
     }
-
+    
     protected void createIfRequired() {
         // create if required (without creation work with db is impossible)
         final ODatabaseDocumentTx database = new ODatabaseDocumentTx(uri);
         try {
-            if (!database.exists()) {
+            if (!isRemoteDatabase() && !database.exists()) { //remote database do not support db exists check and creation
                 logger.info("Creating database: '{}'", uri);
                 database.create();
             } else {
+                logger.info("Opening database: '{}'", uri);
                 database.open(user, pass);
             }
             initGraphDb(database);
@@ -141,6 +142,9 @@ public class DatabaseManager implements PersistService {
         }
     }
 
+    private boolean isRemoteDatabase(){
+        return this.uri.startsWith("remote:") || !(this.uri.startsWith("plocal:") || this.uri.startsWith("memory:") );
+    }
     /**
      * Graph connection object performs schema check and can perform modifications.
      * To safely use graph connections later, initializing it with notx transaction.
@@ -149,6 +153,7 @@ public class DatabaseManager implements PersistService {
      */
     protected void initGraphDb(final ODatabaseDocumentTx db) {
         try {
+            logger.trace("Initiating graph db");
             Class.forName("com.tinkerpop.blueprints.impls.orient.OrientGraph")
                     .getConstructor(ODatabaseDocumentTx.class).newInstance(db);
         } catch (ClassNotFoundException ignored) {
