@@ -1,5 +1,6 @@
 package ru.vyarus.guice.persist.orient.support.finder;
 
+import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import ru.vyarus.guice.persist.orient.FinderModule;
 import ru.vyarus.guice.persist.orient.finder.executor.ObjectFinderExecutor;
 
@@ -14,6 +15,8 @@ import java.lang.reflect.Method;
 public class ObjectFinderExecutorBinder {
     public ObjectFinderExecutorBinder(final FinderModule module,
                                       final Method bindExecutor) throws Exception {
+        // explicit dependency on class required to fail
+        OObjectDatabaseTx.class.getName();
         bindExecutor.invoke(module, ObjectFinderExecutor.class);
     }
 }

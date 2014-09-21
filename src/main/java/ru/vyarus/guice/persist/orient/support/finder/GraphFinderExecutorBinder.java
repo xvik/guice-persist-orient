@@ -1,5 +1,6 @@
 package ru.vyarus.guice.persist.orient.support.finder;
 
+import com.tinkerpop.blueprints.impls.orient.OrientBaseGraph;
 import ru.vyarus.guice.persist.orient.FinderModule;
 import ru.vyarus.guice.persist.orient.finder.executor.GraphFinderExecutor;
 
@@ -14,6 +15,8 @@ import java.lang.reflect.Method;
 public class GraphFinderExecutorBinder {
     public GraphFinderExecutorBinder(final FinderModule module,
                                      final Method bindExecutor) throws Exception {
+        // explicit dependency on class required to fail
+        OrientBaseGraph.class.getName();
         bindExecutor.invoke(module, GraphFinderExecutor.class);
     }
 }

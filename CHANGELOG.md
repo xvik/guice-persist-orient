@@ -1,3 +1,5 @@
+* Fix finder module available db types detection
+
 ### 1.0.3 (2014-09-15)
 
 * Fix remote connection support (avoid database creation)
