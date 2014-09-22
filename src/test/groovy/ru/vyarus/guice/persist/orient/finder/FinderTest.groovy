@@ -1,12 +1,12 @@
 package ru.vyarus.guice.persist.orient.finder
 
 import com.google.inject.Inject
-import com.orientechnologies.orient.core.exception.OCommandExecutionException
 import com.orientechnologies.orient.core.record.impl.ODocument
 import com.orientechnologies.orient.core.sql.OCommandSQL
 import com.tinkerpop.blueprints.Vertex
 import ru.vyarus.guice.persist.orient.AbstractTest
 import ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxAction
+import ru.vyarus.guice.persist.orient.finder.internal.FinderExecutionException
 import ru.vyarus.guice.persist.orient.support.finder.InterfaceFinder
 import ru.vyarus.guice.persist.orient.support.model.Model
 import ru.vyarus.guice.persist.orient.support.modules.TestFinderModule
@@ -264,7 +264,7 @@ class FinderTest extends AbstractTest {
         when: "calling unknown function"
         finder.function()
         then: "internal orient exception"
-        thrown(OCommandExecutionException)
+        thrown(FinderExecutionException)
     }
 
     def "Check function calls"() {

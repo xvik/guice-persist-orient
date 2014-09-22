@@ -1,6 +1,6 @@
 package ru.vyarus.guice.persist.orient.finder.internal
 
-import com.google.common.collect.Lists
+import com.google.common.collect.Sets
 import com.google.inject.Inject
 import ru.vyarus.guice.persist.orient.AbstractTest
 import ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxAction
@@ -27,7 +27,7 @@ class PlaceholderDefinitionParseTest extends AbstractTest {
         then: "placeholder recognized"
         desc.usePlaceholders
         desc.placeholderParametersIndex == ['field': 0]
-        Lists.newArrayList(desc.placeholderValues.get('field')) == ['name', 'nick']
+        Sets.newHashSet(desc.placeholderValues.get('field')) == ['name', 'nick'] as Set
         desc.parametersIndex == [1]
 
         when: "placeholder with two parameters"
@@ -35,8 +35,8 @@ class PlaceholderDefinitionParseTest extends AbstractTest {
         then: "placeholder recognized"
         desc.usePlaceholders
         desc.placeholderParametersIndex == ['field1': 0, 'field2': 1]
-        Lists.newArrayList(desc.placeholderValues.get('field1')) == ['name', 'nick']
-        Lists.newArrayList(desc.placeholderValues.get('field2')) == ['name', 'nick']
+        Sets.newHashSet(desc.placeholderValues.get('field1')) == ['name', 'nick'] as Set
+        Sets.newHashSet(desc.placeholderValues.get('field2')) == ['name', 'nick'] as Set
         desc.parametersIndex == [2, 3]
 
         when: "placeholder with enum parameter"
@@ -44,7 +44,7 @@ class PlaceholderDefinitionParseTest extends AbstractTest {
         then: "placeholder recognized"
         desc.usePlaceholders
         desc.placeholderParametersIndex == ['field': 0]
-        Lists.newArrayList(desc.placeholderValues.get('field')) == []
+        Sets.newHashSet(desc.placeholderValues.get('field')) == [] as Set
         desc.parametersIndex == [1]
 
         when: "function placeholder"
@@ -52,7 +52,7 @@ class PlaceholderDefinitionParseTest extends AbstractTest {
         then: "placeholder recognized"
         desc.usePlaceholders
         desc.placeholderParametersIndex == ['name': 0]
-        Lists.newArrayList(desc.placeholderValues.get('name')) == []
+        Sets.newHashSet(desc.placeholderValues.get('name')) == [] as Set
         !desc.parametersIndex
 
         when: "function enum placeholder"
@@ -60,7 +60,7 @@ class PlaceholderDefinitionParseTest extends AbstractTest {
         then: "placeholder recognized"
         desc.usePlaceholders
         desc.placeholderParametersIndex == ['name': 0]
-        Lists.newArrayList(desc.placeholderValues.get('name')) == []
+        Sets.newHashSet(desc.placeholderValues.get('name')) == [] as Set
         !desc.parametersIndex
     }
 

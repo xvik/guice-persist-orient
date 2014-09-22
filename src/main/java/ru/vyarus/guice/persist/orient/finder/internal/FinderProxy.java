@@ -48,15 +48,16 @@ public class FinderProxy implements MethodInterceptor {
         final Method method = methodInvocation.getMethod();
         final FinderDescriptor descriptor = getFinderDescriptor(method);
         SqlCommandDesc command;
+        final Object[] arguments = methodInvocation.getArguments();
         try {
-            command = buildCommand(descriptor, methodInvocation.getArguments());
+            command = buildCommand(descriptor, arguments);
         } catch (Exception ex) {
             throw new IllegalArgumentException(String.format(
                     "Failed to prepare query for finder method %s#%s%s with arguments: %s",
                     method.getDeclaringClass(), method.getName(), Arrays.toString(method.getParameterTypes()),
-                    Arrays.toString(methodInvocation.getArguments())), ex);
+                    Arrays.toString(arguments)), ex);
         }
-        final Object result = descriptor.executor.executeQuery(command);
+        final Object result = executeQuery(descriptor, command, arguments, method);
         final ResultDesc desc = new ResultDesc();
         desc.result = result;
         desc.entityClass = descriptor.returnEntity;
@@ -69,6 +70,21 @@ public class FinderProxy implements MethodInterceptor {
                     "Failed to convert execution result (%s) of finder %s#%s%s",
                     result == null ? null : result.getClass(), method.getDeclaringClass(),
                     method.getName(), Arrays.toString(method.getParameterTypes())), th);
+        }
+    }
+
+    private Object executeQuery(final FinderDescriptor descriptor,
+                                final SqlCommandDesc command, final Object[] arguments,
+                                final Method method) throws Throwable {
+        try {
+            return descriptor.executor.executeQuery(command);
+        } catch (Throwable th) {
+            throw new FinderExecutionException(String.format(
+                    "Failed to execute query '%s' with parameters %s of finder %s#%s%s",
+                    command.isFunctionCall ? command.function : command.query,
+                    Arrays.toString(arguments), method.getDeclaringClass(),
+                    method.getName(), Arrays.toString(method.getParameterTypes())
+            ), th);
         }
     }
 
