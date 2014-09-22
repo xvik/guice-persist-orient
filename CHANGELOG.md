@@ -1,4 +1,5 @@
 * Fix finder module available db types detection
+* Add query placeholders support for finders
 
 ### 1.0.3 (2014-09-15)
 

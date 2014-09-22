@@ -115,4 +115,8 @@ public interface InterfaceFinder {
     // error - page definition must be numbers
     @Finder(query = "select from Model where name=? and nick=?")
     List<Model> parametersPagedWrongType2(String name, String nick, @FirstResult int start, @MaxResults String max);
+
+    // using parameters in update query
+    @Finder(query = "update Model set name=? where name=?")
+    int updateWithParam(String toName, String whereName);
 }

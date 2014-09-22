@@ -148,6 +148,14 @@ class FinderTest extends AbstractTest {
         res = finder.parametersPagedObject('John', 'Doe', 0, null);
         then:
         res.size() == 1
+
+        when: "using parameters in update query"
+        template.doInTransaction({ db ->
+            db.save(new Model(name: 'To', nick: 'Change'))
+        } as SpecificTxAction)
+        int affect = finder.updateWithParam('changed', 'To');
+        then:
+        affect == 1
     }
 
     def "Check pagination"() {

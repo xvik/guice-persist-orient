@@ -43,7 +43,7 @@ interface ExtraCasesFinder {
     @Finder(query = "select from Model where name in ?")
     List<Model> findWithVararg(String... names);
 
-    //
+    // use object connection for select
     @Finder(query = "select name from Model")
     @Use(DbType.OBJECT)
     List<ODocument> documentOverride();

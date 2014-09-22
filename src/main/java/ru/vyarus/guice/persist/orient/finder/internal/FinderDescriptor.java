@@ -1,5 +1,6 @@
 package ru.vyarus.guice.persist.orient.finder.internal;
 
+import com.google.common.collect.Multimap;
 import ru.vyarus.guice.persist.orient.finder.FinderExecutor;
 import ru.vyarus.guice.persist.orient.finder.result.ResultType;
 
@@ -30,6 +31,10 @@ public class FinderDescriptor {
 
     boolean isFunctionCall;
     boolean useNamedParameters;
+    boolean usePlaceholders;
+
+    Multimap<String, String> placeholderValues;
+
     ResultType returnType;
     // return entity type (return type for single return and generic type for collection, array or iterator)
     Class returnEntity;
@@ -40,4 +45,5 @@ public class FinderDescriptor {
 
     Integer[] parametersIndex;
     Map<String, Integer> namedParametersIndex;
+    Map<String, Integer> placeholderParametersIndex;
 }

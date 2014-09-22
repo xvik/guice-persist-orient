@@ -2,10 +2,7 @@ package ru.vyarus.guice.persist.orient.finder.internal;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-import com.google.common.collect.MapMaker;
-import com.google.common.collect.Maps;
+import com.google.common.collect.*;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import com.google.inject.persist.finder.Finder;
@@ -16,6 +13,10 @@ import org.slf4j.LoggerFactory;
 import ru.vyarus.guice.persist.orient.db.DbType;
 import ru.vyarus.guice.persist.orient.finder.FinderExecutor;
 import ru.vyarus.guice.persist.orient.finder.Use;
+import ru.vyarus.guice.persist.orient.finder.placeholder.Placeholder;
+import ru.vyarus.guice.persist.orient.finder.placeholder.PlaceholderValues;
+import ru.vyarus.guice.persist.orient.finder.placeholder.Placeholders;
+import ru.vyarus.guice.persist.orient.finder.placeholder.StringTemplateUtils;
 import ru.vyarus.guice.persist.orient.finder.result.ResultType;
 
 import javax.inject.Singleton;
@@ -35,7 +36,10 @@ import static ru.vyarus.guice.persist.orient.finder.result.ResultType.*;
  * @since 30.07.2014
  */
 @Singleton
-@SuppressWarnings("PMD")
+@SuppressWarnings({
+        "PMD",
+        "checkstyle:classfanoutcomplexity"
+})
 public class FinderDescriptorFactory {
     private static final List<Class> PRIMITIVE_NUMBERS = ImmutableList.<Class>of(int.class, long.class);
 
@@ -94,12 +98,53 @@ public class FinderDescriptorFactory {
         descriptor.query = query;
         descriptor.isFunctionCall = functionName != null;
 
+        analyzePlaceholders(method, descriptor);
         analyzeReturnType(method,
                 Collection.class.equals(returnCollectionType) ? null : returnCollectionType,
                 descriptor);
         analyzeExecutor(method, descriptor);
         analyzeParameters(method, descriptor);
         return descriptor;
+    }
+
+    private void analyzePlaceholders(final Method method, final FinderDescriptor descriptor) {
+        final List<String> placeholders = getPlaceholders(descriptor);
+        descriptor.usePlaceholders = !placeholders.isEmpty();
+
+        if (descriptor.usePlaceholders) {
+            descriptor.placeholderValues = HashMultimap.create();
+            final PlaceholderValues valueAnnotation = method.getAnnotation(PlaceholderValues.class);
+            if (valueAnnotation != null) {
+                registerPlaceholderValues(valueAnnotation, placeholders, descriptor);
+            }
+            final Placeholders valuesAnnotation = method.getAnnotation(Placeholders.class);
+            if (valuesAnnotation != null) {
+                for (PlaceholderValues values : valuesAnnotation.value()) {
+                    registerPlaceholderValues(values, placeholders, descriptor);
+                }
+            }
+        }
+    }
+
+    private List<String> getPlaceholders(final FinderDescriptor descriptor) {
+        List<String> placeholders = null;
+        try {
+            placeholders = StringTemplateUtils
+                    .findPlaceholders(descriptor.isFunctionCall ? descriptor.functionName : descriptor.query);
+        } catch (IllegalStateException ex) {
+            check(false, ex.getMessage());
+        }
+        return placeholders;
+    }
+
+    private void registerPlaceholderValues(final PlaceholderValues values, final List<String> placeholders,
+                                           final FinderDescriptor descriptor) {
+        final String name = values.name();
+        check(!descriptor.placeholderValues.containsKey(name),
+                "Duplicate placeholder '%s' values definition", name);
+        check(placeholders.contains(name),
+                "Default values defined for placeholder '%s' not used in query", name);
+        descriptor.placeholderValues.putAll(name, Arrays.asList(values.values()));
     }
 
     private void analyzeReturnType(final Method method,
@@ -210,6 +255,9 @@ public class FinderDescriptorFactory {
             }
         }
 
+        descriptor.placeholderParametersIndex = context.placeholderParams;
+        validatePlaceholdersParamsDefinition(descriptor);
+
         if (context.useOrdinalParams == null) {
             // no-arg method
             descriptor.useNamedParameters = false;
@@ -224,6 +272,17 @@ public class FinderDescriptorFactory {
         } else {
             final List<Integer> params = context.params;
             descriptor.parametersIndex = params.toArray(new Integer[params.size()]);
+        }
+    }
+
+    private void validatePlaceholdersParamsDefinition(final FinderDescriptor descriptor) {
+        if (descriptor.usePlaceholders) {
+            try {
+                StringTemplateUtils.validate(descriptor.isFunctionCall ? descriptor.functionName : descriptor.query,
+                        Lists.newArrayList(descriptor.placeholderParametersIndex.keySet()));
+            } catch (IllegalStateException ex) {
+                check(false, ex.getMessage());
+            }
         }
     }
 
@@ -248,6 +307,12 @@ public class FinderDescriptorFactory {
             check(descriptor.maxResultsParamIndex == null, "Duplicate @MaxResults definition");
             descriptor.maxResultsParamIndex = pos;
             isNumber(method.getParameterTypes()[pos], "Number must be used as @MaxResults parameter");
+            return true;
+        } else if (Placeholder.class.equals(annotationType)) {
+            check(descriptor.usePlaceholders, "Placeholder parameter used while query did "
+                    + "not contain placeholders");
+            final String placeholderName = ((Placeholder) annotation).value();
+            bindPlaceholder(placeholderName, pos, context, method, descriptor.placeholderValues.get(placeholderName));
             return true;
         }
         return false;
@@ -275,10 +340,38 @@ public class FinderDescriptorFactory {
         } else {
             // if first parameter was named all other must be named too (without duplicates)
             check(name != null, "Named parameter not annotated at position %s", position);
-            check(context.namedParams.get(name) == null,
+            check(!context.namedParams.containsKey(name),
                     "Duplicate parameter %s declaration at position %s", name, position);
             context.namedParams.put(name, position);
         }
+    }
+
+    private void bindPlaceholder(final String name, final int position,
+                                 final ParamsContext context, final Method method,
+                                 final Collection<String> placeholderDefaults) {
+        if (context.placeholderParams == null) {
+            context.placeholderParams = Maps.newHashMap();
+        }
+        check(!context.placeholderParams.containsKey(name),
+                "Duplicate placeholder parameter %s declaration at position %s", name, position);
+        final Class paramType = method.getParameterTypes()[position];
+        final boolean isEnum = paramType.isEnum();
+        check(String.class.equals(paramType) || isEnum,
+                "Unsupported placeholder '%s' type at position %s. Only string end enum could be used",
+                name, position);
+        if (isEnum) {
+            check(placeholderDefaults.isEmpty(), "Placeholder param '%s' at position %s is enum. "
+                    + "Explicit defaults definition is not required", name, position);
+        } else {
+            if (placeholderDefaults.isEmpty()) {
+                logger.warn("No default values registered for placeholder parameter {}. Either use enum "
+                                + "or define values with @PlaceholderValues annotation in finder "
+                                + "method {}#{}. Without explicit check your query "
+                                + "is vulnerable for injection.",
+                        name, method.getDeclaringClass(), method.getName());
+            }
+        }
+        context.placeholderParams.put(name, position);
     }
 
     private void isNumber(final Class type, final String message) {
@@ -309,5 +402,6 @@ public class FinderDescriptorFactory {
         Boolean useOrdinalParams;
         List<Integer> params;
         Map<String, Integer> namedParams;
+        Map<String, Integer> placeholderParams;
     }
 }

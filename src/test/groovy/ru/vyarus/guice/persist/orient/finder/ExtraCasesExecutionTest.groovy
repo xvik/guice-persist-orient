@@ -60,5 +60,10 @@ class ExtraCasesExecutionTest extends AbstractTest {
         res = finder.findWithVararg('Sam', 'Dan', 'John');
         then: "returned list"
         res.size() == 1
+
+        when: "document connection overridden in select"
+        res = finder.documentOverride();
+        then: "returned list"
+        res.size() == 1
     }
 }
