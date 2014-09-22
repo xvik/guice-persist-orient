@@ -11,7 +11,7 @@
     <!-- switch off nasty warnings shown for memory db -->
     <logger name="com.orientechnologies.orient.core.db.record.ODatabaseRecordAbstract" level="ERROR"/>
 
-    <logger name="ru.vyarus" level="TRACE"/>
+    <logger name="ru.vyarus.guice.orient" level="DEBUG"/>
     <!-- transaction manager logs -->
     <logger name="ru.vyarus.guice.persist.orient.db.transaction.internal.DefaultTransactionManager" level="DEBUG"/>
     <!-- @Transactional annotation handling -->
@@ -19,7 +19,7 @@
     <!-- pools -->
     <logger name="ru.vyarus.guice.persist.orient.db.pool" level="DEBUG"/>
 
-    <root level="DEBUG">
+    <root level="WARN">
         <appender-ref ref="STDOUT"/>
     </root>
 </configuration>

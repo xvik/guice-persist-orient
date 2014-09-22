@@ -4,11 +4,14 @@ jdk:
 env:
   - TERM=dumb
 
+before_install:
+  - chmod +x gradlew
+
 install:
-  - ./gradlew assemble --stacktrace
+  - ./gradlew assemble
 
 script:
-  - ./gradlew check --stacktrace
+  - ./gradlew check
 
 after_success:
-  - ./gradlew jacocoTestReport coveralls --stacktrace
+  - ./gradlew jacocoTestReport coveralls
