@@ -3,5 +3,12 @@ jdk:
   - oraclejdk7
 env:
   - TERM=dumb
+
+install:
+  - ./gradlew assemble --stacktrace
+
+script:
+  - ./gradlew check --stacktrace
+
 after_success:
-  - ./gradlew jacocoTestReport coveralls
+  - ./gradlew jacocoTestReport coveralls --stacktrace
