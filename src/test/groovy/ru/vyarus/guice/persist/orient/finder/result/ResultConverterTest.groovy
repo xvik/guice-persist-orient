@@ -243,6 +243,29 @@ class ResultConverterTest extends AbstractTest {
         res == 1
     }
 
+    def "Check optionals"() {
+
+        when: "result is guava optional"
+        def res = converter.convert(new ResultDesc(
+                result: 1,
+                type: ResultType.PLAIN,
+                returnClass: com.google.common.base.Optional,
+                entityClass: Integer))
+        then: "no conversion"
+        res instanceof com.google.common.base.Optional
+        res.get() == 1
+
+        when: "result is jdk optional"
+        res = converter.convert(new ResultDesc(
+                result: 1,
+                type: ResultType.PLAIN,
+                returnClass: Optional,
+                entityClass: Integer))
+        then: "no conversion"
+        res instanceof Optional
+        res.get() == 1
+    }
+
     def "Check collection substitution"() {
 
         when: "result is ArrayList and LinkedList expected"

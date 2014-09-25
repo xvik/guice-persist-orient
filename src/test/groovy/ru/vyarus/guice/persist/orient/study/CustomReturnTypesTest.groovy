@@ -1,6 +1,5 @@
 package ru.vyarus.guice.persist.orient.study
 
-import com.google.common.collect.Lists
 import com.google.inject.Inject
 import com.orientechnologies.orient.core.record.impl.ODocument
 import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery
@@ -11,8 +10,6 @@ import ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxAction
 import ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxTemplate
 import ru.vyarus.guice.persist.orient.support.modules.BootstrappedModule
 import spock.guice.UseModules
-import spock.lang.Specification
-
 
 /**
  * @author Vyacheslav Rusakov 

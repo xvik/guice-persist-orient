@@ -96,6 +96,25 @@ class ExtraCasesAnalysisTest extends AbstractTest {
         desc.expectType == List
     }
 
+    def "Optional cases"() {
+
+        when: "return jdk optional"
+        FinderDescriptor desc = lookup(ExtraCasesFinder.getMethod("findJdkOptional"))
+        then: "optional recognized"
+        desc.executor.class == ObjectFinderExecutor
+        desc.returnType == ResultType.PLAIN
+        desc.returnEntity == Model
+        desc.expectType == Optional
+
+        when: "return guava optional"
+        desc = lookup(ExtraCasesFinder.getMethod("findGuavaOptional"))
+        then: "optional recognized"
+        desc.executor.class == ObjectFinderExecutor
+        desc.returnType == ResultType.PLAIN
+        desc.returnEntity == Model
+        desc.expectType == com.google.common.base.Optional
+    }
+
     FinderDescriptor lookup(Method method) {
         template.doInTransaction({
             return factory.create(method)

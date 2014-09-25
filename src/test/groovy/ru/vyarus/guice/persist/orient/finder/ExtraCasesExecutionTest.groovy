@@ -65,5 +65,17 @@ class ExtraCasesExecutionTest extends AbstractTest {
         res = finder.documentOverride();
         then: "returned list"
         res.size() == 1
+
+        when: "jdk7 optional"
+        res = finder.findJdkOptional();
+        then: "returned jdk optional"
+        res instanceof Optional
+        res.get()
+
+        when: "guava optional"
+        res = finder.findGuavaOptional();
+        then: "returned guava optional"
+        res instanceof com.google.common.base.Optional
+        res.get()
     }
 }

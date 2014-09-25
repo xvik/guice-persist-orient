@@ -17,6 +17,7 @@ import java.util.*;
  * @since 04.08.2014
  */
 @Singleton
+@SuppressWarnings("PMD.AvoidDuplicateLiterals")
 public class DefaultResultConverter implements ResultConverter {
     private static final List<Class> VOID_TYPES = ImmutableList.<Class>of(Void.class, void.class);
 
@@ -46,7 +47,7 @@ public class DefaultResultConverter implements ResultConverter {
                 converted = handleArray(result, entityClass);
                 break;
             case PLAIN:
-                converted = handlePlain(result, returnClass);
+                converted = handlePlain(result, returnClass, entityClass);
                 break;
             default:
                 throw new FinderResultConversionException("Unsupported return type " + type);
@@ -85,7 +86,27 @@ public class DefaultResultConverter implements ResultConverter {
         return array;
     }
 
-    private Object handlePlain(final Object result, final Class returnClass) {
+    @SuppressWarnings("unchecked")
+    private Object handlePlain(final Object result, final Class returnClass, final Class entityClass) {
+        Object converted;
+        if ("Optional".equals(returnClass.getSimpleName())) {
+            converted = handlePlainValue(result, entityClass);
+            try {
+                // guava or jdk7 Optional
+                final String method = com.google.common.base.Optional.class.equals(returnClass)
+                        ? "fromNullable" : "ofNullable";
+                converted = returnClass.getMethod(method, Object.class).invoke(null, converted);
+            } catch (Exception e) {
+                throw new FinderResultConversionException(String.format("Failed to convert result into optional %s",
+                        returnClass), e);
+            }
+        } else {
+            converted = handlePlainValue(result, returnClass);
+        }
+        return converted;
+    }
+
+    private Object handlePlainValue(final Object result, final Class returnClass) {
         Object converted;
         if (returnClass.equals(Long.class) && result instanceof Number) {
             converted = ((Number) result).longValue();

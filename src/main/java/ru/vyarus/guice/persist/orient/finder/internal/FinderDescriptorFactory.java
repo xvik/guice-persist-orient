@@ -167,13 +167,15 @@ public class FinderDescriptorFactory {
                 || Iterator.class.isAssignableFrom(returnClass)
                 || Iterable.class.isAssignableFrom(returnClass)) {
             type = COLLECTION;
-            entityClass = resolveRealObjectTypeFromCollection(method.getGenericReturnType(), method);
+            entityClass = resolveGenericType(method.getGenericReturnType(), method);
         } else if (returnClass.isArray()) {
             type = ARRAY;
             entityClass = returnClass.getComponentType();
         } else {
             type = PLAIN;
-            entityClass = returnClass;
+            // in order to support guava and jdk7 optionals checking that way
+            entityClass = "Optional".equals(returnClass.getSimpleName())
+                    ? resolveGenericType(method.getGenericReturnType(), method) : returnClass;
         }
 
         descriptor.returnType = type;
@@ -223,11 +225,11 @@ public class FinderDescriptorFactory {
         return use == null ? null : use.value();
     }
 
-    private Class resolveRealObjectTypeFromCollection(final Type returnClass, final Method method) {
+    private Class resolveGenericType(final Type returnClass, final Method method) {
         if (returnClass == null || !(returnClass instanceof ParameterizedType)
                 || ((ParameterizedType) returnClass).getActualTypeArguments().length == 0) {
             logger.warn(
-                    "Can't detect collection entity: no generic set in finder method return type: {}#{}.",
+                    "Can't detect entity: no generic set in finder method return type: {}#{}.",
                     method.getDeclaringClass(), method.getName());
             return Object.class;
         }

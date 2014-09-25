@@ -47,4 +47,12 @@ interface ExtraCasesFinder {
     @Finder(query = "select name from Model")
     @Use(DbType.OBJECT)
     List<ODocument> documentOverride();
+
+    // use jdk7 optional
+    @Finder(query = "select from Model")
+    Optional<Model> findJdkOptional();
+
+    // use guava optional
+    @Finder(query = "select from Model")
+    com.google.common.base.Optional<Model> findGuavaOptional();
 }
