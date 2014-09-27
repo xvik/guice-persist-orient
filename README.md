@@ -33,7 +33,7 @@ Maven:
 <dependency>
 <groupId>ru.vyarus</groupId>
 <artifactId>guice-persist-orient</artifactId>
-<version>1.0.3</version>
+<version>1.1.0</version>
 <exclusions>
   <exclusion>
       <groupId>com.orientechnologies</groupId>
@@ -50,7 +50,7 @@ Maven:
 Gradle:
 
 ```groovy
-compile ('ru.vyarus:guice-persist-orient:1.0.3'){
+compile ('ru.vyarus:guice-persist-orient:1.1.0'){
     exclude module: 'orientdb-graphdb'
     exclude module: 'orientdb-object'       
 }
@@ -76,6 +76,14 @@ In short:
 * `'remote:dbname'` to use remote db (you need to start server to use it)
 
 By default use 'admin/admin' user.
+
+Auto database creation for local types (all except 'remote') is enabled by default, but you can switch it off. 
+Auto creation is nice for playing/developing/testing phase, but most likely will not be useful for production.
+
+```java
+install(new OrientModule(url, user, password)
+                .autoCreateLocalDatabase(false));
+```
 
 Default transactions configuration may be specified as additional module parameter.
 By default, OPTIMISTIC transactions used (use optimistic locking based on object version, same way as hibernate optimistic locking). 
@@ -294,19 +302,66 @@ For function call only `@MaxResults` may be used.
 void updateUsingObjectConnection()
 ```
 
-It may be important for proper return type (different connection return different objects: ODocument for document, model instances for object and
+It may be important for proper return type: different connections may return different objects (ODocument for document, model instances for object and
 Vertex and Edge for graph). For update queries connection type can't be detected and it always executed with default connection 
 (document, but may be changed in module configuration), but it may be important to execute it in the same transaction with other changes 
 (e.g. if you work in object connection and want update in the same connection).
 
+##### Placeholders
+
+Custom placeholders may be used in queries:
+
+```java
+@Finder(query = "select from User where ${provider} = ?")
+Optional<User> findByProvider(@Placeholder("provider") AuthProvider provider, String providerId);
+```
+
+Placeholders are useful mostly when we have a bunch of almost similar queries. In example above we have user object
+with oauth tokens stored for various providers. Without placeholder, we would need to write separate query for each
+provider, but with placeholder it could be written as single finder call with enum as additional parameter (very natural).
+
+Placeholder parameters may be strings or enums. Of course, enum is preferred, as most strict contract, but in some 
+cases strings may be more helpful. Enum converted to value using enum.toString(), so override it to provide correct 
+placeholder value (most likely different from enum.name()).
+
+By using raw string we introduce great opportunity for sql injections (placeholder may insert not just field name, 
+but entire subquery). In order to secure string placeholders, use `@PlaceholderValues` annotation to define possible 
+placeholder values (and `@Placeholders` to define multiple placeholders):
+
+```java
+@Finder(query = "select from Model where ${field} = ?")
+@PlaceholderValues(name = "field", values = {"name", "nick"})
+Model findByField(@Placeholder("field") String field, String value);
+
+
+@Finder( query = "select from Model where ${field1} = ? and ${field2} = ?")
+@Placeholders({
+      @PlaceholderValues(name="field1", values = {"name", "nick"}),
+      @PlaceholderValues(name="field2", values = {"name", "nick"})
+})
+Model findByTwoFields(@Placeholder("field1") String field1, @Placeholder("field2") String field2,
+                      String value1, String value2);
+```
+
+This way, any other value passed to placeholder parameter will be rejected (string usage become secure as enum).
+You can use string placeholders without strict definition, but in this case make sure security will not be violated.
+
 ##### Return types
 
 You can use: `Iterable`, `Collection`, `List`, `Set`, any collection implementation, array, single element or `Iterator`.
+Single elements (single object return) may be wrapped with `Optional` (guava (com.google.common.base.Optional) 
+or jdk8 (java.util.Optional)). Collections should not be wrapped
+with optional, because finder will never return null for collection or array. 
 Query execution result will be converted in accordance with specified return type.
 
 ```java
 @Finder(query = "select from Model")
 Model selectAll()
+```
+
+```java
+@Finder(query = "select from Model")
+Optional<Model> selectAll()
 ```
 
 First result will be returned (query implicitly limited to one element)
