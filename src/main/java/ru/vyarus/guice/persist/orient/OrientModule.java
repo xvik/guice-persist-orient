@@ -92,6 +92,7 @@ public class OrientModule extends PersistModule {
     private final String password;
     private String pkg;
     private TxConfig txConfig;
+    private boolean autoCreateDb = true;
 
     private Multibinder<PoolManager> poolsMultibinder;
     private MethodInterceptor interceptor;
@@ -134,6 +135,19 @@ public class OrientModule extends PersistModule {
         return this;
     }
 
+    /**
+     * Use to disable auto creation. Auto creation works only for local connection types
+     * (local, plocal, memory).
+     * By default, local database auto creation is enabled (to maintain compatibility with previous behaviour).
+     *
+     * @param autoCreateDb true to enable auto creation, false to disable
+     * @return module itself for chained calls
+     */
+    public OrientModule autoCreateLocalDatabase(final boolean autoCreateDb) {
+        this.autoCreateDb = autoCreateDb;
+        return this;
+    }
+
     @Override
     protected void configurePersistence() {
         poolsMultibinder = Multibinder.newSetBinder(binder(), PoolManager.class);
@@ -141,6 +155,7 @@ public class OrientModule extends PersistModule {
         bindConstant().annotatedWith(Names.named("orient.uri")).to(uri);
         bindConstant().annotatedWith(Names.named("orient.user")).to(user);
         bindConstant().annotatedWith(Names.named("orient.password")).to(password);
+        bindConstant().annotatedWith(Names.named("orient.db.autocreate")).to(autoCreateDb);
 
         // if package not provided empty string will mean root package (search all classpath)
         // not required if provided scheme initializers not used

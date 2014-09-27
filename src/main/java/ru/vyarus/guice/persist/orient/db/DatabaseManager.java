@@ -36,6 +36,7 @@ public class DatabaseManager implements PersistService {
     private final String uri;
     private final String user;
     private final String pass;
+    private final boolean autoCreate;
 
     private final Set<PoolManager> pools;
     private final SchemeInitializer modelInitializer;
@@ -47,22 +48,21 @@ public class DatabaseManager implements PersistService {
     private Set<DbType> supportedTypes;
 
     @Inject
+    @SuppressWarnings("checkstyle:parameternumber")
     public DatabaseManager(
             @Named("orient.uri") final String uri,
             @Named("orient.user") final String user,
             @Named("orient.password") final String password,
+            @Named("orient.db.autocreate") final boolean autoCreate,
             final Set<PoolManager> pools,
             final SchemeInitializer modelInitializer,
             final DataInitializer dataInitializer,
             final TxTemplate txTemplate) {
 
-        Preconditions.checkNotNull(uri, "Database name required");
-        Preconditions.checkNotNull(user, "Database user name required");
-        Preconditions.checkNotNull(password, "Database user password required");
-
-        this.uri = uri;
-        this.user = user;
-        this.pass = password;
+        this.uri = Preconditions.checkNotNull(uri, "Database name required");
+        this.user = Preconditions.checkNotNull(user, "Database user name required");
+        this.pass = Preconditions.checkNotNull(password, "Database user password required");
+        this.autoCreate = autoCreate;
         this.pools = pools;
         this.modelInitializer = modelInitializer;
         this.dataInitializer = dataInitializer;
@@ -131,10 +131,12 @@ public class DatabaseManager implements PersistService {
         try {
             // memory, local, plocal modes support simplified db creation,
             // but remote database must be created differently
-            if (isLocalDatabase() && !database.exists()) {
+            if (autoCreate && isLocalDatabase() && !database.exists()) {
                 logger.info("Creating database: '{}'", uri);
                 database.create();
             } else {
+                // trying to open to fail fast in case it doesn't exist and auto creation disabled
+                // (or remote connection was used)
                 logger.debug("Opening database: '{}'", uri);
                 database.open(user, pass);
             }
