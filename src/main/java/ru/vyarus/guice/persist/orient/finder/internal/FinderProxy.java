@@ -60,9 +60,9 @@ public class FinderProxy implements MethodInterceptor {
         final Object result = executeQuery(descriptor, command, arguments, method);
         final ResultDesc desc = new ResultDesc();
         desc.result = result;
-        desc.entityClass = descriptor.returnEntity;
-        desc.type = descriptor.returnType;
-        desc.returnClass = descriptor.expectType;
+        desc.entityClass = descriptor.result.entityType;
+        desc.type = descriptor.result.returnType;
+        desc.returnClass = descriptor.result.expectType;
         try {
             return resultConverter.convert(desc);
         } catch (Throwable th) {
@@ -81,8 +81,7 @@ public class FinderProxy implements MethodInterceptor {
         } catch (Throwable th) {
             throw new FinderExecutionException(String.format(
                     "Failed to execute query '%s' with parameters %s of finder %s#%s%s",
-                    command.isFunctionCall ? command.function : command.query,
-                    Arrays.toString(arguments), method.getDeclaringClass(),
+                    command.query, Arrays.toString(arguments), method.getDeclaringClass(),
                     method.getName(), Arrays.toString(method.getParameterTypes())
             ), th);
         }
@@ -103,19 +102,15 @@ public class FinderProxy implements MethodInterceptor {
         final SqlCommandDesc command = new SqlCommandDesc();
         final String query = processPlaceholders(descriptor, arguments);
         command.isFunctionCall = descriptor.isFunctionCall;
-        if (command.isFunctionCall) {
-            command.function = query;
-        } else {
-            command.query = query;
-        }
-        command.useNamedParams = descriptor.useNamedParameters;
+        command.query = query;
+        command.useNamedParams = descriptor.params.useNamedParameters;
         if (command.useNamedParams) {
-            command.namedParams = getNamedParams(descriptor.namedParametersIndex, arguments);
+            command.namedParams = getNamedParams(descriptor.params.namedParametersIndex, arguments);
         } else {
-            command.params = getParams(descriptor.parametersIndex, arguments);
+            command.params = getParams(descriptor.params.parametersIndex, arguments);
         }
 
-        switch (descriptor.returnType) {
+        switch (descriptor.result.returnType) {
             case COLLECTION:
             case ARRAY:
                 assignPaginationParams(command, descriptor, arguments);
@@ -125,33 +120,35 @@ public class FinderProxy implements MethodInterceptor {
                 command.max = 1;
                 break;
             default:
-                throw new IllegalStateException("Unsupported return type " + descriptor.returnType);
+                throw new IllegalStateException("Unsupported return type " + descriptor.result.returnType);
         }
         return command;
     }
 
     private String processPlaceholders(final FinderDescriptor descriptor, final Object[] arguments) {
-        String query = descriptor.isFunctionCall ? descriptor.functionName : descriptor.query;
-        if (descriptor.usePlaceholders) {
+        String query = descriptor.query;
+        if (descriptor.placeholders != null) {
             query = StringTemplateUtils.replace(query,
-                    getPlaceholderParams(descriptor.placeholderParametersIndex, arguments,
-                            descriptor.placeholderValues));
+                    getPlaceholderParams(descriptor.placeholders.parametersIndex, arguments,
+                            descriptor.placeholders.values));
         }
         return query;
     }
 
     private void assignPaginationParams(final SqlCommandDesc command,
                                         final FinderDescriptor descriptor, final Object[] arguments) {
-        if (descriptor.firstResultParamIndex != null) {
-            final Number rawStartValue = (Number) arguments[descriptor.firstResultParamIndex];
-            final Integer startValue = rawStartValue == null ? null : rawStartValue.intValue();
-            command.start = Objects.firstNonNull(startValue, 0);
-        }
+        if (descriptor.pagination != null) {
+            if (descriptor.pagination.firstResultParamIndex != null) {
+                final Number rawStartValue = (Number) arguments[descriptor.pagination.firstResultParamIndex];
+                final Integer startValue = rawStartValue == null ? null : rawStartValue.intValue();
+                command.start = Objects.firstNonNull(startValue, 0);
+            }
 
-        if (descriptor.maxResultsParamIndex != null) {
-            final Number rawMaxValue = (Number) arguments[descriptor.maxResultsParamIndex];
-            final Integer maxValue = rawMaxValue == null ? null : rawMaxValue.intValue();
-            command.max = Objects.firstNonNull(maxValue, -1);
+            if (descriptor.pagination.maxResultsParamIndex != null) {
+                final Number rawMaxValue = (Number) arguments[descriptor.pagination.maxResultsParamIndex];
+                final Integer maxValue = rawMaxValue == null ? null : rawMaxValue.intValue();
+                command.max = Objects.firstNonNull(maxValue, -1);
+            }
         }
     }
 

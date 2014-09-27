@@ -24,9 +24,7 @@ public class DefaultCommandBuilder implements CommandBuilder {
     public OCommandRequest buildCommand(final SqlCommandDesc desc) {
         final boolean isFunction = desc.isFunctionCall;
         // skip can't be applied to function
-        String query = isFunction
-                ? desc.function
-                : desc.query.trim();
+        String query = desc.query.trim();
 
         final boolean isQuery = !isFunction && query.toLowerCase().startsWith("select");
         if (isQuery) {
@@ -34,7 +32,7 @@ public class DefaultCommandBuilder implements CommandBuilder {
         }
         final OCommandRequest command = createCommandInstance(isFunction, isQuery, query);
 
-        if (desc.max > 0 && (desc.isFunctionCall || isQuery)) {
+        if (desc.max > 0 && (isFunction || isQuery)) {
             // must not be set for update command
             command.setLimit(desc.max);
         }

@@ -11,7 +11,6 @@ import java.util.Map;
 @SuppressWarnings("checkstyle:visibilitymodifier")
 public class SqlCommandDesc {
     public boolean isFunctionCall;
-    public String function;
     public String query;
     public boolean useNamedParams;
     public Object[] params;

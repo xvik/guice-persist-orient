@@ -25,43 +25,43 @@ class PlaceholderDefinitionParseTest extends AbstractTest {
         when: "placeholder with definition"
         FinderDescriptor desc = lookup(FinderWithPlaceholders.getMethod("findByField", String, String))
         then: "placeholder recognized"
-        desc.usePlaceholders
-        desc.placeholderParametersIndex == ['field': 0]
-        Sets.newHashSet(desc.placeholderValues.get('field')) == ['name', 'nick'] as Set
-        desc.parametersIndex == [1]
+        desc.placeholders
+        desc.placeholders.parametersIndex == ['field': 0]
+        Sets.newHashSet(desc.placeholders.values.get('field')) == ['name', 'nick'] as Set
+        desc.params.parametersIndex == [1]
 
         when: "placeholder with two parameters"
         desc = lookup(FinderWithPlaceholders.getMethod("findByTwoFields", String, String, String, String))
         then: "placeholder recognized"
-        desc.usePlaceholders
-        desc.placeholderParametersIndex == ['field1': 0, 'field2': 1]
-        Sets.newHashSet(desc.placeholderValues.get('field1')) == ['name', 'nick'] as Set
-        Sets.newHashSet(desc.placeholderValues.get('field2')) == ['name', 'nick'] as Set
-        desc.parametersIndex == [2, 3]
+        desc.placeholders
+        desc.placeholders.parametersIndex == ['field1': 0, 'field2': 1]
+        Sets.newHashSet(desc.placeholders.values.get('field1')) == ['name', 'nick'] as Set
+        Sets.newHashSet(desc.placeholders.values.get('field2')) == ['name', 'nick'] as Set
+        desc.params.parametersIndex == [2, 3]
 
         when: "placeholder with enum parameter"
         desc = lookup(FinderWithPlaceholders.getMethod("findByEnumField", PlaceholdersEnum, String))
         then: "placeholder recognized"
-        desc.usePlaceholders
-        desc.placeholderParametersIndex == ['field': 0]
-        Sets.newHashSet(desc.placeholderValues.get('field')) == [] as Set
-        desc.parametersIndex == [1]
+        desc.placeholders
+        desc.placeholders.parametersIndex == ['field': 0]
+        Sets.newHashSet(desc.placeholders.values.get('field')) == [] as Set
+        desc.params.parametersIndex == [1]
 
         when: "function placeholder"
         desc = lookup(FinderWithPlaceholders.getMethod("functionWithPlaceholder", String))
         then: "placeholder recognized"
-        desc.usePlaceholders
-        desc.placeholderParametersIndex == ['name': 0]
-        Sets.newHashSet(desc.placeholderValues.get('name')) == [] as Set
-        !desc.parametersIndex
+        desc.placeholders
+        desc.placeholders.parametersIndex == ['name': 0]
+        Sets.newHashSet(desc.placeholders.values.get('name')) == [] as Set
+        !desc.params.parametersIndex
 
         when: "function enum placeholder"
         desc = lookup(FinderWithPlaceholders.getMethod("functionWithPlaceholderEnum", PlaceholdersEnum))
         then: "placeholder recognized"
-        desc.usePlaceholders
-        desc.placeholderParametersIndex == ['name': 0]
-        Sets.newHashSet(desc.placeholderValues.get('name')) == [] as Set
-        !desc.parametersIndex
+        desc.placeholders
+        desc.placeholders.parametersIndex == ['name': 0]
+        Sets.newHashSet(desc.placeholders.values.get('name')) == [] as Set
+        !desc.params.parametersIndex
     }
 
     def "Check placeholder definition errors"() {

@@ -22,13 +22,13 @@ class CommandBuilderTest extends AbstractTest {
 
         when: "function call description provided"
         OCommandFunction req = builder.buildCommand(new SqlCommandDesc(
-                isFunctionCall: true, function: "test"))
+                isFunctionCall: true, query: "test"))
         then: "function query created"
         req.text == "test"
 
         when: "function with positional params"
         req = builder.buildCommand(new SqlCommandDesc(
-                isFunctionCall: true, function: "test", start: 1, max: 10))
+                isFunctionCall: true, query: "test", start: 1, max: 10))
         then: "function query created"
         req.text == "test"
         req.limit == 10

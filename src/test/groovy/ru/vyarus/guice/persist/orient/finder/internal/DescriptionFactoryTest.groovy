@@ -32,63 +32,63 @@ class DescriptionFactoryTest extends AbstractTest {
         FinderDescriptor desc = lookup(InterfaceFinder.getMethod("selectAll"))
         then: "object provider recognized"
         desc.executor.class == ObjectFinderExecutor
-        desc.returnType == ResultType.COLLECTION
-        desc.returnEntity == Model
-        !desc.useNamedParameters
-        desc.parametersIndex.length == 0
+        desc.result.returnType == ResultType.COLLECTION
+        desc.result.entityType == Model
+        !desc.params.useNamedParameters
+        desc.params.parametersIndex.length == 0
         !desc.isFunctionCall
 
         when: "object db method, detection by array type"
         desc = lookup(InterfaceFinder.getMethod("selectAllAsArray"))
         then: "object provider recognized"
         desc.executor.class == ObjectFinderExecutor
-        desc.returnType == ResultType.ARRAY
-        desc.returnEntity == Model
+        desc.result.returnType == ResultType.ARRAY
+        desc.result.entityType == Model
 
         when: "object db method, single return"
         desc = lookup(InterfaceFinder.getMethod("selectUnique"))
         then: "object provider recognized"
         desc.executor.class == ObjectFinderExecutor
-        desc.returnType == ResultType.PLAIN
-        desc.returnEntity == Model
+        desc.result.returnType == ResultType.PLAIN
+        desc.result.entityType == Model
 
         when: "document db method, detection by list generic"
         desc = lookup(InterfaceFinder.getMethod("selectAllAsDocument"))
         then: "document provider recognized"
         desc.executor.class == DocumentFinderExecutor
-        desc.returnType == ResultType.COLLECTION
-        desc.returnEntity == ODocument
+        desc.result.returnType == ResultType.COLLECTION
+        desc.result.entityType == ODocument
 
         when: "graph db method, detection by list generic"
         desc = lookup(InterfaceFinder.getMethod("selectAllAsVertex"))
         then: "graph provider recognized"
         desc.executor.class == GraphFinderExecutor
-        desc.returnType == ResultType.COLLECTION
-        desc.returnEntity == Vertex
+        desc.result.returnType == ResultType.COLLECTION
+        desc.result.entityType == Vertex
 
         when: "no return type, default document"
         desc = lookup(InterfaceFinder.getMethod("update"))
         then: "document provider recognized"
         desc.executor.class == DocumentFinderExecutor
-        desc.returnType == ResultType.PLAIN
+        desc.result.returnType == ResultType.PLAIN
 
         when: "primitive return type, default document"
         desc = lookup(InterfaceFinder.getMethod("updateWithCount"))
         then: "document provider recognized"
         desc.executor.class == DocumentFinderExecutor
-        desc.returnType == ResultType.PLAIN
+        desc.result.returnType == ResultType.PLAIN
 
         when: "primitive wrapper return type, default document"
         desc = lookup(InterfaceFinder.getMethod("updateWithCountObject"))
         then: "document provider recognized"
         desc.executor.class == DocumentFinderExecutor
-        desc.returnType == ResultType.PLAIN
+        desc.result.returnType == ResultType.PLAIN
 
         when: "list without generic"
         desc = lookup(InterfaceFinder.getMethod("selectAllNoType"))
         then: "document connection selected"
         desc.executor.class == DocumentFinderExecutor
-        desc.returnType == ResultType.COLLECTION
+        desc.result.returnType == ResultType.COLLECTION
     }
 
     def "Check function recognition"() {
@@ -109,20 +109,20 @@ class DescriptionFactoryTest extends AbstractTest {
         when: "positional parameters"
         FinderDescriptor desc = lookup(InterfaceFinder.getMethod("parametersPositional", String.class, String.class))
         then: "recognized"
-        !desc.useNamedParameters
-        desc.parametersIndex == [0, 1]
+        !desc.params.useNamedParameters
+        desc.params.parametersIndex == [0, 1]
 
         when: "named parameters"
         desc = lookup(InterfaceFinder.getMethod("parametersNamed", String.class, String.class))
         then: "recognized"
-        desc.useNamedParameters
-        desc.namedParametersIndex== ["name": 0, "nick":1]
+        desc.params.useNamedParameters
+        desc.params.namedParametersIndex== ["name": 0, "nick":1]
 
         when: "positional parameters with warning, because of wrong @named use"
         desc = lookup(InterfaceFinder.getMethod("parametersPositionalWithWarning", String.class, String.class))
         then: "recognized"
-        !desc.useNamedParameters
-        desc.parametersIndex== [0, 1]
+        !desc.params.useNamedParameters
+        desc.params.parametersIndex== [0, 1]
 
         when: "named parameters incorrect declaration"
         lookup(InterfaceFinder.getMethod("parametersNames", String.class, String.class))
@@ -137,18 +137,18 @@ class DescriptionFactoryTest extends AbstractTest {
         when: "positional parameters with page definition"
         desc = lookup(InterfaceFinder.getMethod("parametersPaged", String.class, String.class, int.class, int.class))
         then: "recognized"
-        !desc.useNamedParameters
-        desc.parametersIndex== [0, 1]
-        desc.firstResultParamIndex==2
-        desc.maxResultsParamIndex==3
+        !desc.params.useNamedParameters
+        desc.params.parametersIndex== [0, 1]
+        desc.pagination.firstResultParamIndex==2
+        desc.pagination.maxResultsParamIndex==3
 
         when: "positional parameters with page definition as objects"
         desc = lookup(InterfaceFinder.getMethod("parametersPagedObject", String.class, String.class, Long.class, Long.class))
         then: "recognized"
-        !desc.useNamedParameters
-        desc.parametersIndex== [0, 1]
-        desc.firstResultParamIndex==2
-        desc.maxResultsParamIndex==3
+        !desc.params.useNamedParameters
+        desc.params.parametersIndex== [0, 1]
+        desc.pagination.firstResultParamIndex==2
+        desc.pagination.maxResultsParamIndex==3
 
         when: "positional parameters with page definition as objects"
         lookup(InterfaceFinder.getMethod("parametersPagedDouble", String.class, String.class, int.class, int.class))

@@ -31,69 +31,69 @@ class ExtraCasesAnalysisTest extends AbstractTest {
         FinderDescriptor desc = lookup(ExtraCasesFinder.getMethod("selectAll"))
         then: "iterable recognized"
         desc.executor.class == ObjectFinderExecutor
-        desc.returnType == ResultType.COLLECTION
-        desc.returnEntity == Model
-        desc.expectType == Iterable
-        !desc.useNamedParameters
-        desc.parametersIndex.length == 0
+        desc.result.returnType == ResultType.COLLECTION
+        desc.result.entityType == Model
+        desc.result.expectType == Iterable
+        !desc.params.useNamedParameters
+        desc.params.parametersIndex.length == 0
         !desc.isFunctionCall
 
         when: "iterator return should be detected as collection"
         desc = lookup(ExtraCasesFinder.getMethod("selectAllIterator"))
         then: "iterator recognized"
         desc.executor.class == ObjectFinderExecutor
-        desc.returnType == ResultType.COLLECTION
-        desc.returnEntity == Model
-        desc.expectType == Iterator
+        desc.result.returnType == ResultType.COLLECTION
+        desc.result.entityType == Model
+        desc.result.expectType == Iterator
 
         when: "iterator return should be detected as collection for graph connection"
         desc = lookup(ExtraCasesFinder.getMethod("selectAllVertex"))
         then: "iterator recognized"
         desc.executor.class == GraphFinderExecutor
-        desc.returnType == ResultType.COLLECTION
-        desc.returnEntity == Vertex
-        desc.expectType == Iterator
+        desc.result.returnType == ResultType.COLLECTION
+        desc.result.entityType== Vertex
+        desc.result.expectType == Iterator
 
         when: "iterable return should be detected as collection for graph connection"
         desc = lookup(ExtraCasesFinder.getMethod("selectAllVertexIterable"))
         then: "iterable recognized"
         desc.executor.class == GraphFinderExecutor
-        desc.returnType == ResultType.COLLECTION
-        desc.returnEntity == Vertex
-        desc.expectType == Iterable
+        desc.result.returnType == ResultType.COLLECTION
+        desc.result.entityType == Vertex
+        desc.result.expectType == Iterable
 
         when: "set collection override"
         desc = lookup(ExtraCasesFinder.getMethod("selectAllAsSet"))
         then: "set recognized"
         desc.executor.class == ObjectFinderExecutor
-        desc.returnType == ResultType.COLLECTION
-        desc.returnEntity == Model
-        desc.expectType == HashSet
+        desc.result.returnType == ResultType.COLLECTION
+        desc.result.entityType== Model
+        desc.result.expectType == HashSet
 
         when: "set collection override with graph connection"
         desc = lookup(ExtraCasesFinder.getMethod("selectAllAsSetGraph"))
         then: "set recognized"
         desc.executor.class == GraphFinderExecutor
-        desc.returnType == ResultType.COLLECTION
-        desc.returnEntity == Vertex
-        desc.expectType == HashSet
+        desc.result.returnType == ResultType.COLLECTION
+        desc.result.entityType == Vertex
+        desc.result.expectType == HashSet
 
         when: "vararg parameter"
         desc = lookup(ExtraCasesFinder.getMethod("findWithVararg", String[]))
         then: "parameter recognized as array"
         desc.executor.class == ObjectFinderExecutor
-        desc.returnType == ResultType.COLLECTION
-        desc.returnEntity == Model
-        desc.expectType == List
-        desc.parametersIndex == [0]
+        desc.result.returnType == ResultType.COLLECTION
+        desc.result.entityType == Model
+        desc.result.expectType == List
+        desc.params.parametersIndex == [0]
 
         when: "document overridden for object connection"
         desc = lookup(ExtraCasesFinder.getMethod("documentOverride"))
         then: "select object connection"
         desc.executor.class == ObjectFinderExecutor
-        desc.returnType == ResultType.COLLECTION
-        desc.returnEntity == ODocument
-        desc.expectType == List
+        desc.result.returnType == ResultType.COLLECTION
+        desc.result.entityType== ODocument
+        desc.result.expectType == List
     }
 
     def "Optional cases"() {
@@ -102,17 +102,17 @@ class ExtraCasesAnalysisTest extends AbstractTest {
         FinderDescriptor desc = lookup(ExtraCasesFinder.getMethod("findJdkOptional"))
         then: "optional recognized"
         desc.executor.class == ObjectFinderExecutor
-        desc.returnType == ResultType.PLAIN
-        desc.returnEntity == Model
-        desc.expectType == Optional
+        desc.result.returnType == ResultType.PLAIN
+        desc.result.entityType == Model
+        desc.result.expectType == Optional
 
         when: "return guava optional"
         desc = lookup(ExtraCasesFinder.getMethod("findGuavaOptional"))
         then: "optional recognized"
         desc.executor.class == ObjectFinderExecutor
-        desc.returnType == ResultType.PLAIN
-        desc.returnEntity == Model
-        desc.expectType == com.google.common.base.Optional
+        desc.result.returnType == ResultType.PLAIN
+        desc.result.entityType == Model
+        desc.result.expectType == com.google.common.base.Optional
     }
 
     FinderDescriptor lookup(Method method) {

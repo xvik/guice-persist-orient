@@ -101,7 +101,7 @@ gradle.taskGraph.afterTask { Task task, TaskState state ->
             println ''
             result.file.each { file ->
                 file.violation.each { violation ->
-                    println "${file.'@name'}:${violation.'@beginline'}: ${violation.text()}"
+                    println "${file.'@name'}:${violation.'@beginline'}: ${violation.text()}${violation.'@externalInfoUrl'}\n"
                 }
             }
         }

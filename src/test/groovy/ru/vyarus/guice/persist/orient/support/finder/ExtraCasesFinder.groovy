@@ -48,7 +48,7 @@ interface ExtraCasesFinder {
     @Use(DbType.OBJECT)
     List<ODocument> documentOverride();
 
-    // use jdk7 optional
+    // use jdk8 optional
     @Finder(query = "select from Model")
     Optional<Model> findJdkOptional();
 

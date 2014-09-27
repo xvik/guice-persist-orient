@@ -1,10 +1,10 @@
 package ru.vyarus.guice.persist.orient.finder.internal;
 
-import com.google.common.collect.Multimap;
 import ru.vyarus.guice.persist.orient.finder.FinderExecutor;
-import ru.vyarus.guice.persist.orient.finder.result.ResultType;
-
-import java.util.Map;
+import ru.vyarus.guice.persist.orient.finder.internal.pagination.PaginationDescriptor;
+import ru.vyarus.guice.persist.orient.finder.internal.params.ParamsDescriptor;
+import ru.vyarus.guice.persist.orient.finder.internal.placeholder.PlaceholderDescriptor;
+import ru.vyarus.guice.persist.orient.finder.internal.result.ResultDescriptor;
 
 /**
  * Parsed method finder declaration.
@@ -20,30 +20,16 @@ import java.util.Map;
 })
 public class FinderDescriptor {
 
-    // Finder.namedQuery
-    String functionName;
-    // Finder.query
-    String query;
-    // @FirstResult annotation
-    Integer firstResultParamIndex;
-    // @MaxResults annotation
-    Integer maxResultsParamIndex;
-
     boolean isFunctionCall;
-    boolean useNamedParameters;
-    boolean usePlaceholders;
+    // finder query or function
+    String query;
 
-    Multimap<String, String> placeholderValues;
+    PlaceholderDescriptor placeholders;
+    ResultDescriptor result;
 
-    ResultType returnType;
-    // return entity type (return type for single return and generic type for collection, array or iterator)
-    Class returnEntity;
-    // type to convert result object to
-    Class expectType;
     // assigned executor instance
     FinderExecutor executor;
 
-    Integer[] parametersIndex;
-    Map<String, Integer> namedParametersIndex;
-    Map<String, Integer> placeholderParametersIndex;
+    ParamsDescriptor params;
+    PaginationDescriptor pagination;
 }

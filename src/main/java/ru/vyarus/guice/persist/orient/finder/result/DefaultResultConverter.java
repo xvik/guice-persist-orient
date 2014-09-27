@@ -88,24 +88,16 @@ public class DefaultResultConverter implements ResultConverter {
 
     @SuppressWarnings("unchecked")
     private Object handlePlain(final Object result, final Class returnClass, final Class entityClass) {
-        Object converted;
-        if ("Optional".equals(returnClass.getSimpleName())) {
-            converted = handlePlainValue(result, entityClass);
-            try {
-                // guava or jdk7 Optional
-                final String method = com.google.common.base.Optional.class.equals(returnClass)
-                        ? "fromNullable" : "ofNullable";
-                converted = returnClass.getMethod(method, Object.class).invoke(null, converted);
-            } catch (Exception e) {
-                throw new FinderResultConversionException(String.format("Failed to convert result into optional %s",
-                        returnClass), e);
-            }
-        } else {
-            converted = handlePlainValue(result, returnClass);
+        final boolean isOptional = Optionals.isOptional(returnClass);
+        Object converted = handlePlainValue(result, isOptional ? entityClass : returnClass);
+        if (isOptional) {
+            // jdk8 or guava optional
+            converted = Optionals.create(converted, returnClass);
         }
         return converted;
     }
 
+    @SuppressWarnings("PMD.UnusedPrivateMethod")
     private Object handlePlainValue(final Object result, final Class returnClass) {
         Object converted;
         if (returnClass.equals(Long.class) && result instanceof Number) {
