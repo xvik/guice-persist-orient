@@ -40,7 +40,7 @@ class FinderPlaceholdersExecutionTest extends AbstractTest {
         res
 
         when: "select by two dynamic fields"
-        res = finder.findByEnumField(PlaceholdersEnum.name as PlaceholdersEnum, 'John');
+        res = finder.findByEnumField(PlaceholdersEnum.NAME as PlaceholdersEnum, 'John');
         then: "found"
         res
 
@@ -50,7 +50,7 @@ class FinderPlaceholdersExecutionTest extends AbstractTest {
         res2.size() > 0
 
         when: "select by dynamic function with enum name"
-        res2 = finder.functionWithPlaceholderEnum(PlaceholdersEnum.name as PlaceholdersEnum);
+        res2 = finder.functionWithPlaceholderEnum(PlaceholdersEnum.NAME as PlaceholdersEnum);
         then: "found"
         res2.size() > 0
     }

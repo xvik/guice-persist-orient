@@ -7,6 +7,17 @@ package ru.vyarus.guice.persist.orient.support.finder;
  * @since 22.09.2014
  */
 public enum PlaceholdersEnum {
-    name,
-    nick
+    NAME("name"),
+    NICK("nick")
+
+    private String field;
+
+    PlaceholdersEnum(String field) {
+        this.field = field
+    }
+
+    @Override
+    String toString() {
+        return field;
+    }
 }

@@ -176,7 +176,7 @@ public class FinderProxy implements MethodInterceptor {
             final Object value = arguments[entry.getValue()];
             // safeguard from accident null passing
             Preconditions.checkArgument(value != null, "Placeholder '%s' value is null. "
-                    + "Use explicit empty string if you need epty replacement for placeholder.", name);
+                    + "Use explicit empty string if you need empty replacement for placeholder.", name);
             final String strValue = value.toString();
             // check value with defaults. don't print warning because one warning is enough (during method analysis)
             if (!value.getClass().isEnum() && defaults.containsKey(name)) {
