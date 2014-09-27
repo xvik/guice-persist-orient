@@ -255,15 +255,15 @@ class ResultConverterTest extends AbstractTest {
         res instanceof com.google.common.base.Optional
         res.get() == 1
 
-        when: "result is jdk optional"
-        res = converter.convert(new ResultDesc(
-                result: 1,
-                type: ResultType.PLAIN,
-                returnClass: Optional,
-                entityClass: Integer))
-        then: "no conversion"
-        res instanceof Optional
-        res.get() == 1
+//        when: "result is jdk optional"
+//        res = converter.convert(new ResultDesc(
+//                result: 1,
+//                type: ResultType.PLAIN,
+//                returnClass: Optional,
+//                entityClass: Integer))
+//        then: "no conversion"
+//        res instanceof Optional
+//        res.get() == 1
     }
 
     def "Check collection substitution"() {

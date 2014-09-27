@@ -66,11 +66,11 @@ class ExtraCasesExecutionTest extends AbstractTest {
         then: "returned list"
         res.size() == 1
 
-        when: "jdk8 optional"
-        res = finder.findJdkOptional();
-        then: "returned jdk optional"
-        res instanceof Optional
-        res.get()
+//        when: "jdk8 optional"
+//        res = finder.findJdkOptional();
+//        then: "returned jdk optional"
+//        res instanceof Optional
+//        res.get()
 
         when: "guava optional"
         res = finder.findGuavaOptional();

@@ -98,21 +98,21 @@ class ExtraCasesAnalysisTest extends AbstractTest {
 
     def "Optional cases"() {
 
-        when: "return jdk optional"
-        FinderDescriptor desc = lookup(ExtraCasesFinder.getMethod("findJdkOptional"))
-        then: "optional recognized"
-        desc.executor.class == ObjectFinderExecutor
-        desc.result.returnType == ResultType.PLAIN
-        desc.result.entityType == Model
-        desc.result.expectType == Optional
-
         when: "return guava optional"
-        desc = lookup(ExtraCasesFinder.getMethod("findGuavaOptional"))
+        FinderDescriptor desc = lookup(ExtraCasesFinder.getMethod("findGuavaOptional"))
         then: "optional recognized"
         desc.executor.class == ObjectFinderExecutor
         desc.result.returnType == ResultType.PLAIN
         desc.result.entityType == Model
         desc.result.expectType == com.google.common.base.Optional
+
+//        when: "return jdk optional"
+//        desc = lookup(ExtraCasesFinder.getMethod("findJdkOptional"))
+//        then: "optional recognized"
+//        desc.executor.class == ObjectFinderExecutor
+//        desc.result.returnType == ResultType.PLAIN
+//        desc.result.entityType == Model
+//        desc.result.expectType == Optional
     }
 
     FinderDescriptor lookup(Method method) {
