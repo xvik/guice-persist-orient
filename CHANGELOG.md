@@ -1,3 +1,6 @@
+### 1.1.1
+* Fix finder behaviour: empty collection conversion to single element
+
 ### 1.1.0
 * Fix finder module available db types detection
 * Add query placeholders support for finders

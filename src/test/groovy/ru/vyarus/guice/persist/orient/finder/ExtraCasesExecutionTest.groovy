@@ -77,5 +77,11 @@ class ExtraCasesExecutionTest extends AbstractTest {
         then: "returned guava optional"
         res instanceof com.google.common.base.Optional
         res.get()
+
+        when: "converting empty collection to single element"
+        res = finder.finderEmptyCollection();
+        then: "empty optional returned"
+        res instanceof com.google.common.base.Optional
+        !res.isPresent()
     }
 }

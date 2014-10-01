@@ -99,7 +99,7 @@ public class DefaultResultConverter implements ResultConverter {
 
     @SuppressWarnings("PMD.UnusedPrivateMethod")
     private Object handlePlainValue(final Object result, final Class returnClass) {
-        Object converted;
+        Object converted = null;
         if (returnClass.equals(Long.class) && result instanceof Number) {
             converted = ((Number) result).longValue();
         } else if (returnClass.equals(Integer.class) && result instanceof Number) {
@@ -107,7 +107,10 @@ public class DefaultResultConverter implements ResultConverter {
         } else {
             // if single type required convert from collection
             // simple single type case will be handled on checking assignment (at the top)
-            converted = toIterator(result).next();
+            final Iterator it = toIterator(result);
+            if (it.hasNext()) {
+                converted = it.next();
+            }
         }
         return converted;
     }

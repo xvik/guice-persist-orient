@@ -55,4 +55,8 @@ interface ExtraCasesFinder {
     // use guava optional
     @Finder(query = "select from Model")
     com.google.common.base.Optional<Model> findGuavaOptional();
+
+    // check empty collection result conversion to single element
+    @Finder(query = "select from Model where name='not existent'")
+    com.google.common.base.Optional<Model> finderEmptyCollection();
 }

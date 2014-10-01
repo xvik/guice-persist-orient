@@ -33,7 +33,7 @@ Maven:
 <dependency>
 <groupId>ru.vyarus</groupId>
 <artifactId>guice-persist-orient</artifactId>
-<version>1.1.0</version>
+<version>1.1.1</version>
 <exclusions>
   <exclusion>
       <groupId>com.orientechnologies</groupId>
@@ -50,7 +50,7 @@ Maven:
 Gradle:
 
 ```groovy
-compile ('ru.vyarus:guice-persist-orient:1.1.0'){
+compile ('ru.vyarus:guice-persist-orient:1.1.1'){
     exclude module: 'orientdb-graphdb'
     exclude module: 'orientdb-object'       
 }
