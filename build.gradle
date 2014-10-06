@@ -20,7 +20,8 @@ project.ext {
         tags = ['guice', 'guice-persist', 'orientdb']
         dryRun = false // whether to run this as dry-run, without deploying (TEST RUN)
         publish = true //If version should be auto published after an upload
-        signFiles = true // true to sign files on bintray (certificate must be installed on bintray account)
+        signFiles = true // true to gpg sign files on bintray (certificate must be installed on bintray account)
+        gpgPassphrase = project.hasProperty('gpgPassphrase') ? gpgPassphrase : '' // optionally configured in ~/.gradle/gradle.properties if certificate requires it
     }
     license = 'MIT'
     licenseDesc = 'The MIT License'
@@ -64,9 +65,9 @@ apply from: 'gradle/quality.gradle'
 
 
 repositories {
-    mavenLocal()
     jcenter()
     mavenCentral()
+    mavenLocal()
 }
 
 dependencies {
