@@ -12,4 +12,5 @@ dependencies {
     // check dependencies updates
     classpath "com.github.ben-manes:gradle-versions-plugin:0.5"
     classpath 'com.github.townsfolk:gradle-release:1.2'
+    classpath "be.insaneprogramming.gradle:animalsniffer-gradle-plugin:1.4.0"
 }
