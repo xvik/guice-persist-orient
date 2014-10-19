@@ -2,21 +2,17 @@ package ru.vyarus.guice.persist.orient.finder.internal
 
 import com.google.common.collect.Sets
 import com.google.inject.Inject
-import ru.vyarus.guice.persist.orient.AbstractTest
-import ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxAction
 import ru.vyarus.guice.persist.orient.support.finder.FinderWithPlaceholders
 import ru.vyarus.guice.persist.orient.support.finder.PlaceholdersEnum
 import ru.vyarus.guice.persist.orient.support.modules.TestFinderModule
 import spock.guice.UseModules
-
-import java.lang.reflect.Method
 
 /**
  * @author Vyacheslav Rusakov 
  * @since 22.09.2014
  */
 @UseModules(TestFinderModule)
-class PlaceholderDefinitionParseTest extends AbstractTest {
+class PlaceholderDefinitionParseTest extends AbstractFinderDefinitionTest {
     @Inject
     FinderDescriptorFactory factory;
 
@@ -110,11 +106,5 @@ class PlaceholderDefinitionParseTest extends AbstractTest {
         lookup(FinderWithPlaceholders.getMethod("findByFieldErrDuplicateDefaultsDefinition", String, String))
         then: "error"
         thrown(FinderDefinitionException)
-    }
-
-    FinderDescriptor lookup(Method method) {
-        template.doInTransaction({
-            return factory.create(method)
-        } as SpecificTxAction)
     }
 }

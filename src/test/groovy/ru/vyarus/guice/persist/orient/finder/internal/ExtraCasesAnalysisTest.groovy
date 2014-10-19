@@ -3,8 +3,6 @@ package ru.vyarus.guice.persist.orient.finder.internal
 import com.google.inject.Inject
 import com.orientechnologies.orient.core.record.impl.ODocument
 import com.tinkerpop.blueprints.Vertex
-import ru.vyarus.guice.persist.orient.AbstractTest
-import ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxAction
 import ru.vyarus.guice.persist.orient.finder.executor.GraphFinderExecutor
 import ru.vyarus.guice.persist.orient.finder.executor.ObjectFinderExecutor
 import ru.vyarus.guice.persist.orient.finder.result.ResultType
@@ -13,21 +11,19 @@ import ru.vyarus.guice.persist.orient.support.model.Model
 import ru.vyarus.guice.persist.orient.support.modules.AutoScanFinderTestModule
 import spock.guice.UseModules
 
-import java.lang.reflect.Method
-
 /**
  * @author Vyacheslav Rusakov 
  * @since 05.08.2014
  */
 @UseModules(AutoScanFinderTestModule)
-class ExtraCasesAnalysisTest extends AbstractTest {
+class ExtraCasesAnalysisTest extends AbstractFinderDefinitionTest {
 
     @Inject
     FinderDescriptorFactory factory;
 
     def "Check db type recognition"() {
 
-        when: "iterable return ahould be detected as collection"
+        when: "iterable return should be detected as collection"
         FinderDescriptor desc = lookup(ExtraCasesFinder.getMethod("selectAll"))
         then: "iterable recognized"
         desc.executor.class == ObjectFinderExecutor
@@ -51,7 +47,7 @@ class ExtraCasesAnalysisTest extends AbstractTest {
         then: "iterator recognized"
         desc.executor.class == GraphFinderExecutor
         desc.result.returnType == ResultType.COLLECTION
-        desc.result.entityType== Vertex
+        desc.result.entityType == Vertex
         desc.result.expectType == Iterator
 
         when: "iterable return should be detected as collection for graph connection"
@@ -67,7 +63,7 @@ class ExtraCasesAnalysisTest extends AbstractTest {
         then: "set recognized"
         desc.executor.class == ObjectFinderExecutor
         desc.result.returnType == ResultType.COLLECTION
-        desc.result.entityType== Model
+        desc.result.entityType == Model
         desc.result.expectType == HashSet
 
         when: "set collection override with graph connection"
@@ -92,7 +88,7 @@ class ExtraCasesAnalysisTest extends AbstractTest {
         then: "select object connection"
         desc.executor.class == ObjectFinderExecutor
         desc.result.returnType == ResultType.COLLECTION
-        desc.result.entityType== ODocument
+        desc.result.entityType == ODocument
         desc.result.expectType == List
     }
 
@@ -113,12 +109,6 @@ class ExtraCasesAnalysisTest extends AbstractTest {
 //        desc.result.returnType == ResultType.PLAIN
 //        desc.result.entityType == Model
 //        desc.result.expectType == Optional
-    }
-
-    FinderDescriptor lookup(Method method) {
-        template.doInTransaction({
-            return factory.create(method)
-        } as SpecificTxAction)
     }
 }
 

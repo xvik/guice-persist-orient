@@ -16,9 +16,10 @@ import ru.vyarus.guice.persist.orient.finder.internal.result.ResultDescriptor;
  */
 @SuppressWarnings({
         "checkstyle:visibilitymodifier",
-        "PMD.DefaultPackage"
-})
+        "PMD.DefaultPackage"})
 public class FinderDescriptor {
+    // when interface hierarchies used we can't get root class from method
+    Class finderRootType;
 
     boolean isFunctionCall;
     // finder query or function

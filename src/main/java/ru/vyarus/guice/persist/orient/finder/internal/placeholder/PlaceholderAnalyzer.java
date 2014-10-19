@@ -1,11 +1,12 @@
 package ru.vyarus.guice.persist.orient.finder.internal.placeholder;
 
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Lists;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vyarus.guice.persist.orient.finder.internal.FinderDefinitionException;
+import ru.vyarus.guice.persist.orient.finder.internal.generics.GenericsUtils;
 import ru.vyarus.guice.persist.orient.finder.internal.params.ParamsUtil;
 import ru.vyarus.guice.persist.orient.finder.placeholder.Placeholder;
 import ru.vyarus.guice.persist.orient.finder.placeholder.PlaceholderValues;
@@ -14,14 +15,15 @@ import ru.vyarus.guice.persist.orient.finder.placeholder.StringTemplateUtils;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.lang.reflect.Type;
+import java.util.*;
 
 import static ru.vyarus.guice.persist.orient.finder.internal.FinderDefinitionException.check;
 
 /**
  * Placeholders analysis support for finder methods.
+ * Interface generics also may be used as placeholder. In this case placeholder value will be set
+ * automatically.
  *
  * @author Vyacheslav Rusakov
  * @since 26.09.2014
@@ -32,7 +34,9 @@ public final class PlaceholderAnalyzer {
     private PlaceholderAnalyzer() {
     }
 
-    public static PlaceholderDescriptor analyzePlaceholders(final Method method, final String query) {
+    public static PlaceholderDescriptor analyzePlaceholders(final Method method,
+                                                            final Map<String, Type> generics,
+                                                            final String query) {
         final List<String> placeholders = getPlaceholders(query);
 
         PlaceholderDescriptor descriptor = null;
@@ -49,11 +53,13 @@ public final class PlaceholderAnalyzer {
                     registerPlaceholderValues(values, placeholders, descriptor);
                 }
             }
+            checkGenericPlaceholders(placeholders, descriptor, generics);
         }
         return descriptor;
     }
 
-    public static void analyzePlaceholderParameters(final Method method, final PlaceholderDescriptor descriptor,
+    public static void analyzePlaceholderParameters(final Method method,
+                                                    final PlaceholderDescriptor descriptor,
                                                     final String query, final List<Integer> skip) {
         ParamsUtil.process(method, new PlaceholderParamVisitor(descriptor, method), skip);
         validatePlaceholdersParamsDefinition(descriptor, query);
@@ -67,6 +73,24 @@ public final class PlaceholderAnalyzer {
             throw new FinderDefinitionException(ex.getMessage(), ex);
         }
         return placeholders;
+    }
+
+    private static void checkGenericPlaceholders(final List<String> placeholders,
+                                                 final PlaceholderDescriptor descriptor,
+                                                 final Map<String, Type> generics) {
+        if (generics != null) {
+            for (Map.Entry<String, Type> entry : generics.entrySet()) {
+                final String key = entry.getKey();
+                if (placeholders.contains(key)) {
+                    if (descriptor.genericParameters == null) {
+                        descriptor.genericParameters = Maps.newHashMap();
+                    }
+                    // using just class name, because orient don't need package
+                    descriptor.genericParameters.put(key,
+                            GenericsUtils.resolveClass(entry.getValue(), generics).getSimpleName());
+                }
+            }
+        }
     }
 
     private static void registerPlaceholderValues(final PlaceholderValues values, final List<String> placeholders,
@@ -111,7 +135,16 @@ public final class PlaceholderAnalyzer {
             final PlaceholderDescriptor descriptor, final String query) {
         if (descriptor != null) {
             try {
-                StringTemplateUtils.validate(query, Lists.newArrayList(descriptor.parametersIndex.keySet()));
+                final List<String> empty = Collections.emptyList();
+                // count usual and generic parameters
+                final List<String> params = ImmutableList.<String>builder()
+                        .addAll(descriptor.parametersIndex != null
+                                ? descriptor.parametersIndex.keySet()
+                                : empty)
+                        .addAll(descriptor.genericParameters != null
+                                ? descriptor.genericParameters.keySet()
+                                : empty).build();
+                StringTemplateUtils.validate(query, params);
             } catch (IllegalStateException ex) {
                 check(false, ex.getMessage());
             }

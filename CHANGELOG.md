@@ -1,3 +1,7 @@
+* Support inheritance for finder beans and interfaces (mixins)
+* Support generic type query placeholders (finder class generic used as query placeholder)
+* AutoScanFinderModule accept multiple packages for scanning
+
 ### 1.1.1
 * Fix finder behaviour: empty collection conversion to single element
 

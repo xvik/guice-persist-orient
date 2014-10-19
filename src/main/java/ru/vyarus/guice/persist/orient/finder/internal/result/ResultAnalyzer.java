@@ -2,14 +2,16 @@ package ru.vyarus.guice.persist.orient.finder.internal.result;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.vyarus.guice.persist.orient.finder.internal.generics.GenericsUtils;
+import ru.vyarus.guice.persist.orient.finder.internal.generics.NoGenericException;
 import ru.vyarus.guice.persist.orient.finder.result.Optionals;
 import ru.vyarus.guice.persist.orient.finder.result.ResultType;
 
 import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Map;
 
 import static ru.vyarus.guice.persist.orient.finder.internal.FinderDefinitionException.check;
 import static ru.vyarus.guice.persist.orient.finder.result.ResultType.*;
@@ -30,12 +32,14 @@ public final class ResultAnalyzer {
      * Analyze return type.
      *
      * @param method               finder method
+     * @param generics             finder interface hierarchy generic parameters values or null if no generics
+     *                             or no hierarchy
      * @param returnCollectionType collection implementation to convert to or null if conversion not required
      * @return result description object
      */
-    public static ResultDescriptor analyzeReturnType(final Method method,
+    public static ResultDescriptor analyzeReturnType(final Method method, final Map<String, Type> generics,
                                                      final Class<? extends Collection> returnCollectionType) {
-        final Class<?> returnClass = method.getReturnType();
+        final Class<?> returnClass = GenericsUtils.getReturnType(method, generics);
         final ResultDescriptor descriptor = new ResultDescriptor();
         descriptor.expectType = resolveExpectedType(returnClass, returnCollectionType);
 
@@ -45,7 +49,7 @@ public final class ResultAnalyzer {
                 || Iterator.class.isAssignableFrom(returnClass)
                 || Iterable.class.isAssignableFrom(returnClass)) {
             type = COLLECTION;
-            entityClass = resolveGenericType(method.getGenericReturnType(), method);
+            entityClass = resolveGenericType(method.getGenericReturnType(), method, generics);
         } else if (returnClass.isArray()) {
             type = ARRAY;
             entityClass = returnClass.getComponentType();
@@ -53,7 +57,7 @@ public final class ResultAnalyzer {
             type = PLAIN;
             // support for guava and jdk8 optionals
             entityClass = Optionals.isOptional(returnClass)
-                    ? resolveGenericType(method.getGenericReturnType(), method) : returnClass;
+                    ? resolveGenericType(method.getGenericReturnType(), method, generics) : returnClass;
         }
 
         descriptor.returnType = type;
@@ -66,7 +70,7 @@ public final class ResultAnalyzer {
         if (returnCollectionType != null) {
             check(returnClass.isAssignableFrom(returnCollectionType),
                     "Requested collection %s is incompatible with method return type %s",
-                            returnCollectionType, returnClass);
+                    returnCollectionType, returnClass);
             expected = returnCollectionType;
         } else {
             expected = returnClass;
@@ -74,17 +78,16 @@ public final class ResultAnalyzer {
         return expected;
     }
 
-    private static Class<?> resolveGenericType(final Type returnClass, final Method method) {
+    private static Class<?> resolveGenericType(final Type returnClass, final Method method,
+                                               final Map<String, Type> generics) {
         Class res;
-        if (returnClass == null || !(returnClass instanceof ParameterizedType)
-                || ((ParameterizedType) returnClass).getActualTypeArguments().length == 0) {
+        try {
+            res = GenericsUtils.resolveGenericOf(returnClass, generics);
+        } catch (NoGenericException e) {
+            res = Object.class;
             LOGGER.warn(
                     "Can't detect entity: no generic set in finder method return type: {}#{}.",
                     method.getDeclaringClass(), method.getName());
-            res = Object.class;
-        } else {
-            final Type[] actual = ((ParameterizedType) returnClass).getActualTypeArguments();
-            res = (Class) actual[0];
         }
         return res;
     }

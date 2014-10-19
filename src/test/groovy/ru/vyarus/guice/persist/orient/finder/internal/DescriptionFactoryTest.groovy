@@ -3,8 +3,6 @@ package ru.vyarus.guice.persist.orient.finder.internal
 import com.google.inject.Inject
 import com.orientechnologies.orient.core.record.impl.ODocument
 import com.tinkerpop.blueprints.Vertex
-import ru.vyarus.guice.persist.orient.AbstractTest
-import ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxAction
 import ru.vyarus.guice.persist.orient.finder.executor.DocumentFinderExecutor
 import ru.vyarus.guice.persist.orient.finder.executor.GraphFinderExecutor
 import ru.vyarus.guice.persist.orient.finder.executor.ObjectFinderExecutor
@@ -14,14 +12,12 @@ import ru.vyarus.guice.persist.orient.support.model.Model
 import ru.vyarus.guice.persist.orient.support.modules.TestFinderModule
 import spock.guice.UseModules
 
-import java.lang.reflect.Method
-
 /**
  * @author Vyacheslav Rusakov 
  * @since 31.07.2014
  */
 @UseModules(TestFinderModule)
-class DescriptionFactoryTest extends AbstractTest {
+class DescriptionFactoryTest extends AbstractFinderDefinitionTest {
 
     @Inject
     FinderDescriptorFactory factory;
@@ -116,13 +112,13 @@ class DescriptionFactoryTest extends AbstractTest {
         desc = lookup(InterfaceFinder.getMethod("parametersNamed", String.class, String.class))
         then: "recognized"
         desc.params.useNamedParameters
-        desc.params.namedParametersIndex== ["name": 0, "nick":1]
+        desc.params.namedParametersIndex == ["name": 0, "nick": 1]
 
         when: "positional parameters with warning, because of wrong @named use"
         desc = lookup(InterfaceFinder.getMethod("parametersPositionalWithWarning", String.class, String.class))
         then: "recognized"
         !desc.params.useNamedParameters
-        desc.params.parametersIndex== [0, 1]
+        desc.params.parametersIndex == [0, 1]
 
         when: "named parameters incorrect declaration"
         lookup(InterfaceFinder.getMethod("parametersNames", String.class, String.class))
@@ -138,17 +134,17 @@ class DescriptionFactoryTest extends AbstractTest {
         desc = lookup(InterfaceFinder.getMethod("parametersPaged", String.class, String.class, int.class, int.class))
         then: "recognized"
         !desc.params.useNamedParameters
-        desc.params.parametersIndex== [0, 1]
-        desc.pagination.firstResultParamIndex==2
-        desc.pagination.maxResultsParamIndex==3
+        desc.params.parametersIndex == [0, 1]
+        desc.pagination.firstResultParamIndex == 2
+        desc.pagination.maxResultsParamIndex == 3
 
         when: "positional parameters with page definition as objects"
         desc = lookup(InterfaceFinder.getMethod("parametersPagedObject", String.class, String.class, Long.class, Long.class))
         then: "recognized"
         !desc.params.useNamedParameters
-        desc.params.parametersIndex== [0, 1]
-        desc.pagination.firstResultParamIndex==2
-        desc.pagination.maxResultsParamIndex==3
+        desc.params.parametersIndex == [0, 1]
+        desc.pagination.firstResultParamIndex == 2
+        desc.pagination.maxResultsParamIndex == 3
 
         when: "positional parameters with page definition as objects"
         lookup(InterfaceFinder.getMethod("parametersPagedDouble", String.class, String.class, int.class, int.class))
@@ -164,11 +160,5 @@ class DescriptionFactoryTest extends AbstractTest {
         lookup(InterfaceFinder.getMethod("parametersPagedWrongType2", String.class, String.class, int.class, String.class))
         then: "error"
         thrown(FinderDefinitionException)
-    }
-
-    FinderDescriptor lookup(Method method) {
-        template.doInTransaction({
-            return factory.create(method)
-        } as SpecificTxAction)
     }
 }

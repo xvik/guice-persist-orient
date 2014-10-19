@@ -13,8 +13,7 @@ import java.util.List;
  */
 @SuppressWarnings({
         "checkstyle:visibilitymodifier",
-        "PMD.DefaultPackage"
-})
+        "PMD.DefaultPackage"})
 public class PaginationDescriptor {
     // @FirstResult annotation
     public Integer firstResultParamIndex;

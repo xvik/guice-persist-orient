@@ -10,6 +10,7 @@ import com.google.inject.persist.finder.Finder;
 import ru.vyarus.guice.persist.orient.db.DbType;
 import ru.vyarus.guice.persist.orient.finder.FinderExecutor;
 import ru.vyarus.guice.persist.orient.finder.internal.executor.ExecutorAnalyzer;
+import ru.vyarus.guice.persist.orient.finder.internal.generics.GenericsDescriptor;
 import ru.vyarus.guice.persist.orient.finder.internal.pagination.PaginationAnalyzer;
 import ru.vyarus.guice.persist.orient.finder.internal.params.ParamsAnalyzer;
 import ru.vyarus.guice.persist.orient.finder.internal.placeholder.PlaceholderAnalyzer;
@@ -17,6 +18,7 @@ import ru.vyarus.guice.persist.orient.finder.internal.result.ResultAnalyzer;
 
 import javax.inject.Singleton;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -50,7 +52,7 @@ public class FinderDescriptorFactory {
                 "No executor found for type " + type);
     }
 
-    public FinderDescriptor create(final Method method) throws Throwable {
+    public FinderDescriptor create(final Method method, final GenericsDescriptor generics) throws Throwable {
         FinderDescriptor descriptor = finderCache.get(method);
         if (descriptor == null) {
             lock.lock();
@@ -60,7 +62,7 @@ public class FinderDescriptorFactory {
                     descriptor = finderCache.get(method);
                 } else {
 
-                    descriptor = buildDescriptor(method);
+                    descriptor = buildDescriptor(method, generics);
                     // internal check
                     Preconditions.checkState(finderCache.get(method) == null,
                             "Bad concurrency: descriptor already present in cache");
@@ -73,8 +75,9 @@ public class FinderDescriptorFactory {
         return descriptor;
     }
 
-    private FinderDescriptor buildDescriptor(final Method method) {
+    private FinderDescriptor buildDescriptor(final Method method, final GenericsDescriptor generics) {
         final Finder finderAnnotation = method.getAnnotation(Finder.class);
+        final Map<String, Type> genericsMap = generics.types.get(method.getDeclaringClass());
 
         final String functionName = Strings.emptyToNull(finderAnnotation.namedQuery());
         final String query = Strings.emptyToNull(finderAnnotation.query());
@@ -84,15 +87,16 @@ public class FinderDescriptorFactory {
         final Class<? extends Collection> returnCollectionType = finderAnnotation.returnAs();
 
         final FinderDescriptor descriptor = new FinderDescriptor();
+        descriptor.finderRootType = generics.root;
         descriptor.isFunctionCall = functionName != null;
         descriptor.query = descriptor.isFunctionCall ? functionName : query;
 
-        descriptor.placeholders = PlaceholderAnalyzer.analyzePlaceholders(method, descriptor.query);
+        descriptor.placeholders = PlaceholderAnalyzer.analyzePlaceholders(method, genericsMap, descriptor.query);
         Class<? extends Collection> customCollectionType = null;
         if (!Collection.class.equals(returnCollectionType)) {
             customCollectionType = returnCollectionType;
         }
-        descriptor.result = ResultAnalyzer.analyzeReturnType(method, customCollectionType);
+        descriptor.result = ResultAnalyzer.analyzeReturnType(method, genericsMap, customCollectionType);
         descriptor.executor = ExecutorAnalyzer.analyzeExecutor(method, descriptor.result, executors, defaultExecutor);
         analyzeParameters(method, descriptor);
         return descriptor;

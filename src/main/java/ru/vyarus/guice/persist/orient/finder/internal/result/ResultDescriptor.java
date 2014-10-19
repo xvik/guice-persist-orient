@@ -10,8 +10,7 @@ import ru.vyarus.guice.persist.orient.finder.result.ResultType;
  */
 @SuppressWarnings({
         "checkstyle:visibilitymodifier",
-        "PMD.DefaultPackage"
-})
+        "PMD.DefaultPackage"})
 public class ResultDescriptor {
 
     public ResultType returnType;

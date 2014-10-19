@@ -36,8 +36,9 @@ public class FinderInvocationHandler implements InvocationHandler {
         if (transactionManager.isTransactionActive()) {
             res = process(thisObject, method, args);
         } else {
+            final Class targetType = thisObject.getClass().getInterfaces()[0];
             // providing support for @Transactional annotations the same way as in other beans
-            final TxConfig cfg = AnnotationTxConfigBuilder.buildConfig(method.getDeclaringClass(), method, false);
+            final TxConfig cfg = AnnotationTxConfigBuilder.buildConfig(targetType, method, false);
 
             if (cfg == null) {
                 // no tx defined
@@ -96,7 +97,7 @@ public class FinderInvocationHandler implements InvocationHandler {
         }
 
         public Object getThis() {
-            throw new UnsupportedOperationException("Bottomless proxies don't expose a this.");
+            return thisObject;
         }
 
         public AccessibleObject getStaticPart() {

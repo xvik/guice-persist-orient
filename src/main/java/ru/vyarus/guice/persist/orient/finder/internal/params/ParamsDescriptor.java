@@ -10,8 +10,7 @@ import java.util.Map;
  */
 @SuppressWarnings({
         "checkstyle:visibilitymodifier",
-        "PMD.DefaultPackage"
-})
+        "PMD.DefaultPackage"})
 public class ParamsDescriptor {
 
     public boolean useNamedParameters;

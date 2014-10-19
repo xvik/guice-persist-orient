@@ -118,8 +118,7 @@ public final class ParamsAnalyzer {
      */
     @SuppressWarnings({
             "checkstyle:visibilitymodifier",
-            "PMD.DefaultPackage"
-    })
+            "PMD.DefaultPackage"})
     private static class ParamsContext {
         Boolean useOrdinalParams;
         List<Integer> params;

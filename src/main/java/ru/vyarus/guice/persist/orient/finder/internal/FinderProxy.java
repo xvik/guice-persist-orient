@@ -8,12 +8,15 @@ import com.google.inject.Inject;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import ru.vyarus.guice.persist.orient.finder.command.SqlCommandDesc;
+import ru.vyarus.guice.persist.orient.finder.internal.generics.FinderGenericsFactory;
+import ru.vyarus.guice.persist.orient.finder.internal.generics.GenericsDescriptor;
 import ru.vyarus.guice.persist.orient.finder.placeholder.StringTemplateUtils;
 import ru.vyarus.guice.persist.orient.finder.result.ResultConverter;
 import ru.vyarus.guice.persist.orient.finder.result.ResultDesc;
 
 import javax.inject.Singleton;
 import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -40,13 +43,17 @@ public class FinderProxy implements MethodInterceptor {
 
     // field injection because instantiated directly in module
     @Inject
+    private FinderGenericsFactory genericsFactory;
+    @Inject
     private FinderDescriptorFactory factory;
     @Inject
     private ResultConverter resultConverter;
 
     public Object invoke(final MethodInvocation methodInvocation) throws Throwable {
+        final Class<?> finderType = resolveFinderClass(methodInvocation.getThis());
+        final GenericsDescriptor generics = genericsFactory.create(finderType);
         final Method method = methodInvocation.getMethod();
-        final FinderDescriptor descriptor = getFinderDescriptor(method);
+        final FinderDescriptor descriptor = getFinderDescriptor(method, generics);
         SqlCommandDesc command;
         final Object[] arguments = methodInvocation.getArguments();
         try {
@@ -54,7 +61,7 @@ public class FinderProxy implements MethodInterceptor {
         } catch (Exception ex) {
             throw new IllegalArgumentException(String.format(
                     "Failed to prepare query for finder method %s#%s%s with arguments: %s",
-                    method.getDeclaringClass(), method.getName(), Arrays.toString(method.getParameterTypes()),
+                    descriptor.finderRootType, method.getName(), Arrays.toString(method.getParameterTypes()),
                     Arrays.toString(arguments)), ex);
         }
         final Object result = executeQuery(descriptor, command, arguments, method);
@@ -68,9 +75,24 @@ public class FinderProxy implements MethodInterceptor {
         } catch (Throwable th) {
             throw new IllegalStateException(String.format(
                     "Failed to convert execution result (%s) of finder %s#%s%s",
-                    result == null ? null : result.getClass(), method.getDeclaringClass(),
+                    result == null ? null : result.getClass(), descriptor.finderRootType,
                     method.getName(), Arrays.toString(method.getParameterTypes())), th);
         }
+    }
+
+    private Class<?> resolveFinderClass(final Object finder) {
+        Class<?> result;
+        if (finder instanceof Proxy) {
+            // finder proxy always created around single interface
+            result = finder.getClass().getInterfaces()[0];
+        } else {
+            // bean finder
+            result = finder.getClass();
+            if (result.getName().contains("$$EnhancerByGuice")) {
+                result = result.getSuperclass();
+            }
+        }
+        return result;
     }
 
     private Object executeQuery(final FinderDescriptor descriptor,
@@ -81,19 +103,19 @@ public class FinderProxy implements MethodInterceptor {
         } catch (Throwable th) {
             throw new FinderExecutionException(String.format(
                     "Failed to execute query '%s' with parameters %s of finder %s#%s%s",
-                    command.query, Arrays.toString(arguments), method.getDeclaringClass(),
+                    command.query, Arrays.toString(arguments), descriptor.finderRootType,
                     method.getName(), Arrays.toString(method.getParameterTypes())
             ), th);
         }
     }
 
-    private FinderDescriptor getFinderDescriptor(final Method method) {
+    private FinderDescriptor getFinderDescriptor(final Method method, final GenericsDescriptor generics) {
         FinderDescriptor descriptor;
         try {
-            descriptor = factory.create(method);
+            descriptor = factory.create(method, generics);
         } catch (Throwable th) {
             throw new IllegalStateException(String.format("Failed to analyze finder method %s#%s%s",
-                    method.getDeclaringClass(), method.getName(), Arrays.toString(method.getParameterTypes())), th);
+                    generics.root, method.getName(), Arrays.toString(method.getParameterTypes())), th);
         }
         return descriptor;
     }
@@ -128,9 +150,17 @@ public class FinderProxy implements MethodInterceptor {
     private String processPlaceholders(final FinderDescriptor descriptor, final Object[] arguments) {
         String query = descriptor.query;
         if (descriptor.placeholders != null) {
-            query = StringTemplateUtils.replace(query,
-                    getPlaceholderParams(descriptor.placeholders.parametersIndex, arguments,
-                            descriptor.placeholders.values));
+            final Map<String, String> params = Maps.newHashMap();
+            if (descriptor.placeholders.genericParameters != null) {
+                params.putAll(descriptor.placeholders.genericParameters);
+            }
+            if (descriptor.placeholders.parametersIndex != null) {
+                params.putAll(
+                        getPlaceholderParams(descriptor.placeholders.parametersIndex, arguments,
+                                descriptor.placeholders.values)
+                );
+            }
+            query = StringTemplateUtils.replace(query, params);
         }
         return query;
     }
