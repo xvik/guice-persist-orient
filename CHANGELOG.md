@@ -1,6 +1,8 @@
 * Support inheritance for finder beans and interfaces (mixins)
 * Support generic type query placeholders (finder class generic used as query placeholder)
 * AutoScanFinderModule accept multiple packages for scanning
+* Add experimental(!) delegate finders (annotated interface method delegates execution to guice bean method)
+* Add crud mixins for object and document finders (DocumentCrudMixin, ObjectCrudMixin)
 
 ### 1.1.1 (2014-10-01)
 * Fix finder behaviour: empty collection conversion to single element

@@ -5,7 +5,6 @@ import ru.vyarus.guice.persist.orient.AbstractTest
 import ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxAction
 import ru.vyarus.guice.persist.orient.finder.internal.generics.FinderGenericsFactory
 import ru.vyarus.guice.persist.orient.finder.internal.generics.GenericsDescriptor
-import spock.lang.Specification
 
 import java.lang.reflect.Method
 

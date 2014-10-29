@@ -1,4 +1,4 @@
-package ru.vyarus.guice.persist.orient.finder.internal.placeholder;
+package ru.vyarus.guice.persist.orient.finder.internal.query.placeholder;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableList;
@@ -7,7 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vyarus.guice.persist.orient.finder.internal.FinderDefinitionException;
 import ru.vyarus.guice.persist.orient.finder.internal.generics.GenericsUtils;
-import ru.vyarus.guice.persist.orient.finder.internal.params.ParamsUtil;
+import ru.vyarus.guice.persist.orient.finder.internal.query.params.ParamsUtils;
 import ru.vyarus.guice.persist.orient.finder.placeholder.Placeholder;
 import ru.vyarus.guice.persist.orient.finder.placeholder.PlaceholderValues;
 import ru.vyarus.guice.persist.orient.finder.placeholder.Placeholders;
@@ -61,7 +61,7 @@ public final class PlaceholderAnalyzer {
     public static void analyzePlaceholderParameters(final Method method,
                                                     final PlaceholderDescriptor descriptor,
                                                     final String query, final List<Integer> skip) {
-        ParamsUtil.process(method, new PlaceholderParamVisitor(descriptor, method), skip);
+        ParamsUtils.process(method, new PlaceholderParamVisitor(descriptor, method), skip);
         validatePlaceholdersParamsDefinition(descriptor, query);
     }
 
@@ -154,7 +154,7 @@ public final class PlaceholderAnalyzer {
     /**
      * Placeholder parameters visitor. Searches for parameters annotated with @Placeholder.
      */
-    private static class PlaceholderParamVisitor implements ParamsUtil.ParamVisitor {
+    private static class PlaceholderParamVisitor implements ParamsUtils.ParamVisitor {
         private final PlaceholderDescriptor descriptor;
         private final Method method;
 

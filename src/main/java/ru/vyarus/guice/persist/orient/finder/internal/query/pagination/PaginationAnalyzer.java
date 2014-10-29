@@ -1,9 +1,9 @@
-package ru.vyarus.guice.persist.orient.finder.internal.pagination;
+package ru.vyarus.guice.persist.orient.finder.internal.query.pagination;
 
 import com.google.common.collect.ImmutableList;
 import com.google.inject.persist.finder.FirstResult;
 import com.google.inject.persist.finder.MaxResults;
-import ru.vyarus.guice.persist.orient.finder.internal.params.ParamsUtil;
+import ru.vyarus.guice.persist.orient.finder.internal.query.params.ParamsUtils;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -33,7 +33,7 @@ public final class PaginationAnalyzer {
     @SuppressWarnings("PMD.NullAssignment")
     public static PaginationDescriptor analyzePaginationParameters(final Method method) {
         final PaginationDescriptor descriptor = new PaginationDescriptor();
-        ParamsUtil.process(method, new PaginationParamVisitor(descriptor), null);
+        ParamsUtils.process(method, new PaginationParamVisitor(descriptor), null);
         return descriptor.isEmpty() ? null : descriptor;
     }
 
@@ -45,7 +45,7 @@ public final class PaginationAnalyzer {
     /**
      * Pagination parameters visitor. Recognize parameters annotated with @FirstResult and @MaxResults.
      */
-    private static class PaginationParamVisitor implements ParamsUtil.ParamVisitor {
+    private static class PaginationParamVisitor implements ParamsUtils.ParamVisitor {
         private final PaginationDescriptor descriptor;
 
         public PaginationParamVisitor(final PaginationDescriptor descriptor) {

@@ -13,6 +13,8 @@ import javax.inject.Singleton;
 import java.util.List;
 
 /**
+ * Document connection query executor.
+ *
  * @author Vyacheslav Rusakov
  * @since 30.07.2014
  */
@@ -37,6 +39,11 @@ public class DocumentFinderExecutor extends AbstractFinderExecutor {
     @Override
     protected OCommandRequest wrapCommand(final OCommandRequest command) {
         return provider.get().command(command);
+    }
+
+    @Override
+    public Object getConnection() {
+        return provider.get();
     }
 
     @Override

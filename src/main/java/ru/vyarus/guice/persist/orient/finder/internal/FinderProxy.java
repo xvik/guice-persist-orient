@@ -1,24 +1,21 @@
 package ru.vyarus.guice.persist.orient.finder.internal;
 
-import com.google.common.base.Objects;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
 import com.google.inject.Inject;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
-import ru.vyarus.guice.persist.orient.finder.command.SqlCommandDesc;
+import ru.vyarus.guice.persist.orient.finder.internal.delegate.DelegateInvocation;
+import ru.vyarus.guice.persist.orient.finder.internal.delegate.FinderDelegateDescriptor;
 import ru.vyarus.guice.persist.orient.finder.internal.generics.FinderGenericsFactory;
 import ru.vyarus.guice.persist.orient.finder.internal.generics.GenericsDescriptor;
-import ru.vyarus.guice.persist.orient.finder.placeholder.StringTemplateUtils;
+import ru.vyarus.guice.persist.orient.finder.internal.query.FinderQueryDescriptor;
+import ru.vyarus.guice.persist.orient.finder.internal.query.QueryInvocation;
 import ru.vyarus.guice.persist.orient.finder.result.ResultConverter;
 import ru.vyarus.guice.persist.orient.finder.result.ResultDesc;
+import ru.vyarus.guice.persist.orient.finder.util.FinderUtils;
 
 import javax.inject.Singleton;
 import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.util.Arrays;
-import java.util.Map;
 
 /**
  * Implements finder analysis and query execution logic.
@@ -50,21 +47,12 @@ public class FinderProxy implements MethodInterceptor {
     private ResultConverter resultConverter;
 
     public Object invoke(final MethodInvocation methodInvocation) throws Throwable {
-        final Class<?> finderType = resolveFinderClass(methodInvocation.getThis());
+        final Class<?> finderType = FinderUtils.resolveFinderClass(methodInvocation.getThis());
         final GenericsDescriptor generics = genericsFactory.create(finderType);
         final Method method = methodInvocation.getMethod();
         final FinderDescriptor descriptor = getFinderDescriptor(method, generics);
-        SqlCommandDesc command;
         final Object[] arguments = methodInvocation.getArguments();
-        try {
-            command = buildCommand(descriptor, arguments);
-        } catch (Exception ex) {
-            throw new IllegalArgumentException(String.format(
-                    "Failed to prepare query for finder method %s#%s%s with arguments: %s",
-                    descriptor.finderRootType, method.getName(), Arrays.toString(method.getParameterTypes()),
-                    Arrays.toString(arguments)), ex);
-        }
-        final Object result = executeQuery(descriptor, command, arguments, method);
+        final Object result = invoke(descriptor, method, arguments, methodInvocation.getThis());
         final ResultDesc desc = new ResultDesc();
         desc.result = result;
         desc.entityClass = descriptor.result.entityType;
@@ -80,35 +68,6 @@ public class FinderProxy implements MethodInterceptor {
         }
     }
 
-    private Class<?> resolveFinderClass(final Object finder) {
-        Class<?> result;
-        if (finder instanceof Proxy) {
-            // finder proxy always created around single interface
-            result = finder.getClass().getInterfaces()[0];
-        } else {
-            // bean finder
-            result = finder.getClass();
-            if (result.getName().contains("$$EnhancerByGuice")) {
-                result = result.getSuperclass();
-            }
-        }
-        return result;
-    }
-
-    private Object executeQuery(final FinderDescriptor descriptor,
-                                final SqlCommandDesc command, final Object[] arguments,
-                                final Method method) throws Throwable {
-        try {
-            return descriptor.executor.executeQuery(command);
-        } catch (Throwable th) {
-            throw new FinderExecutionException(String.format(
-                    "Failed to execute query '%s' with parameters %s of finder %s#%s%s",
-                    command.query, Arrays.toString(arguments), descriptor.finderRootType,
-                    method.getName(), Arrays.toString(method.getParameterTypes())
-            ), th);
-        }
-    }
-
     private FinderDescriptor getFinderDescriptor(final Method method, final GenericsDescriptor generics) {
         FinderDescriptor descriptor;
         try {
@@ -120,101 +79,11 @@ public class FinderProxy implements MethodInterceptor {
         return descriptor;
     }
 
-    private SqlCommandDesc buildCommand(final FinderDescriptor descriptor, final Object[] arguments) {
-        final SqlCommandDesc command = new SqlCommandDesc();
-        final String query = processPlaceholders(descriptor, arguments);
-        command.isFunctionCall = descriptor.isFunctionCall;
-        command.query = query;
-        command.useNamedParams = descriptor.params.useNamedParameters;
-        if (command.useNamedParams) {
-            command.namedParams = getNamedParams(descriptor.params.namedParametersIndex, arguments);
-        } else {
-            command.params = getParams(descriptor.params.parametersIndex, arguments);
-        }
-
-        switch (descriptor.result.returnType) {
-            case COLLECTION:
-            case ARRAY:
-                assignPaginationParams(command, descriptor, arguments);
-                break;
-            case PLAIN:
-                // implicitly limit query for single return result (for performance)
-                command.max = 1;
-                break;
-            default:
-                throw new IllegalStateException("Unsupported return type " + descriptor.result.returnType);
-        }
-        return command;
-    }
-
-    private String processPlaceholders(final FinderDescriptor descriptor, final Object[] arguments) {
-        String query = descriptor.query;
-        if (descriptor.placeholders != null) {
-            final Map<String, String> params = Maps.newHashMap();
-            if (descriptor.placeholders.genericParameters != null) {
-                params.putAll(descriptor.placeholders.genericParameters);
-            }
-            if (descriptor.placeholders.parametersIndex != null) {
-                params.putAll(
-                        getPlaceholderParams(descriptor.placeholders.parametersIndex, arguments,
-                                descriptor.placeholders.values)
-                );
-            }
-            query = StringTemplateUtils.replace(query, params);
-        }
-        return query;
-    }
-
-    private void assignPaginationParams(final SqlCommandDesc command,
-                                        final FinderDescriptor descriptor, final Object[] arguments) {
-        if (descriptor.pagination != null) {
-            if (descriptor.pagination.firstResultParamIndex != null) {
-                final Number rawStartValue = (Number) arguments[descriptor.pagination.firstResultParamIndex];
-                final Integer startValue = rawStartValue == null ? null : rawStartValue.intValue();
-                command.start = Objects.firstNonNull(startValue, 0);
-            }
-
-            if (descriptor.pagination.maxResultsParamIndex != null) {
-                final Number rawMaxValue = (Number) arguments[descriptor.pagination.maxResultsParamIndex];
-                final Integer maxValue = rawMaxValue == null ? null : rawMaxValue.intValue();
-                command.max = Objects.firstNonNull(maxValue, -1);
-            }
-        }
-    }
-
-    private Object[] getParams(final Integer[] positions, final Object[] arguments) {
-        final Object[] res = new Object[positions.length];
-        for (int i = 0; i < positions.length; i++) {
-            res[i] = arguments[positions[i]];
-        }
-        return res;
-    }
-
-    private Map<String, Object> getNamedParams(final Map<String, Integer> positions, final Object[] arguments) {
-        final Map<String, Object> res = Maps.newHashMap();
-        for (Map.Entry<String, Integer> entry : positions.entrySet()) {
-            res.put(entry.getKey(), arguments[entry.getValue()]);
-        }
-        return res;
-    }
-
-    private Map<String, String> getPlaceholderParams(final Map<String, Integer> positions, final Object[] arguments,
-                                                     final Multimap<String, String> defaults) {
-        final Map<String, String> res = Maps.newHashMap();
-        for (Map.Entry<String, Integer> entry : positions.entrySet()) {
-            final String name = entry.getKey();
-            final Object value = arguments[entry.getValue()];
-            // safeguard from accident null passing
-            Preconditions.checkArgument(value != null, "Placeholder '%s' value is null. "
-                    + "Use explicit empty string if you need empty replacement for placeholder.", name);
-            final String strValue = value.toString();
-            // check value with defaults. don't print warning because one warning is enough (during method analysis)
-            if (!value.getClass().isEnum() && defaults.containsKey(name)) {
-                Preconditions.checkArgument(defaults.get(name).contains(strValue),
-                        "Illegal value for placeholder '%s': '%s'", name, strValue);
-            }
-            res.put(name, strValue);
-        }
-        return res;
+    private Object invoke(final FinderDescriptor descriptor, final Method method,
+                          final Object[] arguments, final Object instance) throws Throwable {
+        return descriptor instanceof FinderQueryDescriptor
+                ? QueryInvocation.processQuery((FinderQueryDescriptor) descriptor, method, arguments)
+                : DelegateInvocation.processDelegate((FinderDelegateDescriptor) descriptor, method,
+                arguments, instance);
     }
 }

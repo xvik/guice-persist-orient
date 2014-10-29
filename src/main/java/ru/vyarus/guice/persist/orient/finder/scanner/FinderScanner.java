@@ -3,11 +3,10 @@ package ru.vyarus.guice.persist.orient.finder.scanner;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
-import com.google.inject.persist.finder.Finder;
 import com.orientechnologies.common.reflection.OReflectionHelper;
+import ru.vyarus.guice.persist.orient.finder.util.FinderUtils;
 
 import javax.annotation.Nonnull;
-import java.lang.reflect.Method;
 import java.util.List;
 
 /**
@@ -52,20 +51,7 @@ public final class FinderScanner {
     }
 
     private static boolean isFinderClass(final Class<?> type) {
-        boolean resolution = false;
-        // only top level finders resolved, avoiding generified mixin finders
-        final boolean acceptable = type.isInterface()
-                && type.getTypeParameters().length == 0
+        return FinderUtils.isFinderInterface(type)
                 && !type.isAnnotationPresent(InvisibleForScanner.class);
-        if (acceptable) {
-            // at least one method annotated with finder (complete check module will perform during binding)
-            for (Method method : type.getMethods()) {
-                if (method.isAnnotationPresent(Finder.class)) {
-                    resolution = true;
-                    break;
-                }
-            }
-        }
-        return resolution;
     }
 }

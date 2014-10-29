@@ -2,6 +2,7 @@ package ru.vyarus.guice.persist.orient.finder.result;
 
 import com.google.common.collect.ImmutableList;
 
+import java.lang.reflect.Method;
 import java.util.List;
 
 /**
@@ -16,6 +17,7 @@ public final class Optionals {
     private static final List<String> OPTIONAL_TYPES = ImmutableList.of(
             "com.google.common.base.Optional",
             "java.util.Optional");
+    private static Method jdk8OptionalFactory;
 
     private Optionals() {
     }
@@ -46,9 +48,22 @@ public final class Optionals {
      */
     private static Object jdk8(final Class<?> type, final Object object) {
         try {
-            return type.getMethod("ofNullable", Object.class).invoke(null, object);
+            // a bit faster than resolving it each time
+            if (jdk8OptionalFactory == null) {
+                lookupOptionalFactoryMethod(type);
+            }
+            return jdk8OptionalFactory.invoke(null, object);
         } catch (Exception e) {
             throw new IllegalStateException("Failed to instantiate jdk Optional", e);
+        }
+    }
+
+    private static void lookupOptionalFactoryMethod(final Class<?> type)
+            throws NoSuchMethodException {
+        synchronized (Optionals.class) {
+            if (jdk8OptionalFactory == null) {
+                jdk8OptionalFactory = type.getMethod("ofNullable", Object.class);
+            }
         }
     }
 }

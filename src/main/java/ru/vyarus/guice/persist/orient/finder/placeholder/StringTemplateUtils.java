@@ -16,9 +16,9 @@ import java.util.Map;
  */
 public final class StringTemplateUtils {
 
-    public static final char PLACEHOLDER_START = '$';
-    public static final char PLACEHOLDER_LEFT_BOUND = '{';
-    public static final char PLACEHOLDER_RIGHT_BOUND = '}';
+    private static final char PLACEHOLDER_START = '$';
+    private static final char PLACEHOLDER_LEFT_BOUND = '{';
+    private static final char PLACEHOLDER_RIGHT_BOUND = '}';
 
     private StringTemplateUtils() {
     }

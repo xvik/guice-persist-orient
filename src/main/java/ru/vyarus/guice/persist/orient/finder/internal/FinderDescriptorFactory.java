@@ -1,26 +1,24 @@
 package ru.vyarus.guice.persist.orient.finder.internal;
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
 import com.google.common.collect.MapMaker;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import com.google.inject.persist.finder.Finder;
 import ru.vyarus.guice.persist.orient.db.DbType;
+import ru.vyarus.guice.persist.orient.finder.delegate.FinderDelegate;
 import ru.vyarus.guice.persist.orient.finder.FinderExecutor;
+import ru.vyarus.guice.persist.orient.finder.internal.delegate.DelegateUtils;
+import ru.vyarus.guice.persist.orient.finder.internal.delegate.FinderDelegateDescriptorFactory;
 import ru.vyarus.guice.persist.orient.finder.internal.executor.ExecutorAnalyzer;
 import ru.vyarus.guice.persist.orient.finder.internal.generics.GenericsDescriptor;
-import ru.vyarus.guice.persist.orient.finder.internal.pagination.PaginationAnalyzer;
-import ru.vyarus.guice.persist.orient.finder.internal.params.ParamsAnalyzer;
-import ru.vyarus.guice.persist.orient.finder.internal.placeholder.PlaceholderAnalyzer;
+import ru.vyarus.guice.persist.orient.finder.internal.query.FinderQueryDescriptorFactory;
 import ru.vyarus.guice.persist.orient.finder.internal.result.ResultAnalyzer;
 
 import javax.inject.Singleton;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.locks.ReentrantLock;
@@ -40,16 +38,19 @@ public class FinderDescriptorFactory {
 
     private final Set<FinderExecutor> executors;
     private final FinderExecutor defaultExecutor;
+    private final FinderDelegateDescriptorFactory delegateDescriptorFactory;
 
     // lock will not affect performance for cached descriptors, just to make sure nothing was build two times
     private final ReentrantLock lock = new ReentrantLock();
 
     @Inject
     public FinderDescriptorFactory(final Set<FinderExecutor> executors,
-                                   @Named("orient.finder.default.connection") final DbType type) {
+                                   @Named("orient.finder.default.connection") final DbType type,
+                                   final FinderDelegateDescriptorFactory delegateDescriptorFactory) {
         this.executors = executors;
         this.defaultExecutor = Preconditions.checkNotNull(find(type),
                 "No executor found for type " + type);
+        this.delegateDescriptorFactory = delegateDescriptorFactory;
     }
 
     public FinderDescriptor create(final Method method, final GenericsDescriptor generics) throws Throwable {
@@ -76,48 +77,30 @@ public class FinderDescriptorFactory {
     }
 
     private FinderDescriptor buildDescriptor(final Method method, final GenericsDescriptor generics) {
-        final Finder finderAnnotation = method.getAnnotation(Finder.class);
         final Map<String, Type> genericsMap = generics.types.get(method.getDeclaringClass());
+        final Finder finderAnnotation = method.getAnnotation(Finder.class);
+        final FinderDelegate delegateAnnotation = DelegateUtils.findAnnotation(method);
+        check(finderAnnotation == null || delegateAnnotation == null,
+                "Both query finder and delegate finder definition annotations found.");
 
-        final String functionName = Strings.emptyToNull(finderAnnotation.namedQuery());
-        final String query = Strings.emptyToNull(finderAnnotation.query());
-        check(Strings.isNullOrEmpty(functionName) || Strings.isNullOrEmpty(query),
-                "Choose what to use function or query, but not both");
+        final boolean isQueryFinder = finderAnnotation != null;
+        final FinderDescriptor descriptor = isQueryFinder
+                ? FinderQueryDescriptorFactory.buildDescriptor(method, genericsMap)
+                : delegateDescriptorFactory.buildDescriptor(method, genericsMap);
 
-        final Class<? extends Collection> returnCollectionType = finderAnnotation.returnAs();
-
-        final FinderDescriptor descriptor = new FinderDescriptor();
         descriptor.finderRootType = generics.root;
-        descriptor.isFunctionCall = functionName != null;
-        descriptor.query = descriptor.isFunctionCall ? functionName : query;
 
-        descriptor.placeholders = PlaceholderAnalyzer.analyzePlaceholders(method, genericsMap, descriptor.query);
+        final Class<? extends Collection> returnCollectionType = isQueryFinder
+                ? finderAnnotation.returnAs() : delegateAnnotation.returnAs();
         Class<? extends Collection> customCollectionType = null;
         if (!Collection.class.equals(returnCollectionType)) {
             customCollectionType = returnCollectionType;
         }
         descriptor.result = ResultAnalyzer.analyzeReturnType(method, genericsMap, customCollectionType);
         descriptor.executor = ExecutorAnalyzer.analyzeExecutor(method, descriptor.result, executors, defaultExecutor);
-        analyzeParameters(method, descriptor);
         return descriptor;
     }
 
-    private void analyzeParameters(final Method method, final FinderDescriptor descriptor) {
-        final List<Integer> skip = Lists.newArrayList();
-        // recognize pagination annotations
-        descriptor.pagination = PaginationAnalyzer.analyzePaginationParameters(method);
-        if (descriptor.pagination != null) {
-            skip.addAll(descriptor.pagination.getBoundIndexes());
-        }
-        // recognize placeholder annotations
-        PlaceholderAnalyzer.analyzePlaceholderParameters(method, descriptor.placeholders,
-                descriptor.query, skip);
-        if (descriptor.placeholders != null) {
-            skip.addAll(descriptor.placeholders.getBoundIndexes());
-        }
-        // map all remaining parameters
-        descriptor.params = ParamsAnalyzer.analyzeParameters(method, skip);
-    }
 
     @SuppressWarnings("PMD.UnusedPrivateMethod")
     private FinderExecutor find(final DbType type) {

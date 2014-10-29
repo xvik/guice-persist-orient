@@ -1,4 +1,4 @@
-package ru.vyarus.guice.persist.orient.finder.internal.params;
+package ru.vyarus.guice.persist.orient.finder.internal.query.params;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -28,7 +28,7 @@ public final class ParamsAnalyzer {
     @SuppressWarnings("PMD.BooleanInversion")
     public static ParamsDescriptor analyzeParameters(final Method method, final List<Integer> skip) {
         final ParamsContext context = new ParamsContext();
-        ParamsUtil.process(method, new ParamsVisitor(context, method), skip);
+        ParamsUtils.process(method, new ParamsVisitor(context, method), skip);
 
         final ParamsDescriptor descriptor = new ParamsDescriptor();
         if (context.useOrdinalParams == null) {
@@ -81,7 +81,7 @@ public final class ParamsAnalyzer {
     /**
      * Parameters visitor. Assumed to be called after all other custom parameters detected.
      */
-    private static class ParamsVisitor implements ParamsUtil.ParamVisitor {
+    private static class ParamsVisitor implements ParamsUtils.ParamVisitor {
         private final ParamsContext context;
         private final Method method;
 

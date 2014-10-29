@@ -1,13 +1,13 @@
 package ru.vyarus.guice.persist.orient.finder.internal;
 
 import com.google.inject.Inject;
-import com.google.inject.persist.finder.Finder;
 import org.aopalliance.intercept.MethodInvocation;
 import ru.vyarus.guice.persist.orient.db.transaction.TransactionManager;
 import ru.vyarus.guice.persist.orient.db.transaction.TxConfig;
 import ru.vyarus.guice.persist.orient.db.transaction.internal.AnnotationTxConfigBuilder;
 import ru.vyarus.guice.persist.orient.db.transaction.template.TxAction;
 import ru.vyarus.guice.persist.orient.db.transaction.template.TxTemplate;
+import ru.vyarus.guice.persist.orient.finder.util.FinderUtils;
 
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.InvocationHandler;
@@ -59,7 +59,7 @@ public class FinderInvocationHandler implements InvocationHandler {
     private Object process(final Object thisObject, final Method method, final Object[] args) throws Throwable {
         Object res;
         // Don't intercept non-finder methods like equals and hashcode.
-        if (!method.isAnnotationPresent(Finder.class)) {
+        if (!FinderUtils.isFinderMethod(method)) {
             // NOTE(dhanji): This is not ideal, we are using the invocation handler's equals
             // and hashcode as a proxy (!) for the proxy's equals and hashcode.
             res = method.invoke(this, args);

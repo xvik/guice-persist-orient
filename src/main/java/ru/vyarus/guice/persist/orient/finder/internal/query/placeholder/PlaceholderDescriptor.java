@@ -1,4 +1,4 @@
-package ru.vyarus.guice.persist.orient.finder.internal.placeholder;
+package ru.vyarus.guice.persist.orient.finder.internal.query.placeholder;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;

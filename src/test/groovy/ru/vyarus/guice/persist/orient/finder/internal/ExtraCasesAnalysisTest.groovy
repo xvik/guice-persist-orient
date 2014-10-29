@@ -1,6 +1,5 @@
 package ru.vyarus.guice.persist.orient.finder.internal
 
-import com.google.inject.Inject
 import com.orientechnologies.orient.core.record.impl.ODocument
 import com.tinkerpop.blueprints.Vertex
 import ru.vyarus.guice.persist.orient.finder.executor.GraphFinderExecutor
@@ -17,9 +16,6 @@ import spock.guice.UseModules
  */
 @UseModules(AutoScanFinderTestModule)
 class ExtraCasesAnalysisTest extends AbstractFinderDefinitionTest {
-
-    @Inject
-    FinderDescriptorFactory factory;
 
     def "Check db type recognition"() {
 

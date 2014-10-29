@@ -1,4 +1,4 @@
-package ru.vyarus.guice.persist.orient.finder.internal.params;
+package ru.vyarus.guice.persist.orient.finder.internal.query.params;
 
 import java.util.Map;
 

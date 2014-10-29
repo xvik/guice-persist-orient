@@ -1,4 +1,4 @@
-package ru.vyarus.guice.persist.orient.finder.internal.pagination;
+package ru.vyarus.guice.persist.orient.finder.internal.query.pagination;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;

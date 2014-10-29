@@ -10,6 +10,8 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 /**
+ * Object connection query executor.
+ *
  * @author Vyacheslav Rusakov
  * @since 30.07.2014
  */
@@ -32,6 +34,11 @@ public class ObjectFinderExecutor extends AbstractFinderExecutor {
     @Override
     protected OCommandRequest wrapCommand(final OCommandRequest command) {
         return provider.get().command(command);
+    }
+
+    @Override
+    public Object getConnection() {
+        return provider.get();
     }
 
     @Override

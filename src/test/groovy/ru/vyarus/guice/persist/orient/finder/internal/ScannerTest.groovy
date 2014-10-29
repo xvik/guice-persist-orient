@@ -1,10 +1,8 @@
 package ru.vyarus.guice.persist.orient.finder.internal
 
-import com.google.common.collect.Sets
 import ru.vyarus.guice.persist.orient.finder.scanner.FinderScanner
 import ru.vyarus.guice.persist.orient.support.finder.inheritance.PowerFinder
 import spock.lang.Specification
-
 
 /**
  * @author Vyacheslav Rusakov 

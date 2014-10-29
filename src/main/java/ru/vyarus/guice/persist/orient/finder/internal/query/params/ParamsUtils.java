@@ -1,4 +1,4 @@
-package ru.vyarus.guice.persist.orient.finder.internal.params;
+package ru.vyarus.guice.persist.orient.finder.internal.query.params;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -10,9 +10,9 @@ import java.util.List;
  * @author Vyacheslav Rusakov
  * @since 26.09.2014
  */
-public final class ParamsUtil {
+public final class ParamsUtils {
 
-    private ParamsUtil() {
+    private ParamsUtils() {
     }
 
     /**

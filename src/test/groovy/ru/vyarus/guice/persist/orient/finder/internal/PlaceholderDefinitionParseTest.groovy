@@ -1,7 +1,6 @@
 package ru.vyarus.guice.persist.orient.finder.internal
 
 import com.google.common.collect.Sets
-import com.google.inject.Inject
 import ru.vyarus.guice.persist.orient.support.finder.FinderWithPlaceholders
 import ru.vyarus.guice.persist.orient.support.finder.PlaceholdersEnum
 import ru.vyarus.guice.persist.orient.support.modules.TestFinderModule
@@ -13,8 +12,6 @@ import spock.guice.UseModules
  */
 @UseModules(TestFinderModule)
 class PlaceholderDefinitionParseTest extends AbstractFinderDefinitionTest {
-    @Inject
-    FinderDescriptorFactory factory;
 
     def "Check placeholders recognition"() {
 

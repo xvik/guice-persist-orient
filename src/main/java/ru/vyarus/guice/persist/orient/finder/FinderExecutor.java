@@ -33,6 +33,11 @@ public interface FinderExecutor {
     Object executeQuery(SqlCommandDesc desc);
 
     /**
+     * @return database connection object obtained from pool
+     */
+    Object getConnection();
+
+    /**
      * @return reference connection type
      */
     DbType getType();

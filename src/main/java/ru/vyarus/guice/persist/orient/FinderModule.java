@@ -6,17 +6,18 @@ import com.google.inject.AbstractModule;
 import com.google.inject.matcher.Matchers;
 import com.google.inject.multibindings.Multibinder;
 import com.google.inject.name.Names;
-import com.google.inject.persist.finder.DynamicFinder;
 import com.google.inject.persist.finder.Finder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vyarus.guice.persist.orient.db.DbType;
 import ru.vyarus.guice.persist.orient.finder.FinderExecutor;
 import ru.vyarus.guice.persist.orient.finder.command.CommandBuilder;
+import ru.vyarus.guice.persist.orient.finder.delegate.FinderDelegate;
 import ru.vyarus.guice.persist.orient.finder.executor.DocumentFinderExecutor;
 import ru.vyarus.guice.persist.orient.finder.internal.FinderInvocationHandler;
 import ru.vyarus.guice.persist.orient.finder.internal.FinderProxy;
 import ru.vyarus.guice.persist.orient.finder.result.ResultConverter;
+import ru.vyarus.guice.persist.orient.finder.util.FinderUtils;
 
 import javax.inject.Singleton;
 import java.lang.reflect.Method;
@@ -118,6 +119,7 @@ public class FinderModule extends AbstractModule {
         finderInvoker = new FinderInvocationHandler();
         requestInjection(finderInvoker);
         bindInterceptor(Matchers.any(), Matchers.annotatedWith(Finder.class), proxy);
+        bindInterceptor(Matchers.any(), Matchers.annotatedWith(FinderDelegate.class), proxy);
 
         executorsMultibinder = Multibinder.newSetBinder(binder(), FinderExecutor.class);
 
@@ -206,11 +208,10 @@ public class FinderModule extends AbstractModule {
             valid = false;
         }
 
-        for (Method method : iface.getMethods()) {
-            final DynamicFinder finder = DynamicFinder.from(method);
-            if (null == finder) {
-                addError("Dynamic Finder methods must be annotated with @Finder, but " + iface
-                        + "." + method.getName() + " was not");
+        for (Method method : iface.getDeclaredMethods()) {
+            if (!FinderUtils.isDirectFinderMethod(method)) {
+                addError("Dynamic Finder methods must be annotated with @Finder or @FinderDelegate, "
+                        + "but " + iface + "." + method.getName() + " was not");
                 valid = false;
             }
         }

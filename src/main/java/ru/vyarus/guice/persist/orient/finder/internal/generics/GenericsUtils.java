@@ -1,6 +1,9 @@
 package ru.vyarus.guice.persist.orient.finder.internal.generics;
 
+import com.google.common.collect.Lists;
+
 import java.lang.reflect.*;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -24,6 +27,21 @@ public final class GenericsUtils {
     public static Class<?> getReturnType(final Method method, final Map<String, Type> generics) {
         final Type returnType = method.getGenericReturnType();
         return resolveClass(returnType, generics);
+    }
+
+    /**
+     * Resolve generics in method parameters.
+     *
+     * @param method   method to resolve parameters
+     * @param generics type generics
+     * @return resolved method parameter types
+     */
+    public static List<Class<?>> getMethodParameters(final Method method, final Map<String, Type> generics) {
+        final List<Class<?>> params = Lists.newArrayList();
+        for (Type type: method.getGenericParameterTypes()) {
+            params.add(resolveClass(type, generics));
+        }
+        return params;
     }
 
     /**

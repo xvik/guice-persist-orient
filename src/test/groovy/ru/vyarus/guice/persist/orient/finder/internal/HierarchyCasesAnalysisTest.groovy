@@ -1,6 +1,5 @@
 package ru.vyarus.guice.persist.orient.finder.internal
 
-import com.google.inject.Inject
 import ru.vyarus.guice.persist.orient.finder.executor.ObjectFinderExecutor
 import ru.vyarus.guice.persist.orient.finder.result.ResultType
 import ru.vyarus.guice.persist.orient.support.finder.inheritance.*
@@ -14,9 +13,6 @@ import spock.guice.UseModules
  */
 @UseModules(AutoScanFinderTestModule)
 class HierarchyCasesAnalysisTest extends AbstractFinderDefinitionTest {
-
-    @Inject
-    FinderDescriptorFactory factory;
 
     def "Check generic finder interfaces"() {
 
