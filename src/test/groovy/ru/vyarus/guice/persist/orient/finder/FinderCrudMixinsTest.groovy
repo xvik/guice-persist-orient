@@ -4,6 +4,7 @@ import com.google.inject.Inject
 import com.orientechnologies.orient.core.id.ORecordId
 import com.orientechnologies.orient.core.record.impl.ODocument
 import ru.vyarus.guice.persist.orient.AbstractTest
+import ru.vyarus.guice.persist.orient.finder.internal.FinderExecutionException
 import ru.vyarus.guice.persist.orient.support.finder.DocumentDao
 import ru.vyarus.guice.persist.orient.support.finder.ObjectDao
 import ru.vyarus.guice.persist.orient.support.model.Model
@@ -75,6 +76,15 @@ class FinderCrudMixinsTest extends AbstractTest {
         model = objectDao.get(model.id)
         then: "object removed"
         model == null
+
+        when: "creating proxy and removing object by orid"
+        model = objectDao.create()
+        model.name = 'sample'
+        objectDao.save(model)
+        objectDao.delete(new ORecordId(model.id))
+        model = objectDao.get(model.id)
+        then: "object removed"
+        model == null
     }
 
     def "Check document crud mixin"() {
@@ -119,5 +129,71 @@ class FinderCrudMixinsTest extends AbstractTest {
         doc = documentDao.get((String)doc.field('@rid'))
         then: "document removed"
         doc == null
+
+        when: "removing document by orid"
+        doc = new ODocument(Model.simpleName)
+        doc.field('name', 'name')
+        doc.field('nick', 'tst')
+        doc = documentDao.save(doc)
+        documentDao.delete(new ORecordId((String)doc.field('@rid')))
+        doc = documentDao.get((String)doc.field('@rid'))
+        then: "document removed"
+        doc == null
+    }
+
+    def "Check object custom mixin"() {
+
+        when: "check generic pass and finder instance"
+        Object res = objectDao.doSomething(1,2)
+        then: "called"
+        res == null
+
+        when: "check generic pass and connection object"
+        res = objectDao.doSomething2(1,2, Object)
+        then: "called"
+        res == null
+
+        when: "check incorrect connection type"
+        objectDao.badCall()
+        then: "bad connection param"
+        thrown(IllegalArgumentException)
+
+        when: "check graph connection type, recognized with annotation"
+        objectDao.graphCall()
+        then: "bad connection param"
+        true
+
+        when: "invocation fails"
+        objectDao.invocationFail()
+        then: "fail"
+        thrown(FinderExecutionException)
+
+        when: "specific selection"
+        objectDao.paramSpecific(1, 1, 'hjh')
+        then: "correct specific method chosen"
+        true
+    }
+
+    def "Check document custom mixin"() {
+
+        when: "check generic pass and finder instance"
+        Object res = documentDao.doSomething(1,2)
+        then: "called"
+        res == null
+
+        when: "check generic pass and connection object"
+        res = documentDao.doSomething2(1,2, Object)
+        then: "called"
+        res == null
+
+        when: "check incorrect connection type"
+        documentDao.badCall()
+        then: "bad connection param"
+        thrown(IllegalArgumentException)
+
+        when: "check graph connection type, recognized with annotation"
+        documentDao.graphCall()
+        then: "bad connection param"
+        true
     }
 }

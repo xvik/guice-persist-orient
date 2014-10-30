@@ -338,4 +338,16 @@ class ResultConverterTest extends AbstractTest {
         then: "int converted to integer"
         res == 1
     }
+
+    def "Check conversion fail"() {
+
+        when: "result is string and integer expected"
+        converter.convert(new ResultDesc(
+                result: 'string',
+                type: ResultType.PLAIN,
+                returnClass: Integer,
+                entityClass: Integer))
+        then: "fail"
+       thrown(FinderResultConversionException)
+    }
 }

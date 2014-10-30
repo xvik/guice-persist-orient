@@ -31,5 +31,10 @@ class BeanFinderTest extends AbstractTest {
         then: "finder detected and executed"
         res.size() == 1
 
+        when: "calling finder delegate method"
+        res = finder.selectAllAsArray()
+        then: "delegate call detected and executed"
+        res.size() == 1
+
     }
 }

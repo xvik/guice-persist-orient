@@ -3,6 +3,7 @@ package ru.vyarus.guice.persist.orient.support.finder.delegate
 import ru.vyarus.guice.persist.orient.finder.delegate.mixin.FinderDb
 import ru.vyarus.guice.persist.orient.finder.delegate.mixin.FinderGeneric
 import ru.vyarus.guice.persist.orient.finder.delegate.mixin.FinderInstance
+import ru.vyarus.guice.persist.orient.support.finder.CustomMixin
 
 /**
  * @author Vyacheslav Rusakov 
@@ -27,7 +28,7 @@ class ErrorsDelegate {
     }
 
     // incompatible finder instance
-    void someth5(@FinderInstance Mixin inst) {
+    void someth5(@FinderInstance CustomMixin inst) {
     }
 
     // duplicate connection param

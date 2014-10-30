@@ -84,7 +84,7 @@ public final class MethodFilters {
         // finder method reference position
         int actualParamCounter = 0;
         while (actualParamCounter != pos) {
-            if (!desc.extendedParamsPositions.contains(targetPos)) {
+            if (!desc.isExtended() || !desc.extendedParamsPositions.contains(targetPos)) {
                 actualParamCounter++;
             }
             targetPos++;

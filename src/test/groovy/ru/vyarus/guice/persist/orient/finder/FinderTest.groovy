@@ -22,6 +22,15 @@ class FinderTest extends AbstractTest {
     @Inject
     InterfaceFinder finder
 
+    def "Test interface finder support equals and hashcode"() {
+
+        when: "call finder equals and hashcode"
+        int hash = finder.hashCode()
+        finder.equals(finder) // return false, because relies on proxy equals impl
+        then:
+        hash > 0
+    }
+
     def "Check selects"() {
         template.doInTransaction({ db ->
             db.save(new Model(name: 'John', nick: 'Doe'))

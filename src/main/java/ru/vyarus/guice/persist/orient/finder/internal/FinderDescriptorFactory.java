@@ -86,7 +86,7 @@ public class FinderDescriptorFactory {
         final boolean isQueryFinder = finderAnnotation != null;
         final FinderDescriptor descriptor = isQueryFinder
                 ? FinderQueryDescriptorFactory.buildDescriptor(method, genericsMap)
-                : delegateDescriptorFactory.buildDescriptor(method, genericsMap);
+                : delegateDescriptorFactory.buildDescriptor(method, genericsMap, generics.root);
 
         descriptor.finderRootType = generics.root;
 

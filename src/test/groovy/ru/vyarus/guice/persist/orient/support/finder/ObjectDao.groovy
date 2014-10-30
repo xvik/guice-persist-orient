@@ -9,5 +9,5 @@ import ru.vyarus.guice.persist.orient.support.model.Model
  * @since 26.10.2014
  */
 @Transactional
-interface ObjectDao extends ObjectCrudMixin<Model> {
+interface ObjectDao extends ObjectCrudMixin<Model>, CustomMixin<Model, String> {
 }

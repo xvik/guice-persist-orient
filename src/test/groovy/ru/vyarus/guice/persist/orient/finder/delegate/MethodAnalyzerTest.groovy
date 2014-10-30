@@ -130,6 +130,6 @@ class MethodAnalyzerTest extends Specification {
 
     MethodDescriptor lookup(Class iface, Method method, Class target, String hint = null) {
         GenericsDescriptor generics = genericsFactory.create(iface);
-        return MethodDescriptorAnalyzer.analyzeMethod(method, target, hint, generics.types[method.getDeclaringClass()])
+        return MethodDescriptorAnalyzer.analyzeMethod(method, target, hint, generics.types[method.getDeclaringClass()], iface)
     }
 }

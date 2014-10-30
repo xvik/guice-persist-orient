@@ -21,7 +21,7 @@ public final class DelegateUtils {
      * Looks for {@link ru.vyarus.guice.persist.orient.finder.delegate.FinderDelegate} annotation on method or type.
      *
      * @param method method to lookup annotation
-     * @return method or type annotation
+     * @return method or type annotation or null if not found
      * @throws FinderDefinitionException if annotation declared on type and method hint specified
      */
     public static FinderDelegate findAnnotation(final Method method) {

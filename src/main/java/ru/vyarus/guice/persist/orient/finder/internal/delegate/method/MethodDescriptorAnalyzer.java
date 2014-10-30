@@ -29,12 +29,13 @@ public final class MethodDescriptorAnalyzer {
     public static MethodDescriptor analyzeMethod(final Method method,
                                                  final Class<?> target,
                                                  final String methodHint,
-                                                 final Map<String, Type> generics) {
+                                                 final Map<String, Type> generics,
+                                                 final Class<?> finderType) {
         final Map<String, Type> finderGenerics = com.google.common.base.Objects.firstNonNull(generics,
                 Collections.<String, Type>emptyMap());
         final List<Class<?>> params = GenericsUtils.getMethodParameters(method, finderGenerics);
         final List<MethodDescriptor> possibilities = findPossibilities(target, params, methodHint,
-                finderGenerics, method.getDeclaringClass());
+                finderGenerics, finderType);
         FinderDefinitionException.check(!possibilities.isEmpty(),
                 "No matched method found in target bean %s for delegation", target.getName());
         // if method hint wasn't used trying finder method name for guessing
@@ -100,6 +101,7 @@ public final class MethodDescriptorAnalyzer {
         final int cnt = method.getParameterTypes().length;
         boolean resolution = params.isEmpty() && cnt - skip.size() == 0;
         if (cnt == params.size() + skip.size()) {
+            resolution = true;
             int skipCnt = 0;
             for (int i = 0; i < cnt; i++) {
                 if (skip.contains(i)) {
@@ -109,10 +111,8 @@ public final class MethodDescriptorAnalyzer {
                 final Class<?> param = params.get(i - skipCnt);
                 final Class<?> valParam = method.getParameterTypes()[i];
                 if (!valParam.isAssignableFrom(param)) {
+                    resolution = false;
                     break;
-                }
-                if (i == cnt - 1) {
-                    resolution = true;
                 }
             }
         }

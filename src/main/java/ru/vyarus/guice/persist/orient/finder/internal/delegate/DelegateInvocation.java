@@ -1,5 +1,6 @@
 package ru.vyarus.guice.persist.orient.finder.internal.delegate;
 
+import ru.vyarus.guice.persist.orient.finder.internal.FinderDefinitionException;
 import ru.vyarus.guice.persist.orient.finder.internal.FinderExecutionException;
 
 import java.lang.reflect.Method;
@@ -55,6 +56,10 @@ public final class DelegateInvocation {
             if (connection != null && connection == i) {
                 shift++;
                 res[i] = descriptor.executor.getConnection();
+                final Class<?> methodConnType = descriptor.method.method.getParameterTypes()[i];
+                FinderDefinitionException.check(methodConnType.isAssignableFrom(res[i].getClass()),
+                        "Bad connection type declared %s, when actual is %s",
+                        methodConnType.getSimpleName(), res[i].getClass().getSimpleName());
             } else if (instance != null && instance == i) {
                 shift++;
                 res[i] = finder;

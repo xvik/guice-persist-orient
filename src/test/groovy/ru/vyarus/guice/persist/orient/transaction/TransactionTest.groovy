@@ -129,4 +129,12 @@ class TransactionTest extends AbstractTest {
         !transactionManager.isTransactionActive()
         selectService.select() != null
     }
+
+    def "TxConfig toString"() {
+
+        when: "toString config"
+        println new TxConfig([IllegalStateException], []).toString()
+        then: "ok"
+        true
+    }
 }

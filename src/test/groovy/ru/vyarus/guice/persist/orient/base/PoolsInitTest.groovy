@@ -33,7 +33,19 @@ class PoolsInitTest extends Specification {
         documentPool.started
         objectPool.started
 
+        when: "duplicate start check"
+        persist.start()
+        then: "just warn in logs"
+        documentPool.started
+        objectPool.started
+
         when: "shutdown db"
+        persist.stop()
+        then: "pools closed"
+        !documentPool.started
+        !objectPool.started
+
+        when: "double shutdown ok"
         persist.stop()
         then: "pools closed"
         !documentPool.started
