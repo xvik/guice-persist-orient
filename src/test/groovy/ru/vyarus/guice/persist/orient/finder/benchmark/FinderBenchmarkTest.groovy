@@ -10,6 +10,7 @@ import ru.vyarus.guice.persist.orient.support.modules.AutoScanFinderTestModule
 import spock.guice.UseModules
 
 import javax.inject.Inject
+import java.lang.reflect.Method
 
 /**
  * Very very simple benchmark. Ofc not accurate, just to understand overhead.
@@ -21,7 +22,7 @@ import javax.inject.Inject
 class FinderBenchmarkTest extends AbstractTest {
 
     @Inject
-    BenchmarkDelegate delegate
+    BenchmarkDelegate delegateBean
     @Inject
     FinderBenchmark finder;
 
@@ -33,8 +34,10 @@ class FinderBenchmarkTest extends AbstractTest {
             }
         } as SpecificTxAction)
         // worm up
-        1000.times {
-            delegate.findAll()
+        final Method method = BenchmarkDelegate.getMethod('findAll');
+        100.times {
+            delegateBean.findAll()
+            method.invoke(delegateBean)
             finder.findAll()
             finder.findAllDelegate()
         }
@@ -43,9 +46,14 @@ class FinderBenchmarkTest extends AbstractTest {
         3.times {
             println "------------------------------- try $it"
             Stopwatch stopwatch = Stopwatch.createStarted()
-            delegate.findAll()
+            delegateBean.findAll()
             stopwatch.stop()
             println "Direct call: $stopwatch"
+
+            stopwatch.reset().start()
+            method.invoke(delegateBean)
+            stopwatch.stop()
+            println "Direct reflection call: $stopwatch"
 
             stopwatch.reset().start()
             finder.findAll()
@@ -59,7 +67,5 @@ class FinderBenchmarkTest extends AbstractTest {
         }
         then:
         true
-
-
     }
 }
