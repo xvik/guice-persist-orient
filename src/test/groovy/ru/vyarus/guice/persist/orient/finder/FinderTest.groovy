@@ -293,4 +293,30 @@ class FinderTest extends AbstractTest {
         then: "error"
         thrown(IllegalStateException)
     }
+
+    def "Check wrapped results"() {
+
+        template.doInTransaction({ db ->
+            2.times {
+                db.save(new Model(name: "name$it", nick: "nick$it"))
+            }
+        } as SpecificTxAction)
+
+        when: "count call"
+        ODocument count = finder.getCount()
+        then: "single document returned"
+        count.field('count') == 2
+
+        when: "single field select"
+        List<ODocument> res = finder.getNames()
+        then: "list of documents returned"
+        res.size() == 2
+        res[0].field('name') == 'name0'
+
+        when: "single field select as array"
+        ODocument[] res2 = finder.getNamesArray()
+        then: "array of documents returned"
+        res2.length == 2
+        res[0].field('name') == 'name0'
+    }
 }

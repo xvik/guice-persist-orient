@@ -157,4 +157,28 @@ class DescriptionFactoryTest extends AbstractFinderDefinitionTest {
         then: "error"
         thrown(FinderDefinitionException)
     }
+
+    def "Check wrapped results"() {
+
+        when: "count query"
+        FinderDescriptor desc = lookup(InterfaceFinder.getMethod("getCount"))
+        then: "plain document recognized"
+        desc.result.entityType == ODocument
+        desc.result.returnType == ResultType.PLAIN
+        desc.result.expectType == ODocument
+
+        when: "projection query"
+        desc = lookup(InterfaceFinder.getMethod("getNames"))
+        then: "document collection recognized"
+        desc.result.entityType == ODocument
+        desc.result.returnType == ResultType.COLLECTION
+        desc.result.expectType == List
+
+        when: "projection query and array result"
+        desc = lookup(InterfaceFinder.getMethod("getNamesArray"))
+        then: "document array recognized"
+        desc.result.entityType == ODocument
+        desc.result.returnType == ResultType.ARRAY
+        desc.result.expectType == ODocument[]
+    }
 }

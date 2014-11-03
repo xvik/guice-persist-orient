@@ -53,11 +53,7 @@ public class FinderProxy implements MethodInterceptor {
         final FinderDescriptor descriptor = getFinderDescriptor(method, generics);
         final Object[] arguments = methodInvocation.getArguments();
         final Object result = invoke(descriptor, method, arguments, methodInvocation.getThis());
-        final ResultDesc desc = new ResultDesc();
-        desc.result = result;
-        desc.entityClass = descriptor.result.entityType;
-        desc.type = descriptor.result.returnType;
-        desc.returnClass = descriptor.result.expectType;
+        final ResultDesc desc = new ResultDesc(descriptor.result, result);
         try {
             return resultConverter.convert(desc);
         } catch (Throwable th) {

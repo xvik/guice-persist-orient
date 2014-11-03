@@ -64,6 +64,20 @@ public interface InterfaceFinder {
     @Finder(query = "select from Model")
     List selectAllNoType()
 
+    // -------------------------------------------- custom results
+
+    // returns result wrapped in document
+    @Finder(query = "select count(@rid) from Model")
+    ODocument getCount()
+
+    // returns names wrapped in documents
+    @Finder(query = "select name from Model")
+    List<ODocument> getNames()
+
+    // returns names wrapped in documents
+    @Finder(query = "select name from Model")
+    ODocument[] getNamesArray()
+
     // -------------------------------------------- function recognition
 
     // recognize as function call

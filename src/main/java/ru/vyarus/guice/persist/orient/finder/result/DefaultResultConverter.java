@@ -4,6 +4,8 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.common.primitives.Primitives;
+import com.orientechnologies.orient.core.db.record.OIdentifiable;
+import com.orientechnologies.orient.core.record.impl.ODocument;
 
 import javax.inject.Singleton;
 import java.lang.reflect.Array;
@@ -81,7 +83,7 @@ public class DefaultResultConverter implements ResultConverter {
         final Object array = Array.newInstance(entityType, res.size());
         int i = 0;
         for (Object obj : res) {
-            Array.set(array, i++, obj);
+            Array.set(array, i++, flattenSimple(obj, entityType));
         }
         return array;
     }
@@ -110,6 +112,9 @@ public class DefaultResultConverter implements ResultConverter {
             final Iterator it = toIterator(result);
             if (it.hasNext()) {
                 converted = it.next();
+                if (!ODocument.class.equals(returnClass)) {
+                    converted = flattenSimple(converted, returnClass);
+                }
             }
         }
         return converted;
@@ -145,5 +150,39 @@ public class DefaultResultConverter implements ResultConverter {
             collection.add(it.next());
         }
         return collection;
+    }
+
+    /**
+     * Flattening is important for simple cases: when querying for count (or other aggregated function) or
+     * for single field (column).
+     *
+     * @param object result object
+     * @param returnClass expected type
+     * @return either object itself or just object field (extracted)
+     */
+    @SuppressWarnings("PMD.AvoidLiteralsInIfCondition")
+    private Object flattenSimple(final Object object, final Class<?> returnClass) {
+        Object res = object;
+        if (!ODocument.class.isAssignableFrom(returnClass)) {
+            ODocument doc = null;
+            if (object instanceof ODocument) {
+                doc = (ODocument) object;
+            }
+            if (object instanceof OIdentifiable) {
+                // most likely OrientVertex, which is returned under graph connection, even for partial requests
+                final Object record = ((OIdentifiable) object).getRecord();
+                if (record instanceof ODocument) {
+                    doc = (ODocument) record;
+                }
+            }
+            if (doc != null && doc.fieldNames().length == 1) {
+                res = doc.fieldValues()[0];
+                // if required, perform result correction
+                if (res != null && !returnClass.isAssignableFrom(res.getClass())) {
+                    res = handlePlainValue(res, returnClass);
+                }
+            }
+        }
+        return res;
     }
 }

@@ -1,5 +1,6 @@
 package ru.vyarus.guice.persist.orient.finder.internal.result;
 
+import com.orientechnologies.orient.core.record.impl.ODocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vyarus.guice.persist.orient.finder.internal.generics.GenericsUtils;
@@ -45,9 +46,10 @@ public final class ResultAnalyzer {
 
         ResultType type;
         Class<?> entityClass;
-        if (Collection.class.isAssignableFrom(returnClass)
+        if (!ODocument.class.isAssignableFrom(returnClass)
+                && (Collection.class.isAssignableFrom(returnClass)
                 || Iterator.class.isAssignableFrom(returnClass)
-                || Iterable.class.isAssignableFrom(returnClass)) {
+                || Iterable.class.isAssignableFrom(returnClass))) {
             type = COLLECTION;
             entityClass = resolveGenericType(method.getGenericReturnType(), method, generics);
         } else if (returnClass.isArray()) {
