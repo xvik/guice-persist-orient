@@ -5,6 +5,7 @@ import com.orientechnologies.orient.object.db.OObjectDatabasePool;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import ru.vyarus.guice.persist.orient.db.DbType;
 import ru.vyarus.guice.persist.orient.db.transaction.TransactionManager;
+import ru.vyarus.guice.persist.orient.db.user.UserManager;
 
 import javax.inject.Inject;
 
@@ -17,14 +18,14 @@ import javax.inject.Inject;
 public class ObjectPool extends AbstractPool<OObjectDatabaseTx> {
 
     @Inject
-    public ObjectPool(final TransactionManager transactionManager) {
-        super(transactionManager);
+    public ObjectPool(final TransactionManager transactionManager, final UserManager userManager) {
+        super(transactionManager, userManager);
     }
 
 
     @Override
-    protected ODatabasePoolBase createPool(final String uri, final String user, final String pass) {
-        return new OObjectDatabasePool(uri, user, pass);
+    protected ODatabasePoolBase createPool() {
+        return new OObjectDatabasePool();
     }
 
     @Override

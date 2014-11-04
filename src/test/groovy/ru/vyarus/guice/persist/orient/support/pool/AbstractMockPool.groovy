@@ -16,7 +16,7 @@ abstract class AbstractMockPool<T> implements PoolManager<T> {
     Class<RuntimeException> onRollback
 
     @Override
-    void start(String uri, String user, String pass) {
+    void start(String uri) {
         started = true
         committed = false
         rolledBack = false

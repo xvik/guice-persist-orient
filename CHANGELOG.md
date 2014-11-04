@@ -4,7 +4,8 @@
 * Add experimental(!) delegate finders (annotated interface method delegates execution to guice bean method)
 * Add crud mixins for object and document finders (DocumentCrudMixin, ObjectCrudMixin)
 * Add document and vertex projection for single field (works for plain and array result): useful for count (or other aggregation functions) or selecting single field
-* Add simple pagination mixin (for object and document finders): PaginationMixin   
+* Add simple pagination mixin (for object and document finders): PaginationMixin
+* (pools api breaking change) Support using different users (to init schema with more powerful user and to leverage orient security model)   
 
 ### 1.1.1 (2014-10-01)
 * Fix finder behaviour: empty collection conversion to single element

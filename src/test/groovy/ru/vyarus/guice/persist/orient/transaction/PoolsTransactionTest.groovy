@@ -39,8 +39,8 @@ class PoolsTransactionTest extends Specification {
     void setup() {
         persist.start()
         // reset mocks state, because db on startup calls it
-        documentPool.start(null, null, null)
-        objectPool.start(null, null, null)
+        documentPool.start(null)
+        objectPool.start(null)
     }
 
     void cleanup() {

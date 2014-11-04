@@ -15,6 +15,8 @@ import com.google.inject.Provider;
  * {@code OGlobalConfiguration.DB_POOL_MAX.setValue()}. By default pools it's 1-20.</p>
  * <p>Do not use global pools in implementations - always create new one to avoid possible
  * collisions with other pools</p>
+ * <p>Implementation must rely on {@link ru.vyarus.guice.persist.orient.db.user.UserManager} for actual
+ * user credentials.</p>
  *
  * @author Vyacheslav Rusakov
  * @since 24.07.2014
@@ -23,13 +25,11 @@ import com.google.inject.Provider;
 public interface PoolManager<T> extends Provider<T> {
 
     /**
-     * Start pool.Will be called by PersistService implementation..
+     * Start pool. Will be called by PersistService implementation..
      *
      * @param uri  database uri
-     * @param user database user
-     * @param pass database password
      */
-    void start(String uri, String user, String pass);
+    void start(String uri);
 
     /**
      * Stops pool. Will be called by PersistService implementation.

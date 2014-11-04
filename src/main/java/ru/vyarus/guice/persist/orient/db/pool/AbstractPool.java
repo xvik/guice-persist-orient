@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vyarus.guice.persist.orient.db.PoolManager;
 import ru.vyarus.guice.persist.orient.db.transaction.TransactionManager;
+import ru.vyarus.guice.persist.orient.db.user.UserManager;
 
 /**
  * Base class for default pool implementations.
@@ -24,22 +25,20 @@ public abstract class AbstractPool<T> implements PoolManager<T> {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private final TransactionManager transactionManager;
+    private final UserManager userManager;
     private final ThreadLocal<ODatabaseComplex> transaction = new ThreadLocal<ODatabaseComplex>();
     private ODatabasePoolBase pool;
     private String uri;
-    private String user;
-    private String password;
 
-    protected AbstractPool(final TransactionManager transactionManager) {
+    protected AbstractPool(final TransactionManager transactionManager, final UserManager userManager) {
         this.transactionManager = transactionManager;
+        this.userManager = userManager;
     }
 
     @Override
-    public void start(final String uri, final String user, final String pass) {
-        pool = createPool(uri, user, pass);
+    public void start(final String uri) {
         this.uri = uri;
-        this.user = user;
-        this.password = pass;
+        pool = createPool();
         logger.debug("Pool {} started for '{}'", getType(), uri);
     }
 
@@ -110,7 +109,8 @@ public abstract class AbstractPool<T> implements PoolManager<T> {
             Preconditions.checkState(transactionManager.isTransactionActive(), String.format(
                     "Can't obtain connection from pool %s: no transaction defined.", getType()));
 
-            final ODatabaseComplex db = checkAndRecoverConnection((ODatabaseComplex) pool.acquire());
+            final ODatabaseComplex db = checkAndRecoverConnection(
+                    (ODatabaseComplex) pool.acquire(uri, userManager.getUser(), userManager.getPassword()));
 
             db.begin(transactionManager.getActiveTransactionType());
             transaction.set(db);
@@ -122,12 +122,9 @@ public abstract class AbstractPool<T> implements PoolManager<T> {
     /**
      * Called to create correct orient pool instance (native orient pool).
      *
-     * @param uri  database url
-     * @param user database user
-     * @param pass database password
      * @return orient connection pool instance
      */
-    protected abstract ODatabasePoolBase createPool(String uri, String user, String pass);
+    protected abstract ODatabasePoolBase createPool();
 
     /**
      * @param db connection instance obtained from pool or thread local
@@ -175,11 +172,9 @@ public abstract class AbstractPool<T> implements PoolManager<T> {
                     + "begin/commit/rollback/close (construct your own connection if you need "
                     + "full control, otherwise trust to transaction manager).", getType());
             final String localUri = uri;
-            final String localUser = user;
-            final String localPass = password;
             stop();
-            start(localUri, localUser, localPass);
-            res = (ODatabaseComplex) pool.acquire();
+            start(localUri);
+            res = (ODatabaseComplex) pool.acquire(uri, userManager.getUser(), userManager.getPassword());
         }
         Preconditions.checkState(!res.isClosed(), String.format(
                 "Pool %s return closed connection, even pool restart didn't help.. "

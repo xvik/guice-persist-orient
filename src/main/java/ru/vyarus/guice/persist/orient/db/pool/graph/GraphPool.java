@@ -11,6 +11,7 @@ import com.tinkerpop.blueprints.impls.orient.OrientGraphNoTx;
 import ru.vyarus.guice.persist.orient.db.DbType;
 import ru.vyarus.guice.persist.orient.db.pool.AbstractPool;
 import ru.vyarus.guice.persist.orient.db.transaction.TransactionManager;
+import ru.vyarus.guice.persist.orient.db.user.UserManager;
 
 import javax.inject.Inject;
 
@@ -33,14 +34,14 @@ public class GraphPool extends AbstractPool<OrientBaseGraph> {
     private final TransactionManager transactionManager;
 
     @Inject
-    public GraphPool(final TransactionManager transactionManager) {
-        super(transactionManager);
+    public GraphPool(final TransactionManager transactionManager, final UserManager userManager) {
+        super(transactionManager, userManager);
         this.transactionManager = transactionManager;
     }
 
     @Override
-    protected ODatabasePoolBase createPool(final String uri, final String user, final String pass) {
-        return new ODatabaseDocumentPool(uri, user, pass);
+    protected ODatabasePoolBase createPool() {
+        return new ODatabaseDocumentPool();
     }
 
     @Override

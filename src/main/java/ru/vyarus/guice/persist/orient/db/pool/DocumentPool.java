@@ -5,6 +5,7 @@ import com.orientechnologies.orient.core.db.document.ODatabaseDocumentPool;
 import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx;
 import ru.vyarus.guice.persist.orient.db.DbType;
 import ru.vyarus.guice.persist.orient.db.transaction.TransactionManager;
+import ru.vyarus.guice.persist.orient.db.user.UserManager;
 
 import javax.inject.Inject;
 
@@ -17,13 +18,13 @@ import javax.inject.Inject;
 public class DocumentPool extends AbstractPool<ODatabaseDocumentTx> {
 
     @Inject
-    public DocumentPool(final TransactionManager transactionManager) {
-        super(transactionManager);
+    public DocumentPool(final TransactionManager transactionManager, final UserManager userManager) {
+        super(transactionManager, userManager);
     }
 
     @Override
-    protected ODatabasePoolBase createPool(final String uri, final String user, final String pass) {
-        return new ODatabaseDocumentPool(uri, user, pass);
+    protected ODatabasePoolBase createPool() {
+        return new ODatabaseDocumentPool();
     }
 
     @Override

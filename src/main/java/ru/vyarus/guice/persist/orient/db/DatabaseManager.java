@@ -14,6 +14,7 @@ import ru.vyarus.guice.persist.orient.db.scheme.SchemeInitializer;
 import ru.vyarus.guice.persist.orient.db.transaction.TxConfig;
 import ru.vyarus.guice.persist.orient.db.transaction.template.TxAction;
 import ru.vyarus.guice.persist.orient.db.transaction.template.TxTemplate;
+import ru.vyarus.guice.persist.orient.db.user.UserManager;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -34,10 +35,9 @@ public class DatabaseManager implements PersistService {
     private final Logger logger = LoggerFactory.getLogger(DatabaseManager.class);
 
     private final String uri;
-    private final String user;
-    private final String pass;
     private final boolean autoCreate;
 
+    private final UserManager userManager;
     private final Set<PoolManager> pools;
     private final SchemeInitializer modelInitializer;
     private final DataInitializer dataInitializer;
@@ -48,21 +48,18 @@ public class DatabaseManager implements PersistService {
     private Set<DbType> supportedTypes;
 
     @Inject
-    @SuppressWarnings("checkstyle:parameternumber")
     public DatabaseManager(
             @Named("orient.uri") final String uri,
-            @Named("orient.user") final String user,
-            @Named("orient.password") final String password,
             @Named("orient.db.autocreate") final boolean autoCreate,
+            final UserManager userManager,
             final Set<PoolManager> pools,
             final SchemeInitializer modelInitializer,
             final DataInitializer dataInitializer,
             final TxTemplate txTemplate) {
 
         this.uri = Preconditions.checkNotNull(uri, "Database name required");
-        this.user = Preconditions.checkNotNull(user, "Database user name required");
-        this.pass = Preconditions.checkNotNull(password, "Database user password required");
         this.autoCreate = autoCreate;
+        this.userManager = userManager;
         this.pools = pools;
         this.modelInitializer = modelInitializer;
         this.dataInitializer = dataInitializer;
@@ -119,7 +116,7 @@ public class DatabaseManager implements PersistService {
 
     /**
      * @param type db type to check
-     * @return true if db tpe supported (supporting pool regisntered), false otherwise
+     * @return true if db tpe supported (supporting pool registered), false otherwise
      */
     public boolean isTypeSupported(final DbType type) {
         return supportedTypes.contains(type);
@@ -138,7 +135,7 @@ public class DatabaseManager implements PersistService {
                 // trying to open to fail fast in case it doesn't exist and auto creation disabled
                 // (or remote connection was used)
                 logger.debug("Opening database: '{}'", uri);
-                database.open(user, pass);
+                database.open(userManager.getUser(), userManager.getPassword());
             }
             initGraphDb(database);
         } finally {
@@ -175,7 +172,7 @@ public class DatabaseManager implements PersistService {
         supportedTypes = Sets.newHashSet();
         for (PoolManager<?> pool : pools) {
             // if pool start failed, entire app start should fail (no catch here)
-            pool.start(uri, user, pass);
+            pool.start(uri);
             supportedTypes.add(pool.getType());
         }
     }
