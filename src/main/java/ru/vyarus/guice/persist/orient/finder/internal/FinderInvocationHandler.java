@@ -28,8 +28,9 @@ public class FinderInvocationHandler implements InvocationHandler {
     @Inject
     private TransactionManager transactionManager;
 
+    @Override
     public Object invoke(final Object thisObject, final Method method,
-                         final Object[] args) throws Throwable {
+                         final Object... args) throws Throwable {
 
         Object res;
         // already inside transaction
@@ -56,7 +57,7 @@ public class FinderInvocationHandler implements InvocationHandler {
         return res;
     }
 
-    private Object process(final Object thisObject, final Method method, final Object[] args) throws Throwable {
+    private Object process(final Object thisObject, final Method method, final Object... args) throws Throwable {
         Object res;
         // Don't intercept non-finder methods like equals and hashcode.
         if (!FinderUtils.isFinderMethod(method)) {

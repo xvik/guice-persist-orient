@@ -64,7 +64,7 @@ public final class AnnotationTxConfigBuilder {
      * @param list array of exceptions
      * @return converted list or null if array os empty
      */
-    private static List<Class<? extends Exception>> wrapExceptions(final Class<? extends Exception>[] list) {
+    private static List<Class<? extends Exception>> wrapExceptions(final Class<? extends Exception>... list) {
         return list.length == 0 ? null : Arrays.asList(list);
     }
 

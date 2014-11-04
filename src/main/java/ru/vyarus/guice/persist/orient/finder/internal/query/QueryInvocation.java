@@ -25,7 +25,7 @@ public final class QueryInvocation {
 
     public static Object processQuery(final FinderQueryDescriptor descriptor,
                                       final Method method,
-                                      final Object[] arguments) throws Throwable {
+                                      final Object... arguments) throws Throwable {
         SqlCommandDesc command;
         try {
             command = buildCommand(descriptor, arguments);
@@ -46,7 +46,7 @@ public final class QueryInvocation {
         }
     }
 
-    private static SqlCommandDesc buildCommand(final FinderQueryDescriptor descriptor, final Object[] arguments) {
+    private static SqlCommandDesc buildCommand(final FinderQueryDescriptor descriptor, final Object... arguments) {
         final SqlCommandDesc command = new SqlCommandDesc();
         final String query = processPlaceholders(descriptor, arguments);
         command.isFunctionCall = descriptor.isFunctionCall;
@@ -73,7 +73,7 @@ public final class QueryInvocation {
         return command;
     }
 
-    private static String processPlaceholders(final FinderQueryDescriptor descriptor, final Object[] arguments) {
+    private static String processPlaceholders(final FinderQueryDescriptor descriptor, final Object... arguments) {
         String query = descriptor.query;
         if (descriptor.placeholders != null) {
             final Map<String, String> params = Maps.newHashMap();
@@ -82,8 +82,8 @@ public final class QueryInvocation {
             }
             if (descriptor.placeholders.parametersIndex != null) {
                 params.putAll(
-                        getPlaceholderParams(descriptor.placeholders.parametersIndex, arguments,
-                                descriptor.placeholders.values)
+                        getPlaceholderParams(descriptor.placeholders.parametersIndex,
+                                descriptor.placeholders.values, arguments)
                 );
             }
             query = StringTemplateUtils.replace(query, params);
@@ -92,7 +92,7 @@ public final class QueryInvocation {
     }
 
     private static void assignPaginationParams(final SqlCommandDesc command,
-                                               final FinderQueryDescriptor descriptor, final Object[] arguments) {
+                                               final FinderQueryDescriptor descriptor, final Object... arguments) {
         if (descriptor.pagination != null) {
             if (descriptor.pagination.firstResultParamIndex != null) {
                 final Number rawStartValue = (Number) arguments[descriptor.pagination.firstResultParamIndex];
@@ -108,7 +108,7 @@ public final class QueryInvocation {
         }
     }
 
-    private static Object[] getParams(final Integer[] positions, final Object[] arguments) {
+    private static Object[] getParams(final Integer[] positions, final Object... arguments) {
         final Object[] res = new Object[positions.length];
         for (int i = 0; i < positions.length; i++) {
             res[i] = arguments[positions[i]];
@@ -116,7 +116,7 @@ public final class QueryInvocation {
         return res;
     }
 
-    private static Map<String, Object> getNamedParams(final Map<String, Integer> positions, final Object[] arguments) {
+    private static Map<String, Object> getNamedParams(final Map<String, Integer> positions, final Object... arguments) {
         final Map<String, Object> res = Maps.newHashMap();
         for (Map.Entry<String, Integer> entry : positions.entrySet()) {
             res.put(entry.getKey(), arguments[entry.getValue()]);
@@ -125,8 +125,8 @@ public final class QueryInvocation {
     }
 
     private static Map<String, String> getPlaceholderParams(final Map<String, Integer> positions,
-                                                            final Object[] arguments,
-                                                            final Multimap<String, String> defaults) {
+                                                            final Multimap<String, String> defaults,
+                                                            final Object... arguments) {
         final Map<String, String> res = Maps.newHashMap();
         for (Map.Entry<String, Integer> entry : positions.entrySet()) {
             final String name = entry.getKey();
