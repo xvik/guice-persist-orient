@@ -20,7 +20,7 @@ public interface PaginationMixin<M, R> extends Pagination<R> {
 
     /**
      * @param start starting entity (from 0)
-     * @param max   number of items to select (all if <=0)
+     * @param max   number of items to select (to select all set value less or equal 0)
      * @return list of selected entities or empty list (if range not exist)
      */
     @Finder(query = "select from ${M}")

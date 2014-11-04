@@ -77,10 +77,11 @@ public final class GenericsUtils {
     }
 
     /**
-     * Resolves top class for provided type (for example for generified classes like List&lt;T&gt it
+     * Resolves top class for provided type (for example, for generified classes like {@code List<T>} it
      * returns base type List).
      *
      * @param type type to resolve
+     * @param generics root class generics mapping
      * @return resolved class
      */
     public static Class<?> resolveClass(final Type type, final Map<String, Type> generics) {
