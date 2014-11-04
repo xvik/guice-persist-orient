@@ -64,7 +64,7 @@ public class UserManager {
      * @throws Throwable if error happens it will not be caught here
      */
     public <T> T executeWithUser(final String user, final String password,
-                                 final SpecificUserAction userAction) throws Throwable {
+                                 final SpecificUserAction<T> userAction) throws Throwable {
         Preconditions.checkState(!transactionManager.isTransactionActive(),
                 "User can't be changed during transaction");
         Preconditions.checkState(specificUser.get() == null,

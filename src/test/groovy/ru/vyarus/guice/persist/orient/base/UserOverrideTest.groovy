@@ -45,7 +45,7 @@ class UserOverrideTest extends AbstractTest {
 
         when: "working with db within different user"
         List<Model> res = Lists.newArrayList(
-                userManager.<Model> executeWithUser('test', 'test', {
+                userManager.executeWithUser('test', 'test', {
                     template.doInTransaction({ db ->
                         db.browseClass(Model)
                     } as SpecificTxAction)
