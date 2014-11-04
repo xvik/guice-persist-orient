@@ -1,5 +1,6 @@
 package ru.vyarus.guice.persist.orient.finder
 
+import com.google.common.collect.Lists
 import com.google.inject.Inject
 import com.orientechnologies.orient.core.id.ORecordId
 import com.orientechnologies.orient.core.record.impl.ODocument
@@ -32,6 +33,12 @@ class FinderCrudMixinsTest extends AbstractTest {
         model = objectDao.save(model)
         then: "object stored"
         model.id
+
+        when: "selecting all records"
+        List<Model> all = Lists.newArrayList(objectDao.getAll() as Iterator)
+        then: "retrieved"
+        all.size() == 1
+        all[0] instanceof Model
 
         when: "loading object"
         model = objectDao.get(model.id)
@@ -98,6 +105,12 @@ class FinderCrudMixinsTest extends AbstractTest {
         doc = documentDao.save(doc)
         then: "document stored"
         doc.field('@rid')
+
+        when: "selecting all records"
+        List<ODocument> all = Lists.newArrayList(documentDao.getAll() as Iterator)
+        then: "retrieved"
+        all.size() == 1
+        all[0] instanceof ODocument
 
         when: "loading document"
         doc = documentDao.get((String)doc.field('@rid'))

@@ -11,7 +11,7 @@ import ru.vyarus.guice.persist.orient.support.model.Model
  * @since 26.10.2014
  */
 @Transactional
-public interface DocumentDao extends DocumentCrudMixin,
+public interface DocumentDao extends DocumentCrudMixin<Model>,
         CustomMixin<ODocument, String>,
         PaginationMixin<Model, ODocument> {
 

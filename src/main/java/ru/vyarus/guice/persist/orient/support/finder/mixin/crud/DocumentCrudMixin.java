@@ -4,15 +4,18 @@ import com.orientechnologies.orient.core.id.ORID;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import ru.vyarus.guice.persist.orient.finder.delegate.FinderDelegate;
 
+import java.util.Iterator;
+
 /**
  * Crud mixin for document finders.
  * Could be used by finder to avoid external dao requirement.
  *
+ * @param <T> entity type (if not specified then getAll method will not work)
  * @author Vyacheslav Rusakov
  * @since 21.10.2014
  */
 @FinderDelegate(DocumentCrudDelegate.class)
-public interface DocumentCrudMixin {
+public interface DocumentCrudMixin<T> {
 
     /**
      * @param id entity id
@@ -49,4 +52,12 @@ public interface DocumentCrudMixin {
      * @param id entity id to remove
      */
     void delete(ORID id);
+
+    /**
+     * NOTE: works only if generic parameter set. Method can't be used in case when queried type doesn't have
+     * class reference.
+     *
+     * @return all records of type
+     */
+    Iterator<ODocument> getAll();
 }

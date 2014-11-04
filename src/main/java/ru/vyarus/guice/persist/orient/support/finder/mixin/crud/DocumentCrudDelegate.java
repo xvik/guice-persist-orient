@@ -4,10 +4,12 @@ import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx;
 import com.orientechnologies.orient.core.id.ORID;
 import com.orientechnologies.orient.core.id.ORecordId;
 import com.orientechnologies.orient.core.record.impl.ODocument;
+import ru.vyarus.guice.persist.orient.finder.delegate.mixin.FinderGeneric;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.inject.Singleton;
+import java.util.Iterator;
 
 /**
  * Crud mixin implementation for document database.
@@ -53,5 +55,15 @@ public class DocumentCrudDelegate implements DocumentCrudMixin {
     @Override
     public void delete(final ORID id) {
         dbProvider.get().delete(id);
+    }
+
+    @Override
+    public Iterator<ODocument> getAll() {
+        // finder should choose extended method instead of direct implementation
+        throw new UnsupportedOperationException("Method with type must be called");
+    }
+
+    public Iterator<ODocument> getAll(@FinderGeneric("T") final Class<?> type) {
+        return dbProvider.get().browseClass(type.getSimpleName());
     }
 }

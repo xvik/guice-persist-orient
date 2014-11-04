@@ -8,6 +8,7 @@ import ru.vyarus.guice.persist.orient.finder.delegate.mixin.FinderGeneric;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.inject.Singleton;
+import java.util.Iterator;
 
 /**
  * Crud mixin object implementation.
@@ -71,10 +72,20 @@ public class ObjectCrudDelegate<T> implements ObjectCrudMixin<T> {
     @Override
     public T create() {
         // finder should choose extended method instead of direct implementation
-        throw new UnsupportedOperationException("Method with type must be called");
+        throw new UnsupportedOperationException("Method create(Class) must be called");
     }
 
     public T create(@FinderGeneric("T") final Class<T> type) {
         return dbProvider.get().newInstance(type);
+    }
+
+    @Override
+    public Iterator<T> getAll() {
+        // finder should choose extended method instead of direct implementation
+        throw new UnsupportedOperationException("Method getAll(Class) must be called");
+    }
+
+    public Iterator<T> getAll(@FinderGeneric("T") final Class<T> type) {
+        return dbProvider.get().browseClass(type);
     }
 }

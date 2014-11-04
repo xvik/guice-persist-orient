@@ -3,6 +3,8 @@ package ru.vyarus.guice.persist.orient.support.finder.mixin.crud;
 import com.orientechnologies.orient.core.id.ORID;
 import ru.vyarus.guice.persist.orient.finder.delegate.FinderDelegate;
 
+import java.util.Iterator;
+
 /**
  * Crud mixin for object finders.
  * Could be used by finder to avoid external dao requirement.
@@ -69,4 +71,9 @@ public interface ObjectCrudMixin<T> {
      * @return empty object proxy
      */
     T create();
+
+    /**
+     * @return all records of type
+     */
+    Iterator<T> getAll();
 }
