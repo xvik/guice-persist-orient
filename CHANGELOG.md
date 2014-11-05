@@ -1,11 +1,12 @@
-* Support inheritance for finder beans and interfaces (mixins)
-* Support generic type query placeholders (finder class generic used as query placeholder)
+### 2.0.0 (2014-11-05)
+* Support different users (for example, to init schema with more powerful user and to use orient security model). Breaks pools api compatibility
 * AutoScanFinderModule accept multiple packages for scanning
-* Add experimental(!) delegate finders (annotated interface method delegates execution to guice bean method)
-* Add crud mixins for object and document finders (DocumentCrudMixin, ObjectCrudMixin)
 * Add document and vertex projection for single field (works for plain and array result): useful for count (or other aggregation functions) or selecting single field
-* Add simple pagination mixin (for object and document finders): PaginationMixin
-* (pools api breaking change) Support using different users (to init schema with more powerful user and to leverage orient security model)   
+* Support inheritance for finder beans and interfaces (mixins) and generics recognition through all hierarchy
+* Support generic type query placeholders (finder class generic used as query placeholder)
+* Add delegate finders (annotated interface method delegates execution to guice bean method)
+* Add crud mixins for object and document finders: DocumentCrudMixin, ObjectCrudMixin
+* Add pagination mixin for object and document finders: PaginationMixin  
 
 ### 1.1.1 (2014-10-01)
 * Fix finder behaviour: empty collection conversion to single element

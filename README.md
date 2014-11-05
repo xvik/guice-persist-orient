@@ -18,6 +18,10 @@ Features:
 * Auto db creation (for memory, local and plocal)
 * Hooks for schema migration and data initialization extensions
 * All three database types may be used in single unit of work (but each type will use its own transaction)
+* Different db users may be used (for example, for schema initialization or to use orient security model)
+* Finders concept extended from guice-persist with support of method delegates, hierarchies and complete generics recognition. 
+This allows writing generic parts (mixins) and re-use them in many finders (thanks to multiple inheritance in interfaces).
+Out of the box crud and pagination mixins provided.
 
 ### Setup
 
@@ -33,7 +37,7 @@ Maven:
 <dependency>
 <groupId>ru.vyarus</groupId>
 <artifactId>guice-persist-orient</artifactId>
-<version>1.1.1</version>
+<version>2.0.0</version>
 <exclusions>
   <exclusion>
       <groupId>com.orientechnologies</groupId>
@@ -50,7 +54,7 @@ Maven:
 Gradle:
 
 ```groovy
-compile ('ru.vyarus:guice-persist-orient:1.1.1'){
+compile ('ru.vyarus:guice-persist-orient:2.0.0'){
     exclude module: 'orientdb-graphdb'
     exclude module: 'orientdb-object'       
 }
@@ -221,20 +225,56 @@ public void nonTxMethod(){
 }
 ```
 
+##### Different users
+
+To use different db user for one or more transactions, get `UserManager` bean from context:
+
+```java
+userManager.executeWithUser('user', 'password', new SpecificUserAction<Void>() {
+    @Override
+    public Void execute() throws Throwable {
+        // do work
+    }
+})
+```
+
+`SpecificUserAction` defines scope of user overriding. This will not implicitly start transaction, but simply
+binds different user to current thread.
+
+Overriding may be used in scheme initialization to use more powerful user or to use [orient security model](http://www.orientechnologies.com/docs/last/orientdb.wiki/Security.html)
+(in this case overriding may be done, for example in servlet filter).
+
+Limitations:
+* User can't be overridden during transaction (override it before transaction start)
+* Overridden user can't be changed (inside overriding scope other overrides are not allowed)
+
 ### Dynamic finders
 
-Dynamic finders allows to define queries using method annotation and pass parameters from method arguments, e.g.:
+In guice-persist finders allows just to define queries on interface methods. This concept was evolved,
+allowing to completely write dao layer using interfaces.
+
+There are two types of finder methods:
+* Sql finders, which allows to define sql queries (select/insert/update) on interface methods
+* Delegate finders, delegate call to interface method into guice bean method
+
+Finder annotations may be used on interface methods or bean methods.
+If finder used in interface, all interface methods must be finder methods and interface must be manually registered in `FinderModule`.
+If `AutoScanFinderModule` used, finder interfaces will be registered automatically. 
+`@Transactonal` annotation is supported within interface finders (generally not the best idea to limit transaction to finder method, but in some cases could be suitable)
+
+The most powerful thing is finder mixins: interfaces in java support multiple inheritance, and so allows better reuse of generic parts.
+More on mixins read below.
+
+#### Sql finders
+
+Example interface method:
 
 ```java
 @Finder(query = "select from Model where name=? and nick=?")
 List<Model> parametersPositional(String name, String nick);
 ```
 
-If finder used in interface, all interface methods must be finder methods and interface must be manually registered in `FinderModule`.
-If `AutoScanFinderModule` used, finder interfaces will be registered automatically. 
-`@Transactonal` annotation is supported within interface finders (generally not the best idea to limit transaction to finder method, but in some cases could be suitable)
-
-Finders may be used with beans (e.g. to supplement usual dao methods):
+Used with bean (e.g. to supplement usual dao methods):
 
 ```java
 @Finder(query = "select from Model")
@@ -346,7 +386,231 @@ Model findByTwoFields(@Placeholder("field1") String field1, @Placeholder("field2
 This way, any other value passed to placeholder parameter will be rejected (string usage become secure as enum).
 You can use string placeholders without strict definition, but in this case make sure security will not be violated.
 
-##### Return types
+##### Generics (generified mixins)
+
+Finder interfaces could extend other interfaces - entire finder interface hierarchy is parsed and all generics properly
+resolved. For example:
+
+```java
+public interface Base<T> {
+    @Finder(query = "..")
+    List<T> getSomething();
+}
+
+public interface ActualFinder extends Base<Model> {}
+```
+
+Is absolutely valid finder. Return type will be properly resolved with real generic value and all detections/conversions
+could apply. The only problem is query.
+
+To solve this problem, queries support generic placeholders:
+
+```java
+@Finder(query = "select from ${T}")
+List<T> getSomething();
+```
+
+No matter how complicated generic is, it will still be resolved, e.g.:
+
+```java
+public interface Base<T, K extends List<T>> {
+    @Finder(query = "select from ${T}")
+    K getSomething();
+}
+```
+
+Generics correctly resolved even for multiple hierarchy levels.
+
+Generified base interfaces are the simplest type of mixins (generic reusable parts).
+
+#### Delegate finder
+
+Delegates execution to guice bean method, for example interface method:
+
+```java
+@FinderDelegate(TargetBean.class)
+List<Model> selectSomething();
+```
+
+On execution, delegating method will be found in TargetBean and executed. 
+This allows writing queries using java api, but still use interface finder to call it. So finder become single point
+for your entity's dao methods, whereas actual implementation could be decomposed by multiple beans.
+ 
+Delegation will work on beans too:
+ 
+```java
+@FinderDelegate(TargetBean.class)
+public List<Model> selectSomething() {
+  throw new UnsupportedOperationException("Should be handled with finder interceptor");
+}
+```
+
+##### Method lookup algorithm
+
+`@FinderDelegate` annotation allows you to define
+* target implementation type with `value` attribute
+* exact target method name with `method` attribute (this must be used as last resort, because it introduce weak contract and not refactor-friendly)
+* override result collection implementation with `returnAs` attribute (the same as with `@Finder` annotation)
+
+Method is searched only as direct public method of target bean, ignoring it's hierarchy. 
+This may change in future, but currently this reduces scope for searching.
+
+Algorithm:
+* If method name set directly (annotation method attribute), look only methods with this name. If method name not set look all public methods.
+* Check all methods for parameter compatibility. Target method must have compatible parameters
+at the same order(!) Special parameters (see below) may appear at any position (before/after/between).
+* If more then one method found, use finder method name to reduce results (this should be the most useful hint)
+* Method with special parameters is prioritized. So if few methods found but only one has additional parameters - it will be chosen.
+* Next methods are filtered by most specific parameters (e.g. two methods with the same name but one declares
+String parameter and other Object; first one will be chosen as more specific).
+* If we still have more than one possibility, error will be thrown.
+
+##### Delegate method implementation specifics
+
+Delegate bean may be not aware that it is delegate (maybe already existent bean). In this case method parameters must be 1 to 1
+compatible to finder parameters.
+
+If delegated method written specifically for finder, it may use extended annotated parameters:
+* `@FinderGeneric` pass resolved finder interface generic type as parameter
+* `@FinderInstance` pass finder itself as parameter
+* `@FinderDb` pass resolved connection type object as parameter (see connection type detection below)
+
+For example, suppose we have generic finder mixin:
+
+```java
+public interface MyBase<T> {
+    @FinderDelegate(TargetBean.class)
+    List<T> doSomething1(int a)
+    
+    @FinderDelegate(TargetBean.class)    
+    List<T> doSomething2(int b)
+    
+    @FinderDelegate(TargetBean.class)    
+    List<T> doSomething3(int c, int d)
+}
+
+public class TargetBean {
+    List doSomething1(@FinderGeneric("T") Class<?> type, int a) {
+        ...
+    }
+    
+    List doSomething2(int b, @FinderInstance MyBase finder) {
+        ...
+    }
+    
+    List doSomething3(int c, @FinderDb MyBase finder, int b) {
+        ...
+    }
+}
+```
+
+All three methods would be properly resolved (thanks to method names). Also this shows that position of extended 
+parameter is not important (only order of usual parameters is important). And of course, more than one special parameter
+may be used for single method.
+
+Now suppose we have root finder implementing mixin:
+
+```java
+public Finder extends MyBase<Model> {}
+```
+
+If we call `doSomething1`, `Model` will be passed as first parameter.
+For `doSomething2` `Finder` will be passed (proxy around interface). And for `doSomething3` `OObjectDatabaseTx` will be passed
+as db connection instance (suppose that Model is registered entity type).
+
+Note that document and object connection objects share common interface `ODatabaseComplex`, which may be used
+for writing generic mixins (for both object and document finders).
+
+In simplest case connection parameter may be used to simply avoid using provider for obtaining connection (suppose
+you're writing delegated graph query):
+
+```java
+public List<Vertex> doSearch(@FinderDb OrientGraph db, Integer some param) {
+    db.//do something using connection object directly
+}
+```
+
+##### Delegate mixins
+
+In root finder you must use `@FinderDelegate` annotation on methods, but for mixins, you may place annotation
+on type (example above could be re-written):
+
+```java
+@FinderDelegate(TargetBean.class)
+public interface MyBase<T> {
+    ...
+}    
+```    
+
+All methods will search for delegating method in `TargetBean`.
+
+The best possible way for writing delegate mixins is to implement finder interface by implementing bean: 
+this the most strongest contract between finder mixin and implementation will be kept (also, IDE will provide direct
+reference for implementation from interface).
+
+In case, when you need extended method parameters: implement direct method as throwing exception and write extended method
+below it, e.g:
+
+```java
+@Override
+public T create() {
+    // finder should choose extended method instead of direct implementation
+    throw new UnsupportedOperationException("Method create(Class) must be called");
+}
+
+public T create(@FinderGeneric("T") final Class<T> type) {
+    return dbProvider.get().newInstance(type);
+}
+```
+
+Different technics could be used for writing mixins. Writing delegation mixins is a bit hard, but resulted mixins
+are very easy (obvious) to use and soon you should invent your own technics.
+
+##### Delegate beans
+
+Delegate beans are obtained from guice context, so you can use any scopes for beans. But most of the time singleton
+will perfectly fits your needs.
+
+It is not required to explicitly register delegate beans - guice will be able to create instance in runtime even if bean
+was not registered.
+
+##### Bundled mixins
+
+Few mixins provided out of the box. 
+
+Crud mixins are the most common thing: most likely these methods are implemented in your `AbstractDao` or something like this.
+
+`ObjectCrudMixin` provides base crud methods for object finder:
+
+```java
+public interface MyEntityDao extends ObjectCrudMixin<MyEntity> {}
+```
+
+Now MyEntityDao has all basic crud methods (create, get, delete etc).
+
+`DocumentCrudMixin` provides base crud methods for document dao.
+
+```java
+public interface MyEntityDao extends DocumentCrudMixin<MyEntity> {}
+```
+
+Set mixin generic value only if you have reference entity class. Generic affects only `getAll` method: if generic not set
+you will not be able to use it.
+
+`PaginationMixin` provides simple pagination for your entity or document (but document should have reference type)
+
+```java
+public interface MyEntityDao extends ObjectCrudMixin<MyEntity>, PaginationMixin<MyEntity, MyEntity> {}
+
+...
+// return page
+Page page = myFinderDao.getPage(1, 20);
+```
+
+In order to use pagination mixin, crud mixin is not required (used in example just to show how mixins could be combined).
+Pagination mixin is the most complex one and good place to inspire how to write non trivial mixins.
+
+#### Return types
 
 You can use: `Iterable`, `Collection`, `List`, `Set`, any collection implementation, array, single element or `Iterator`.
 Single elements (single object return) may be wrapped with `Optional` (guava (com.google.common.base.Optional) 
@@ -382,7 +646,58 @@ Set<Model> selectAll()
 TreeSet collection will be returned. The same result will be if set method return type to TreeSet 
 (but it's not best practice to define implementation as return type).
 
-##### Connection type detection
+###### Result projection
+
+In orient, when you query for some aggregated function (like count) or selecting just one field, ODocument
+or Vertex objects will be returned (for document/object and graph connections). This is usually not the desired behaviour.
+
+Projection is unwrapping from document or vertex if it contains just one property. Unwrapping is triggered by return type, e.g.
+
+```java
+@Finder(query = "select count(@rid) from Model")
+int getCount();
+```
+
+Here return type is int, but actual query will return ODocument. Result converter will detect this, look that document contains
+just one field (count) and return just this field value. 
+Note that actual field value could be long or double, conversion to int will also be performed automatically.
+If return type would be ODocument - no conversion will occur.
+
+When we need just one field from multiple rows:
+
+```java
+@Finder(query = "select name from Model")
+String[] getNamesArray();
+```
+
+Query returns collection of ODocument, but result converter will look return type and unwrap documents returning you simple array.
+
+Automatic projection will work ONLY with array: if you try to set return type as List<String> you will actually get list 
+of documents (due to type erasure this would be valid in runtime). Detection not implemented for collections because
+at least one element is required to check, but orient tends to return iterators, which mean entire iterator must be repackaged to 
+a new one just for one check (probably redundant). To reduce this overhead, projection is triggered only by arrays (easy to check - no overhead).
+
+For graph connection this will also work:
+
+```java
+@Finder(query = "select name from Model")
+@Use(DbType.GRAPH)
+String[] getNamesArray();
+```
+
+This time orient will return Vertex instances and result converter will look if vertex contains just one property and if so 
+will unwrap single value.
+
+Special case: by default, result converter took first collection element if single result required. So projection may be used like this:
+
+```java
+@Finder(query = "select name from Model")
+String getNamesArray();
+```
+
+Here collection reduced to one element and single element projected to single value.
+
+#### Connection type detection
 
 Connection type can be detected for queries using method return type. 
 If you specify generic for returned collection (or iterator) or use typed array (not Object[]) or in case of single element,
@@ -394,6 +709,25 @@ connection type will be detected like this:
 But, for example, even if you try to select not object itself, but fields you will get ODocument, even in object connection
 (kind of result set in jdbc). For such case document connection will be selected (according to return type), 
 but it may be part of object connection logic (e.g. all other queries in object connection). In this case `@Use` annotation will help.
+
+#### Performance
+
+Finders involve a lot of reflection (especially delegates), but it doesn't mean they are slow. 
+Finder method is checked on first invocation (so when app starts it doesn't mean everything is ok).
+On first finder invocation method descriptor object is composed and cached. On next call everything proxy will have to do
+is to prepare special parameters (placeholders, custom delegate params etc) and perform result conversion (which may not occur).
+
+There is very simple benchmark in tests `FinderBenchmarkTest`, you can play with it and see real overhead (yes it's groovy so numbers 
+are not accurate, but you can see the big picture).
+
+```
+Direct method call: 352,5 μs
+Reflection method call: 352,1 μs
+Sql finder call: 353,0 μs
+Delegate finder method call: 353,4 μs
+```
+
+Again, don't believe this numbers, it's just to show there is no large overhead with finders.
 
 ### Schema initialization
 
