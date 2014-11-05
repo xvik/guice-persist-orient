@@ -255,11 +255,13 @@ allowing to completely write dao layer using interfaces.
 
 There are two types of finder methods:
 * Sql finders, which allows to define sql queries (select/insert/update) on interface methods
-* Delegate finders, delegate call to interface method into guice bean method
+* Delegate finders, delegates call of interface method into guice bean method
 
 Finder annotations may be used on interface methods or bean methods.
+
 If finder used in interface, all interface methods must be finder methods and interface must be manually registered in `FinderModule`.
 If `AutoScanFinderModule` used, finder interfaces will be registered automatically. 
+
 `@Transactonal` annotation is supported within interface finders (generally not the best idea to limit transaction to finder method, but in some cases could be suitable)
 
 The most powerful thing is finder mixins: interfaces in java support multiple inheritance, and so allows better reuse of generic parts.
@@ -472,13 +474,15 @@ compatible to finder parameters.
 
 If delegated method written specifically for finder, it may use extended annotated parameters:
 * `@FinderGeneric` pass resolved finder interface generic type as parameter
-* `@FinderInstance` pass finder itself as parameter
-* `@FinderDb` pass resolved connection type object as parameter (see connection type detection below)
+* `@FinderInstance` pass finder itself as parameter; parameter type may be any type finder is assignable to
+* `@FinderDb` pass resolved connection type object as parameter (see connection type detection below); parameter type should be assignable with connection 
+(e.g. for document and object `ODatabaseComplex` may be used as common abstraction)
 
 For example, suppose we have generic finder mixin:
 
 ```java
 public interface MyBase<T> {
+
     @FinderDelegate(TargetBean.class)
     List<T> doSomething1(int a)
     
@@ -490,17 +494,12 @@ public interface MyBase<T> {
 }
 
 public class TargetBean {
-    List doSomething1(@FinderGeneric("T") Class<?> type, int a) {
-        ...
-    }
+
+    List doSomething1(@FinderGeneric("T") Class<?> type, int a) {...}
     
-    List doSomething2(int b, @FinderInstance MyBase finder) {
-        ...
-    }
+    List doSomething2(int b, @FinderInstance MyBase finder) {...}
     
-    List doSomething3(int c, @FinderDb MyBase finder, int b) {
-        ...
-    }
+    List doSomething3(int c, @FinderDb ODatabaseComplex db, int b) {...}
 }
 ```
 
@@ -518,14 +517,11 @@ If we call `doSomething1`, `Model` will be passed as first parameter.
 For `doSomething2` `Finder` will be passed (proxy around interface). And for `doSomething3` `OObjectDatabaseTx` will be passed
 as db connection instance (suppose that Model is registered entity type).
 
-Note that document and object connection objects share common interface `ODatabaseComplex`, which may be used
-for writing generic mixins (for both object and document finders).
-
-In simplest case connection parameter may be used to simply avoid using provider for obtaining connection (suppose
+Connection parameter may be used to simply avoid using provider for obtaining connection (suppose
 you're writing delegated graph query):
 
 ```java
-public List<Vertex> doSearch(@FinderDb OrientGraph db, Integer some param) {
+public List<Vertex> doSearch(@FinderDb OrientGraph db, Integer someParam) {
     db.//do something using connection object directly
 }
 ```
@@ -545,7 +541,7 @@ public interface MyBase<T> {
 All methods will search for delegating method in `TargetBean`.
 
 The best possible way for writing delegate mixins is to implement finder interface by implementing bean: 
-this the most strongest contract between finder mixin and implementation will be kept (also, IDE will provide direct
+this makes the most strongest contract between finder mixin interface and implementation (also, IDE will provide direct
 reference for implementation from interface).
 
 In case, when you need extended method parameters: implement direct method as throwing exception and write extended method
@@ -563,8 +559,7 @@ public T create(@FinderGeneric("T") final Class<T> type) {
 }
 ```
 
-Different technics could be used for writing mixins. Writing delegation mixins is a bit hard, but resulted mixins
-are very easy (obvious) to use and soon you should invent your own technics.
+Writing delegation mixins is a bit hard, but resulted mixins are very easy (obvious) to use.
 
 ##### Delegate beans
 
@@ -595,9 +590,10 @@ public interface MyEntityDao extends DocumentCrudMixin<MyEntity> {}
 ```
 
 Set mixin generic value only if you have reference entity class. Generic affects only `getAll` method: if generic not set
-you will not be able to use it.
+you will not be able to use only this method.
 
-`PaginationMixin` provides simple pagination for your entity or document (but document should have reference type)
+`PaginationMixin` provides simple pagination for your entity or document (but document should have reference type, 
+at least to specifyschema type name (may be empty class))
 
 ```java
 public interface MyEntityDao extends ObjectCrudMixin<MyEntity>, PaginationMixin<MyEntity, MyEntity> {}
