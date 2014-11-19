@@ -1,3 +1,4 @@
+### 2.0.1 (2014-11-19)
 * Generics resolution extracted to separate lib [generics-resolver](https://github.com/xvik/generics-resolver)
 
 ### 2.0.0 (2014-11-05)
