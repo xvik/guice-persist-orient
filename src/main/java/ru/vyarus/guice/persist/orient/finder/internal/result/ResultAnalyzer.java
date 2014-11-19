@@ -3,16 +3,15 @@ package ru.vyarus.guice.persist.orient.finder.internal.result;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.vyarus.guice.persist.orient.finder.internal.generics.GenericsUtils;
-import ru.vyarus.guice.persist.orient.finder.internal.generics.NoGenericException;
 import ru.vyarus.guice.persist.orient.finder.result.Optionals;
 import ru.vyarus.guice.persist.orient.finder.result.ResultType;
+import ru.vyarus.java.generics.resolver.context.GenericsContext;
+import ru.vyarus.java.generics.resolver.util.NoGenericException;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.Map;
 
 import static ru.vyarus.guice.persist.orient.finder.internal.FinderDefinitionException.check;
 import static ru.vyarus.guice.persist.orient.finder.result.ResultType.*;
@@ -33,14 +32,13 @@ public final class ResultAnalyzer {
      * Analyze return type.
      *
      * @param method               finder method
-     * @param generics             finder interface hierarchy generic parameters values or null if no generics
-     *                             or no hierarchy
+     * @param generics             finder interface hierarchy generic parameters context
      * @param returnCollectionType collection implementation to convert to or null if conversion not required
      * @return result description object
      */
-    public static ResultDescriptor analyzeReturnType(final Method method, final Map<String, Type> generics,
+    public static ResultDescriptor analyzeReturnType(final Method method, final GenericsContext generics,
                                                      final Class<? extends Collection> returnCollectionType) {
-        final Class<?> returnClass = GenericsUtils.getReturnType(method, generics);
+        final Class<?> returnClass = generics.resolveReturnClass(method);
         final ResultDescriptor descriptor = new ResultDescriptor();
         descriptor.expectType = resolveExpectedType(returnClass, returnCollectionType);
 
@@ -81,10 +79,10 @@ public final class ResultAnalyzer {
     }
 
     private static Class<?> resolveGenericType(final Type returnClass, final Method method,
-                                               final Map<String, Type> generics) {
+                                               final GenericsContext generics) {
         Class res;
         try {
-            res = GenericsUtils.resolveGenericOf(returnClass, generics);
+            res = generics.resolveGenericOf(returnClass);
         } catch (NoGenericException e) {
             res = Object.class;
             LOGGER.warn(

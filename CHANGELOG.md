@@ -1,3 +1,5 @@
+* Generics resolution extracted to separate lib [generics-resolver](https://github.com/xvik/generics-resolver)
+
 ### 2.0.0 (2014-11-05)
 * Support different users (for example, to init schema with more powerful user and to use orient security model). Breaks pools api compatibility
 * AutoScanFinderModule accept multiple packages for scanning

@@ -5,13 +5,15 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import ru.vyarus.guice.persist.orient.finder.internal.FinderDefinitionException;
-import ru.vyarus.guice.persist.orient.finder.internal.generics.GenericsUtils;
+import ru.vyarus.java.generics.resolver.context.GenericsContext;
 
 import javax.annotation.Nonnull;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.lang.reflect.Type;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Searches for target delegate method. Current limitation: searches only for public methods and doesn't scan
@@ -29,13 +31,11 @@ public final class MethodDescriptorAnalyzer {
     public static MethodDescriptor analyzeMethod(final Method method,
                                                  final Class<?> target,
                                                  final String methodHint,
-                                                 final Map<String, Type> generics,
+                                                 final GenericsContext generics,
                                                  final Class<?> finderType) {
-        final Map<String, Type> finderGenerics = com.google.common.base.Objects.firstNonNull(generics,
-                Collections.<String, Type>emptyMap());
-        final List<Class<?>> params = GenericsUtils.getMethodParameters(method, finderGenerics);
+        final List<Class<?>> params = generics.resolveParameters(method);
         final List<MethodDescriptor> possibilities = findPossibilities(target, params, methodHint,
-                finderGenerics, finderType);
+                generics, finderType);
         FinderDefinitionException.check(!possibilities.isEmpty(),
                 "No matched method found in target bean %s for delegation", target.getName());
         // if method hint wasn't used trying finder method name for guessing
@@ -56,7 +56,7 @@ public final class MethodDescriptorAnalyzer {
      */
     private static List<MethodDescriptor> findPossibilities(final Class<?> target,
                                                             final List<Class<?>> params, final String hint,
-                                                            final Map<String, Type> generics,
+                                                            final GenericsContext generics,
                                                             final Class<?> finderType) {
         final List<MethodDescriptor> possibilities = Lists.newArrayList();
         for (Method method : target.getDeclaredMethods()) {
@@ -65,7 +65,8 @@ public final class MethodDescriptorAnalyzer {
             if (!isAcceptableMethod(method) || !methodHintValid) {
                 continue;
             }
-            final Map<Integer, String> extParams = ExtParamsSupport.findSpecialParams(method, generics.keySet());
+            final Map<Integer, String> extParams = ExtParamsSupport
+                    .findSpecialParams(method, generics.genericsMap().keySet());
             if (isParametersCompatible(method, params, extParams.keySet())) {
                 possibilities.add(
                         buildDescriptor(method, extParams, generics, finderType));
@@ -120,7 +121,7 @@ public final class MethodDescriptorAnalyzer {
     }
 
     private static MethodDescriptor buildDescriptor(final Method method, final Map<Integer, String> extParams,
-                                                    final Map<String, Type> generics,
+                                                    final GenericsContext generics,
                                                     final Class<?> finderType) {
         return extParams.isEmpty()
                 ? new MethodDescriptor(method)

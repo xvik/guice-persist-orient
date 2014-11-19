@@ -6,12 +6,12 @@ import com.google.common.collect.Maps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vyarus.guice.persist.orient.finder.internal.FinderDefinitionException;
-import ru.vyarus.guice.persist.orient.finder.internal.generics.GenericsUtils;
 import ru.vyarus.guice.persist.orient.finder.internal.query.params.ParamsUtils;
 import ru.vyarus.guice.persist.orient.finder.placeholder.Placeholder;
 import ru.vyarus.guice.persist.orient.finder.placeholder.PlaceholderValues;
 import ru.vyarus.guice.persist.orient.finder.placeholder.Placeholders;
 import ru.vyarus.guice.persist.orient.finder.placeholder.StringTemplateUtils;
+import ru.vyarus.java.generics.resolver.context.GenericsContext;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -35,7 +35,7 @@ public final class PlaceholderAnalyzer {
     }
 
     public static PlaceholderDescriptor analyzePlaceholders(final Method method,
-                                                            final Map<String, Type> generics,
+                                                            final GenericsContext generics,
                                                             final String query) {
         final List<String> placeholders = getPlaceholders(query);
 
@@ -77,17 +77,16 @@ public final class PlaceholderAnalyzer {
 
     private static void checkGenericPlaceholders(final List<String> placeholders,
                                                  final PlaceholderDescriptor descriptor,
-                                                 final Map<String, Type> generics) {
+                                                 final GenericsContext generics) {
         if (generics != null) {
-            for (Map.Entry<String, Type> entry : generics.entrySet()) {
+            for (Map.Entry<String, Type> entry : generics.genericsMap().entrySet()) {
                 final String key = entry.getKey();
                 if (placeholders.contains(key)) {
                     if (descriptor.genericParameters == null) {
                         descriptor.genericParameters = Maps.newHashMap();
                     }
                     // using just class name, because orient don't need package
-                    descriptor.genericParameters.put(key,
-                            GenericsUtils.resolveClass(entry.getValue(), generics).getSimpleName());
+                    descriptor.genericParameters.put(key, generics.resolveClass(entry.getValue()).getSimpleName());
                 }
             }
         }

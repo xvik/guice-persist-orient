@@ -6,11 +6,10 @@ import com.google.inject.persist.finder.Finder;
 import ru.vyarus.guice.persist.orient.finder.internal.query.pagination.PaginationAnalyzer;
 import ru.vyarus.guice.persist.orient.finder.internal.query.params.ParamsAnalyzer;
 import ru.vyarus.guice.persist.orient.finder.internal.query.placeholder.PlaceholderAnalyzer;
+import ru.vyarus.java.generics.resolver.context.GenericsContext;
 
 import java.lang.reflect.Method;
-import java.lang.reflect.Type;
 import java.util.List;
-import java.util.Map;
 
 import static ru.vyarus.guice.persist.orient.finder.internal.FinderDefinitionException.check;
 
@@ -25,7 +24,7 @@ public final class FinderQueryDescriptorFactory {
     private FinderQueryDescriptorFactory() {
     }
 
-    public static FinderQueryDescriptor buildDescriptor(final Method method, final Map<String, Type> generics) {
+    public static FinderQueryDescriptor buildDescriptor(final Method method, final GenericsContext generics) {
         final Finder finderAnnotation = method.getAnnotation(Finder.class);
 
         final String functionName = Strings.emptyToNull(finderAnnotation.namedQuery());

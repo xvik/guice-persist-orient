@@ -5,13 +5,13 @@ import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import ru.vyarus.guice.persist.orient.finder.internal.delegate.DelegateInvocation;
 import ru.vyarus.guice.persist.orient.finder.internal.delegate.FinderDelegateDescriptor;
-import ru.vyarus.guice.persist.orient.finder.internal.generics.FinderGenericsFactory;
-import ru.vyarus.guice.persist.orient.finder.internal.generics.GenericsDescriptor;
 import ru.vyarus.guice.persist.orient.finder.internal.query.FinderQueryDescriptor;
 import ru.vyarus.guice.persist.orient.finder.internal.query.QueryInvocation;
 import ru.vyarus.guice.persist.orient.finder.result.ResultConverter;
 import ru.vyarus.guice.persist.orient.finder.result.ResultDesc;
 import ru.vyarus.guice.persist.orient.finder.util.FinderUtils;
+import ru.vyarus.java.generics.resolver.GenericsResolver;
+import ru.vyarus.java.generics.resolver.context.GenericsContext;
 
 import javax.inject.Singleton;
 import java.lang.reflect.Method;
@@ -40,15 +40,13 @@ public class FinderProxy implements MethodInterceptor {
 
     // field injection because instantiated directly in module
     @Inject
-    private FinderGenericsFactory genericsFactory;
-    @Inject
     private FinderDescriptorFactory factory;
     @Inject
     private ResultConverter resultConverter;
 
     public Object invoke(final MethodInvocation methodInvocation) throws Throwable {
         final Class<?> finderType = FinderUtils.resolveFinderClass(methodInvocation.getThis());
-        final GenericsDescriptor generics = genericsFactory.create(finderType);
+        final GenericsContext generics = GenericsResolver.resolve(finderType);
         final Method method = methodInvocation.getMethod();
         final FinderDescriptor descriptor = getFinderDescriptor(method, generics);
         final Object[] arguments = methodInvocation.getArguments();
@@ -64,13 +62,14 @@ public class FinderProxy implements MethodInterceptor {
         }
     }
 
-    private FinderDescriptor getFinderDescriptor(final Method method, final GenericsDescriptor generics) {
+    private FinderDescriptor getFinderDescriptor(final Method method, final GenericsContext generics) {
         FinderDescriptor descriptor;
         try {
             descriptor = factory.create(method, generics);
         } catch (Throwable th) {
             throw new IllegalStateException(String.format("Failed to analyze finder method %s#%s%s",
-                    generics.root, method.getName(), Arrays.toString(method.getParameterTypes())), th);
+                    generics.getGenericsInfo().getRootClass(), method.getName(),
+                    Arrays.toString(method.getParameterTypes())), th);
         }
         return descriptor;
     }

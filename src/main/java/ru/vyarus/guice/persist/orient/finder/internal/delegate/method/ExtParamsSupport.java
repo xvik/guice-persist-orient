@@ -9,13 +9,12 @@ import ru.vyarus.guice.persist.orient.finder.delegate.mixin.FinderDb;
 import ru.vyarus.guice.persist.orient.finder.delegate.mixin.FinderGeneric;
 import ru.vyarus.guice.persist.orient.finder.delegate.mixin.FinderInstance;
 import ru.vyarus.guice.persist.orient.finder.internal.FinderDefinitionException;
-import ru.vyarus.guice.persist.orient.finder.internal.generics.GenericsUtils;
 import ru.vyarus.guice.persist.orient.finder.internal.query.params.ParamsUtils;
+import ru.vyarus.java.generics.resolver.context.GenericsContext;
 
 import javax.annotation.Nonnull;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
@@ -43,7 +42,7 @@ public final class ExtParamsSupport {
 
     public static MethodDescriptor buildExtendedDeclaration(final Method method,
                                                             final Map<Integer, String> extensions,
-                                                            final Map<String, Type> generics,
+                                                            final GenericsContext generics,
                                                             final Class<?> finderType) {
         final MethodDescriptor ext = new MethodDescriptor(method);
         final Set<String> usedGenerics = Sets.newHashSet();
@@ -60,7 +59,7 @@ public final class ExtParamsSupport {
                 if (ext.typeParams == null) {
                     ext.typeParams = Maps.newHashMap();
                 }
-                ext.typeParams.put(pos, GenericsUtils.resolveClass(generics.get(value), generics));
+                ext.typeParams.put(pos, generics.resolveClass(generics.genericsMap().get(value)));
                 usedGenerics.add(value);
             }
         }

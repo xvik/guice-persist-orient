@@ -5,13 +5,12 @@ import com.google.inject.Injector;
 import ru.vyarus.guice.persist.orient.finder.delegate.FinderDelegate;
 import ru.vyarus.guice.persist.orient.finder.internal.FinderDefinitionException;
 import ru.vyarus.guice.persist.orient.finder.internal.delegate.method.MethodDescriptorAnalyzer;
+import ru.vyarus.java.generics.resolver.context.GenericsContext;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.lang.reflect.Method;
-import java.lang.reflect.Type;
 import java.util.Arrays;
-import java.util.Map;
 
 /**
  * Analyze finder delegate method: search for target method in delegate and build descriptor object.
@@ -30,7 +29,7 @@ public class FinderDelegateDescriptorFactory {
     }
 
     @SuppressWarnings("unchecked")
-    public FinderDelegateDescriptor buildDescriptor(final Method method, final Map<String, Type> generics,
+    public FinderDelegateDescriptor buildDescriptor(final Method method, final GenericsContext generics,
                                                     final Class<?> finderType) {
         final FinderDelegateDescriptor descriptor = new FinderDelegateDescriptor();
         final FinderDelegate annotation = DelegateUtils.findAnnotation(method);

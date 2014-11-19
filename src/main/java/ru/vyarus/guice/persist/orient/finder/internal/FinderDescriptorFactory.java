@@ -6,18 +6,17 @@ import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import com.google.inject.persist.finder.Finder;
 import ru.vyarus.guice.persist.orient.db.DbType;
-import ru.vyarus.guice.persist.orient.finder.delegate.FinderDelegate;
 import ru.vyarus.guice.persist.orient.finder.FinderExecutor;
+import ru.vyarus.guice.persist.orient.finder.delegate.FinderDelegate;
 import ru.vyarus.guice.persist.orient.finder.internal.delegate.DelegateUtils;
 import ru.vyarus.guice.persist.orient.finder.internal.delegate.FinderDelegateDescriptorFactory;
 import ru.vyarus.guice.persist.orient.finder.internal.executor.ExecutorAnalyzer;
-import ru.vyarus.guice.persist.orient.finder.internal.generics.GenericsDescriptor;
 import ru.vyarus.guice.persist.orient.finder.internal.query.FinderQueryDescriptorFactory;
 import ru.vyarus.guice.persist.orient.finder.internal.result.ResultAnalyzer;
+import ru.vyarus.java.generics.resolver.context.GenericsContext;
 
 import javax.inject.Singleton;
 import java.lang.reflect.Method;
-import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
@@ -53,7 +52,7 @@ public class FinderDescriptorFactory {
         this.delegateDescriptorFactory = delegateDescriptorFactory;
     }
 
-    public FinderDescriptor create(final Method method, final GenericsDescriptor generics) throws Throwable {
+    public FinderDescriptor create(final Method method, final GenericsContext generics) throws Throwable {
         FinderDescriptor descriptor = finderCache.get(method);
         if (descriptor == null) {
             lock.lock();
@@ -76,19 +75,20 @@ public class FinderDescriptorFactory {
         return descriptor;
     }
 
-    private FinderDescriptor buildDescriptor(final Method method, final GenericsDescriptor generics) {
-        final Map<String, Type> genericsMap = generics.types.get(method.getDeclaringClass());
+    private FinderDescriptor buildDescriptor(final Method method, final GenericsContext generics) {
+        final GenericsContext genericsContext = generics.type(method.getDeclaringClass());
         final Finder finderAnnotation = method.getAnnotation(Finder.class);
         final FinderDelegate delegateAnnotation = DelegateUtils.findAnnotation(method);
         check(finderAnnotation == null || delegateAnnotation == null,
                 "Both query finder and delegate finder definition annotations found.");
 
         final boolean isQueryFinder = finderAnnotation != null;
+        final Class<?> rootClass = generics.getGenericsInfo().getRootClass();
         final FinderDescriptor descriptor = isQueryFinder
-                ? FinderQueryDescriptorFactory.buildDescriptor(method, genericsMap)
-                : delegateDescriptorFactory.buildDescriptor(method, genericsMap, generics.root);
+                ? FinderQueryDescriptorFactory.buildDescriptor(method, genericsContext)
+                : delegateDescriptorFactory.buildDescriptor(method, genericsContext, rootClass);
 
-        descriptor.finderRootType = generics.root;
+        descriptor.finderRootType = rootClass;
 
         final Class<? extends Collection> returnCollectionType = isQueryFinder
                 ? finderAnnotation.returnAs() : delegateAnnotation.returnAs();
@@ -96,7 +96,7 @@ public class FinderDescriptorFactory {
         if (!Collection.class.equals(returnCollectionType)) {
             customCollectionType = returnCollectionType;
         }
-        descriptor.result = ResultAnalyzer.analyzeReturnType(method, genericsMap, customCollectionType);
+        descriptor.result = ResultAnalyzer.analyzeReturnType(method, genericsContext, customCollectionType);
         descriptor.executor = ExecutorAnalyzer.analyzeExecutor(method, descriptor.result, executors, defaultExecutor);
         return descriptor;
     }

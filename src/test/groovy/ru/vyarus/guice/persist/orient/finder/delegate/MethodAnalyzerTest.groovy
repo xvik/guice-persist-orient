@@ -3,27 +3,19 @@ package ru.vyarus.guice.persist.orient.finder.delegate
 import ru.vyarus.guice.persist.orient.finder.internal.FinderDefinitionException
 import ru.vyarus.guice.persist.orient.finder.internal.delegate.method.MethodDescriptor
 import ru.vyarus.guice.persist.orient.finder.internal.delegate.method.MethodDescriptorAnalyzer
-import ru.vyarus.guice.persist.orient.finder.internal.generics.FinderGenericsFactory
-import ru.vyarus.guice.persist.orient.finder.internal.generics.GenericsDescriptor
-import ru.vyarus.guice.persist.orient.support.finder.delegate.ComplexFinder
-import ru.vyarus.guice.persist.orient.support.finder.delegate.ComplexFinderDelegate
-import ru.vyarus.guice.persist.orient.support.finder.delegate.Errors
-import ru.vyarus.guice.persist.orient.support.finder.delegate.ErrorsDelegate
-import ru.vyarus.guice.persist.orient.support.finder.delegate.Finder
-import ru.vyarus.guice.persist.orient.support.finder.delegate.MixinImpl
+import ru.vyarus.guice.persist.orient.support.finder.delegate.*
 import ru.vyarus.guice.persist.orient.support.model.Model
+import ru.vyarus.java.generics.resolver.GenericsResolver
+import ru.vyarus.java.generics.resolver.context.GenericsContext
 import spock.lang.Specification
 
 import java.lang.reflect.Method
-
 
 /**
  * @author Vyacheslav Rusakov 
  * @since 22.10.2014
  */
 class MethodAnalyzerTest extends Specification {
-
-    FinderGenericsFactory genericsFactory = new FinderGenericsFactory()
 
     def "Check implemented mixin resolution"() {
 
@@ -129,7 +121,7 @@ class MethodAnalyzerTest extends Specification {
     }
 
     MethodDescriptor lookup(Class iface, Method method, Class target, String hint = null) {
-        GenericsDescriptor generics = genericsFactory.create(iface);
-        return MethodDescriptorAnalyzer.analyzeMethod(method, target, hint, generics.types[method.getDeclaringClass()], iface)
+        GenericsContext generics = GenericsResolver.resolve(iface);
+        return MethodDescriptorAnalyzer.analyzeMethod(method, target, hint, generics.type(method.getDeclaringClass()), iface)
     }
 }
