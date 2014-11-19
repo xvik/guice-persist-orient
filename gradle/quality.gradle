@@ -120,7 +120,7 @@ gradle.taskGraph.afterTask { Task task, TaskState state ->
 apply plugin: 'checkstyle'
 
 checkstyle {
-    toolVersion = "6.0"
+    toolVersion = "6.1"
     ignoreFailures = false
     sourceSets = [sourceSets.main]
     configFile = file('gradle/config/checkstyle/checkstyle.xml')

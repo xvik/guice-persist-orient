@@ -904,6 +904,7 @@ Read about [all configuration options](http://www.orientechnologies.com/docs/las
 
 ### Might also like
 
+* [generics-resolver](https://github.com/xvik/generics-resolver) - extracted library, used for generics resolution during finders analysis
 * [dropwizard-orient-server](https://github.com/xvik/dropwizard-orient-server) - embedded orientdb server for dropwizard
 * [guice-validator](https://github.com/xvik/guice-validator) - hibernate validator integration for guice 
 (objects validation, method arguments and return type runtime validation)
