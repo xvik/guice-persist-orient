@@ -37,7 +37,7 @@ Maven:
 <dependency>
 <groupId>ru.vyarus</groupId>
 <artifactId>guice-persist-orient</artifactId>
-<version>2.0.1</version>
+<version>2.0.2</version>
 <exclusions>
   <exclusion>
       <groupId>com.orientechnologies</groupId>
@@ -54,7 +54,7 @@ Maven:
 Gradle:
 
 ```groovy
-compile ('ru.vyarus:guice-persist-orient:2.0.1'){
+compile ('ru.vyarus:guice-persist-orient:2.0.2'){
     exclude module: 'orientdb-graphdb'
     exclude module: 'orientdb-object'       
 }
@@ -218,11 +218,16 @@ So it's possible to define few units of work withing single bean using annotatio
 
 ```java
 public void nonTxMethod(){
-    // all called methods are annotated
     doTx1();
     doTx2();
-    doTx3();
 }
+
+// methods can't be private (should be at least package private)
+@Transactional
+void doTx1() {..}
+
+@Transactional
+void doTx2() {..}
 ```
 
 ##### Different users

@@ -9,6 +9,7 @@ import ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxAction
 import ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxTemplate
 import ru.vyarus.guice.persist.orient.support.finder.FinderResultProjections
 import ru.vyarus.guice.persist.orient.support.model.Model
+import ru.vyarus.guice.persist.orient.support.model.SingleValueVertex
 import ru.vyarus.guice.persist.orient.support.model.VertexModel
 import ru.vyarus.guice.persist.orient.support.modules.AutoScanFinderTestModule
 import spock.guice.UseModules
@@ -63,6 +64,7 @@ class FinderProjectionsTest extends AbstractTest {
             10.times {
                 db.addVertex("class:$VertexModel.simpleName" as String, "name", "name$it", "nick", "nick$it")
             }
+            db.addVertex("class:$SingleValueVertex.simpleName" as String, "name", "sample")
         } as SpecificTxAction)
 
         when: "call names selection under graph connection"
@@ -81,5 +83,10 @@ class FinderProjectionsTest extends AbstractTest {
         then: "list of Vertex's returned without flattening"
         res2.size() == 10
         res2[0] instanceof Vertex
+
+        when: "requesting vertex with single element"
+        Vertex res3 = finder.getSingleValueVertex()
+        then: "projection not performed"
+        res3 instanceof Vertex
     }
 }

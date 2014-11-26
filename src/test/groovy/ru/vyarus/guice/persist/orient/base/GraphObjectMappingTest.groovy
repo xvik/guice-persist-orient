@@ -1,12 +1,11 @@
 package ru.vyarus.guice.persist.orient.base
 
 import com.google.inject.Inject
-import com.google.inject.persist.PersistService
 import com.orientechnologies.orient.core.tx.OTransaction
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx
+import ru.vyarus.guice.persist.orient.AbstractTest
 import ru.vyarus.guice.persist.orient.db.transaction.TxConfig
 import ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxAction
-import ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxTemplate
 import ru.vyarus.guice.persist.orient.support.Config
 import ru.vyarus.guice.persist.orient.support.model.EdgeModel
 import ru.vyarus.guice.persist.orient.support.model.VertexModel
@@ -15,7 +14,6 @@ import ru.vyarus.guice.persist.orient.support.model4mapper.ComplexVertexModel
 import ru.vyarus.guice.persist.orient.support.modules.DefaultModule
 import ru.vyarus.guice.persist.orient.support.scheme.ObjectSchemeTestInitializer
 import spock.guice.UseModules
-import spock.lang.Specification
 
 /**
  * Checks various cases of mapping graph models (@EdgeType, @VertexType support)
@@ -24,48 +22,18 @@ import spock.lang.Specification
  * @since 04.08.2014
  */
 @UseModules(DefaultModule)
-class GraphObjectMappingTest extends Specification {
-
-    @javax.inject.Inject
-    PersistService persist
-    @javax.inject.Inject
-    SpecificTxTemplate<OObjectDatabaseTx> template
+class GraphObjectMappingTest extends AbstractTest {
 
     @Inject
     ObjectSchemeTestInitializer initializer
 
+    @Override
     void setup() {
-        persist.start()
-    }
-
-    void cleanup() {
-        // truncate db
         template.doInTransaction(new TxConfig(OTransaction.TXTYPE.NOTX), { db ->
-            db.getStorage().clusterInstances.each({ it?.delete() });
             db.getEntityManager().deregisterEntityClasses(Config.MODEL_PKG)
             db.getEntityManager().deregisterEntityClasses("ru.vyarus.guice.persist.orient.support.model4mapper")
-
-            def schema = db.getMetadata().getSchema()
-            def dropClass = { Class cls ->
-                def name = cls.simpleName
-                if (schema.getClass(name)) schema.dropClass(name)
-            }
-            dropClass(BadComplexEdgeModel)
-            dropClass(ComplexVertexModel)
-            dropClass(VertexModel)
+            db.getMetadata().getSchema().synchronizeSchema()
         } as SpecificTxAction<Void, OObjectDatabaseTx>)
-        persist.stop()
-    }
-
-    //using different db for test because of more aggressive cleanup - to not interference with other tests
-    def static normalUrl;
-    static {
-        normalUrl = Config.DB
-        Config.DB = "memory:schemeTest"
-    }
-
-    void cleanupSpec() {
-        Config.DB = normalUrl
     }
 
     def "Check mapping with empty scheme"() {
@@ -111,7 +79,7 @@ class GraphObjectMappingTest extends Specification {
             initializer.register(VertexModel)
             baseName = db.getMetadata().getSchema().getClass(VertexModel).getSuperClass()?.getName()
         } as SpecificTxAction)
-        then: "initializer can't update graph"
+        then: "initializer updated graph"
         baseName == "V"
     }
 

@@ -3,6 +3,7 @@ package ru.vyarus.guice.persist.orient.support.finder
 import com.google.inject.persist.Transactional
 import com.google.inject.persist.finder.Finder
 import com.orientechnologies.orient.core.record.impl.ODocument
+import com.tinkerpop.blueprints.Vertex
 import ru.vyarus.guice.persist.orient.db.DbType
 import ru.vyarus.guice.persist.orient.finder.Use
 
@@ -46,4 +47,7 @@ public interface FinderResultProjections {
     @Finder(query = "select count(@rid) from VertexModel")
     @Use(DbType.GRAPH)
     int getGraphCount()
+
+    @Finder(query = "select from SingleValueVertex")
+    Vertex getSingleValueVertex()
 }

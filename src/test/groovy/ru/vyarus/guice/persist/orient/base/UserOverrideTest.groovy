@@ -6,7 +6,6 @@ import ru.vyarus.guice.persist.orient.AbstractTest
 import ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxAction
 import ru.vyarus.guice.persist.orient.db.user.SpecificUserAction
 import ru.vyarus.guice.persist.orient.db.user.UserManager
-import ru.vyarus.guice.persist.orient.support.Config
 import ru.vyarus.guice.persist.orient.support.model.Model
 import ru.vyarus.guice.persist.orient.support.modules.PackageSchemeModule
 import spock.guice.UseModules
@@ -24,17 +23,6 @@ class UserOverrideTest extends AbstractTest {
 
     @Inject
     UserManager userManager
-
-    //using different db for test because of aggressive cleanup
-    def static normalUrl;
-    static {
-        normalUrl = Config.DB
-        Config.DB = "memory:specificUserTest"
-    }
-
-    void cleanupSpec() {
-        Config.DB = normalUrl
-    }
 
     def "Test connecting with different user"() {
 

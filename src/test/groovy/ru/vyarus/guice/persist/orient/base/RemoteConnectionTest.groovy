@@ -2,6 +2,7 @@ package ru.vyarus.guice.persist.orient.base
 
 import com.google.inject.persist.PersistService
 import com.orientechnologies.common.io.OIOException
+import com.orientechnologies.orient.core.exception.OStorageException
 import ru.vyarus.guice.persist.orient.support.Config
 import ru.vyarus.guice.persist.orient.support.modules.DefaultModule
 import spock.guice.UseModules
@@ -35,7 +36,7 @@ class RemoteConnectionTest extends Specification {
         when: "starting persistence"
         persist.start()
         then: "connection failed, but not creation"
-        thrown(OIOException)
+        thrown(OStorageException)
     }
 
 }

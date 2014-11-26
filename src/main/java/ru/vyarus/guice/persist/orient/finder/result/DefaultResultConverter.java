@@ -112,7 +112,7 @@ public class DefaultResultConverter implements ResultConverter {
             final Iterator it = toIterator(result);
             if (it.hasNext()) {
                 converted = it.next();
-                if (!ODocument.class.equals(returnClass)) {
+                if (!ODocument.class.equals(returnClass) && !returnClass.isInstance(converted)) {
                     converted = flattenSimple(converted, returnClass);
                 }
             }

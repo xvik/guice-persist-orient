@@ -1,3 +1,8 @@
+### 2.0.2 (2014-11-26)
+* Update orient (1.7.9 > 1.7.10 ([changes](https://github.com/orientechnologies/orientdb/issues?q=is%3Aissue+milestone%3A1.7.10+is%3Aclosed)))
+* Fix single value vertex return from finder (projection should not occur)
+* Add explicit scheme synchronization for AutoScanSchemeInitializer and PackageSchemeInitializer (useful for dynamic environments, like tests)
+
 ### 2.0.1 (2014-11-19)
 * Generics resolution extracted to separate lib [generics-resolver](https://github.com/xvik/generics-resolver)
 

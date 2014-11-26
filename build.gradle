@@ -82,9 +82,9 @@ dependencies {
     compile 'com.google.inject.extensions:guice-persist:4.0-beta5'
     compile 'com.google.inject.extensions:guice-multibindings:4.0-beta5'
     compile 'org.slf4j:slf4j-api:1.7.7'
-    compile "com.orientechnologies:orientdb-core:1.7.9"
-    compile "com.orientechnologies:orientdb-object:1.7.9"
-    compile("com.orientechnologies:orientdb-graphdb:1.7.9") {
+    compile "com.orientechnologies:orientdb-core:1.7.10"
+    compile "com.orientechnologies:orientdb-object:1.7.10"
+    compile("com.orientechnologies:orientdb-graphdb:1.7.10") {
         // excluded to remove old groovy dependency
         exclude module: 'gremlin-groovy'
     }

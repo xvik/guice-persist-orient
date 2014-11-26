@@ -47,7 +47,10 @@ public abstract class AbstractObjectInitializer implements SchemeInitializer {
 
     @Override
     public void initialize() {
-        init(dbProvider.get());
+        final OObjectDatabaseTx db = dbProvider.get();
+        init(db);
+        // important to guarantee correct state in dynamic environments (like tests or using different databases)
+        db.getMetadata().getSchema().synchronizeSchema();
     }
 
     /**
