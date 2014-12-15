@@ -9,6 +9,7 @@ import ru.vyarus.guice.persist.orient.support.finder.FinderWithPlaceholders
 import ru.vyarus.guice.persist.orient.support.finder.PlaceholdersEnum
 import ru.vyarus.guice.persist.orient.support.model.Model
 import ru.vyarus.guice.persist.orient.support.modules.AutoScanFinderTestModule
+import ru.vyarus.guice.persist.orient.support.modules.FinderTestModule
 import spock.guice.UseModules
 
 /**
@@ -17,7 +18,7 @@ import spock.guice.UseModules
  * @author Vyacheslav Rusakov 
  * @since 22.09.2014
  */
-@UseModules(AutoScanFinderTestModule)
+@UseModules(FinderTestModule)
 class FinderPlaceholdersExecutionTest extends AbstractTest {
 
     @Inject

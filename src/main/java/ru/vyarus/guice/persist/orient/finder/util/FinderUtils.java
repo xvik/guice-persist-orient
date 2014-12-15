@@ -1,10 +1,10 @@
 package ru.vyarus.guice.persist.orient.finder.util;
 
 import com.google.inject.persist.finder.Finder;
+import ru.vyarus.guice.ext.core.generator.DynamicClassGenerator;
 import ru.vyarus.guice.persist.orient.finder.delegate.FinderDelegate;
 
 import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 
 /**
  * Finder specific utilities.
@@ -25,22 +25,14 @@ public final class FinderUtils {
      * @return base finder type
      */
     public static Class<?> resolveFinderClass(final Object finder) {
-        Class<?> result;
-        if (finder instanceof Proxy) {
-            // finder proxy always created around single interface
-            result = finder.getClass().getInterfaces()[0];
-        } else {
-            // bean finder
-            result = finder.getClass();
-            if (result.getName().contains("$$EnhancerByGuice")) {
-                result = result.getSuperclass();
-            }
+        Class<?> result = finder.getClass();
+        if (result.getName().contains("$$EnhancerByGuice")) {
+            result = result.getSuperclass();
+        }
+        if (result.getName().contains(DynamicClassGenerator.DYNAMIC_CLASS_POSTFIX)) {
+            result = result.getSuperclass() == Object.class ? result.getInterfaces()[0] : result.getSuperclass();
         }
         return result;
-    }
-
-    public static boolean isFinderMethod(final Method method) {
-        return isDirectFinderMethod(method) || isMixin(method.getDeclaringClass());
     }
 
     /**

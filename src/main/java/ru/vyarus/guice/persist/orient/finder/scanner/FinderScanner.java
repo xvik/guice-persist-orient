@@ -14,7 +14,11 @@ import java.util.List;
  *
  * @author Vyacheslav Rusakov
  * @since 17.10.2014
+ * @deprecated finders now completely
+ * <a href="https://github.com/xvik/guice-ext-annotations#usage">controlled by guice</a>
+ * you can use @ProvidedBy instead of classpath scanning
  */
+@Deprecated
 public final class FinderScanner {
     private FinderScanner() {
     }

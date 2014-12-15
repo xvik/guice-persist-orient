@@ -1,5 +1,7 @@
 package ru.vyarus.guice.persist.orient.support.finder.benchmark
 
+import com.google.inject.ProvidedBy
+import com.google.inject.internal.DynamicClassProvider
 import com.google.inject.persist.Transactional
 import com.google.inject.persist.finder.Finder
 import ru.vyarus.guice.persist.orient.finder.delegate.FinderDelegate
@@ -13,6 +15,7 @@ import ru.vyarus.guice.persist.orient.support.model.Model
  * @since 28.10.2014
  */
 @Transactional
+@ProvidedBy(DynamicClassProvider)
 interface FinderBenchmark {
 
     @Finder(query = "select from Model")

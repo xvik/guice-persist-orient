@@ -6,7 +6,7 @@ import ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxAction
 import ru.vyarus.guice.persist.orient.support.finder.benchmark.BenchmarkDelegate
 import ru.vyarus.guice.persist.orient.support.finder.benchmark.FinderBenchmark
 import ru.vyarus.guice.persist.orient.support.model.Model
-import ru.vyarus.guice.persist.orient.support.modules.AutoScanFinderTestModule
+import ru.vyarus.guice.persist.orient.support.modules.FinderTestModule
 import spock.guice.UseModules
 
 import javax.inject.Inject
@@ -18,7 +18,7 @@ import java.lang.reflect.Method
  * @author Vyacheslav Rusakov 
  * @since 28.10.2014
  */
-@UseModules(AutoScanFinderTestModule)
+@UseModules(FinderTestModule)
 class FinderBenchmarkTest extends AbstractTest {
 
     @Inject

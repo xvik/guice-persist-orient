@@ -77,7 +77,9 @@ repositories {
 dependencies {
     provided 'com.google.code.findbugs:jsr305:3.0.0'
 
-    compile 'ru.vyarus:generics-resolver:1.0.0'
+    compile 'ru.vyarus:generics-resolver:1.1.0'
+    compile 'ru.vyarus:guice-ext-annotations:1.1.0'
+    compile 'org.javassist:javassist:3.16.1-GA'
     compile 'com.google.inject:guice:4.0-beta5'
     compile 'com.google.inject.extensions:guice-persist:4.0-beta5'
     compile 'com.google.inject.extensions:guice-multibindings:4.0-beta5'
@@ -90,7 +92,7 @@ dependencies {
     }
 
 
-    testCompile 'junit:junit:4.11'
+    testCompile 'junit:junit:4.12'
     testCompile 'ch.qos.logback:logback-classic:1.1.2'
     testCompile 'org.slf4j:jul-to-slf4j:1.7.7'
     testCompile 'org.spockframework:spock-core:0.7-groovy-2.0'

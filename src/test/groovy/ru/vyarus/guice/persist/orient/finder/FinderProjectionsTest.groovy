@@ -12,6 +12,7 @@ import ru.vyarus.guice.persist.orient.support.model.Model
 import ru.vyarus.guice.persist.orient.support.model.SingleValueVertex
 import ru.vyarus.guice.persist.orient.support.model.VertexModel
 import ru.vyarus.guice.persist.orient.support.modules.AutoScanFinderTestModule
+import ru.vyarus.guice.persist.orient.support.modules.FinderTestModule
 import spock.guice.UseModules
 
 import javax.inject.Inject
@@ -20,7 +21,7 @@ import javax.inject.Inject
  * @author Vyacheslav Rusakov 
  * @since 01.11.2014
  */
-@UseModules(AutoScanFinderTestModule)
+@UseModules(FinderTestModule)
 class FinderProjectionsTest extends AbstractTest {
 
     @Inject

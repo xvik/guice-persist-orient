@@ -1,5 +1,7 @@
 package ru.vyarus.guice.persist.orient.support.finder.subpkg
 
+import com.google.inject.ProvidedBy
+import com.google.inject.internal.DynamicClassProvider
 import com.google.inject.persist.Transactional
 import com.google.inject.persist.finder.Finder
 import ru.vyarus.guice.persist.orient.support.model.Model
@@ -11,6 +13,7 @@ import ru.vyarus.guice.persist.orient.support.model.Model
  * @since 04.08.2014
  */
 @Transactional
+@ProvidedBy(DynamicClassProvider)
 public interface FoundFinder {
 
     @Finder(query = "select from Model")

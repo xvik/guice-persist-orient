@@ -1,3 +1,7 @@
+* Finders now managed by guice and any additional aop could be applied; abstract beans could define finder methods.
+(integration implemented in [external library](https://github.com/xvik/guice-ext-annotations))
+* Finders auto scan api deprecated: now finder bean could be marked with @ProvidedBy and rely on guice JIT resolution
+
 ### 2.0.2 (2014-11-26)
 * Update orient (1.7.9 > 1.7.10 ([changes](https://github.com/orientechnologies/orientdb/issues?q=is%3Aissue+milestone%3A1.7.10+is%3Aclosed)))
 * Fix single value vertex return from finder (projection should not occur)

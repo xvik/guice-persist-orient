@@ -1,5 +1,7 @@
 package ru.vyarus.guice.persist.orient.support.finder;
 
+import com.google.inject.ProvidedBy;
+import com.google.inject.internal.DynamicClassProvider;
 import com.google.inject.persist.Transactional;
 import com.google.inject.persist.finder.Finder;
 import ru.vyarus.guice.persist.orient.finder.placeholder.Placeholder;
@@ -16,6 +18,7 @@ import java.util.List;
  * @since 21.09.2014
  */
 @Transactional
+@ProvidedBy(DynamicClassProvider.class)
 public interface FinderWithPlaceholders {
 
     // query with single placeholder, guarded with defaults
@@ -25,10 +28,10 @@ public interface FinderWithPlaceholders {
 
 
     // query with two placeholders, guarded with defaults
-    @Finder( query = "select from Model where ${field1} = ? and ${field2} = ?")
+    @Finder(query = "select from Model where ${field1} = ? and ${field2} = ?")
     @Placeholders({
-          @PlaceholderValues(name="field1", values = {"name", "nick"}),
-          @PlaceholderValues(name="field2", values = {"name", "nick"})
+            @PlaceholderValues(name = "field1", values = {"name", "nick"}),
+            @PlaceholderValues(name = "field2", values = {"name", "nick"})
     })
     Model findByTwoFields(@Placeholder("field1") String field1, @Placeholder("field2") String field2,
                           String value1, String value2);
@@ -49,7 +52,7 @@ public interface FinderWithPlaceholders {
 
     // error - no need for definition if enum used
     @Finder(namedQuery = "func${name}")
-    @PlaceholderValues(name="name", values = {"name", "nick"})
+    @PlaceholderValues(name = "name", values = {"name", "nick"})
     List<Model> functionWithPlaceholderEnumErr(@Placeholder("name") PlaceholdersEnum name);
 
     // error - defaults for not defined placeholder

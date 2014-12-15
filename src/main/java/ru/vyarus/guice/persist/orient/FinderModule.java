@@ -3,32 +3,34 @@ package ru.vyarus.guice.persist.orient;
 import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
 import com.google.inject.AbstractModule;
+import com.google.inject.matcher.AbstractMatcher;
 import com.google.inject.matcher.Matchers;
 import com.google.inject.multibindings.Multibinder;
 import com.google.inject.name.Names;
 import com.google.inject.persist.finder.Finder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.vyarus.guice.ext.core.generator.DynamicClassGenerator;
 import ru.vyarus.guice.persist.orient.db.DbType;
 import ru.vyarus.guice.persist.orient.finder.FinderExecutor;
 import ru.vyarus.guice.persist.orient.finder.command.CommandBuilder;
 import ru.vyarus.guice.persist.orient.finder.delegate.FinderDelegate;
 import ru.vyarus.guice.persist.orient.finder.executor.DocumentFinderExecutor;
-import ru.vyarus.guice.persist.orient.finder.internal.FinderInvocationHandler;
-import ru.vyarus.guice.persist.orient.finder.internal.FinderProxy;
+import ru.vyarus.guice.persist.orient.finder.internal.FinderMethodInterceptor;
 import ru.vyarus.guice.persist.orient.finder.result.ResultConverter;
 import ru.vyarus.guice.persist.orient.finder.util.FinderUtils;
 
 import javax.inject.Singleton;
 import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.util.Arrays;
 import java.util.Set;
 
 /**
  * Module provides support for dynamic finders. Must be used together with main orient module.
- * <p>Finders supported on interfaces and beans in context. Interfaces must be manually registered in module
- * (see addFinder method).</p>
+ * <p>Finders supported on interfaces and beans in context (may be abstract methods in beans).
+ * Finders completely <a href="https://github.com/xvik/guice-ext-annotations#usage">controlled by guice</a> and
+ * aop could be used on finder beans.</p>
+ * <p>There is two types of finders: sql finders and method delegates.</p>
  * <p>Named and position parameters may be used. To use named parameters use @Named annotation (defines parameter name).
  * Additional annotation @FirstResult and @MaxResults may be used to define pagination. NOTE: in contrast to jpa, where
  * first result defines first result to take, in orient it defines number of records to skip!
@@ -67,14 +69,20 @@ public class FinderModule extends AbstractModule {
     private final Set<Class<?>> dynamicFinders = Sets.newHashSet();
     private DbType defaultConnectionToUse = DbType.DOCUMENT;
 
-    private FinderInvocationHandler finderInvoker;
     private Multibinder<FinderExecutor> executorsMultibinder;
+
+    public FinderModule() {
+        // empty constructor required to mark old one as deprecated
+    }
 
     /**
      * Allows to register all interfaces using constructor, instead of calling addFinder for each interface.
      *
      * @param finderInterface array of finder interfaces
+     * @deprecated finders now completely
+     * <a href="https://github.com/xvik/guice-ext-annotations#usage">controlled by guice</a>
      */
+    @Deprecated
     public FinderModule(final Class<?>... finderInterface) {
         if (finderInterface.length > 0) {
             dynamicFinders.addAll(Arrays.asList(finderInterface));
@@ -98,7 +106,10 @@ public class FinderModule extends AbstractModule {
      * @param iface Any interface type whose methods are all dynamic finders.
      * @param <T>   finder type to check resulted proxy
      * @return module instance
+     * @deprecated finders now completely
+     * <a href="https://github.com/xvik/guice-ext-annotations#usage">controlled by guice</a>
      */
+    @Deprecated
     public <T> FinderModule addFinder(final Class<T> iface) {
         dynamicFinders.add(iface);
         return this;
@@ -113,13 +124,19 @@ public class FinderModule extends AbstractModule {
         bind(CommandBuilder.class);
         bind(ResultConverter.class);
 
-        final FinderProxy proxy = new FinderProxy();
+        final FinderMethodInterceptor proxy = new FinderMethodInterceptor();
         requestInjection(proxy);
-        bind(FinderProxy.class).toInstance(proxy);
-        finderInvoker = new FinderInvocationHandler();
-        requestInjection(finderInvoker);
+        bind(FinderMethodInterceptor.class).toInstance(proxy);
         bindInterceptor(Matchers.any(), Matchers.annotatedWith(Finder.class), proxy);
         bindInterceptor(Matchers.any(), Matchers.annotatedWith(FinderDelegate.class), proxy);
+        // support delegating mixin interfaces
+        bindInterceptor(Matchers.any(), new AbstractMatcher<Method>() {
+            @Override
+            public boolean matches(final Method method) {
+                return !method.isAnnotationPresent(FinderDelegate.class)
+                        && method.getDeclaringClass().isAnnotationPresent(FinderDelegate.class);
+            }
+        }, proxy);
 
         executorsMultibinder = Multibinder.newSetBinder(binder(), FinderExecutor.class);
 
@@ -186,19 +203,15 @@ public class FinderModule extends AbstractModule {
     /**
      * @param iface finder interface
      * @param <T>   finder type to check resulted proxy
+     * @deprecated finders now completely
+     * <a href="https://github.com/xvik/guice-ext-annotations#usage">controlled by guice</a>
      */
+    @Deprecated
     protected <T> void bindFinder(final Class<T> iface) {
         if (!isDynamicFinderValid(iface)) {
             return;
         }
-
-        // Proxy must produce instance of type given.
-        @SuppressWarnings("unchecked")
-        final T proxy = (T) Proxy
-                .newProxyInstance(Thread.currentThread().getContextClassLoader(), new Class<?>[]{iface},
-                        finderInvoker);
-
-        bind(iface).toInstance(proxy);
+        bind(iface).to(DynamicClassGenerator.generate(iface));
     }
 
     private boolean isDynamicFinderValid(final Class<?> iface) {

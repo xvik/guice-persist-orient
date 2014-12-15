@@ -1,5 +1,7 @@
 package ru.vyarus.guice.persist.orient.support.finder
 
+import com.google.inject.ProvidedBy
+import com.google.inject.internal.DynamicClassProvider
 import com.google.inject.persist.Transactional
 import com.google.inject.persist.finder.Finder
 import com.google.inject.persist.finder.FirstResult
@@ -19,6 +21,7 @@ import javax.inject.Named
  * @since 31.07.2014
  */
 @Transactional
+@ProvidedBy(DynamicClassProvider)
 public interface InterfaceFinder {
 
     // -------------------------------------------- db type recognition

@@ -5,13 +5,14 @@ import ru.vyarus.guice.persist.orient.finder.result.ResultType
 import ru.vyarus.guice.persist.orient.support.finder.inheritance.*
 import ru.vyarus.guice.persist.orient.support.model.Model
 import ru.vyarus.guice.persist.orient.support.modules.AutoScanFinderTestModule
+import ru.vyarus.guice.persist.orient.support.modules.FinderTestModule
 import spock.guice.UseModules
 
 /**
  * @author Vyacheslav Rusakov 
  * @since 17.10.2014
  */
-@UseModules(AutoScanFinderTestModule)
+@UseModules(FinderTestModule)
 class HierarchyCasesAnalysisTest extends AbstractFinderDefinitionTest {
 
     def "Check generic finder interfaces"() {

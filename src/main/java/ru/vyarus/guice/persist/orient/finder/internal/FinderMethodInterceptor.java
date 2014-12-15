@@ -36,7 +36,7 @@ import java.util.Arrays;
  * @since 30.07.2014
  */
 @Singleton
-public class FinderProxy implements MethodInterceptor {
+public class FinderMethodInterceptor implements MethodInterceptor {
 
     // field injection because instantiated directly in module
     @Inject

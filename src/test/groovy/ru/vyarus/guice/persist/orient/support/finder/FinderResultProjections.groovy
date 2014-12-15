@@ -1,8 +1,9 @@
 package ru.vyarus.guice.persist.orient.support.finder
 
+import com.google.inject.ProvidedBy
+import com.google.inject.internal.DynamicClassProvider
 import com.google.inject.persist.Transactional
 import com.google.inject.persist.finder.Finder
-import com.orientechnologies.orient.core.record.impl.ODocument
 import com.tinkerpop.blueprints.Vertex
 import ru.vyarus.guice.persist.orient.db.DbType
 import ru.vyarus.guice.persist.orient.finder.Use
@@ -14,6 +15,7 @@ import ru.vyarus.guice.persist.orient.finder.Use
  * @since 01.11.2014
  */
 @Transactional
+@ProvidedBy(DynamicClassProvider)
 public interface FinderResultProjections {
 
     // orient returns ODocument with singe field, but it will be recognized and "unwrapped"
