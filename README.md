@@ -6,7 +6,7 @@
 
 ### About
 
-[OrientDB](http://www.orientechnologies.com/orientdb/) is document, graph and object database ([see intro](https://www.youtube.com/watch?v=o_7NCiTLVis)).
+[OrientDB](http://www.orientechnologies.com/orientdb/) is document, graph and object database (see [intro](https://www.youtube.com/watch?v=o_7NCiTLVis) and [starter course](http://www.orientechnologies.com/getting-started/)).
 Underlying format is almost the same for all database types, which allows us to use single database in any way. For example, schema creation and updates
 may be performed as object database (jpa style) and graph queries for complex cases. 
 
