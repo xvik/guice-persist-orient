@@ -892,6 +892,31 @@ Custom query execution result converter may be defined:
 bind(ResultConverter.class).to(MyCustomResultConverter.class);
 ```
 
+#### Dynamic finders cache
+
+If you use JRebel or other class reloading tool (maybe some other reason) you will need to disable finder descriptors caching.
+
+To do it set system property or environment variable:
+
+```
+ru.vyarus.guice.persist.orient.finder.internal.FinderDescriptorFactory.cache=false
+```
+
+Or from code:
+
+```java
+FinderDescriptorFactory.disableCache();
+```
+
+Also you can clear cache manually (on instance):
+
+```java
+factory.clearCache()
+```
+
+Note: generics-resolver use it's own [cache for generics resolution](https://github.com/xvik/generics-resolver#cache).
+If you disable cache before start, generics cache will also be disabled. Static methods (disable and clear cache)
+
 ### Orient configuration
 
 Configuration could be done on instance: 

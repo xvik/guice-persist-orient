@@ -2,6 +2,8 @@ package ru.vyarus.guice.persist.orient;
 
 import com.google.common.base.Strings;
 import com.google.inject.Binder;
+import com.google.inject.matcher.AbstractMatcher;
+import com.google.inject.matcher.Matcher;
 import com.google.inject.multibindings.Multibinder;
 import com.google.inject.name.Names;
 import com.google.inject.persist.PersistModule;
@@ -238,6 +240,25 @@ public class OrientModule extends PersistModule {
             if (logger.isTraceEnabled()) {
                 logger.trace("Failed to process pool loader " + poolBinder, ignored);
             }
+        }
+    }
+
+    @Override
+    protected void bindInterceptor(final Matcher<? super Class<?>> classMatcher,
+                                   final Matcher<? super Method> methodMatcher,
+                                   final MethodInterceptor... interceptors) {
+        if (interceptors.length == 1 && interceptors[0] == getTransactionInterceptor()) {
+            // hack to correctly bind @Transactional annotation for java8:
+            // aop tries to intercept synthetic methods which cause a lot of warnings
+            // (and generally not correct)
+            super.bindInterceptor(classMatcher, new AbstractMatcher<Method>() {
+                @Override
+                public boolean matches(final Method method) {
+                    return !method.isSynthetic() && !method.isBridge() && methodMatcher.matches(method);
+                }
+            }, interceptors);
+        } else {
+            super.bindInterceptor(classMatcher, methodMatcher, interceptors);
         }
     }
 
