@@ -1,5 +1,7 @@
 package ru.vyarus.guice.persist.orient.support.finder.mixin.crud;
 
+import com.google.inject.ProvidedBy;
+import com.google.inject.internal.DynamicSingletonProvider;
 import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx;
 import com.orientechnologies.orient.core.id.ORID;
 import com.orientechnologies.orient.core.id.ORecordId;
@@ -8,7 +10,6 @@ import ru.vyarus.guice.persist.orient.finder.delegate.mixin.FinderGeneric;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
-import javax.inject.Singleton;
 import java.util.Iterator;
 
 /**
@@ -17,8 +18,8 @@ import java.util.Iterator;
  * @author Vyacheslav Rusakov
  * @since 15.10.2014
  */
-@Singleton
-public class DocumentCrudDelegate implements DocumentCrudMixin {
+@ProvidedBy(DynamicSingletonProvider.class)
+public abstract class DocumentCrudDelegate implements DocumentCrudMixin {
 
     private final Provider<ODatabaseDocumentTx> dbProvider;
 
@@ -55,12 +56,6 @@ public class DocumentCrudDelegate implements DocumentCrudMixin {
     @Override
     public void delete(final ORID id) {
         dbProvider.get().delete(id);
-    }
-
-    @Override
-    public Iterator<ODocument> getAll() {
-        // finder should choose extended method instead of direct implementation
-        throw new UnsupportedOperationException("Method with type must be called");
     }
 
     public Iterator<ODocument> getAll(@FinderGeneric("T") final Class<?> type) {

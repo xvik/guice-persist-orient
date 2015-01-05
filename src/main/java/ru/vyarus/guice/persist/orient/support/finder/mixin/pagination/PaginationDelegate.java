@@ -1,9 +1,10 @@
 package ru.vyarus.guice.persist.orient.support.finder.mixin.pagination;
 
 import com.google.common.base.Preconditions;
+import com.google.inject.ProvidedBy;
+import com.google.inject.internal.DynamicSingletonProvider;
 import ru.vyarus.guice.persist.orient.finder.delegate.mixin.FinderInstance;
 
-import javax.inject.Singleton;
 import java.util.List;
 
 /**
@@ -12,14 +13,8 @@ import java.util.List;
  * @author Vyacheslav Rusakov
  * @since 01.11.2014
  */
-@Singleton
-public class PaginationDelegate implements Pagination {
-
-    @Override
-    public Page getPage(final int page, final int pageSize) {
-        // finder delegate takes finder method name into account, but always choose extended method
-        throw new UnsupportedOperationException("Finder should choose extended declaration");
-    }
+@ProvidedBy(DynamicSingletonProvider.class)
+public abstract class PaginationDelegate implements Pagination {
 
     @SuppressWarnings("unchecked")
     public Page getPage(@FinderInstance final PaginationMixin finder, final int page, final int pageSize) {

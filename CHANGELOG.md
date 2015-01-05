@@ -1,6 +1,8 @@
 * Finders now managed by guice and any additional aop could be applied; abstract beans could define finder methods.
 (integration implemented in [external library](https://github.com/xvik/guice-ext-annotations))
 * Finders auto scan api deprecated: now finder bean could be marked with @ProvidedBy and rely on guice JIT resolution
+* Fix transactional aop warnings on jdk8
+* Fix finder descriptors cache
 * Add ability to disable finder descriptors cache using property and method to clear current cache
 
 ### 2.0.2 (2014-11-26)

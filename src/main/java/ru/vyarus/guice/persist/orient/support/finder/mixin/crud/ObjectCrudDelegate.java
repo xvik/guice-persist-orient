@@ -1,5 +1,7 @@
 package ru.vyarus.guice.persist.orient.support.finder.mixin.crud;
 
+import com.google.inject.ProvidedBy;
+import com.google.inject.internal.DynamicSingletonProvider;
 import com.orientechnologies.orient.core.id.ORID;
 import com.orientechnologies.orient.core.id.ORecordId;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
@@ -7,7 +9,6 @@ import ru.vyarus.guice.persist.orient.finder.delegate.mixin.FinderGeneric;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
-import javax.inject.Singleton;
 import java.util.Iterator;
 
 /**
@@ -17,8 +18,8 @@ import java.util.Iterator;
  * @author Vyacheslav Rusakov
  * @since 15.10.2014
  */
-@Singleton
-public class ObjectCrudDelegate<T> implements ObjectCrudMixin<T> {
+@ProvidedBy(DynamicSingletonProvider.class)
+public abstract class ObjectCrudDelegate<T> implements ObjectCrudMixin<T> {
 
     private final Provider<OObjectDatabaseTx> dbProvider;
 
@@ -69,20 +70,8 @@ public class ObjectCrudDelegate<T> implements ObjectCrudMixin<T> {
         return dbProvider.get().detach(entity, true);
     }
 
-    @Override
-    public T create() {
-        // finder should choose extended method instead of direct implementation
-        throw new UnsupportedOperationException("Method create(Class) must be called");
-    }
-
     public T create(@FinderGeneric("T") final Class<T> type) {
         return dbProvider.get().newInstance(type);
-    }
-
-    @Override
-    public Iterator<T> getAll() {
-        // finder should choose extended method instead of direct implementation
-        throw new UnsupportedOperationException("Method getAll(Class) must be called");
     }
 
     public Iterator<T> getAll(@FinderGeneric("T") final Class<T> type) {

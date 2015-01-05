@@ -83,7 +83,7 @@ dependencies {
     provided 'com.google.code.findbugs:jsr305:3.0.0'
 
     compile 'ru.vyarus:generics-resolver:1.1.0'
-    compile 'ru.vyarus:guice-ext-annotations:1.1.0'
+    compile 'ru.vyarus:guice-ext-annotations:1.1.1'
     compile 'org.javassist:javassist:3.16.1-GA'
     compile 'com.google.inject:guice:4.0-beta5'
     compile 'com.google.inject.extensions:guice-persist:4.0-beta5'
