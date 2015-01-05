@@ -56,8 +56,6 @@ import java.util.Set;
  * <p>It is possible to replace default orient command building logic (conversion of query to orient sql command).
  * Simply register new implementation of CommandBuilder: bind(CommandBuilder.class).to(MyCommandBuilder.class)</p>
  * <p>Query result converter may be overridden too: bind(ResultConverter.class).to(MyResultConverter.class)</p>
- * <p>Also, there is predefined AutoScanFinderModule, which is able to find your finders automatically
- * with classpath scanning</p>
  * <p>Based on guice-persist jpa module com.google.inject.persist.jpa.JpaPersistModule</p>
  *
  * @author Vyacheslav Rusakov
@@ -211,7 +209,7 @@ public class FinderModule extends AbstractModule {
         if (!isDynamicFinderValid(iface)) {
             return;
         }
-        bind(iface).to(DynamicClassGenerator.generate(iface));
+        bind(iface).to(DynamicClassGenerator.generate(iface)).in(Singleton.class);
     }
 
     private boolean isDynamicFinderValid(final Class<?> iface) {

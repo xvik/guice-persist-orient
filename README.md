@@ -38,7 +38,7 @@ Maven:
 <dependency>
 <groupId>ru.vyarus</groupId>
 <artifactId>guice-persist-orient</artifactId>
-<version>2.0.2</version>
+<version>2.1.0</version>
 <exclusions>
   <exclusion>
       <groupId>com.orientechnologies</groupId>
@@ -55,7 +55,7 @@ Maven:
 Gradle:
 
 ```groovy
-compile ('ru.vyarus:guice-persist-orient:2.0.2'){
+compile ('ru.vyarus:guice-persist-orient:2.1.0'){
     exclude module: 'orientdb-graphdb'
     exclude module: 'orientdb-object'       
 }
@@ -117,23 +117,17 @@ There are two shortcut modules with predefined scheme initializers from objects:
 To use dynamic finders register finders module:
 
 ```java
-install(new FinderModule()
-            .addFinder(FinderInterface.class));
+install(new FinderModule());
 ```
 
 Default connection type could be specified to use when connection type can't be detected from finder return type (by default it will be document connection):
 
 ```java
 install(new FinderModule()  
-            .defaultConnectionType(DbType.OBJECT)
-            .addFinder(FinderInterface.class));
+            .defaultConnectionType(DbType.OBJECT));
 ```
 
-To avoid manual addition of all finder interfaces, you can use module with classpath scanning instead:
-
-```java
-install(new AutoScanFinderModule("package.to.search.finders.in"));
-```
+NOTE: classpath scanning is deprecated and will be removed soon! Now finders could be dynamically resolved with help of guice JIT (see below)
 
 ### Usage
 
@@ -256,21 +250,73 @@ Limitations:
 
 ### Dynamic finders
 
-In guice-persist finders allows just to define queries on interface methods. This concept was evolved,
-allowing to completely write dao layer using interfaces.
+Finders allows you to define queries using just annotation, removing all boilerplate code.
+
+```java
+@Finder(query = "select from Model where name=? and nick=?")
+List<Model> parametersPositional(String name, String nick);
+```
+
+Finder methods may be defined on interfaces or abstract methods. There are two main approaches of finders usage:
+* Use interfaces with finder methods. Suitable if entire dao layer could be written with sql queries. Benefit of this approach is
+more clear interface (without abstract keyword on each method) and easy mocking (any implementation could be directly configured in guice module)
+* Use finders on abstract classes to supplement existing dao methods. This approach will be more common, because it requires just
+to mark usual dao class as abstract and use abstract methods with sql in annotations.
+
+Ofc, both approaches could be mixed (some daos could be interfaces and some abstract classes).
+
+Guice doesn't allow using abstract types, but it's possible with [a bit of magic](https://github.com/xvik/guice-ext-annotations).
+
+Abstract types (abstract class or interface containing finder methods) could be registered directly in guice module:
+
+```java
+bind(MyInterfaceDao.class).to(DynamicClassGenerator.generate(MyInterfaceDao.class)).in(Singleton.class)
+```
+
+Or dynamic resolution could be used (guice JIT resolution):
+
+```java
+@ProvidedBy(DynamicSingletonProvider.class)
+public interface MyInterfaceDao
+```
+
+When some bean require this dao as dependency, guice will call provider, which will generate proper class for guice.
+(dynamic resolution completely replaces classpath scanning: only actually used finders will be created)
+Note, this will automatically make bean singleton, which should be desirable in most cases. If you need custom scope
+use `DynamicClassProvider` with `@ScopeAnnotation` annotation (see details in [guice-ext-annotations](https://github.com/xvik/guice-ext-annotations))
+
+IMPORTANT: guice will control instance creation, so guice AOP features will completely work!
+So `@Transactional` annotation may be used (generally not the best idea to limit transaction to finder method, but in some cases could be suitable).
+
+##### Finder kinds
 
 There are two types of finder methods:
-* Sql finders, which allows to define sql queries (select/insert/update) on interface methods
-* Delegate finders, delegates call of interface method into guice bean method
-
-Finder annotations may be used on interface methods or bean methods.
-
-If finder used in interface, all interface methods must be finder methods and interface must be manually registered in `FinderModule`.
-If `AutoScanFinderModule` used, finder interfaces will be registered automatically. 
-
-`@Transactonal` annotation is supported within interface finders (generally not the best idea to limit transaction to finder method, but in some cases could be suitable)
+* Sql finders, which allows to define sql queries (select/insert/update) on methods. Most useful for daos
+* Delegate finders, delegates call of interface method into guice bean method. Most useful for mixins
 
 The most powerful thing is finder mixins: interfaces in java support multiple inheritance, and so allows better reuse of generic parts.
+Mixins may be used as with interface daos as with abstract class dao.
+
+Going a bit forward, imagine you have few different daos for different entities. Some of them have `name` property.
+Normally you will have to write select by name query in each dao (can't be moved to some base class, because not all entities contains name).
+Simple mixin could be defined:
+
+```java
+public interface FindByNameMixin<T> {
+
+    @Finder(query = "select from ${T} where name=?")
+    T findByName(String name);
+}
+```
+
+Now some daos could simply implement this interface. Note that any number of mixins cold be used with
+interface or abstract class, so mixins could greatly affect code reuse (parts which was impossible to share due to
+single inheritance limitation).
+
+Complicated mixins could be written using delegate finders. For example see `PaginationMixin`.
+See `DocumentCrudMixin` and `ObjectCrudMixin` as example of replacing of abstract dao with mixin.
+Such mixins allows to comfortably use interfaces for daos.
+
 More on mixins read below.
 
 #### Sql finders

@@ -144,7 +144,7 @@ public class FinderDescriptorFactory {
 
     /**
      * Clears cached finder descriptors (already parsed). Also clears parsed generics info
-     * ({@see ru.vyarus.java.generics.resolver.context.GenericsInfoFactory}).
+     * ({@link ru.vyarus.java.generics.resolver.context.GenericsInfoFactory}).
      * Cache could be completely disabled using system property or environment variable
      *
      * @see #CACHE_PROPERTY
@@ -161,7 +161,7 @@ public class FinderDescriptorFactory {
 
     /**
      * Disables finder descriptors cache. Also disables parsed generics info cache
-     * ({@see ru.vyarus.java.generics.resolver.context.GenericsInfoFactory}).
+     * ({@link ru.vyarus.java.generics.resolver.context.GenericsInfoFactory}).
      */
     public static void disableCache() {
         System.setProperty(CACHE_PROPERTY, Boolean.FALSE.toString());
