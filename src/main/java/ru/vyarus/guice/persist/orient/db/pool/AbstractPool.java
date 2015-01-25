@@ -1,7 +1,7 @@
 package ru.vyarus.guice.persist.orient.db.pool;
 
 import com.google.common.base.Preconditions;
-import com.orientechnologies.orient.core.db.ODatabaseComplex;
+import com.orientechnologies.orient.core.db.ODatabaseInternal;
 import com.orientechnologies.orient.core.db.ODatabasePoolBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +26,7 @@ public abstract class AbstractPool<T> implements PoolManager<T> {
 
     private final TransactionManager transactionManager;
     private final UserManager userManager;
-    private final ThreadLocal<ODatabaseComplex> transaction = new ThreadLocal<ODatabaseComplex>();
+    private final ThreadLocal<ODatabaseInternal> transaction = new ThreadLocal<ODatabaseInternal>();
     private ODatabasePoolBase pool;
     private String uri;
 
@@ -55,7 +55,7 @@ public abstract class AbstractPool<T> implements PoolManager<T> {
 
     @Override
     public void commit() {
-        final ODatabaseComplex db = transaction.get();
+        final ODatabaseInternal db = transaction.get();
         if (db == null) {
             // pool not participate in current transaction
             return;
@@ -76,7 +76,7 @@ public abstract class AbstractPool<T> implements PoolManager<T> {
 
     @Override
     public void rollback() {
-        final ODatabaseComplex db = transaction.get();
+        final ODatabaseInternal db = transaction.get();
         if (db == null) {
             // pool not participate in current transaction or already committed (may happen if one other pool's
             // transaction fail: in this case all other transactions will be committed and after that
@@ -109,14 +109,14 @@ public abstract class AbstractPool<T> implements PoolManager<T> {
             Preconditions.checkState(transactionManager.isTransactionActive(), String.format(
                     "Can't obtain connection from pool %s: no transaction defined.", getType()));
 
-            final ODatabaseComplex db = checkAndRecoverConnection(
-                    (ODatabaseComplex) pool.acquire(uri, userManager.getUser(), userManager.getPassword()));
+            final ODatabaseInternal db = checkAndRecoverConnection(
+                     pool.acquire(uri, userManager.getUser(), userManager.getPassword()));
 
             db.begin(transactionManager.getActiveTransactionType());
             transaction.set(db);
             logger.trace("Pool {} transaction started", getType());
         }
-        return convertDbInstance(checkOpened(transaction.get()));
+        return (T) convertDbInstance(checkOpened(transaction.get()));
     }
 
     /**
@@ -132,7 +132,7 @@ public abstract class AbstractPool<T> implements PoolManager<T> {
      * if method not overridden in pool
      */
     @SuppressWarnings("unchecked")
-    protected T convertDbInstance(final ODatabaseComplex<?> db) {
+    protected T convertDbInstance(final ODatabaseInternal<?> db) {
         return (T) db;
     }
 
@@ -144,7 +144,7 @@ public abstract class AbstractPool<T> implements PoolManager<T> {
      * @param db database connection instance
      * @return connection instance if its opened, otherwise error thrown
      */
-    private ODatabaseComplex checkOpened(final ODatabaseComplex db) {
+    private ODatabaseInternal checkOpened(final ODatabaseInternal db) {
         Preconditions.checkState(!db.isClosed(), String.format(
                 "Inconsistent %s pool state: thread-bound database closed! "
                         + "This may happen if close/commit/rollback was called directly on "
@@ -160,8 +160,8 @@ public abstract class AbstractPool<T> implements PoolManager<T> {
      * @param db connection to check
      * @return connection itself or new valid connection
      */
-    private ODatabaseComplex checkAndRecoverConnection(final ODatabaseComplex db) {
-        ODatabaseComplex res = db;
+    private ODatabaseInternal checkAndRecoverConnection(final ODatabaseInternal db) {
+        ODatabaseInternal res = db;
         if (db.isClosed()) {
             logger.warn("ATTENTION: Pool {} return closed connection, restarting pool. "
                     + "This is NOT normal situation: in spite of the fact that your logic will perform "
@@ -174,7 +174,7 @@ public abstract class AbstractPool<T> implements PoolManager<T> {
             final String localUri = uri;
             stop();
             start(localUri);
-            res = (ODatabaseComplex) pool.acquire(uri, userManager.getUser(), userManager.getPassword());
+            res = pool.acquire(uri, userManager.getUser(), userManager.getPassword());
         }
         Preconditions.checkState(!res.isClosed(), String.format(
                 "Pool %s return closed connection, even pool restart didn't help.. "

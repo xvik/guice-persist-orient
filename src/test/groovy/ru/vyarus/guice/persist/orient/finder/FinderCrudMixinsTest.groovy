@@ -11,7 +11,6 @@ import ru.vyarus.guice.persist.orient.support.finder.DocumentDao
 import ru.vyarus.guice.persist.orient.support.finder.ObjectDao
 import ru.vyarus.guice.persist.orient.support.finder.mixin.pagination.Page
 import ru.vyarus.guice.persist.orient.support.model.Model
-import ru.vyarus.guice.persist.orient.support.modules.AutoScanFinderTestModule
 import ru.vyarus.guice.persist.orient.support.modules.FinderTestModule
 import spock.guice.UseModules
 
@@ -100,7 +99,7 @@ class FinderCrudMixinsTest extends AbstractTest {
     def "Check document crud mixin"() {
 
         when: "storing document"
-        ODocument doc = new ODocument(Model.simpleName)
+        ODocument doc = documentDao.create()
         doc.field('name', 'name')
         doc.field('nick', 'tst')
         doc = documentDao.save(doc)
@@ -114,7 +113,7 @@ class FinderCrudMixinsTest extends AbstractTest {
         all[0] instanceof ODocument
 
         when: "loading document"
-        doc = documentDao.get((String)doc.field('@rid'))
+        doc = documentDao.get((String) doc.field('@rid'))
         then: "document found"
         doc
 
@@ -126,33 +125,35 @@ class FinderCrudMixinsTest extends AbstractTest {
         when: "updating document"
         doc.field('name', 'name2')
         doc = documentDao.save(doc)
-        doc = documentDao.get((String)doc.field('@rid'))
+        doc = documentDao.get((String) doc.field('@rid'))
         then: "updated document stored"
         doc.field('name') == 'name2'
 
         when: "deleting document"
         documentDao.delete(doc)
-        doc = documentDao.get((String)doc.field('@rid'))
+        doc = documentDao.get((String) doc.field('@rid'))
         then: "document removed"
         doc == null
 
         when: "removing document by id"
-        doc = new ODocument(Model.simpleName)
+        doc = documentDao.create()
         doc.field('name', 'name')
         doc.field('nick', 'tst')
         doc = documentDao.save(doc)
-        documentDao.delete((String)doc.field('@rid'))
-        doc = documentDao.get((String)doc.field('@rid'))
+        def id = (String) doc.field('@rid')
+        documentDao.delete(id)
+        doc = documentDao.get(id)
         then: "document removed"
         doc == null
 
         when: "removing document by orid"
-        doc = new ODocument(Model.simpleName)
+        doc = documentDao.create()
         doc.field('name', 'name')
         doc.field('nick', 'tst')
         doc = documentDao.save(doc)
-        documentDao.delete(new ORecordId((String)doc.field('@rid')))
-        doc = documentDao.get((String)doc.field('@rid'))
+        id = doc.field('@rid')
+        documentDao.delete(new ORecordId(id))
+        doc = documentDao.get(id)
         then: "document removed"
         doc == null
     }
@@ -160,12 +161,12 @@ class FinderCrudMixinsTest extends AbstractTest {
     def "Check object custom mixin"() {
 
         when: "check generic pass and finder instance"
-        Object res = objectDao.doSomething(1,2)
+        Object res = objectDao.doSomething(1, 2)
         then: "called"
         res == null
 
         when: "check generic pass and connection object"
-        res = objectDao.doSomething2(1,2, Object)
+        res = objectDao.doSomething2(1, 2, Object)
         then: "called"
         res == null
 
@@ -193,12 +194,12 @@ class FinderCrudMixinsTest extends AbstractTest {
     def "Check document custom mixin"() {
 
         when: "check generic pass and finder instance"
-        Object res = documentDao.doSomething(1,2)
+        Object res = documentDao.doSomething(1, 2)
         then: "called"
         res == null
 
         when: "check generic pass and connection object"
-        res = documentDao.doSomething2(1,2, Object)
+        res = documentDao.doSomething2(1, 2, Object)
         then: "called"
         res == null
 

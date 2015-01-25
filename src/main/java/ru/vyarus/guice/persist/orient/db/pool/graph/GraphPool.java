@@ -1,6 +1,6 @@
 package ru.vyarus.guice.persist.orient.db.pool.graph;
 
-import com.orientechnologies.orient.core.db.ODatabaseComplex;
+import com.orientechnologies.orient.core.db.ODatabaseInternal;
 import com.orientechnologies.orient.core.db.ODatabasePoolBase;
 import com.orientechnologies.orient.core.db.document.ODatabaseDocumentPool;
 import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx;
@@ -45,7 +45,7 @@ public class GraphPool extends AbstractPool<OrientBaseGraph> {
     }
 
     @Override
-    protected OrientBaseGraph convertDbInstance(final ODatabaseComplex<?> db) {
+    protected OrientBaseGraph convertDbInstance(final ODatabaseInternal<?> db) {
         if (transaction.get() == null) {
             final ODatabaseDocumentTx documentDb = (ODatabaseDocumentTx) db;
             final OrientBaseGraph graph = transactionManager.getActiveTransactionType() == OTransaction.TXTYPE.NOTX

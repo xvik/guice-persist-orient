@@ -3,6 +3,8 @@ package ru.vyarus.guice.persist.orient.finder
 import com.google.inject.Inject
 import ru.vyarus.guice.persist.orient.AbstractTest
 import ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxAction
+import ru.vyarus.guice.persist.orient.db.transaction.template.TxAction
+import ru.vyarus.guice.persist.orient.db.transaction.template.TxTemplate
 import ru.vyarus.guice.persist.orient.support.finder.ExtraCasesFinder
 import ru.vyarus.guice.persist.orient.support.model.Model
 import ru.vyarus.guice.persist.orient.support.modules.FinderTestModule
@@ -17,6 +19,8 @@ class ExtraCasesExecutionTest extends AbstractTest {
 
     @Inject
     ExtraCasesFinder finder
+    @Inject
+    TxTemplate simpleTemplate;
 
     def "Check cases"() {
 
@@ -35,14 +39,24 @@ class ExtraCasesExecutionTest extends AbstractTest {
         res.next() != null
 
         when: "graph select for iterator"
-        res = finder.selectAllVertex();
+        res = simpleTemplate.doInTransaction(new TxAction() {
+            @Override
+            Object execute() throws Throwable {
+                finder.selectAllVertex().next();
+            }
+        })
         then: "returned iterator"
-        res.next() != null
+        res != null
 
         when: "graph select for iterable"
-        res = finder.selectAllVertexIterable();
+        res = simpleTemplate.doInTransaction(new TxAction() {
+            @Override
+            Object execute() throws Throwable {
+                finder.selectAllVertexIterable().iterator().next();
+            }
+        })
         then: "returned iterable"
-        res.iterator().next() != null
+        res != null
 
         when: "object select with set conversion"
         res = finder.selectAllAsSet();

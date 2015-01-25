@@ -61,4 +61,11 @@ public abstract class DocumentCrudDelegate implements DocumentCrudMixin {
     public Iterator<ODocument> getAll(@FinderGeneric("T") final Class<?> type) {
         return dbProvider.get().browseClass(type.getSimpleName());
     }
+
+    public ODocument create(@FinderGeneric("T") final Class<?> type) {
+        // document creation requires db object bound to current thread, so to make sure
+        // we need to start transaction (if not already started)
+        dbProvider.get();
+        return new ODocument(type.getSimpleName());
+    }
 }

@@ -60,4 +60,12 @@ public interface DocumentCrudMixin<T> {
      * @return all records of type
      */
     Iterator<ODocument> getAll();
+
+    /**
+     * Create new empty document.
+     * Starting from orient 2.0 document creation requires database object bound to current thread.
+     *
+     * @return empty document
+     */
+    ODocument create();
 }
