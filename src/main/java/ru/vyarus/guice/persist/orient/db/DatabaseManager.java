@@ -2,6 +2,7 @@ package ru.vyarus.guice.persist.orient.db;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.inject.persist.PersistService;
 import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx;
@@ -14,11 +15,13 @@ import ru.vyarus.guice.persist.orient.db.scheme.SchemeInitializer;
 import ru.vyarus.guice.persist.orient.db.transaction.TxConfig;
 import ru.vyarus.guice.persist.orient.db.transaction.template.TxAction;
 import ru.vyarus.guice.persist.orient.db.transaction.template.TxTemplate;
-import ru.vyarus.guice.persist.orient.db.user.UserManager;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -37,8 +40,7 @@ public class DatabaseManager implements PersistService {
     private final String uri;
     private final boolean autoCreate;
 
-    private final UserManager userManager;
-    private final Set<PoolManager> pools;
+    private final List<PoolManager> pools;
     private final SchemeInitializer modelInitializer;
     private final DataInitializer dataInitializer;
     private final TxTemplate txTemplate;
@@ -51,7 +53,6 @@ public class DatabaseManager implements PersistService {
     public DatabaseManager(
             @Named("orient.uri") final String uri,
             @Named("orient.db.autocreate") final boolean autoCreate,
-            final UserManager userManager,
             final Set<PoolManager> pools,
             final SchemeInitializer modelInitializer,
             final DataInitializer dataInitializer,
@@ -59,11 +60,17 @@ public class DatabaseManager implements PersistService {
 
         this.uri = Preconditions.checkNotNull(uri, "Database name required");
         this.autoCreate = autoCreate;
-        this.userManager = userManager;
-        this.pools = pools;
+        this.pools = Lists.newArrayList(pools);
         this.modelInitializer = modelInitializer;
         this.dataInitializer = dataInitializer;
         this.txTemplate = txTemplate;
+        // sort pools to correct startup order
+        Collections.sort(this.pools, new Comparator<PoolManager>() {
+            @Override
+            public int compare(final PoolManager o1, final PoolManager o2) {
+                return o1.getType().compareTo(o2.getType());
+            }
+        });
     }
 
     @Override
@@ -131,13 +138,7 @@ public class DatabaseManager implements PersistService {
             if (autoCreate && isLocalDatabase() && !database.exists()) {
                 logger.info("Creating database: '{}'", uri);
                 database.create();
-            } else {
-                // trying to open to fail fast in case it doesn't exist and auto creation disabled
-                // (or remote connection was used)
-                logger.debug("Opening database: '{}'", uri);
-                database.open(userManager.getUser(), userManager.getPassword());
             }
-            initGraphDb(database);
         } finally {
             database.close();
         }
@@ -148,24 +149,6 @@ public class DatabaseManager implements PersistService {
      */
     private boolean isLocalDatabase() {
         return !this.uri.startsWith("remote:");
-    }
-
-    /**
-     * Graph connection object performs schema check and can perform modifications.
-     * To safely use graph connections later, initializing it with notx transaction.
-     *
-     * @param db notx document connection
-     */
-    protected void initGraphDb(final ODatabaseDocumentTx db) {
-        try {
-            logger.trace("Initializing graph db");
-            Class.forName("com.tinkerpop.blueprints.impls.orient.OrientGraph")
-                    .getConstructor(ODatabaseDocumentTx.class).newInstance(db);
-        } catch (ClassNotFoundException ignored) {
-            logger.trace("No graph db support found", ignored);
-        } catch (Exception ex) {
-            throw new IllegalStateException("Failed to init graph connection", ex);
-        }
     }
 
     protected void startPools() {

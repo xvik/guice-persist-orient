@@ -7,6 +7,7 @@ import ru.vyarus.guice.persist.orient.db.transaction.TransactionManager
 import ru.vyarus.guice.persist.orient.db.transaction.TxConfig
 import ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxAction
 import ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxTemplate
+import ru.vyarus.guice.persist.orient.db.transaction.template.TemplateTransactionException
 import ru.vyarus.guice.persist.orient.support.modules.MockPoolsModule
 import ru.vyarus.guice.persist.orient.support.pool.MockDocumentPool
 import ru.vyarus.guice.persist.orient.support.pool.MockObjectPool
@@ -168,7 +169,8 @@ class PoolsTransactionTest extends Specification {
             throw new FileNotFoundException()
         } as SpecificTxAction)
         then: "pools committed, recovered from exception, exception propagated"
-        thrown(FileNotFoundException)
+        TemplateTransactionException ex = thrown()
+        ex.getCause() instanceof FileNotFoundException
         documentPool.committed
         objectPool.committed
     }
@@ -180,7 +182,8 @@ class PoolsTransactionTest extends Specification {
             throw new IOException()
         } as SpecificTxAction)
         then: "pools committed, recovered from exception, exception propagated"
-        thrown(IOException)
+        TemplateTransactionException ex = thrown()
+        ex.getCause() instanceof IOException
         documentPool.committed
         objectPool.committed
     }
@@ -192,7 +195,8 @@ class PoolsTransactionTest extends Specification {
             throw new FileNotFoundException()
         } as SpecificTxAction)
         then: "pools rolled back, exception propagated"
-        thrown(FileNotFoundException)
+        TemplateTransactionException ex = thrown()
+        ex.getCause() instanceof FileNotFoundException
         documentPool.rolledBack
         objectPool.rolledBack
     }

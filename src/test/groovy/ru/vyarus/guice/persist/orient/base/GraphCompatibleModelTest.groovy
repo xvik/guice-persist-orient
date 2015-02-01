@@ -57,7 +57,7 @@ class GraphCompatibleModelTest extends AbstractTest {
             db.save(new VertexModel(name: 'tst', nick: 'tst'));
         } as SpecificTxAction)
         VertexModel model = template.doInTransaction({ db ->
-            db.browseClass(VertexModel.class).first();
+            db.detach(db.browseClass(VertexModel.class).first(), true);
         } as SpecificTxAction<VertexModel, OObjectDatabaseTx>)
         then: "created and visible"
         model != null

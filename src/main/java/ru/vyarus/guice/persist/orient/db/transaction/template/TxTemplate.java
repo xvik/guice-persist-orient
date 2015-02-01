@@ -1,5 +1,6 @@
 package ru.vyarus.guice.persist.orient.db.transaction.template;
 
+import com.google.common.base.Throwables;
 import ru.vyarus.guice.persist.orient.db.transaction.TransactionManager;
 import ru.vyarus.guice.persist.orient.db.transaction.TxConfig;
 
@@ -22,29 +23,35 @@ public class TxTemplate {
     }
 
     /**
+     * Error is propagated if runtime or rethrown as runtime exception.
+     *
      * @param action action to execute within transaction (new or ongoing)
      * @param <T>    return value type
      * @return value produced by action
-     * @throws Throwable re-throws error thrown by action or after commit or rollback error
      */
-    public <T> T doInTransaction(final TxAction<T> action) throws Throwable {
+    public <T> T doInTransaction(final TxAction<T> action) {
         return doInTransaction(null, action);
     }
 
     /**
+     * Error is propagated if runtime or rethrown as runtime exception.
+     *
      * @param config transaction config (ignored in case of ongoing transaction)
      * @param action action to execute within transaction (new or ongoing)
      * @param <T>    return value type
      * @return value produced by action
-     * @throws Throwable re-throws error thrown by action or after commit or rollback error
      */
     public <T> T doInTransaction(final TxConfig config,
-                                 final TxAction<T> action) throws Throwable {
+                                 final TxAction<T> action) {
 
-        T res;
+        T res = null;
         if (transactionManager.isTransactionActive()) {
             // execution inside of other transaction
-            res = action.execute();
+            try {
+                res = action.execute();
+            } catch (Throwable th) {
+                throwRuntime(th);
+            }
         } else {
             try {
                 transactionManager.begin(config);
@@ -56,10 +63,24 @@ public class TxTemplate {
                 // tm already performed rollback action
                 if (transactionManager.isTransactionActive()) {
                     // calling once for nested transactions (or in case it was done manually
-                    transactionManager.rollback(th);
+                    transactionManager.rollback(resolveErrorToAnalyze(th));
                 }
-                throw th;
+                throwRuntime(th);
             }
+        }
+        return res;
+    }
+
+    private void throwRuntime(final Throwable th) {
+        Throwables.propagateIfPossible(th);
+        throw new TemplateTransactionException("Transaction template execution failed", th);
+    }
+
+    private Throwable resolveErrorToAnalyze(final Throwable th) {
+        Throwable res = th;
+        if (th instanceof TemplateTransactionException) {
+            // custom error (possibly thrown by nested templates) shouldn't participate in analysis
+            res = th.getCause();
         }
         return res;
     }

@@ -2,6 +2,7 @@ package ru.vyarus.guice.persist.orient.finder
 
 import com.google.common.collect.Lists
 import com.google.inject.Inject
+import com.orientechnologies.orient.core.exception.ODatabaseException
 import com.orientechnologies.orient.core.id.ORecordId
 import com.orientechnologies.orient.core.record.impl.ODocument
 import ru.vyarus.guice.persist.orient.AbstractTest
@@ -27,6 +28,10 @@ class FinderCrudMixinsTest extends AbstractTest {
     ObjectDao objectDao
 
     def "Check object crud mixin"() {
+
+        // need transaction for entire test to work with objects inside transaction
+        setup:
+        transactionManager.begin()
 
         when: "storing object"
         Model model = new Model(name: 'name', nick: 'tst')
@@ -94,6 +99,79 @@ class FinderCrudMixinsTest extends AbstractTest {
         model = objectDao.get(model.id)
         then: "object removed"
         model == null
+
+        cleanup:
+        transactionManager.end()
+    }
+
+    def "Check object advanced detaching"() {
+
+        setup:
+        transactionManager.begin()
+        10.times({
+            objectDao.save(new Model(name: 'name' + it, nick: 'tst' + it))
+        })
+
+        when: "detaching array"
+        Model model = objectDao.findByName('name0')
+        Model model2 = objectDao.findByName('name1')
+        List<Model> res = objectDao.detachAll(model, model2)
+        then: "detached"
+        res[0] instanceof Model
+        res[0].name == 'name0'
+        res[1] instanceof Model
+        res[1].name == 'name1'
+
+        when: "detaching iterator"
+        res = objectDao.detachAll(objectDao.getAll() as Iterator)
+        then: "detached"
+        res[0] instanceof Model
+        res[0].name == 'name0'
+        res[1] instanceof Model
+        res[1].name == 'name1'
+
+        when: "detaching iteratable"
+        res = objectDao.detachAll(objectDao.getAll(0, 2))
+        then: "detached"
+        res[0] instanceof Model
+        res[0].name == 'name0'
+        res[1] instanceof Model
+        res[1].name == 'name1'
+
+        cleanup:
+        transactionManager.end()
+    }
+
+    def "Check object attach/detach behaviour"() {
+
+        when: "trying to detach proxy out of transaction"
+        Model res = objectDao.save(new Model(name:'detach', nick:'detach'));
+        res = objectDao.detach(res)
+        then: "object detached outside of transaction"
+        res.class == Model
+        res.name == 'detach'
+        res.nick == 'detach'
+
+        when: "modifying and saving object"
+        res.setName('detach2')
+        res = objectDao.save(res)
+        res = objectDao.detach(res)
+        then: "object was correctly saved"
+        res.class == Model
+        res.name == 'detach2'
+        res.nick == 'detach'
+
+        when: "trying to attach object and change it"
+        res = objectDao.attach(res)
+        res.setName('detach3')
+        then: "proxy can't be used outside of transaction"
+        thrown(ODatabaseException)
+
+        when: "trying to use iterator"
+        Iterator<Model> iterator = objectDao.getAll()
+        iterator.next()
+        then: "db iterator is used outside of transaction"
+        thrown(ODatabaseException)
     }
 
     def "Check document crud mixin"() {
@@ -216,6 +294,8 @@ class FinderCrudMixinsTest extends AbstractTest {
 
     def "Test pagination mixin"() {
 
+        setup:
+        transactionManager.begin()
         template.doInTransaction({ db ->
             10.times {
                 db.save(new Model(name: "name$it", nick: "nick$it"))
@@ -273,5 +353,8 @@ class FinderCrudMixinsTest extends AbstractTest {
         page2.totalPages == 4
         page2.content.size() == 3
         page2.content[0].field('name') == 'name0'
+
+        cleanup:
+        transactionManager.end()
     }
 }

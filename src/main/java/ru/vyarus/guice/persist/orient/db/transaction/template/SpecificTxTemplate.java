@@ -29,24 +29,26 @@ public class SpecificTxTemplate<C> {
     }
 
     /**
+     * Error is propagated if runtime or rethrown as runtime exception.
+     *
      * @param action action to execute within transaction (new or ongoing)
      * @param <T>    return value type
      * @return value produced by action
-     * @throws Throwable re-throws error thrown by action or after commit or rollback error
      */
-    public <T> T doInTransaction(final SpecificTxAction<T, C> action) throws Throwable {
+    public <T> T doInTransaction(final SpecificTxAction<T, C> action) {
         return doInTransaction(null, action);
     }
 
     /**
+     * Error is propagated if runtime or rethrown as runtime exception.
+     *
      * @param config transaction config (ignored in case of ongoing transaction)
      * @param action action to execute within transaction (new or ongoing)
      * @param <T>    return value type
      * @return value produced by action
-     * @throws Throwable re-throws error thrown by action or after commit or rollback error
      */
     public <T> T doInTransaction(final TxConfig config,
-                                 final SpecificTxAction<T, C> action) throws Throwable {
+                                 final SpecificTxAction<T, C> action) {
         return template.doInTransaction(config, new TxAction<T>() {
             @Override
             public T execute() throws Throwable {

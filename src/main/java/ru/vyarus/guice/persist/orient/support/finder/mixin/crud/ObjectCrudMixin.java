@@ -4,6 +4,7 @@ import com.orientechnologies.orient.core.id.ORID;
 import ru.vyarus.guice.persist.orient.finder.delegate.FinderDelegate;
 
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * Crud mixin for object finders.
@@ -54,14 +55,41 @@ public interface ObjectCrudMixin<T> {
 
     /**
      * @param entity entity to attach
+     * @return return same entity if its already proxy or proxied instance
      */
-    void attach(T entity);
+    T attach(T entity);
 
     /**
+     * Calls attach first to simplify usage out of transaction.
+     *
      * @param entity entity object (proxy)
-     * @return detached row entity (unproxied)
+     * @return detached row entity (unproxied deeply)
      */
     T detach(T entity);
+
+    /**
+     * Calls attach first to simplify usage out of transaction.
+     *
+     * @param entities entities objects
+     * @return detached entities list (unproxied deeply)
+     */
+    List<T> detachAll(T... entities);
+
+    /**
+     * Calls attach first to simplify usage out of transaction.
+     *
+     * @param entities entities objects
+     * @return detached entities list (unproxied deeply)
+     */
+    List<T> detachAll(Iterable<T> entities);
+
+    /**
+     * Calls attach first to simplify usage out of transaction.
+     *
+     * @param entities entities objects
+     * @return detached entities list (unproxied deeply)
+     */
+    List<T> detachAll(Iterator<T> entities);
 
     /**
      * Create new empty proxy. Used if it's important to track instance:

@@ -36,7 +36,7 @@ class CompositeTransaction extends AbstractTest {
             insert.insertRecord()
             service.selectWithGraph()
         } as SpecificTxAction<List, OObjectDatabaseTx>)
-        then: "Graph connection did't select just inserted element"
-        res.size() == 10
+        then: "Graph connection select just inserted element"
+        res.size() == 11
     }
 }

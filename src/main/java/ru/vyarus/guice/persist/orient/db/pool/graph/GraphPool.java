@@ -1,53 +1,62 @@
 package ru.vyarus.guice.persist.orient.db.pool.graph;
 
-import com.orientechnologies.orient.core.db.ODatabaseInternal;
-import com.orientechnologies.orient.core.db.ODatabasePoolBase;
-import com.orientechnologies.orient.core.db.document.ODatabaseDocumentPool;
 import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx;
 import com.orientechnologies.orient.core.tx.OTransaction;
 import com.tinkerpop.blueprints.impls.orient.OrientBaseGraph;
 import com.tinkerpop.blueprints.impls.orient.OrientGraph;
 import com.tinkerpop.blueprints.impls.orient.OrientGraphNoTx;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.vyarus.guice.persist.orient.db.DbType;
-import ru.vyarus.guice.persist.orient.db.pool.AbstractPool;
+import ru.vyarus.guice.persist.orient.db.PoolManager;
+import ru.vyarus.guice.persist.orient.db.pool.DocumentPool;
 import ru.vyarus.guice.persist.orient.db.transaction.TransactionManager;
 import ru.vyarus.guice.persist.orient.db.user.UserManager;
 
 import javax.inject.Inject;
 
 /**
- * Graph pool. Provides base graph connection (see additional providers for specific graph connections).
- * This pool works a bit differently from other pools: actually it maintains document connections pool and
- * creates graph connection instances when requested. If you look orient graph pool it works the same way.
- * <p>Also, one more thread local is used to mold created graph connection instances during transaction
- * (it's just to avoid redundant objects creation on every connection request; underlining transaction
- * is handled by document connection, controlled by abstract pool)</p>
+ * Graph pool implementation. Provides base graph connection (see additional providers for specific graph connections).
+ * Use document pool connection to merge graph transaction with document transaction.
  *
  * @author Vyacheslav Rusakov
  * @since 24.07.2014
  */
-public class GraphPool extends AbstractPool<OrientBaseGraph> {
+public class GraphPool implements PoolManager<OrientBaseGraph> {
+    private final Logger logger = LoggerFactory.getLogger(GraphPool.class);
 
     // underlying base pool maintains document connections;
     // this pool manage just wrapped instances to reduce number of created objects
     private final ThreadLocal<OrientBaseGraph> transaction = new ThreadLocal<OrientBaseGraph>();
     private final TransactionManager transactionManager;
+    private final DocumentPool documentPool;
+    private final UserManager userManager;
 
     @Inject
-    public GraphPool(final TransactionManager transactionManager, final UserManager userManager) {
-        super(transactionManager, userManager);
+    public GraphPool(final TransactionManager transactionManager, final DocumentPool documentPool,
+                     final UserManager userManager) {
         this.transactionManager = transactionManager;
+        this.documentPool = documentPool;
+        this.userManager = userManager;
     }
 
     @Override
-    protected ODatabasePoolBase createPool() {
-        return new ODatabaseDocumentPool();
+    public void start(final String uri) {
+        // test connection and let orient configure database
+        new OrientGraph(new ODatabaseDocumentTx(uri)
+                .<ODatabaseDocumentTx>open(userManager.getUser(), userManager.getPassword()));
+        logger.debug("Pool {} started for '{}'", getType(), uri);
     }
 
     @Override
-    protected OrientBaseGraph convertDbInstance(final ODatabaseInternal<?> db) {
+    public void stop() {
+        // no stop logic
+    }
+
+    @Override
+    public OrientBaseGraph get() {
         if (transaction.get() == null) {
-            final ODatabaseDocumentTx documentDb = (ODatabaseDocumentTx) db;
+            final ODatabaseDocumentTx documentDb = documentPool.get();
             final OrientBaseGraph graph = transactionManager.getActiveTransactionType() == OTransaction.TXTYPE.NOTX
                     ? new OrientGraphNoTx(documentDb) : new OrientGraph(documentDb);
             transaction.set(graph);
@@ -57,13 +66,11 @@ public class GraphPool extends AbstractPool<OrientBaseGraph> {
 
     @Override
     public void commit() {
-        super.commit();
         transaction.remove();
     }
 
     @Override
     public void rollback() {
-        super.rollback();
         transaction.remove();
     }
 

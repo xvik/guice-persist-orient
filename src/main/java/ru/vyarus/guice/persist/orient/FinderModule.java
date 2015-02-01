@@ -124,7 +124,6 @@ public class FinderModule extends AbstractModule {
 
         final FinderMethodInterceptor proxy = new FinderMethodInterceptor();
         requestInjection(proxy);
-        bind(FinderMethodInterceptor.class).toInstance(proxy);
         bindInterceptor(Matchers.any(), Matchers.annotatedWith(Finder.class), proxy);
         bindInterceptor(Matchers.any(), Matchers.annotatedWith(FinderDelegate.class), proxy);
         // support delegating mixin interfaces

@@ -3,6 +3,7 @@ package ru.vyarus.guice.persist.orient.support.finder
 import com.google.inject.ProvidedBy
 import com.google.inject.internal.DynamicClassProvider
 import com.google.inject.persist.Transactional
+import com.google.inject.persist.finder.Finder
 import ru.vyarus.guice.persist.orient.support.finder.mixin.crud.ObjectCrudMixin
 import ru.vyarus.guice.persist.orient.support.finder.mixin.pagination.PaginationMixin
 import ru.vyarus.guice.persist.orient.support.model.Model
@@ -16,4 +17,7 @@ import ru.vyarus.guice.persist.orient.support.model.Model
 interface ObjectDao extends ObjectCrudMixin<Model>,
         CustomMixin<Model, String>,
         PaginationMixin<Model, Model> {
+
+    @Finder(query = "select from Model where name=?")
+    Model findByName(String name);
 }

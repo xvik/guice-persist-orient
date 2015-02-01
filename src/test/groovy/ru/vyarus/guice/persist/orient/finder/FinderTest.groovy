@@ -3,9 +3,11 @@ package ru.vyarus.guice.persist.orient.finder
 import com.google.inject.Inject
 import com.orientechnologies.orient.core.record.impl.ODocument
 import com.orientechnologies.orient.core.sql.OCommandSQL
+import com.orientechnologies.orient.object.db.OObjectDatabaseTx
 import com.tinkerpop.blueprints.Vertex
 import ru.vyarus.guice.persist.orient.AbstractTest
 import ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxAction
+import ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxTemplate
 import ru.vyarus.guice.persist.orient.finder.internal.FinderExecutionException
 import ru.vyarus.guice.persist.orient.support.finder.InterfaceFinder
 import ru.vyarus.guice.persist.orient.support.model.Model
@@ -21,6 +23,8 @@ class FinderTest extends AbstractTest {
 
     @Inject
     InterfaceFinder finder
+    @Inject
+    SpecificTxTemplate<OObjectDatabaseTx> objectTemplate
 
     def "Test interface finder support equals and hashcode"() {
 
@@ -169,6 +173,8 @@ class FinderTest extends AbstractTest {
 
     def "Check pagination"() {
 
+        setup:
+        transactionManager.begin()
         template.doInTransaction({ db ->
             db.save(new Model(name: 'John', nick: 'Doe', cnt: 1))
             db.save(new Model(name: 'John', nick: 'Doe', cnt: 2))
@@ -203,6 +209,9 @@ class FinderTest extends AbstractTest {
         res = finder.parametersPagedObject('John', 'Doe', null, null);
         then:
         res.size() == 3
+
+        cleanup:
+        transactionManager.end()
     }
 
     def "Check update"() {
@@ -213,7 +222,10 @@ class FinderTest extends AbstractTest {
 
         when: "object updated and selected"
         finder.update();
-        Model model = finder.selectUnique()
+        Model model = objectTemplate.doInTransaction( { db ->
+                Model res = finder.selectUnique()
+                return db.detachAll(res, true)
+        } as SpecificTxAction<Model, OObjectDatabaseTx>)
         then:
         model != null
         model.name == 'changed'
@@ -227,7 +239,10 @@ class FinderTest extends AbstractTest {
 
         when: "object updated and selected"
         int cnt = finder.updateWithCount();
-        Model model = finder.selectUnique()
+        Model model = objectTemplate.doInTransaction( { db ->
+            Model res = finder.selectUnique()
+            return db.detachAll(res, true)
+        } as SpecificTxAction<Model, OObjectDatabaseTx>)
         then:
         cnt == 1
         model != null
@@ -242,7 +257,10 @@ class FinderTest extends AbstractTest {
 
         when: "object updated and selected"
         Integer cnt = finder.updateWithCountObject();
-        Model model = finder.selectUnique()
+        Model model = objectTemplate.doInTransaction( { db ->
+            Model res = finder.selectUnique()
+            return db.detachAll(res, true)
+        } as SpecificTxAction<Model, OObjectDatabaseTx>)
         then:
         cnt == 1
         model != null
@@ -255,13 +273,13 @@ class FinderTest extends AbstractTest {
         } as SpecificTxAction)
 
         when: "object updated and selected"
-        Model model
-        template.doInTransaction({db ->
+        Model model = objectTemplate.doInTransaction( { db ->
             // execute both in single transaction to make sure object connection used
             // (if document used for update, select would not see changes)
             finder.updateUsingObjectConnection();
-            model = finder.selectUnique()
-        } as SpecificTxAction)
+            Model res = finder.selectUnique()
+            return db.detachAll(res, true)
+        } as SpecificTxAction<Model, OObjectDatabaseTx>)
         then:
         model != null
         model.name == 'changed'

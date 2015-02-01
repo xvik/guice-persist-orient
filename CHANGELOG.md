@@ -1,3 +1,17 @@
+* Orient 2 compatibility
+* DocumentPool use OPartitionedDatabasePool instead of deprecated ODatabaseDocumentPool
+* (breaking) Default pools implementation now rely on document pool only (no more separate transactions for each type).
+This allows using all connection types in one transaction and all changes will be visible to each type.
+* (breaking) Connection initialization moved from DatabaseManager to pool implementation (graph and object
+ connections update scheme on first connection). Now each pool did db connection on startup to check connection and
+ let orient properly update scheme on start.
+* (breaking) TxTemplate and SpecificTxTemplate now propagate only runtime exceptions and wrap checked exceptions
+ into runtime. This simplifies general usage (also, most orient exceptions are runtime)
+* ObjectCrudMixin: added multiple detachAll methods (in orient 2 object proxies doesn't work outside of transaction,
+so detaching is more important)
+* DocumentCrudMixin: added create method to create document inside of transaction (in orient 2 it's now impossible to
+create document outside of transaction, but document changes doesn't require ongoing transaction)
+
 ### 2.1.0 (2015-01-06)
 * Finders now managed by guice and any additional aop could be applied. Abstract beans could define finder methods.
 (integration implemented in [external library](https://github.com/xvik/guice-ext-annotations))
