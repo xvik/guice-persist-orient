@@ -3,7 +3,6 @@ package ru.vyarus.guice.persist.orient.support.modules
 import com.google.inject.AbstractModule
 import ru.vyarus.guice.persist.orient.FinderModule
 import ru.vyarus.guice.persist.orient.db.DbType
-import ru.vyarus.guice.persist.orient.support.finder.InterfaceFinder
 
 /**
  * Defines object as default connection for ambiguous cases (instead of document).
@@ -17,7 +16,6 @@ class FinderDefaultObjectModule extends AbstractModule {
     protected void configure() {
         install(new PackageSchemeModule())
         install(new FinderModule()
-                .defaultConnectionType(DbType.OBJECT)
-                .addFinder(InterfaceFinder))
+                .defaultConnectionType(DbType.OBJECT))
     }
 }

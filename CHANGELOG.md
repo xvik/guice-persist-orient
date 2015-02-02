@@ -11,6 +11,7 @@ This allows using all connection types in one transaction and all changes will b
 so detaching is more important)
 * DocumentCrudMixin: added create method to create document inside of transaction (in orient 2 it's now impossible to
 create document outside of transaction, but document changes doesn't require ongoing transaction)
+* Remove deprecated finders auto scanning
 
 ### 2.1.0 (2015-01-06)
 * Finders now managed by guice and any additional aop could be applied. Abstract beans could define finder methods.

@@ -2,7 +2,6 @@ package ru.vyarus.guice.persist.orient.support.modules
 
 import com.google.inject.AbstractModule
 import ru.vyarus.guice.persist.orient.FinderModule
-import ru.vyarus.guice.persist.orient.support.AutoScanFinderModule
 
 /**
  * @author Vyacheslav Rusakov 

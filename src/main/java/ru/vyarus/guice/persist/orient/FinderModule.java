@@ -1,7 +1,6 @@
 package ru.vyarus.guice.persist.orient;
 
 import com.google.common.base.Objects;
-import com.google.common.collect.Sets;
 import com.google.inject.AbstractModule;
 import com.google.inject.matcher.AbstractMatcher;
 import com.google.inject.matcher.Matchers;
@@ -10,7 +9,6 @@ import com.google.inject.name.Names;
 import com.google.inject.persist.finder.Finder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.vyarus.guice.ext.core.generator.DynamicClassGenerator;
 import ru.vyarus.guice.persist.orient.db.DbType;
 import ru.vyarus.guice.persist.orient.finder.FinderExecutor;
 import ru.vyarus.guice.persist.orient.finder.command.CommandBuilder;
@@ -18,12 +16,9 @@ import ru.vyarus.guice.persist.orient.finder.delegate.FinderDelegate;
 import ru.vyarus.guice.persist.orient.finder.executor.DocumentFinderExecutor;
 import ru.vyarus.guice.persist.orient.finder.internal.FinderMethodInterceptor;
 import ru.vyarus.guice.persist.orient.finder.result.ResultConverter;
-import ru.vyarus.guice.persist.orient.finder.util.FinderUtils;
 
 import javax.inject.Singleton;
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.Set;
 
 /**
  * Module provides support for dynamic finders. Must be used together with main orient module.
@@ -64,28 +59,8 @@ import java.util.Set;
 public class FinderModule extends AbstractModule {
     private final Logger logger = LoggerFactory.getLogger(FinderModule.class);
 
-    private final Set<Class<?>> dynamicFinders = Sets.newHashSet();
     private DbType defaultConnectionToUse = DbType.DOCUMENT;
-
     private Multibinder<FinderExecutor> executorsMultibinder;
-
-    public FinderModule() {
-        // empty constructor required to mark old one as deprecated
-    }
-
-    /**
-     * Allows to register all interfaces using constructor, instead of calling addFinder for each interface.
-     *
-     * @param finderInterface array of finder interfaces
-     * @deprecated finders now completely
-     * <a href="https://github.com/xvik/guice-ext-annotations#usage">controlled by guice</a>
-     */
-    @Deprecated
-    public FinderModule(final Class<?>... finderInterface) {
-        if (finderInterface.length > 0) {
-            dynamicFinders.addAll(Arrays.asList(finderInterface));
-        }
-    }
 
     /**
      * By default document connection is used.
@@ -95,21 +70,6 @@ public class FinderModule extends AbstractModule {
      */
     public FinderModule defaultConnectionType(final DbType connection) {
         this.defaultConnectionToUse = Objects.firstNonNull(connection, defaultConnectionToUse);
-        return this;
-    }
-
-    /**
-     * Adds an interface to this module to use as a dynamic finder.
-     *
-     * @param iface Any interface type whose methods are all dynamic finders.
-     * @param <T>   finder type to check resulted proxy
-     * @return module instance
-     * @deprecated finders now completely
-     * <a href="https://github.com/xvik/guice-ext-annotations#usage">controlled by guice</a>
-     */
-    @Deprecated
-    public <T> FinderModule addFinder(final Class<T> iface) {
-        dynamicFinders.add(iface);
         return this;
     }
 
@@ -138,7 +98,6 @@ public class FinderModule extends AbstractModule {
         executorsMultibinder = Multibinder.newSetBinder(binder(), FinderExecutor.class);
 
         configureExecutors();
-        configureFinders();
     }
 
     /**
@@ -150,16 +109,6 @@ public class FinderModule extends AbstractModule {
 
         loadOptionalExecutor("ru.vyarus.guice.persist.orient.support.finder.ObjectFinderExecutorBinder");
         loadOptionalExecutor("ru.vyarus.guice.persist.orient.support.finder.GraphFinderExecutorBinder");
-    }
-
-    /**
-     * Installs manually registered finders,
-     * Override to register finders from different sources.
-     */
-    protected void configureFinders() {
-        for (Class<?> finder : dynamicFinders) {
-            bindFinder(finder);
-        }
     }
 
     /**
@@ -196,36 +145,4 @@ public class FinderModule extends AbstractModule {
             }
         }
     }
-
-    /**
-     * @param iface finder interface
-     * @param <T>   finder type to check resulted proxy
-     * @deprecated finders now completely
-     * <a href="https://github.com/xvik/guice-ext-annotations#usage">controlled by guice</a>
-     */
-    @Deprecated
-    protected <T> void bindFinder(final Class<T> iface) {
-        if (!isDynamicFinderValid(iface)) {
-            return;
-        }
-        bind(iface).to(DynamicClassGenerator.generate(iface)).in(Singleton.class);
-    }
-
-    private boolean isDynamicFinderValid(final Class<?> iface) {
-        boolean valid = true;
-        if (!iface.isInterface()) {
-            addError(iface + " is not an interface. Dynamic Finders must be interfaces.");
-            valid = false;
-        }
-
-        for (Method method : iface.getDeclaredMethods()) {
-            if (!FinderUtils.isDirectFinderMethod(method)) {
-                addError("Dynamic Finder methods must be annotated with @Finder or @FinderDelegate, "
-                        + "but " + iface + "." + method.getName() + " was not");
-                valid = false;
-            }
-        }
-        return valid;
-    }
-
 }

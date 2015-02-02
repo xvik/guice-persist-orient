@@ -3,7 +3,6 @@ package ru.vyarus.guice.persist.orient.finder
 import com.orientechnologies.orient.core.record.impl.ODocument
 import com.tinkerpop.blueprints.Vertex
 import com.tinkerpop.blueprints.impls.orient.OrientGraph
-import com.tinkerpop.blueprints.impls.orient.OrientVertex
 import ru.vyarus.guice.persist.orient.AbstractTest
 import ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxAction
 import ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxTemplate
@@ -11,7 +10,6 @@ import ru.vyarus.guice.persist.orient.support.finder.FinderResultProjections
 import ru.vyarus.guice.persist.orient.support.model.Model
 import ru.vyarus.guice.persist.orient.support.model.SingleValueVertex
 import ru.vyarus.guice.persist.orient.support.model.VertexModel
-import ru.vyarus.guice.persist.orient.support.modules.AutoScanFinderTestModule
 import ru.vyarus.guice.persist.orient.support.modules.FinderTestModule
 import spock.guice.UseModules
 

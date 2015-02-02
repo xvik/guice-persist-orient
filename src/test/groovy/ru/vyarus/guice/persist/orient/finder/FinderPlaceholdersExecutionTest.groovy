@@ -8,7 +8,6 @@ import ru.vyarus.guice.persist.orient.finder.internal.FinderExecutionException
 import ru.vyarus.guice.persist.orient.support.finder.FinderWithPlaceholders
 import ru.vyarus.guice.persist.orient.support.finder.PlaceholdersEnum
 import ru.vyarus.guice.persist.orient.support.model.Model
-import ru.vyarus.guice.persist.orient.support.modules.AutoScanFinderTestModule
 import ru.vyarus.guice.persist.orient.support.modules.FinderTestModule
 import spock.guice.UseModules
 

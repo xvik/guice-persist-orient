@@ -7,7 +7,6 @@ import ru.vyarus.guice.persist.orient.finder.executor.ObjectFinderExecutor
 import ru.vyarus.guice.persist.orient.finder.result.ResultType
 import ru.vyarus.guice.persist.orient.support.finder.ExtraCasesFinder
 import ru.vyarus.guice.persist.orient.support.model.Model
-import ru.vyarus.guice.persist.orient.support.modules.AutoScanFinderTestModule
 import ru.vyarus.guice.persist.orient.support.modules.FinderTestModule
 import spock.guice.UseModules
 
