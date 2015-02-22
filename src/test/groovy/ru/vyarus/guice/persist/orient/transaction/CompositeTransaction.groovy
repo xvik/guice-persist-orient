@@ -3,9 +3,8 @@ package ru.vyarus.guice.persist.orient.transaction
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx
 import ru.vyarus.guice.persist.orient.AbstractTest
 import ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxAction
-import ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxTemplate
 import ru.vyarus.guice.persist.orient.support.modules.BootstrappedModule
-import ru.vyarus.guice.persist.orient.support.service.ComplexModificationService
+import ru.vyarus.guice.persist.orient.transaction.support.ComplexModificationService
 import ru.vyarus.guice.persist.orient.support.service.InsertTransactionalService
 import spock.guice.UseModules
 
@@ -32,7 +31,7 @@ class CompositeTransaction extends AbstractTest {
 
     def "Check transaction isolation in pool"() {
         when: "Inserting element in object transaction and select everything using graph"
-        List res = template.doInTransaction({ db ->
+        List res = context.doInTransaction({ db ->
             insert.insertRecord()
             service.selectWithGraph()
         } as SpecificTxAction<List, OObjectDatabaseTx>)

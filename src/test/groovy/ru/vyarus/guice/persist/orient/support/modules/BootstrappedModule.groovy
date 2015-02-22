@@ -15,7 +15,7 @@ class BootstrappedModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        install(new PackageSchemeOrientModule(Config.DB, Config.USER, Config.PASS, Config.MODEL_PKG))
+        install(new PackageSchemeModule())
         bind(DataInitializer).to(TestDataInitializer)
     }
 }

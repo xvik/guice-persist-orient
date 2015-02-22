@@ -3,7 +3,7 @@ package ru.vyarus.guice.persist.orient.transaction
 import com.google.inject.ProvisionException
 import ru.vyarus.guice.persist.orient.AbstractTest
 import ru.vyarus.guice.persist.orient.support.modules.PackageSchemeModule
-import ru.vyarus.guice.persist.orient.support.service.AllConnectionsService
+import ru.vyarus.guice.persist.orient.transaction.support.AllConnectionsService
 import spock.guice.UseModules
 
 import javax.inject.Inject

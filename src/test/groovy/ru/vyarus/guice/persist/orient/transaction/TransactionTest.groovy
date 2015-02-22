@@ -1,6 +1,5 @@
 package ru.vyarus.guice.persist.orient.transaction
 
-import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx
 import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery
 import com.orientechnologies.orient.core.tx.OTransaction
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx
@@ -32,7 +31,7 @@ class TransactionTest extends AbstractTest {
         insertService.insertRecord()
         then: "select record in another transaction and check transaction closed"
         selectService.select() != null
-        !transactionManager.isTransactionActive()
+        !context.transactionManager.isTransactionActive()
     }
 
     def "Check subtransaction"() {
@@ -40,7 +39,7 @@ class TransactionTest extends AbstractTest {
         final Model model = insertService.subtransaction()
         then: "object correctly selected and no errors"
         model != null
-        !transactionManager.isTransactionActive()
+        !context.transactionManager.isTransactionActive()
     }
 
     def "Check rollback"() {
@@ -48,7 +47,7 @@ class TransactionTest extends AbstractTest {
         insertService.rollbackCheck()
         then: "Expect exception and no stored object in db"
         thrown(IllegalStateException)
-        !transactionManager.isTransactionActive()
+        !context.transactionManager.isTransactionActive()
         selectService.select() == null
     }
 
@@ -57,19 +56,19 @@ class TransactionTest extends AbstractTest {
         insertService.rollbackSubtransaction()
         then: "Expect exception and no stored object in db"
         thrown(IllegalArgumentException)
-        !transactionManager.isTransactionActive()
+        !context.transactionManager.isTransactionActive()
         selectService.select() == null
     }
 
     def "Check tx inlining"() {
         when: "Executing tx callback inside another one and look that first one didn't close unit"
-        template.doInTransaction({ db ->
+        context.doInTransaction({ db ->
 
-            Model model = template.doInTransaction({ db2 ->
+            Model model = context.doInTransaction({ db2 ->
                 db2.save(new Model(name: "tst", nick: "tst"))
             } as SpecificTxAction<Model, OObjectDatabaseTx>)
             // check we can perform actions (previous template not close connection
-            List<Model> res = template.doInTransaction({ db2 ->
+            List<Model> res = context.doInTransaction({ db2 ->
                 db2.query(new OSQLSynchQuery<Model>("select from Model where name=?"), model.getName())
             } as SpecificTxAction<List<Model>, OObjectDatabaseTx>)
 
@@ -84,14 +83,14 @@ class TransactionTest extends AbstractTest {
 
     def "Check tx definition not changed by inlining"() {
         when: "Executing tx callback inside another one with changed tx type"
-        template.doInTransaction({ db ->
-            assert transactionManager.getActiveTransactionType() == OTransaction.TXTYPE.OPTIMISTIC
+        context.doInTransaction({ db ->
+            assert context.transactionManager.getActiveTransactionType() == OTransaction.TXTYPE.OPTIMISTIC
 
-            template.doInTransaction(new TxConfig(OTransaction.TXTYPE.NOTX), { db2 ->
-                assert transactionManager.getActiveTransactionType() == OTransaction.TXTYPE.OPTIMISTIC
+            context.doInTransaction(new TxConfig(OTransaction.TXTYPE.NOTX), { db2 ->
+                assert context.transactionManager.getActiveTransactionType() == OTransaction.TXTYPE.OPTIMISTIC
             } as SpecificTxAction<Void, OObjectDatabaseTx>)
 
-            assert transactionManager.getActiveTransactionType() == OTransaction.TXTYPE.OPTIMISTIC
+            assert context.transactionManager.getActiveTransactionType() == OTransaction.TXTYPE.OPTIMISTIC
         } as SpecificTxAction<Void, OObjectDatabaseTx>)
         then: "everything ok"
         true
@@ -99,34 +98,34 @@ class TransactionTest extends AbstractTest {
 
     def "Check rollback recover"() {
         when: "Insert record and fail not causing rollback"
-        template.doInTransaction(new TxConfig([], [IllegalStateException]), {db ->
+        context.doInTransaction(new TxConfig([], [IllegalStateException]), {db ->
             insertService.rollbackCheck()
         } as SpecificTxAction<Void, OObjectDatabaseTx>)
         then: "Expect successful commit, object in db and exception"
         thrown(IllegalStateException)
-        !transactionManager.isTransactionActive()
+        !context.transactionManager.isTransactionActive()
         selectService.select() != null
     }
 
     def "Check rollback on exception type"() {
         when: "Insert record and fail causing rollback"
-        template.doInTransaction(new TxConfig([IllegalArgumentException], []), {db ->
+        context.doInTransaction(new TxConfig([IllegalArgumentException], []), {db ->
             insertService.rollbackSubtransaction()
         } as SpecificTxAction<Void, OObjectDatabaseTx>)
         then: "Expect exception and no stored object in db"
         thrown(IllegalArgumentException)
-        !transactionManager.isTransactionActive()
+        !context.transactionManager.isTransactionActive()
         selectService.select() == null
     }
 
     def "Check rollback on specific exception type"() {
         when: "Insert record and fail not causing rollback"
-        template.doInTransaction(new TxConfig([IllegalStateException], []), {db ->
+        context.doInTransaction(new TxConfig([IllegalStateException], []), {db ->
             insertService.rollbackSubtransaction()
         } as SpecificTxAction<Void, OObjectDatabaseTx>)
         then: "Expect exception and no stored object in db"
         thrown(IllegalArgumentException)
-        !transactionManager.isTransactionActive()
+        !context.transactionManager.isTransactionActive()
         selectService.select() != null
     }
 

@@ -4,10 +4,10 @@ import com.google.inject.persist.PersistService
 import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx
 import com.orientechnologies.orient.core.tx.OTransaction
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx
+import ru.vyarus.guice.persist.orient.db.PersistentContext
 import ru.vyarus.guice.persist.orient.db.transaction.TransactionManager
 import ru.vyarus.guice.persist.orient.db.transaction.TxConfig
 import ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxAction
-import ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxTemplate
 import ru.vyarus.guice.persist.orient.support.Config
 import spock.lang.Specification
 
@@ -24,16 +24,14 @@ abstract class AbstractTest extends Specification {
     @Inject
     PersistService persist
     @Inject
-    TransactionManager transactionManager;
-    @Inject
-    SpecificTxTemplate<OObjectDatabaseTx> template
+    PersistentContext<OObjectDatabaseTx> context
 
     void setup() {
         persist.start()
     }
 
     void cleanup() {
-        template.doInTransaction(new TxConfig(OTransaction.TXTYPE.NOTX), { db ->
+        context.doWithoutTransaction({ db ->
             for (Class<?> entity :
                     db.getEntityManager().getRegisteredEntities().findAll {
                         it.package.name.startsWith("ru.vyarus.guice")

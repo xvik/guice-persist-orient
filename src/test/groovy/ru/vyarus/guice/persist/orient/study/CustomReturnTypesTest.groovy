@@ -24,7 +24,7 @@ class CustomReturnTypesTest extends AbstractTest {
     def "Check fields collection select"() {
 
         when: "selecting one field in object connection"
-        def res = template.doInTransaction({ db ->
+        def res = context.doInTransaction({ db ->
             db.query(new OSQLSynchQuery<Object>("select name from Model"))
         } as SpecificTxAction)
         then: "receiving list of documents"
@@ -32,7 +32,7 @@ class CustomReturnTypesTest extends AbstractTest {
         res[0].field('name') == 'name0'
 
         when: "selecting few fields in object connection"
-        res = template.doInTransaction({ db ->
+        res = context.doInTransaction({ db ->
             db.query(new OSQLSynchQuery<Object>("select name, nick from Model"))
         } as SpecificTxAction)
         then: "receiving list of documents"

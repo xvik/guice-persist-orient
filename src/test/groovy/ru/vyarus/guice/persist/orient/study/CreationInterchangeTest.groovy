@@ -30,10 +30,10 @@ class CreationInterchangeTest extends AbstractTest {
 
     def "Check object visible"() {
         when: "creating object"
-        template.doInTransaction({ db ->
+        context.doInTransaction({ db ->
             db.save(new Model(name: 'John', nick: 'Doe'))
         } as SpecificTxAction)
-        List objects = template.doInTransaction({ db ->
+        List objects = context.doInTransaction({ db ->
             db.query(new OSQLSynchQuery<Object>("select from Model"))
         } as SpecificTxAction<List, OObjectDatabaseTx>)
         List documents = documentTemplate.doInTransaction({ db ->
@@ -61,7 +61,7 @@ class CreationInterchangeTest extends AbstractTest {
             doc.field('nick', 'Doe')
             db.save(doc)
         } as SpecificTxAction)
-        List objects = template.doInTransaction({ db ->
+        List objects = context.doInTransaction({ db ->
             db.query(new OSQLSynchQuery<Object>("select from Model"))
         } as SpecificTxAction<List, OObjectDatabaseTx>)
         List documents = documentTemplate.doInTransaction({ db ->
@@ -89,13 +89,13 @@ class CreationInterchangeTest extends AbstractTest {
             db.getRawGraph().getMetadata().getSchema().dropClass(Model.simpleName)
             db.createVertexType(Model.simpleName)
         } as SpecificTxAction)
-        template.doInTransaction(new TxConfig(OTransaction.TXTYPE.NOTX), { db ->
+        context.doWithoutTransaction({ db ->
             db.getEntityManager().registerEntityClass(Model)
         } as SpecificTxAction)
         graphTemplate.doInTransaction({ db ->
             db.addVertex("class:$Model.simpleName" as String, "name", "John", "nick", "Doe")
         } as SpecificTxAction)
-        List objects = template.doInTransaction({ db ->
+        List objects = context.doInTransaction({ db ->
             db.query(new OSQLSynchQuery<Object>("select from Model"))
         } as SpecificTxAction<List, OObjectDatabaseTx>)
         List documents = documentTemplate.doInTransaction({ db ->

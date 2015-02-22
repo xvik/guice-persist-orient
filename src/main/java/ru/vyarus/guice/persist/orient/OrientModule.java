@@ -14,7 +14,7 @@ import org.aopalliance.intercept.MethodInterceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vyarus.guice.persist.orient.db.DatabaseManager;
-import ru.vyarus.guice.persist.orient.db.PoolManager;
+import ru.vyarus.guice.persist.orient.db.pool.PoolManager;
 import ru.vyarus.guice.persist.orient.db.pool.DocumentPool;
 import ru.vyarus.guice.persist.orient.db.transaction.TransactionManager;
 import ru.vyarus.guice.persist.orient.db.transaction.TxConfig;
@@ -113,7 +113,8 @@ public class OrientModule extends PersistModule {
     }
 
     /**
-     * * Use if default object scheme initializers are used or your custom initializer depends on this options.
+     * Use if default object scheme initializers are used or your custom initializer depends on this options.
+     * <p>Custom initializer may reference this value as guice constant "orient.model.package"</p>
      *
      * @param basePackage package to use for scheme initializer
      * @return module itself for chained calls

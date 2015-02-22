@@ -5,7 +5,6 @@ import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vyarus.guice.persist.orient.db.DbType;
-import ru.vyarus.guice.persist.orient.db.PoolManager;
 import ru.vyarus.guice.persist.orient.db.user.UserManager;
 
 import javax.inject.Inject;

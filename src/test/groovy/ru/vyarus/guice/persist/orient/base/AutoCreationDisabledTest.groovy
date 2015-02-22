@@ -2,7 +2,7 @@ package ru.vyarus.guice.persist.orient.base
 
 import com.google.inject.persist.PersistService
 import com.orientechnologies.orient.core.exception.OStorageException
-import ru.vyarus.guice.persist.orient.support.modules.DisabledAutoCreationModule
+import ru.vyarus.guice.persist.orient.base.support.DisabledAutoCreationModule
 import spock.guice.UseModules
 import spock.lang.Specification
 

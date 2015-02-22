@@ -1,5 +1,6 @@
 package ru.vyarus.guice.persist.orient.base
 
+import com.google.inject.Inject
 import com.google.inject.persist.PersistService
 import com.orientechnologies.common.io.OIOException
 import com.orientechnologies.orient.core.exception.OStorageException
@@ -17,7 +18,7 @@ import spock.lang.Specification
 @UseModules(DefaultModule)
 class RemoteConnectionTest extends Specification {
 
-    @javax.inject.Inject
+    @Inject
     PersistService persist
 
     //using remote db url

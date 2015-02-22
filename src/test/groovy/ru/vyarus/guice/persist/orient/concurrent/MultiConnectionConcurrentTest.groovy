@@ -5,7 +5,6 @@ import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx
 import com.orientechnologies.orient.core.record.impl.ODocument
 import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery
 import com.orientechnologies.orient.core.tx.OTransaction
-import com.orientechnologies.orient.object.db.OObjectDatabaseTx
 import com.tinkerpop.blueprints.impls.orient.OrientBaseGraph
 import ru.vyarus.guice.persist.orient.AbstractTest
 import ru.vyarus.guice.persist.orient.db.transaction.TxConfig
@@ -49,7 +48,7 @@ class MultiConnectionConcurrentTest extends AbstractTest {
             db.getRawGraph().getMetadata().getSchema().dropClass(Model.simpleName)
             db.createVertexType(Model.simpleName)
         } as SpecificTxAction)
-        template.doInTransaction(new TxConfig(OTransaction.TXTYPE.NOTX), { db ->
+        context.doWithoutTransaction({ db ->
             db.getEntityManager().registerEntityClass(Model)
         } as SpecificTxAction)
 
@@ -78,7 +77,7 @@ class MultiConnectionConcurrentTest extends AbstractTest {
 
         times.times({
             executed << executor.submit({
-                template.doInTransaction({ db ->
+                context.doInTransaction({ db ->
                     db.save(new Model(name: 'John', nick: 'Doe'))
                 } as SpecificTxAction)
                 return null
@@ -86,7 +85,7 @@ class MultiConnectionConcurrentTest extends AbstractTest {
         })
         times.times({
             executed << executor.submit({
-                template.doInTransaction({ db ->
+                context.doInTransaction({ db ->
                     db.query(new OSQLSynchQuery<Object>("select from Model"))
                 } as SpecificTxAction)
                 return null
@@ -115,7 +114,7 @@ class MultiConnectionConcurrentTest extends AbstractTest {
         Long cnt;
         // check data is visible also for all creation types
         List<Model> res;
-        template.doInTransaction({ db ->
+        context.doInTransaction({ db ->
             cnt = db.countClass(Model)
             res = db.query(new OSQLSynchQuery<Object>("select from Model where name='John'"))
         } as SpecificTxAction)

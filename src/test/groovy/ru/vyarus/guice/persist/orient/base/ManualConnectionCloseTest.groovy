@@ -30,7 +30,7 @@ class ManualConnectionCloseTest extends AbstractTest {
         thrown(IllegalStateException)
 
         when: "manually closing object connection in the middle of transaction"
-        template.doInTransaction({db ->
+        context.doInTransaction({db ->
             db.close()
         } as SpecificTxAction)
         then: "consistency check will fail on commit"

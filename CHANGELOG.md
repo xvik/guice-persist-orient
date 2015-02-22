@@ -6,12 +6,18 @@ This allows using all connection types in one transaction and all changes will b
  connections update scheme on first connection). Now each pool did db connection on startup to check connection and
  let orient properly update scheme on start.
 * (breaking) TxTemplate and SpecificTxTemplate now propagate only runtime exceptions and wrap checked exceptions
- into runtime. This simplifies general usage (also, most orient exceptions are runtime)
+ into runtime. This simplifies general usage (most orient exceptions are runtime)
 * ObjectCrudMixin: added multiple detachAll methods (in orient 2 object proxies doesn't work outside of transaction,
 so detaching is more important)
 * DocumentCrudMixin: added create method to create document inside of transaction (in orient 2 it's now impossible to
 create document outside of transaction, but document changes doesn't require ongoing transaction)
+* Add PersistentContext class, which combines connection provider, both templates and provide access to
+TransactionManager. It should be used instead of low level staff (simplifies usage)
 * Remove deprecated finders auto scanning
+* (breaking) Finders rewritten to extensions based architecture. Finder module renamed to repository to follow spring-data
+style (as well known and very similar realization). Not owned annotations (@Named, @Finder, @FirstResult, @MaxResults)
+replaced with spring-data like or orient specific annotations (@Param, @Query, @Function, @Skip, @Limit).
+Many annotations and classes renamed due to module rename.
 
 ### 2.1.0 (2015-01-06)
 * Finders now managed by guice and any additional aop could be applied. Abstract beans could define finder methods.

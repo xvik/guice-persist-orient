@@ -4,7 +4,7 @@ import com.google.inject.Inject
 import com.google.inject.ProvisionException
 import ru.vyarus.guice.persist.orient.AbstractTest
 import ru.vyarus.guice.persist.orient.support.modules.BootstrappedModule
-import ru.vyarus.guice.persist.orient.support.service.InlineTxDefinitionService
+import ru.vyarus.guice.persist.orient.transaction.support.InlineTxDefinitionService
 import spock.guice.UseModules
 
 /**

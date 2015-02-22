@@ -2,6 +2,7 @@ package ru.vyarus.guice.persist.orient.db.user;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Throwables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vyarus.guice.persist.orient.db.transaction.TransactionManager;
@@ -55,16 +56,16 @@ public class UserManager {
     /**
      * Action approach is important to explicitly define scope of specific user and
      * properly cleanup state (which may be not done in case of direct override).
+     * Propagates template exception.
      *
      * @param user       specific user name
      * @param password   specific user password
      * @param userAction logic to execute with specific user
      * @param <T>        type of returned result (may be Void)
      * @return action result (may be null)
-     * @throws Throwable if error happens it will not be caught here
      */
     public <T> T executeWithUser(final String user, final String password,
-                                 final SpecificUserAction<T> userAction) throws Throwable {
+                                 final SpecificUserAction<T> userAction) {
         Preconditions.checkState(!transactionManager.isTransactionActive(),
                 "User can't be changed during transaction");
         Preconditions.checkState(specificUser.get() == null,
@@ -72,11 +73,16 @@ public class UserManager {
                 specificUser.get() != null ? specificUser.get().user : null);
         specificUser.set(create(user, password));
         logger.trace("Use specific user: {}", user);
+        T result = null;
         try {
-            return userAction.execute();
+            result = userAction.execute();
+        } catch (Throwable th) {
+            Throwables.propagate(th);
         } finally {
             specificUser.remove();
         }
+        // unreachable point
+        return result;
     }
 
     private UserCredentials create(final String user, final String password) {

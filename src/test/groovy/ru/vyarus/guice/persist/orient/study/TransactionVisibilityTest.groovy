@@ -11,10 +11,10 @@ import ru.vyarus.guice.persist.orient.AbstractTest
 import ru.vyarus.guice.persist.orient.db.transaction.TxConfig
 import ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxAction
 import ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxTemplate
-import ru.vyarus.guice.persist.orient.support.finder.DocumentDao
-import ru.vyarus.guice.persist.orient.support.finder.ObjectDao
+import ru.vyarus.guice.persist.orient.repository.mixin.crud.support.DocumentDao
+import ru.vyarus.guice.persist.orient.repository.mixin.crud.support.ObjectDao
 import ru.vyarus.guice.persist.orient.support.model.Model
-import ru.vyarus.guice.persist.orient.support.modules.FinderTestModule
+import ru.vyarus.guice.persist.orient.support.modules.RepositoryTestModule
 import spock.guice.UseModules
 
 import javax.inject.Provider
@@ -24,7 +24,7 @@ import javax.inject.Provider
  * @author Vyacheslav Rusakov 
  * @since 25.01.2015
  */
-@UseModules(FinderTestModule)
+@UseModules(RepositoryTestModule)
 class TransactionVisibilityTest extends AbstractTest {
 
     @Inject
@@ -38,7 +38,7 @@ class TransactionVisibilityTest extends AbstractTest {
 
     def "Check document driven visibility"() {
         setup:
-        transactionManager.begin()
+        context.transactionManager.begin()
 
         when: "creating document and reading it in other types within single transaction"
         ODocument doc = documentDao.create()
@@ -55,12 +55,12 @@ class TransactionVisibilityTest extends AbstractTest {
         model && (model.name == "test-name")
 
         cleanup:
-        transactionManager.end()
+        context.transactionManager.end()
     }
 
     def "Check object driven visibility"() {
         setup:
-        transactionManager.begin()
+        context.transactionManager.begin()
 
         when: "creating object and reading it in other types within single transaction"
         Model model = objectDao.create()
@@ -76,7 +76,7 @@ class TransactionVisibilityTest extends AbstractTest {
         vertex && (vertex.getProperty("name") == "test-name")
 
         cleanup:
-        transactionManager.end()
+        context.transactionManager.end()
     }
 
     def "Check vertex driven visibility"() {
@@ -85,7 +85,7 @@ class TransactionVisibilityTest extends AbstractTest {
             db.getRawGraph().getMetadata().getSchema().dropClass(Model.simpleName)
             db.createVertexType(Model.simpleName)
         } as SpecificTxAction)
-        transactionManager.begin()
+        context.transactionManager.begin()
 
         when: "creating vertex and reading it in other types within single transaction"
         Vertex vertex = graph.get().addVertex("class:$Model.simpleName" as String, "name", "test-name")
@@ -98,6 +98,6 @@ class TransactionVisibilityTest extends AbstractTest {
         model && (model.name == "test-name")
 
         cleanup:
-        transactionManager.end()
+        context.transactionManager.end()
     }
 }

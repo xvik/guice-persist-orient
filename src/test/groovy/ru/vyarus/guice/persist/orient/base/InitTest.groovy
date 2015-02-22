@@ -15,7 +15,7 @@ import spock.guice.UseModules
 class InitTest extends AbstractTest {
 
     def "Check bootstrap"() {
-        long cnt = template.doInTransaction({ db ->
+        long cnt = context.doInTransaction({ db ->
             db.countClass(Model.class)
         } as SpecificTxAction<Long, OObjectDatabaseTx>)
         expect: "check db initialized by DataInitializer"

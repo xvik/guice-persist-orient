@@ -51,11 +51,11 @@ class ConcurrentTest extends AbstractTest {
         // lock until finish
         executed.each({ it.get() })
 
-        Long cnt = template.doInTransaction({ db ->
+        Long cnt = context.doInTransaction({ db ->
             return db.countClass(Model)
         } as SpecificTxAction<Long, OObjectDatabaseTx>)
         then: "Db should contain 20 records"
-        !transactionManager.isTransactionActive()
+        !context.transactionManager.isTransactionActive()
         cnt == times
     }
 }
