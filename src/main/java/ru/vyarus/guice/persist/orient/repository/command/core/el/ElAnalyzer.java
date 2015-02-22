@@ -1,6 +1,5 @@
 package ru.vyarus.guice.persist.orient.repository.command.core.el;
 
-import ru.vyarus.guice.persist.orient.repository.core.MethodDefinitionException;
 import ru.vyarus.java.generics.resolver.context.GenericsContext;
 
 import java.lang.reflect.Type;
@@ -30,23 +29,13 @@ public final class ElAnalyzer {
      * @return descriptor object if variables found, null otherwise
      */
     public static ElDescriptor analyzeQuery(final GenericsContext genericsContext, final String query) {
-        final List<String> vars = findVars(query);
+        final List<String> vars = ElUtils.findVars(query);
         ElDescriptor descriptor = null;
         if (!vars.isEmpty()) {
             descriptor = new ElDescriptor(vars);
             checkGenericVars(descriptor, genericsContext);
         }
         return descriptor;
-    }
-
-    private static List<String> findVars(final String query) {
-        List<String> vars;
-        try {
-            vars = ElUtils.findVars(query);
-        } catch (IllegalStateException ex) {
-            throw new MethodDefinitionException(ex.getMessage(), ex);
-        }
-        return vars;
     }
 
     private static void checkGenericVars(final ElDescriptor descriptor, final GenericsContext generics) {

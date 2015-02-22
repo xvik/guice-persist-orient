@@ -5,6 +5,8 @@ import com.google.inject.persist.PersistService
 import ru.vyarus.guice.persist.orient.base.pool.support.MockPoolsModule
 import ru.vyarus.guice.persist.orient.base.pool.support.pool.MockDocumentPool
 import ru.vyarus.guice.persist.orient.base.pool.support.pool.MockObjectPool
+import ru.vyarus.guice.persist.orient.db.DatabaseManager
+import ru.vyarus.guice.persist.orient.db.DbType
 import spock.guice.UseModules
 import spock.lang.Specification
 
@@ -50,5 +52,13 @@ class PoolsInitTest extends Specification {
         then: "pools closed"
         !documentPool.started
         !objectPool.started
+    }
+
+    def "Check types recording"() {
+
+        when: "starting pools"
+        persist.start()
+        then: "two types available"
+        ((DatabaseManager) persist).getSupportedTypes() == [DbType.DOCUMENT, DbType.OBJECT] as Set
     }
 }

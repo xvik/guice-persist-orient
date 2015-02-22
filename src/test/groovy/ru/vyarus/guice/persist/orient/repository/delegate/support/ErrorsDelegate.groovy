@@ -1,6 +1,6 @@
 package ru.vyarus.guice.persist.orient.repository.delegate.support
 
-import ru.vyarus.guice.persist.orient.repository.delegate.ext.db.Connection
+import ru.vyarus.guice.persist.orient.repository.delegate.ext.connection.Connection
 import ru.vyarus.guice.persist.orient.repository.delegate.ext.generic.Generic
 import ru.vyarus.guice.persist.orient.repository.delegate.ext.instance.Repository
 import ru.vyarus.guice.persist.orient.repository.mixin.support.CustomMixin

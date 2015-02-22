@@ -1,7 +1,7 @@
 package ru.vyarus.guice.persist.orient.repository.mixin.support
 
 import com.tinkerpop.blueprints.impls.orient.OrientGraph
-import ru.vyarus.guice.persist.orient.repository.delegate.ext.db.Connection
+import ru.vyarus.guice.persist.orient.repository.delegate.ext.connection.Connection
 import ru.vyarus.guice.persist.orient.repository.delegate.ext.generic.Generic
 import ru.vyarus.guice.persist.orient.repository.delegate.ext.instance.Repository
 

@@ -1,4 +1,4 @@
-package ru.vyarus.guice.persist.orient.repository.delegate.ext.db;
+package ru.vyarus.guice.persist.orient.repository.delegate.ext.connection;
 
 import ru.vyarus.guice.persist.orient.repository.core.MethodDefinitionException;
 import ru.vyarus.guice.persist.orient.repository.core.spi.parameter.MethodParamExtension;
@@ -11,7 +11,7 @@ import javax.inject.Singleton;
 import java.util.List;
 
 /**
- * {@link ru.vyarus.guice.persist.orient.repository.delegate.ext.db.Connection} parameter annotation extension.
+ * {@link ru.vyarus.guice.persist.orient.repository.delegate.ext.connection.Connection} parameter annotation extension.
  *
  * @author Vyacheslav Rusakov
  * @since 06.02.2015

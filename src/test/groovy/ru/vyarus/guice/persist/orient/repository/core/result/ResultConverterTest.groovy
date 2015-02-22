@@ -1,6 +1,7 @@
 package ru.vyarus.guice.persist.orient.repository.core.result
 
 import com.google.common.collect.Lists
+import com.google.common.collect.Maps
 import com.google.common.collect.Sets
 import com.google.inject.Inject
 import ru.vyarus.guice.persist.orient.AbstractTest
@@ -339,6 +340,15 @@ class ResultConverterTest extends AbstractTest {
                 expectType: Integer,
                 entityType: Integer),
                 'string')
+        then: "fail"
+        thrown(ResultConversionException)
+
+        when: "result is list and map expected"
+        converter.convert(new ResultDescriptor(
+                returnType: ResultType.COLLECTION,
+                expectType: Integer,
+                entityType: Integer),
+                Maps.newHashMap())
         then: "fail"
         thrown(ResultConversionException)
     }

@@ -37,7 +37,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * <p>Parameter extensions are always add implicit parameter to delegated method call. For example see
  * {@link ru.vyarus.guice.persist.orient.repository.delegate.ext.generic.Generic},
  * {@link ru.vyarus.guice.persist.orient.repository.delegate.ext.instance.Repository},
- * {@link ru.vyarus.guice.persist.orient.repository.delegate.ext.db.Connection} extensions.
+ * {@link ru.vyarus.guice.persist.orient.repository.delegate.ext.connection.Connection} extensions.
  * </p>
  *
  * @author Vyacheslav Rusakov

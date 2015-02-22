@@ -1,4 +1,4 @@
-package ru.vyarus.guice.persist.orient.repository.delegate.ext.db;
+package ru.vyarus.guice.persist.orient.repository.delegate.ext.connection;
 
 import ru.vyarus.guice.persist.orient.repository.core.spi.parameter.MethodParam;
 

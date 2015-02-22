@@ -94,8 +94,6 @@ public final class ExtUtils {
      * <p>Amend annotation may be defined on method, type and probably globally on root repository type.
      * If annotation is defined in two places then only more prioritized will be used.
      * Priorities: method, direct method type, repository type (in simple cases the last two will be the same type).</p>
-     * <p>NOTE: for complex hierarchies extension from lower layers will be applied if annotation is
-     * {@code @Inherited}.</p>
      * <p>Extensions compatibility is checked against descriptor object. If extension declared directly on method
      * error will be throw (bad usage). For type and root type declared extensions, incompatible extensions simply
      * skipped (case when extension should apply to all methods except few).</p>

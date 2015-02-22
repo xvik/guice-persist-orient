@@ -145,6 +145,7 @@ public class DocumentPool implements PoolManager<ODatabaseDocumentTx> {
     /**
      * Its definitely not normal that pool returns closed connections, but possible if used improperly.
      * If connection closed, trying to recover by restarting entire pool.
+     * <p>NOTE: This problem did not reproduced with new pool (2.0), but logic remain, just for the case.</p>
      *
      * @param db connection to check
      * @return connection itself or new valid connection

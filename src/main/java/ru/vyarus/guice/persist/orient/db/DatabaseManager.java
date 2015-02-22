@@ -157,7 +157,8 @@ public class DatabaseManager implements PersistService {
         for (PoolManager<?> pool : pools) {
             // if pool start failed, entire app start should fail (no catch here)
             pool.start(uri);
-            supportedTypes.add(pool.getType());
+            supportedTypes.add(Preconditions.checkNotNull(pool.getType(),
+                    "Pool %s doesn't declare correct pool type", pool.getClass().getSimpleName()));
         }
     }
 

@@ -69,7 +69,7 @@ public class QueryParamsContext extends ParamsContext<CommandMethodDescriptor> {
      * @param name variable name
      */
     public void addDynamicElVarValue(final String name) {
-        check(!staticElValues.containsKey(name),
+        check(!dynamicElValues.contains(name),
                 "Duplicate dynamic el variable %s declaration", name);
         dynamicElValues.add(name);
     }
