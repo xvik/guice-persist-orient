@@ -5,6 +5,7 @@ import ru.vyarus.guice.persist.orient.AbstractTest
 import ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxAction
 import ru.vyarus.guice.persist.orient.repository.command.ext.fetchplan.support.CustomModelModule
 import ru.vyarus.guice.persist.orient.repository.command.ext.fetchplan.support.FetchPlanCases
+import ru.vyarus.guice.persist.orient.repository.command.ext.fetchplan.support.ext.CheckCommandExtension
 import ru.vyarus.guice.persist.orient.repository.command.ext.fetchplan.support.model.Basket
 import ru.vyarus.guice.persist.orient.repository.command.ext.fetchplan.support.model.Item
 import ru.vyarus.guice.persist.orient.repository.command.ext.fetchplan.support.model.Person
@@ -26,8 +27,14 @@ class FetchPlanExecutionTest extends AbstractTest {
             db.save(new Basket(name: 'one', items: [new Item(name: 'test', person: new Person(name: 'john'))]))
         } as SpecificTxAction)
 
+        when: "checking that expected plan check works"
+        dao.selectBasket("*:-1")
+        then: 'check failed'
+        thrown(IllegalStateException)
+
         when: "custom plan"
-        Basket res = context.doInTransaction({ db->
+        CheckCommandExtension.expectedPlan = "*:-1"
+        Basket res = context.doInTransaction({ db ->
             // -1 no limits
             def basket = dao.selectBasket("*:-1")
             assert basket.name == 'one'
@@ -38,7 +45,8 @@ class FetchPlanExecutionTest extends AbstractTest {
         res
 
         when: "other custom plan"
-        res = context.doInTransaction({ db->
+        CheckCommandExtension.expectedPlan = "*:-2"
+        res = context.doInTransaction({ db ->
             // do not load anything except object
             def basket = dao.selectBasket("*:-2")
             assert basket.name == 'one'
@@ -49,7 +57,8 @@ class FetchPlanExecutionTest extends AbstractTest {
         res
 
         when: "no default plan"
-        res = context.doInTransaction({ db->
+        CheckCommandExtension.expectedPlan = null
+        res = context.doInTransaction({ db ->
             // do not load anything except object
             def basket = dao.selectBasketNoDefault(null)
             assert basket.name == 'one'

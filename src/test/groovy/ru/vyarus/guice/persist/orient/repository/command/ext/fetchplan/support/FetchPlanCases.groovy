@@ -4,6 +4,7 @@ import com.google.inject.ProvidedBy
 import com.google.inject.internal.DynamicSingletonProvider
 import com.google.inject.persist.Transactional
 import ru.vyarus.guice.persist.orient.repository.command.ext.fetchplan.FetchPlan
+import ru.vyarus.guice.persist.orient.repository.command.ext.fetchplan.support.ext.CheckCommand
 import ru.vyarus.guice.persist.orient.repository.command.ext.fetchplan.support.model.Basket
 import ru.vyarus.guice.persist.orient.repository.command.query.Query
 
@@ -13,6 +14,7 @@ import ru.vyarus.guice.persist.orient.repository.command.query.Query
  */
 @Transactional
 @ProvidedBy(DynamicSingletonProvider)
+@CheckCommand
 interface FetchPlanCases {
 
     @Query("select from Basket")
