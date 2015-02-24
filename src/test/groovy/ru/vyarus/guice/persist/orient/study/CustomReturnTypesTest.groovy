@@ -8,14 +8,15 @@ import com.tinkerpop.blueprints.impls.orient.OrientBaseGraph
 import ru.vyarus.guice.persist.orient.AbstractTest
 import ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxAction
 import ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxTemplate
-import ru.vyarus.guice.persist.orient.support.modules.BootstrappedModule
+import ru.vyarus.guice.persist.orient.support.modules.BootstrapModule
+import ru.vyarus.guice.persist.orient.support.modules.PackageSchemeModule
 import spock.guice.UseModules
 
 /**
  * @author Vyacheslav Rusakov 
  * @since 05.08.2014
  */
-@UseModules(BootstrappedModule)
+@UseModules([PackageSchemeModule, BootstrapModule])
 class CustomReturnTypesTest extends AbstractTest {
 
     @Inject

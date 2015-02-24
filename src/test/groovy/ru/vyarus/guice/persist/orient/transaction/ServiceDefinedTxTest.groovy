@@ -3,7 +3,8 @@ package ru.vyarus.guice.persist.orient.transaction
 import com.google.inject.Inject
 import com.google.inject.ProvisionException
 import ru.vyarus.guice.persist.orient.AbstractTest
-import ru.vyarus.guice.persist.orient.support.modules.BootstrappedModule
+import ru.vyarus.guice.persist.orient.support.modules.BootstrapModule
+import ru.vyarus.guice.persist.orient.support.modules.PackageSchemeModule
 import ru.vyarus.guice.persist.orient.transaction.support.InlineTxDefinitionService
 import spock.guice.UseModules
 
@@ -13,7 +14,7 @@ import spock.guice.UseModules
  * @author Vyacheslav Rusakov 
  * @since 01.08.2014
  */
-@UseModules(BootstrappedModule)
+@UseModules([PackageSchemeModule, BootstrapModule])
 class ServiceDefinedTxTest extends AbstractTest {
 
     @Inject

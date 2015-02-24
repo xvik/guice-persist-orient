@@ -2,20 +2,18 @@ package ru.vyarus.guice.persist.orient.support.modules
 
 import com.google.inject.AbstractModule
 import ru.vyarus.guice.persist.orient.db.data.DataInitializer
-import ru.vyarus.guice.persist.orient.support.Config
-import ru.vyarus.guice.persist.orient.support.PackageSchemeOrientModule
 import ru.vyarus.guice.persist.orient.support.service.TestDataInitializer
 
 /**
- * Module with package scheme definition and default data initialization
+ * Applies data bootstrapping
+ *
  * @author Vyacheslav Rusakov 
  * @since 28.07.2014
  */
-class BootstrappedModule extends AbstractModule {
+class BootstrapModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        install(new PackageSchemeModule())
         bind(DataInitializer).to(TestDataInitializer)
     }
 }

@@ -11,7 +11,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * Parameter extension annotation, used to specify fetch plan
- * ({@link com.orientechnologies.orient.core.command.OCommandRequestAbstract#setFetchPlan(java.lang.String)}).
+ * ({@link com.orientechnologies.orient.core.command.OCommandRequest#setFetchPlan(java.lang.String)}).
  * May have default value to use when no fetch plan provided in parameter.
  * <p>May be applied for String parameters only.</p>
  * <p>If parameter value is empty (null) and no default value specified, fetch plan is not set at all.</p>

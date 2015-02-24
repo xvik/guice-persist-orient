@@ -3,9 +3,10 @@ package ru.vyarus.guice.persist.orient.transaction
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx
 import ru.vyarus.guice.persist.orient.AbstractTest
 import ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxAction
-import ru.vyarus.guice.persist.orient.support.modules.BootstrappedModule
-import ru.vyarus.guice.persist.orient.transaction.support.ComplexModificationService
+import ru.vyarus.guice.persist.orient.support.modules.BootstrapModule
+import ru.vyarus.guice.persist.orient.support.modules.PackageSchemeModule
 import ru.vyarus.guice.persist.orient.support.service.InsertTransactionalService
+import ru.vyarus.guice.persist.orient.transaction.support.ComplexModificationService
 import spock.guice.UseModules
 
 import javax.inject.Inject
@@ -14,7 +15,7 @@ import javax.inject.Inject
  * @author Vyacheslav Rusakov 
  * @since 28.07.2014
  */
-@UseModules(BootstrappedModule)
+@UseModules([PackageSchemeModule, BootstrapModule])
 class CompositeTransaction extends AbstractTest {
 
     @Inject
