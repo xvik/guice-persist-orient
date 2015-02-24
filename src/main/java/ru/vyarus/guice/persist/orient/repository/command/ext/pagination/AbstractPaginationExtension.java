@@ -1,7 +1,7 @@
 package ru.vyarus.guice.persist.orient.repository.command.ext.pagination;
 
 import com.google.common.collect.ImmutableList;
-import ru.vyarus.guice.persist.orient.repository.command.core.param.QueryParamsContext;
+import ru.vyarus.guice.persist.orient.repository.command.core.param.CommandParamsContext;
 import ru.vyarus.guice.persist.orient.repository.command.core.spi.CommandMethodDescriptor;
 import ru.vyarus.guice.persist.orient.repository.core.spi.parameter.MethodParamExtension;
 import ru.vyarus.guice.persist.orient.repository.core.spi.parameter.ParamInfo;
@@ -20,17 +20,17 @@ import static ru.vyarus.guice.persist.orient.repository.core.MethodDefinitionExc
  * @since 07.02.2015
  */
 public abstract class AbstractPaginationExtension<A extends Annotation>
-        implements MethodParamExtension<CommandMethodDescriptor, QueryParamsContext, A> {
+        implements MethodParamExtension<CommandMethodDescriptor, CommandParamsContext, A> {
 
     private static final List<Class> PRIMITIVE_NUMBERS = ImmutableList.<Class>of(int.class, long.class);
 
     @Override
-    public void processParameters(final CommandMethodDescriptor descriptor, final QueryParamsContext context,
-                                  final List<ParamInfo<A>> paramInfos) {
-        final ParamInfo<A> paramInfo = paramInfos.get(0);
+    public void processParameters(final CommandMethodDescriptor descriptor, final CommandParamsContext context,
+                                  final List<ParamInfo<A>> paramsInfo) {
+        final ParamInfo<A> paramInfo = paramsInfo.get(0);
         final String type = paramInfo.annotation.annotationType().getSimpleName();
 
-        check(paramInfos.size() == 1, "Duplicate @%s definition", type);
+        check(paramsInfo.size() == 1, "Duplicate @%s definition", type);
         isNumber(paramInfo.type, String.format("Number must be used as @%s parameter", type));
         descriptor.extDescriptors.put(getKey(), paramInfo.position);
     }

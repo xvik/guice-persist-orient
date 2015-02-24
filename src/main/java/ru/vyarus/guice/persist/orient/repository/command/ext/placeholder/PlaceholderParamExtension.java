@@ -6,7 +6,7 @@ import com.google.common.collect.Multimap;
 import com.orientechnologies.orient.core.command.OCommandRequest;
 import ru.vyarus.guice.persist.orient.repository.core.spi.parameter.MethodParamExtension;
 import ru.vyarus.guice.persist.orient.repository.core.spi.parameter.ParamInfo;
-import ru.vyarus.guice.persist.orient.repository.command.core.param.QueryParamsContext;
+import ru.vyarus.guice.persist.orient.repository.command.core.param.CommandParamsContext;
 import ru.vyarus.guice.persist.orient.repository.command.core.spi.CommandExtension;
 import ru.vyarus.guice.persist.orient.repository.command.core.spi.CommandMethodDescriptor;
 import ru.vyarus.guice.persist.orient.repository.command.core.spi.SqlCommandDescriptor;
@@ -30,17 +30,17 @@ import static ru.vyarus.guice.persist.orient.repository.core.MethodDefinitionExc
 @Singleton
 public class PlaceholderParamExtension implements
         CommandExtension<CommandMethodDescriptor>,
-        MethodParamExtension<CommandMethodDescriptor, QueryParamsContext, Placeholder> {
+        MethodParamExtension<CommandMethodDescriptor, CommandParamsContext, Placeholder> {
 
     public static final String KEY = PlaceholderParamExtension.class.getName();
 
     @Override
     public void processParameters(final CommandMethodDescriptor descriptor,
-                                  final QueryParamsContext context,
-                                  final List<ParamInfo<Placeholder>> paramInfos) {
+                                  final CommandParamsContext context,
+                                  final List<ParamInfo<Placeholder>> paramsInfo) {
         final PlaceholderDescriptor placeholders = PlaceholderAnalyzer.analyzeDeclarations(
                 context.getDescriptorContext().method, descriptor.el);
-        for (ParamInfo<Placeholder> paramInfo : paramInfos) {
+        for (ParamInfo<Placeholder> paramInfo : paramsInfo) {
             check(descriptor.el != null, "Placeholder parameter used while query did "
                     + "not contain placeholders");
             final String placeholderName = paramInfo.annotation.value();

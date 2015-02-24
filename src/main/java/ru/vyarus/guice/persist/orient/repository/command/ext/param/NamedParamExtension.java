@@ -4,7 +4,7 @@ import com.google.common.base.Strings;
 import ru.vyarus.guice.persist.orient.repository.core.MethodDefinitionException;
 import ru.vyarus.guice.persist.orient.repository.core.spi.parameter.MethodParamExtension;
 import ru.vyarus.guice.persist.orient.repository.core.spi.parameter.ParamInfo;
-import ru.vyarus.guice.persist.orient.repository.command.core.param.QueryParamsContext;
+import ru.vyarus.guice.persist.orient.repository.command.core.param.CommandParamsContext;
 import ru.vyarus.guice.persist.orient.repository.command.core.spi.CommandMethodDescriptor;
 
 import javax.inject.Singleton;
@@ -18,11 +18,11 @@ import java.util.List;
  */
 @Singleton
 public class NamedParamExtension implements
-        MethodParamExtension<CommandMethodDescriptor, QueryParamsContext, Param> {
+        MethodParamExtension<CommandMethodDescriptor, CommandParamsContext, Param> {
 
     @Override
     public void processParameters(final CommandMethodDescriptor descriptor,
-                                  final QueryParamsContext context, final List<ParamInfo<Param>> paramsInfo) {
+                                  final CommandParamsContext context, final List<ParamInfo<Param>> paramsInfo) {
         for (ParamInfo<Param> paramInfo : paramsInfo) {
             final String name = Strings.emptyToNull(paramInfo.annotation.value());
             MethodDefinitionException.check(name != null,

@@ -6,7 +6,7 @@ import java.util.Map;
  * Query parameters descriptor.
  *
  * @author Vyacheslav Rusakov
- * @see QueryParamsContext
+ * @see CommandParamsContext
  * @since 26.09.2014
  */
 @SuppressWarnings({

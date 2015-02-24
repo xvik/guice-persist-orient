@@ -22,7 +22,7 @@ class NamedParamsDescriptorTest extends AbstractRepositoryDefinitionTest {
         desc.params.namedParametersIndex == ["name": 0, "nick": 1]
 
         when: "positional parameters with warning, because of wrong @named use"
-        desc = lookup(NamedParamsCases.getMethod("parametersPositionalWithOrdinal", String.class, String.class))
+        lookup(NamedParamsCases.getMethod("parametersPositionalWithOrdinal", String.class, String.class))
         then: "recognized"
         thrown(MethodDefinitionException)
 

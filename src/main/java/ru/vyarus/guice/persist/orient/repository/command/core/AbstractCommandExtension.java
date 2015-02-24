@@ -6,7 +6,7 @@ import com.orientechnologies.orient.core.command.OCommandRequest;
 import ru.vyarus.guice.persist.orient.repository.command.core.el.ElAnalyzer;
 import ru.vyarus.guice.persist.orient.repository.command.core.el.ElUtils;
 import ru.vyarus.guice.persist.orient.repository.command.core.param.ParamsDescriptor;
-import ru.vyarus.guice.persist.orient.repository.command.core.param.QueryParamsContext;
+import ru.vyarus.guice.persist.orient.repository.command.core.param.CommandParamsContext;
 import ru.vyarus.guice.persist.orient.repository.command.core.spi.CommandExtension;
 import ru.vyarus.guice.persist.orient.repository.command.core.spi.CommandMethodDescriptor;
 import ru.vyarus.guice.persist.orient.repository.command.core.spi.SqlCommandDescriptor;
@@ -57,7 +57,7 @@ public abstract class AbstractCommandExtension<T extends CommandMethodDescriptor
      * @param context    repository method context
      */
     protected void analyzeParameters(final T descriptor, final DescriptorContext context) {
-        final QueryParamsContext paramsContext = new QueryParamsContext(context);
+        final CommandParamsContext paramsContext = new CommandParamsContext(context);
         spiService.process(descriptor, paramsContext);
     }
 

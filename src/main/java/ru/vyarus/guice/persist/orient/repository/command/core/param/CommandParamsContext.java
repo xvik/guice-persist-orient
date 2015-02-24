@@ -28,12 +28,12 @@ import static ru.vyarus.guice.persist.orient.repository.core.MethodDefinitionExc
  * @author Vyacheslav Rusakov
  * @since 04.02.2015
  */
-public class QueryParamsContext extends ParamsContext<CommandMethodDescriptor> {
+public class CommandParamsContext extends ParamsContext<CommandMethodDescriptor> {
     private final Map<String, ParamInfo> named = Maps.newHashMap();
     private final Map<String, String> staticElValues = Maps.newHashMap();
     private final List<String> dynamicElValues = Lists.newArrayList();
 
-    public QueryParamsContext(final DescriptorContext descriptorContext) {
+    public CommandParamsContext(final DescriptorContext descriptorContext) {
         super(descriptorContext);
     }
 

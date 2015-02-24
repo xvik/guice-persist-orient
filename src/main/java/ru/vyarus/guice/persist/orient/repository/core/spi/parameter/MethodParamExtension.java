@@ -37,7 +37,7 @@ public interface MethodParamExtension<T extends RepositoryMethodDescriptor, P ex
      *
      * @param descriptor repository method descriptor
      * @param context    params context
-     * @param paramInfos     found annotated params
+     * @param paramsInfo     found annotated params
      */
-    void processParameters(T descriptor, P context, List<ParamInfo<A>> paramInfos);
+    void processParameters(T descriptor, P context, List<ParamInfo<A>> paramsInfo);
 }

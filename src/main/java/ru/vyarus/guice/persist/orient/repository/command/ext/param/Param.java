@@ -15,7 +15,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * <p>Query must contain either positional or named parameters.</p>
  *
  * @author Vyacheslav Rusakov
- * @see ru.vyarus.guice.persist.orient.repository.command.core.param.QueryParamsContext
+ * @see ru.vyarus.guice.persist.orient.repository.command.core.param.CommandParamsContext
  * @since 06.02.2015
  */
 @Documented

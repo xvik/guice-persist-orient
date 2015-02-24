@@ -14,7 +14,9 @@ import java.util.Collection;
  * <p>Function name could contain variables in format (${var}). By default, only declared type generic names
  * could be used, but extensions could provide other variables (like
  * {@link ru.vyarus.guice.persist.orient.repository.command.ext.placeholder.Placeholder}).</p>
- *
+ * <p>For example, function may be created like this
+ * <code>CREATE FUNCTION function1 "select from Model" LANGUAGE SQL</code> and called as
+ * {@code @Function("function1")}</p>
  * @author Vyacheslav Rusakov
  * @since 02.02.2015
  */
