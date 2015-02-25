@@ -1,6 +1,7 @@
 package ru.vyarus.guice.persist.orient.repository.core.ext;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.google.inject.Injector;
 import ru.vyarus.guice.persist.orient.repository.core.spi.RepositoryMethodDescriptor;
 import ru.vyarus.guice.persist.orient.repository.core.spi.amend.AmendExecutionExtension;
@@ -16,6 +17,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Resolves and applies amend extensions. Analyze found params extensions (provided in params context)
@@ -27,6 +29,11 @@ import java.util.List;
  * are simply filtered if they are incompatible with current descriptor (extensions has required descriptor
  * in generic). Finally, resolved list of execution extensions are filtered according to descriptor
  * generic value (supported specific extension).</p>
+ * <p>Global extension could be registered to apply to every called method. Don't forget that extension are
+ * resolved in time of method descriptor creation (first method call). So if you register extension after
+ * descriptor composed, it would not be added to existing descriptor. The same with remove: when
+ * extension removed, already created descriptors will keep using it. Cache may be cleared to resolve
+ * such situations (but generally this should be quite rare case).</p>
  *
  * @author Vyacheslav Rusakov
  * @since 07.02.2015
@@ -35,6 +42,7 @@ import java.util.List;
 public class AmendExtensionsService {
 
     private final Injector injector;
+    private final Set<AmendExecutionExtension> globalExtensions = Sets.newHashSet();
 
     @Inject
     public AmendExtensionsService(final Injector injector) {
@@ -56,12 +64,38 @@ public class AmendExtensionsService {
             }
         }
         extensions.addAll(getParameterExtensions(paramsContext));
+        extensions.addAll(globalExtensions);
         // descriptor has specific extension type in generic, so we could filter list and be 100% sure
         // this is important for universal amend extensions, which may support only some methods
         final List<AmendExecutionExtension> res = ExtCompatibilityUtils
                 .filterCompatibleExtensions(extensions, descriptor.getClass());
         Collections.sort(res, OrderComparator.INSTANCE);
         descriptor.amendExtensions = res;
+    }
+
+    /**
+     * Register global extension (will be applied to all repository method calls).
+     * NOTE: If some descriptors where already created at this moment, they will not be affected
+     * with global extension. Be sure to register extension before repository method calls, or
+     * flush descriptors cache manually using
+     * {@link ru.vyarus.guice.persist.orient.repository.core.MethodDescriptorFactory#clearCache()}.
+     *
+     * @param ext extension instance
+     */
+    public void addGlobalExtension(final AmendExecutionExtension ext) {
+        globalExtensions.add(ext);
+    }
+
+    /**
+     * Removes global extension.
+     * NOTE: descriptors, created while extension was registered still continue to call it.
+     * To avoid it manually flush descriptors cache using
+     * {@link ru.vyarus.guice.persist.orient.repository.core.MethodDescriptorFactory#clearCache()}.
+     *
+     * @param ext extension instance
+     */
+    public void removeGlobalExtension(final AmendExecutionExtension ext) {
+        globalExtensions.remove(ext);
     }
 
     @SuppressWarnings("unchecked")
