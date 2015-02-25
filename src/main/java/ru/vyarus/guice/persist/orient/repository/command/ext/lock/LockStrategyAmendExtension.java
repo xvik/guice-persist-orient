@@ -6,6 +6,7 @@ import com.orientechnologies.orient.core.storage.OStorage;
 import ru.vyarus.guice.persist.orient.repository.command.core.spi.CommandExtension;
 import ru.vyarus.guice.persist.orient.repository.command.core.spi.CommandMethodDescriptor;
 import ru.vyarus.guice.persist.orient.repository.command.core.spi.SqlCommandDescriptor;
+import ru.vyarus.guice.persist.orient.repository.core.MethodDefinitionException;
 import ru.vyarus.guice.persist.orient.repository.core.spi.amend.AmendMethodExtension;
 
 import javax.inject.Singleton;
@@ -36,16 +37,13 @@ public class LockStrategyAmendExtension implements AmendMethodExtension<CommandM
     @Override
     public void amendCommand(final OCommandRequest query, final CommandMethodDescriptor descriptor,
                              final Object instance, final Object... arguments) {
+        // exception, to force user remove annotation
+        // it may cause problem if annotation applied on type and single method not support it,
+        // but still it's better to know then be sure that lock is applied
+        MethodDefinitionException.check(query instanceof OCommandRequestAbstract,
+                "@LockStrategy can't be applied to query, because command object %s doesn't support it",
+                query.getClass().getName());
         final OStorage.LOCKING_STRATEGY strategy = (OStorage.LOCKING_STRATEGY) descriptor.extDescriptors.get(KEY);
-        if (query instanceof OCommandRequestAbstract) {
-            ((OCommandRequestAbstract) query).setLockStrategy(strategy);
-        } else {
-            // exception, to force user remove annotation
-            // it may cause problem if annotation applied on type and single method not support it,
-            // but still it's better to know then be sure that lock is applied
-            throw new IllegalStateException(String.format(
-                    "@LockStrategy can't be applied to query, because command object %s doesn't support it",
-                    query.getClass().getName()));
-        }
+        ((OCommandRequestAbstract) query).setLockStrategy(strategy);
     }
 }

@@ -1,4 +1,4 @@
-package ru.vyarus.guice.persist.orient.repository.command.function;
+package ru.vyarus.guice.persist.orient.repository.command.script;
 
 import ru.vyarus.guice.persist.orient.db.DbType;
 import ru.vyarus.guice.persist.orient.repository.core.spi.method.RepositoryMethod;
@@ -10,27 +10,31 @@ import java.lang.annotation.Target;
 import java.util.Collection;
 
 /**
- * Function call repository method extension.
- * <p>Function name could contain variables in format (${var}). By default, only declared type generic names
- * could be used, but extensions could provide other variables (like
+ * Script call repository method extension.
+ * <p>Script could contain el variables (${var}). By default, only declared type generic names could be used,
+ * but extensions could provide other variables (like
  * {@link ru.vyarus.guice.persist.orient.repository.command.ext.placeholder.Placeholder}).</p>
- * <p>For example, function may be created like this
- * <code>CREATE FUNCTION function1 "select from Model" LANGUAGE SQL</code> and called as
- * {@code @Function("function1")}</p>
+ * <p>By default, sql function expected, but if other language required set it explicitly.</p>
+ * <p>Scripts are very similar to {@link ru.vyarus.guice.persist.orient.repository.command.function.Function}</p>
  *
  * @author Vyacheslav Rusakov
- * @see <a href="http://www.orientechnologies.com/docs/last/orientdb.wiki/SQL-Functions.html">docs</a>
- * @since 02.02.2015
+ * @see <a href="http://www.orientechnologies.com/docs/last/orientdb.wiki/SQL-batch.html">docs</a>
+ * @since 25.02.2015
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-@RepositoryMethod(FunctionMethodExtension.class)
-public @interface Function {
+@RepositoryMethod(ScriptMethodExtension.class)
+public @interface Script {
 
     /**
-     * @return function name
+     * @return script to execute
      */
     String value();
+
+    /**
+     * @return script language (any scripting language installed in the JVM)
+     */
+    String language() default "sql";
 
     /**
      * Returns the configured autoboxing collection class.

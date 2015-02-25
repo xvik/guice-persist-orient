@@ -103,7 +103,7 @@ public abstract class AbstractCommandExtension<T extends CommandMethodDescriptor
      * @param desc       query descriptor
      * @return query command request object
      */
-    protected abstract OCommandRequest createQueryCommand(final CommandMethodDescriptor descriptor,
+    protected abstract OCommandRequest createQueryCommand(final T descriptor,
                                                           final SqlCommandDescriptor desc);
 
     private Object[] prepareOrdinalParams(final Integer[] positions, final Object... arguments) {

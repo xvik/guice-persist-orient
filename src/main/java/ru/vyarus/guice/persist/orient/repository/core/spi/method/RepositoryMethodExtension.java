@@ -8,10 +8,8 @@ import java.lang.annotation.Annotation;
 /**
  * Root extension defines repository method behaviour. Extension must be defined with custom annotation,
  * annotated with {@link RepositoryMethod}.
- * <p>Extensions must manually call {@link ru.vyarus.guice.persist.orient.repository.core.ext.ParamsService}
- * to support parameter extensions and
- * {@link ru.vyarus.guice.persist.orient.repository.core.ext.AmendExtensionsService} to support custom
- * extensions.</p>
+ * <p>Extensions must manually call {@link ru.vyarus.guice.persist.orient.repository.core.ext.SpiService}
+ * to support parameter and amend extensions.</p>
  * <p>Extension implementation is obtained from guice context. Any guice scope may be used, but prefer
  * singletons for performance.</p>
  * <p>Extension must be stateless: in case of singleton, the same instance will be used to handle all
