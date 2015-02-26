@@ -59,5 +59,37 @@ class ParamContextTest extends Specification {
         context.addDynamicElVarValue("tst")
         then: "error"
         thrown(MethodDefinitionException)
+
+        when: "assigning dynamic var same as static"
+        context = new CommandParamsContext(null)
+        context.addStaticElVarValue("tst", "tt")
+        context.addDynamicElVarValue("tst")
+        then: "error"
+        thrown(MethodDefinitionException)
+
+        when: "assigning static var same as dynamic"
+        context = new CommandParamsContext(null)
+        context.addDynamicElVarValue("tst")
+        context.addStaticElVarValue("tst", "tt")
+        then: "error"
+        thrown(MethodDefinitionException)
+
+        when: "declare static var while no vars in query"
+        context = new CommandParamsContext(null)
+        context.setOrdinals([])
+        desc = new CommandMethodDescriptor()
+        context.addStaticElVarValue("tst", "tt")
+        context.process(desc)
+        then: "error"
+        thrown(MethodDefinitionException)
+
+        when: "declare dynamic var while no vars in query"
+        context = new CommandParamsContext(null)
+        context.setOrdinals([])
+        desc = new CommandMethodDescriptor()
+        context.addDynamicElVarValue("tst")
+        context.process(desc)
+        then: "error"
+        thrown(MethodDefinitionException)
     }
 }

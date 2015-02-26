@@ -14,7 +14,7 @@ import java.util.Collection;
  * Use for select/update/insert queries.
  * <p>Query could contain variables in format (${var}). By default, only declared type generic names
  * could be used, but extensions could provide other variables (like
- * {@link ru.vyarus.guice.persist.orient.repository.command.ext.placeholder.Placeholder}).</p>
+ * {@link ru.vyarus.guice.persist.orient.repository.command.ext.elvar.ElVar}).</p>
  *
  * @author Vyacheslav Rusakov
  * @since 02.02.2015

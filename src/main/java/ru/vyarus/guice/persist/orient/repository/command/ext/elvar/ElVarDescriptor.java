@@ -1,4 +1,4 @@
-package ru.vyarus.guice.persist.orient.repository.command.ext.placeholder;
+package ru.vyarus.guice.persist.orient.repository.command.ext.elvar;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Maps;
@@ -7,7 +7,7 @@ import com.google.common.collect.Multimap;
 import java.util.Map;
 
 /**
- * Repository method placeholders descriptor.
+ * Repository method el vars parameters descriptor.
  *
  * @author Vyacheslav Rusakov
  * @since 26.09.2014
@@ -15,17 +15,16 @@ import java.util.Map;
 @SuppressWarnings({
         "checkstyle:visibilitymodifier",
         "PMD.DefaultPackage"})
-public class PlaceholderDescriptor {
+public class ElVarDescriptor {
 
     /**
-     * Possible placeholder values (defined with
-     * {@link ru.vyarus.guice.persist.orient.repository.command.ext.placeholder.PlaceholderValues}).
-     * Possible values should be defined for string placeholders.
+     * Possible variables values.
+     * Should be defined for string or object placeholders to avoid injection.
      */
     public Multimap<String, String> values = HashMultimap.create();
 
     /**
-     * Placeholder parameters indexes in repository method.
+     * Vars parameters indexes in repository method.
      */
     public Map<String, Integer> parametersIndex = Maps.newHashMap();
 

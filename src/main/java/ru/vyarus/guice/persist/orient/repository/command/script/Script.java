@@ -13,7 +13,7 @@ import java.util.Collection;
  * Script call repository method extension.
  * <p>Script could contain el variables (${var}). By default, only declared type generic names could be used,
  * but extensions could provide other variables (like
- * {@link ru.vyarus.guice.persist.orient.repository.command.ext.placeholder.Placeholder}).</p>
+ * {@link ru.vyarus.guice.persist.orient.repository.command.ext.elvar.ElVar}).</p>
  * <p>By default, sql function expected, but if other language required set it explicitly.</p>
  * <p>Scripts are very similar to {@link ru.vyarus.guice.persist.orient.repository.command.function.Function}</p>
  *

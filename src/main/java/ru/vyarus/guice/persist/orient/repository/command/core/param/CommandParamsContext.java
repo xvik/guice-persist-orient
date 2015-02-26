@@ -1,13 +1,14 @@
 package ru.vyarus.guice.persist.orient.repository.command.core.param;
 
+import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import ru.vyarus.guice.persist.orient.repository.core.spi.DescriptorContext;
-import ru.vyarus.guice.persist.orient.repository.core.spi.parameter.ParamInfo;
-import ru.vyarus.guice.persist.orient.repository.core.spi.parameter.ParamsContext;
 import ru.vyarus.guice.persist.orient.repository.command.core.el.ElDescriptor;
 import ru.vyarus.guice.persist.orient.repository.command.core.el.ElUtils;
 import ru.vyarus.guice.persist.orient.repository.command.core.spi.CommandMethodDescriptor;
+import ru.vyarus.guice.persist.orient.repository.core.spi.DescriptorContext;
+import ru.vyarus.guice.persist.orient.repository.core.spi.parameter.ParamInfo;
+import ru.vyarus.guice.persist.orient.repository.core.spi.parameter.ParamsContext;
 
 import java.util.List;
 import java.util.Map;
@@ -21,7 +22,7 @@ import static ru.vyarus.guice.persist.orient.repository.core.MethodDefinitionExc
  * {@link ru.vyarus.guice.persist.orient.repository.command.ext.param.Param}, but any custom could be used).
  * <p>Query string could contain el variables (${name}). By default declaring type generic names recognized.
  * Other variables could be provided by extensions (e.g.
- * {@link ru.vyarus.guice.persist.orient.repository.command.ext.placeholder.Placeholder}). Extension must declare
+ * {@link ru.vyarus.guice.persist.orient.repository.command.ext.elvar.ElVar}). Extension must declare
  * that placeholder recognized and owned by extension. There are two types of variables: static, which are resolved
  * during method descriptor creation and dynamic, which require parameter values to compute value.</p>
  *
@@ -59,6 +60,9 @@ public class CommandParamsContext extends ParamsContext<CommandMethodDescriptor>
         check(!staticElValues.containsKey(name),
                 "Duplicate el variable %s value declaration: %s (original: %s)", name, value,
                 staticElValues.get(name));
+        check(!dynamicElValues.contains(name),
+                "El variable %s can't be registered as static, because dynamic declaration already defined",
+                name);
         staticElValues.put(name, value);
     }
 
@@ -71,6 +75,9 @@ public class CommandParamsContext extends ParamsContext<CommandMethodDescriptor>
     public void addDynamicElVarValue(final String name) {
         check(!dynamicElValues.contains(name),
                 "Duplicate dynamic el variable %s declaration", name);
+        check(!staticElValues.containsKey(name),
+                "El variable %s can't be registered as dynamic, because static declaration already defined",
+                name);
         dynamicElValues.add(name);
     }
 
@@ -104,6 +111,13 @@ public class CommandParamsContext extends ParamsContext<CommandMethodDescriptor>
             } catch (Exception ex) {
                 check(false, ex.getMessage());
             }
+        } else {
+            // not the same as in previous branch, because el context could contain predefined vars
+            final List<String> vars = Lists.newArrayList();
+            vars.addAll(dynamicElValues);
+            vars.addAll(staticElValues.keySet());
+            check(vars.isEmpty(), "El vars declared, while command doesn't contain variables: ",
+                    Joiner.on(", ").join(vars));
         }
     }
 }

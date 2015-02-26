@@ -12,7 +12,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 /**
  * Marks parameter as command variable. In contrast to el variables, which are applied to command string
  * before passing command to orient
- * (e.g {@link ru.vyarus.guice.persist.orient.repository.command.ext.placeholder.Placeholder}), these vars are
+ * (e.g {@link ru.vyarus.guice.persist.orient.repository.command.ext.elvar.ElVar}), these vars are
  * used directly in command execution.
  * <p>Defined variable could be referenced in query as $name.</p>
  *

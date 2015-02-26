@@ -1,4 +1,4 @@
-package ru.vyarus.guice.persist.orient.repository.command.ext.placeholder
+package ru.vyarus.guice.persist.orient.repository.command.ext.elvar
 
 import ru.vyarus.guice.persist.orient.repository.command.core.el.ElUtils
 import spock.lang.Specification

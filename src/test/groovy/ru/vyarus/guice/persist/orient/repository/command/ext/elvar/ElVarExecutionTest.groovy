@@ -1,11 +1,12 @@
-package ru.vyarus.guice.persist.orient.repository.command.ext.placeholder
+package ru.vyarus.guice.persist.orient.repository.command.ext.elvar
 
 import com.google.inject.Inject
 import com.orientechnologies.orient.core.sql.OCommandSQL
 import ru.vyarus.guice.persist.orient.AbstractTest
 import ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxAction
-import ru.vyarus.guice.persist.orient.repository.command.ext.placeholder.support.RepositoryWithPlaceholders
-import ru.vyarus.guice.persist.orient.repository.command.ext.placeholder.support.PlaceholdersEnum
+import ru.vyarus.guice.persist.orient.repository.command.ext.elvar.support.ElVarsCases
+import ru.vyarus.guice.persist.orient.repository.command.ext.elvar.support.ObjVar
+import ru.vyarus.guice.persist.orient.repository.command.ext.elvar.support.VarDefinitionEnum
 import ru.vyarus.guice.persist.orient.support.model.Model
 import ru.vyarus.guice.persist.orient.support.modules.RepositoryTestModule
 import spock.guice.UseModules
@@ -17,15 +18,16 @@ import spock.guice.UseModules
  * @since 22.09.2014
  */
 @UseModules(RepositoryTestModule)
-class RepositoryPlaceholdersExecutionTest extends AbstractTest {
+class ElVarExecutionTest extends AbstractTest {
 
     @Inject
-    RepositoryWithPlaceholders repository
+    ElVarsCases repository
 
     def "Check placeholders"() {
         context.doInTransaction({ db ->
             db.save(new Model(name: 'John', nick: 'Doe'))
             db.command(new OCommandSQL("CREATE FUNCTION funcname \"select from Model\" LANGUAGE SQL ")).execute();
+            db.command(new OCommandSQL("CREATE FUNCTION func1 \"select from Model\" LANGUAGE SQL ")).execute();
         } as SpecificTxAction)
 
         when: "select by dynamic field"
@@ -39,7 +41,7 @@ class RepositoryPlaceholdersExecutionTest extends AbstractTest {
         res
 
         when: "select by two dynamic fields"
-        res = repository.findByEnumField(PlaceholdersEnum.NAME as PlaceholdersEnum, 'John');
+        res = repository.findByEnumField(VarDefinitionEnum.NAME as VarDefinitionEnum, 'John');
         then: "found"
         res
 
@@ -49,7 +51,28 @@ class RepositoryPlaceholdersExecutionTest extends AbstractTest {
         res2.size() > 0
 
         when: "select by dynamic function with enum name"
-        res2 = repository.functionWithPlaceholderEnum(PlaceholdersEnum.NAME as PlaceholdersEnum);
+        res2 = repository.functionWithEnum(VarDefinitionEnum.NAME as VarDefinitionEnum);
+        then: "found"
+        res2.size() > 0
+
+        when: "safe string execution"
+        res2 = repository.safeString("name");
+        then: "found"
+        res2.size() > 0
+
+        when: "int var"
+        res2 = repository.intVar(1);
+        then: "found"
+        res2.size() > 0
+
+        when: "integer var"
+        res2 = repository.integerVar(1);
+        then: "found"
+        res2.size() > 0
+
+
+        when: "object var"
+        res2 = repository.objVar(new ObjVar(value: '1'));
         then: "found"
         res2.size() > 0
     }

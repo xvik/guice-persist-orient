@@ -1,7 +1,7 @@
 package ru.vyarus.guice.persist.orient.repository.mixin.support
 
 import ru.vyarus.guice.persist.orient.repository.command.query.Query
-import ru.vyarus.guice.persist.orient.repository.command.ext.placeholder.Placeholder
+import ru.vyarus.guice.persist.orient.repository.command.ext.elvar.ElVar
 
 /**
  * Sample of generic repository.
@@ -14,5 +14,5 @@ import ru.vyarus.guice.persist.orient.repository.command.ext.placeholder.Placeho
 public interface BaseRepository2<T, K> {
 
     @Query('select from ${T} where ${field} = ?')
-    List<T> findByField(@Placeholder("field") String field, Object value);
+    List<T> findByField(@ElVar("field") String field, Object value);
 }

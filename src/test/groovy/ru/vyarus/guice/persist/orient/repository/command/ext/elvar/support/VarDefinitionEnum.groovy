@@ -1,4 +1,4 @@
-package ru.vyarus.guice.persist.orient.repository.command.ext.placeholder.support;
+package ru.vyarus.guice.persist.orient.repository.command.ext.elvar.support;
 
 /**
  * Placeholder definition with enum.
@@ -6,13 +6,13 @@ package ru.vyarus.guice.persist.orient.repository.command.ext.placeholder.suppor
  * @author Vyacheslav Rusakov
  * @since 22.09.2014
  */
-public enum PlaceholdersEnum {
+public enum VarDefinitionEnum {
     NAME("name"),
     NICK("nick")
 
     private String field;
 
-    PlaceholdersEnum(String field) {
+    VarDefinitionEnum(String field) {
         this.field = field
     }
 

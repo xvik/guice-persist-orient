@@ -1,7 +1,7 @@
 package ru.vyarus.guice.persist.orient.repository.mixin.support
 
 import ru.vyarus.guice.persist.orient.repository.command.query.Query
-import ru.vyarus.guice.persist.orient.repository.command.ext.placeholder.Placeholder
+import ru.vyarus.guice.persist.orient.repository.command.ext.elvar.ElVar
 
 /**
  * @author Vyacheslav Rusakov 
@@ -10,7 +10,7 @@ import ru.vyarus.guice.persist.orient.repository.command.ext.placeholder.Placeho
 class BaseBeanRepository<K> extends Lvl2BaseBeanRepository<K> {
 
     @Query('select from ${K} where ${field} = ?')
-    public List<K> findByField(@Placeholder("field") String field, Object value) {
+    public List<K> findByField(@ElVar("field") String field, Object value) {
         throw new UnsupportedOperationException()
     }
 
