@@ -28,4 +28,8 @@ public class ElVarDescriptor {
      */
     public Map<String, Integer> parametersIndex = Maps.newHashMap();
 
+    /**
+     * Parameters with type Class. They are converted to string by getting class name.
+     */
+    public Map<String, Integer> classParametersIndex = Maps.newHashMap();
 }

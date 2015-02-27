@@ -75,6 +75,11 @@ class ElVarExecutionTest extends AbstractTest {
         res2 = repository.objVar(new ObjVar(value: '1'));
         then: "found"
         res2.size() > 0
+
+        when: "class var"
+        res2 = repository.classVar(Model.class);
+        then: "found"
+        res2.size() > 0
     }
 
     def "Check incorrect params"() {

@@ -36,7 +36,8 @@ public class ElVarParamExtension implements
 
     public static final String KEY = ElVarParamExtension.class.getName();
     private static final Logger LOGGER = LoggerFactory.getLogger(ElVarParamExtension.class);
-    private static final Class<?>[] SAFE_TYPES = new Class<?>[]{Enum.class, Number.class, Character.class};
+    private static final Class<?>[] SAFE_TYPES =
+            new Class<?>[]{Enum.class, Number.class, Character.class, Class.class};
 
     @Override
     public void processParameters(final CommandMethodDescriptor descriptor,
@@ -56,12 +57,13 @@ public class ElVarParamExtension implements
     @Override
     public void amendCommandDescriptor(final SqlCommandDescriptor sql, final CommandMethodDescriptor descriptor,
                                        final Object instance, final Object... arguments) {
-        final ElVarDescriptor placeholders = (ElVarDescriptor) descriptor.extDescriptors.get(KEY);
-        if (placeholders.parametersIndex != null) {
-            sql.elVars.putAll(
-                    getVarValues(placeholders.parametersIndex, placeholders.values, arguments)
-            );
-        }
+        final ElVarDescriptor elvars = (ElVarDescriptor) descriptor.extDescriptors.get(KEY);
+        sql.elVars.putAll(
+                getVarValues(elvars.parametersIndex, elvars.values, Converters.DEFAULT, arguments)
+        );
+        sql.elVars.putAll(
+                getVarValues(elvars.classParametersIndex, elvars.values, Converters.CLASS, arguments)
+        );
 
     }
 
@@ -85,7 +87,11 @@ public class ElVarParamExtension implements
         if (allowed.length > 0) {
             elvars.values.putAll(name, Arrays.asList(allowed));
         }
-        elvars.parametersIndex.put(name, param.position);
+        if (param.type.equals(Class.class)) {
+            elvars.classParametersIndex.put(name, param.position);
+        } else {
+            elvars.parametersIndex.put(name, param.position);
+        }
     }
 
     private boolean isSafeType(final Class<?> type) {
@@ -103,13 +109,15 @@ public class ElVarParamExtension implements
 
     private Map<String, String> getVarValues(final Map<String, Integer> positions,
                                              final Multimap<String, String> defaults,
+                                             final Converters.ValueConverter converter,
                                              final Object... arguments) {
         final Map<String, String> res = Maps.newHashMap();
         for (Map.Entry<String, Integer> entry : positions.entrySet()) {
             final String name = entry.getKey();
             final Object value = arguments[entry.getValue()];
             // use empty string for nulls
-            final String strValue = Strings.nullToEmpty(value == null ? null : Strings.emptyToNull(value.toString()));
+            @SuppressWarnings("unchecked")
+            final String strValue = Strings.nullToEmpty(converter.convert(value));
             // check value with defaults
             if (defaults.containsKey(name)) {
                 Preconditions.checkArgument(defaults.get(name).contains(strValue),

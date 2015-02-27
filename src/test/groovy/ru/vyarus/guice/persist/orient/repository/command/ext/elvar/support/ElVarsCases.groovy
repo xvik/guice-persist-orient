@@ -9,7 +9,6 @@ import ru.vyarus.guice.persist.orient.repository.command.query.Query
 import ru.vyarus.guice.persist.orient.support.model.Model
 
 /**
- * Using java file, to remain annotations syntax (a bit different in groovy) for example purposes.
  *
  * @author Vyacheslav Rusakov
  * @since 21.09.2014
@@ -55,4 +54,7 @@ interface ElVarsCases {
     // object var
     @Function('func${name}')
     List<Model> objVar(@ElVar("name") ObjVar name);
+
+    @Query('select from ${type}')
+    List<Model> classVar(@ElVar("type") Class<?> type);
 }

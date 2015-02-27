@@ -92,5 +92,11 @@ class ElVarDefinitionTest extends AbstractRepositoryDefinitionTest {
         then: "vars recognized"
         elvars
         !desc.params.parametersIndex
+
+        when: "class var"
+        desc = lookup(ElVarsCases.getMethod("classVar", Class.class))
+        elvars = desc.extDescriptors.get(ElVarParamExtension.KEY)
+        then: "vars recognized"
+        elvars.classParametersIndex.size() == 1
     }
 }
