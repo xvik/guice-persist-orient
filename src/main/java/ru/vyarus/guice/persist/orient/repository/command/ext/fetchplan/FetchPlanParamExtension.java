@@ -2,6 +2,7 @@ package ru.vyarus.guice.persist.orient.repository.command.ext.fetchplan;
 
 import com.google.common.base.Strings;
 import com.orientechnologies.orient.core.command.OCommandRequest;
+import com.orientechnologies.orient.core.fetch.OFetchHelper;
 import ru.vyarus.guice.persist.orient.repository.command.core.param.CommandParamsContext;
 import ru.vyarus.guice.persist.orient.repository.command.core.spi.CommandExtension;
 import ru.vyarus.guice.persist.orient.repository.command.core.spi.CommandMethodDescriptor;
@@ -34,6 +35,7 @@ public class FetchPlanParamExtension implements
         MethodDefinitionException.check(param.type.equals(String.class),
                 "Fetch plan parameter must be String");
         final String defPlan = Strings.emptyToNull(param.annotation.value());
+        OFetchHelper.checkFetchPlanValid(defPlan);
         descriptor.extDescriptors.put(KEY, new FetchPlanDescriptor(defPlan, param.position));
     }
 
