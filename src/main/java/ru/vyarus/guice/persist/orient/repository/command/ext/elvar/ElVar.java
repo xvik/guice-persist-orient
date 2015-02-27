@@ -15,7 +15,8 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * Enum is the most preferred type (most safe one). When {@link java.lang.Class} type specified, it's
  * converted to string by getting simple name (just class name). Classes may be useful as schema types.</p>
  * <p>In case of string parameter, there is a huge possibility of sql injection,
- * so it's better to declare possible variable values.</p>
+ * so it's better to declare possible variable values. If possible values not declared, warning will be printed
+ * in logs. To remove warning message use safe annotation flag, but be sure that variable is secured from injection.</p>
  *
  * @author Vyacheslav Rusakov
  * @since 21.09.2014
