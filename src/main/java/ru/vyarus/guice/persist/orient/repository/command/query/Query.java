@@ -12,6 +12,8 @@ import java.util.Collection;
 /**
  * Sql query repository method extension.
  * Use for select/update/insert queries.
+ * <p>Uses {@link com.orientechnologies.orient.core.sql.query.OSQLSynchQuery} for queries and
+ * {@link com.orientechnologies.orient.core.sql.OCommandSQL} for update and insert commands.</p>
  * <p>Query could contain variables in format (${var}). By default, only declared type generic names
  * could be used, but extensions could provide other variables (like
  * {@link ru.vyarus.guice.persist.orient.repository.command.ext.elvar.ElVar}).</p>

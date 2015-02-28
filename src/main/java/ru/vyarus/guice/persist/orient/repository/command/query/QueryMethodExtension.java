@@ -4,12 +4,12 @@ import com.google.common.base.Strings;
 import com.orientechnologies.orient.core.command.OCommandRequest;
 import com.orientechnologies.orient.core.sql.OCommandSQL;
 import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
-import ru.vyarus.guice.persist.orient.repository.core.ext.SpiService;
-import ru.vyarus.guice.persist.orient.repository.core.result.ResultType;
-import ru.vyarus.guice.persist.orient.repository.core.spi.DescriptorContext;
 import ru.vyarus.guice.persist.orient.repository.command.core.AbstractCommandExtension;
 import ru.vyarus.guice.persist.orient.repository.command.core.spi.CommandMethodDescriptor;
 import ru.vyarus.guice.persist.orient.repository.command.core.spi.SqlCommandDescriptor;
+import ru.vyarus.guice.persist.orient.repository.core.ext.SpiService;
+import ru.vyarus.guice.persist.orient.repository.core.result.ResultType;
+import ru.vyarus.guice.persist.orient.repository.core.spi.DescriptorContext;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;

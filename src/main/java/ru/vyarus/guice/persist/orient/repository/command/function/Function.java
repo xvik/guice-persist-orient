@@ -11,6 +11,7 @@ import java.util.Collection;
 
 /**
  * Function call repository method extension.
+ * <p>Uses {@link com.orientechnologies.orient.core.command.script.OCommandFunction}.</p>
  * <p>Function name could contain variables in format (${var}). By default, only declared type generic names
  * could be used, but extensions could provide other variables (like
  * {@link ru.vyarus.guice.persist.orient.repository.command.ext.elvar.ElVar}).</p>

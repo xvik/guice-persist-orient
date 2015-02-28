@@ -10,7 +10,11 @@ import java.lang.annotation.Target;
 import java.util.Collection;
 
 /**
- * Script call repository method extension.
+ * Script call repository method extension. The most common script types are sql, gremlin, javascript.
+ * SQL is the default. Gremlin requires gremlin-groovy dependency, excluded by default.
+ * Javascript requires special server configuration (if remote connection used). Other jvm scripting languages
+ * could be used.
+ * <p>Uses {@link com.orientechnologies.orient.core.command.script.OCommandScript}.</p>
  * <p>Script could contain el variables (${var}). By default, only declared type generic names could be used,
  * but extensions could provide other variables (like
  * {@link ru.vyarus.guice.persist.orient.repository.command.ext.elvar.ElVar}).</p>
