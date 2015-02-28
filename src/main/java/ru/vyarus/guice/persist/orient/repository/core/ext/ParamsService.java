@@ -11,12 +11,12 @@ import ru.vyarus.guice.persist.orient.repository.core.spi.parameter.MethodParam;
 import ru.vyarus.guice.persist.orient.repository.core.spi.parameter.MethodParamExtension;
 import ru.vyarus.guice.persist.orient.repository.core.spi.parameter.ParamInfo;
 import ru.vyarus.guice.persist.orient.repository.core.spi.parameter.ParamsContext;
+import ru.vyarus.guice.persist.orient.repository.core.util.RepositoryUtils;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -93,10 +93,10 @@ public class ParamsService {
             } catch (Throwable th) {
                 final DescriptorContext descriptorContext = paramsContext.getDescriptorContext();
                 throw new IllegalStateException(
-                        String.format("Error processing %s parameter extension on method %s#%s%s",
-                                entry.getValue().getClass().getSimpleName(), descriptorContext.type.getName(),
-                                descriptorContext.method.getName(),
-                                Arrays.toString(descriptorContext.method.getParameterTypes())), th);
+                        String.format("Error processing %s parameter extension on method %s",
+                                entry.getValue().getClass().getSimpleName(),
+                                RepositoryUtils.methodToString(descriptorContext.type,
+                                        descriptorContext.method)), th);
             }
         }
         paramsContext.setExtensions(Lists.newArrayList(context.extensionMap.values()));

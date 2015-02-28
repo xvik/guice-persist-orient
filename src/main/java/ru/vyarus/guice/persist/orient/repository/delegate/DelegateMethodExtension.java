@@ -6,6 +6,7 @@ import ru.vyarus.guice.persist.orient.repository.core.MethodExecutionException;
 import ru.vyarus.guice.persist.orient.repository.core.ext.SpiService;
 import ru.vyarus.guice.persist.orient.repository.core.spi.DescriptorContext;
 import ru.vyarus.guice.persist.orient.repository.core.spi.method.RepositoryMethodExtension;
+import ru.vyarus.guice.persist.orient.repository.core.util.RepositoryUtils;
 import ru.vyarus.guice.persist.orient.repository.delegate.method.TargetMethodAnalyzer;
 import ru.vyarus.guice.persist.orient.repository.delegate.param.DelegateParamsContext;
 import ru.vyarus.guice.persist.orient.repository.delegate.spi.DelegateExtension;
@@ -65,11 +66,9 @@ public class DelegateMethodExtension implements RepositoryMethodExtension<Delega
             return descriptor.method.invoke(instance, args);
         } catch (Throwable th) {
             throw new MethodExecutionException(String.format(
-                    "Failed to invoke delegate method %s#%s%s with arguments %s",
-                    descriptor.target.getName(), descriptor.method.getName(),
-                    Arrays.toString(descriptor.method.getParameterTypes()),
-                    Arrays.toString(args)
-            ), th);
+                    "Failed to invoke delegate method %s with arguments %s",
+                    RepositoryUtils.methodToString(descriptor.target, descriptor.method),
+                    Arrays.toString(args)), th);
         }
     }
 

@@ -14,10 +14,10 @@ import ru.vyarus.guice.persist.orient.repository.core.executor.RepositoryExecuto
 import ru.vyarus.guice.persist.orient.repository.core.executor.impl.DocumentRepositoryExecutor;
 import ru.vyarus.guice.persist.orient.repository.core.ext.ExtUtils;
 import ru.vyarus.guice.persist.orient.repository.core.result.converter.ResultConverter;
+import ru.vyarus.guice.persist.orient.repository.core.util.RepositoryUtils;
 
 import javax.inject.Singleton;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 
 /**
  * Module provides support for spring-data like repositories. Must be used together with main orient module.
@@ -82,9 +82,8 @@ public class RepositoryModule extends AbstractModule {
                 try {
                     return ExtUtils.findMethodAnnotation(method) != null;
                 } catch (Exception ex) {
-                    throw new IllegalStateException(String.format("Error declaration on method %s#%s%s",
-                            method.getDeclaringClass().getName(), method.getName(),
-                            Arrays.toString(method.getParameterTypes())), ex);
+                    throw new IllegalStateException(String.format("Error declaration on method %s",
+                            RepositoryUtils.methodToString(method)), ex);
                 }
             }
         }, proxy);

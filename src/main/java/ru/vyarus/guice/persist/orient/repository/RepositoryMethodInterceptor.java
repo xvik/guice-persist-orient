@@ -49,8 +49,8 @@ public class RepositoryMethodInterceptor implements MethodInterceptor {
         try {
             descriptor = factory.create(method, type);
         } catch (Throwable th) {
-            throw new IllegalStateException(String.format("Failed to analyze repository method %s#%s%s",
-                    type, method.getName(), Arrays.toString(method.getParameterTypes())), th);
+            throw new IllegalStateException(String.format("Failed to analyze repository method %s",
+                    RepositoryUtils.methodToString(type, method)), th);
         }
         return descriptor;
     }
@@ -65,9 +65,9 @@ public class RepositoryMethodInterceptor implements MethodInterceptor {
             return extension.execute(descriptor, methodInvocation.getThis(), arguments);
         } catch (Throwable th) {
             throw new IllegalStateException(String.format(
-                    "Failed to execute repository method %s#%s%s with arguments %s",
-                    descriptor.repositoryRootType,
-                    method.getName(), Arrays.toString(method.getParameterTypes()), Arrays.toString(arguments)), th);
+                    "Failed to execute repository method %s with arguments %s",
+                    RepositoryUtils.methodToString(descriptor.repositoryRootType, method),
+                    Arrays.toString(arguments)), th);
         }
     }
 
@@ -77,9 +77,9 @@ public class RepositoryMethodInterceptor implements MethodInterceptor {
             return resultConverter.convert(descriptor.result, result);
         } catch (Throwable th) {
             throw new IllegalStateException(String.format(
-                    "Failed to convert execution result (%s) of repository method %s#%s%s",
-                    result == null ? null : result.getClass(), descriptor.repositoryRootType,
-                    method.getName(), Arrays.toString(method.getParameterTypes())), th);
+                    "Failed to convert execution result (%s) of repository method %s",
+                    result == null ? null : result.getClass().getSimpleName(),
+                    RepositoryUtils.methodToString(descriptor.repositoryRootType, method)), th);
         }
     }
 }
