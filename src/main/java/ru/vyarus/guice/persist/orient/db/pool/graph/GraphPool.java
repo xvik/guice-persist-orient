@@ -25,8 +25,6 @@ import javax.inject.Inject;
 public class GraphPool implements PoolManager<OrientBaseGraph> {
     private final Logger logger = LoggerFactory.getLogger(GraphPool.class);
 
-    // underlying base pool maintains document connections;
-    // this pool manage just wrapped instances to reduce number of created objects
     private final ThreadLocal<OrientBaseGraph> transaction = new ThreadLocal<OrientBaseGraph>();
     private final TransactionManager transactionManager;
     private final DocumentPool documentPool;

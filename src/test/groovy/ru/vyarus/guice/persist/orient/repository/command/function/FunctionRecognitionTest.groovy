@@ -4,6 +4,7 @@ import com.google.inject.Inject
 import com.orientechnologies.orient.core.sql.OCommandSQL
 import ru.vyarus.guice.persist.orient.AbstractTest
 import ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxAction
+import ru.vyarus.guice.persist.orient.repository.RepositoryException
 import ru.vyarus.guice.persist.orient.support.model.Model
 import ru.vyarus.guice.persist.orient.support.modules.RepositoryTestModule
 import spock.guice.UseModules
@@ -23,7 +24,7 @@ class FunctionRecognitionTest extends AbstractTest {
         when: "calling unknown function"
         dao.function()
         then: "internal orient exception"
-        thrown(IllegalStateException)
+        thrown(RepositoryException)
     }
 
     def "Check function calls"() {

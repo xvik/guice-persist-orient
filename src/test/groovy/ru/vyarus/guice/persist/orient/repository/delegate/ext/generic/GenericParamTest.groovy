@@ -2,6 +2,7 @@ package ru.vyarus.guice.persist.orient.repository.delegate.ext.generic
 
 import com.google.inject.Inject
 import ru.vyarus.guice.persist.orient.AbstractTest
+import ru.vyarus.guice.persist.orient.repository.RepositoryException
 import ru.vyarus.guice.persist.orient.repository.delegate.ext.generic.support.GenericRoot
 import ru.vyarus.guice.persist.orient.support.model.Model
 import ru.vyarus.guice.persist.orient.support.modules.RepositoryTestModule
@@ -37,16 +38,16 @@ class GenericParamTest extends AbstractTest {
         when: "lookup generic in not present type"
         repository.lookupError()
         then: "fail"
-        thrown(IllegalStateException)
+        thrown(RepositoryException)
 
         when: "lookup not existing generic"
         repository.genericError()
         then: "fail"
-        thrown(IllegalStateException)
+        thrown(RepositoryException)
 
         when: "bad type for generic param"
         repository.genericTypeError()
         then: "fail"
-        thrown(IllegalStateException)
+        thrown(RepositoryException)
     }
 }

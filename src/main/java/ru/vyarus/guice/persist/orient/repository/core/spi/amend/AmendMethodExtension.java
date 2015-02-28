@@ -38,6 +38,8 @@ public interface AmendMethodExtension<T extends RepositoryMethodDescriptor, A ex
 
     /**
      * Called just after method parameters processing.
+     * <p>Use {@link ru.vyarus.guice.persist.orient.repository.core.MethodDefinitionException} for usage specific
+     * errors.</p>
      *
      * @param descriptor repository method descriptor
      * @param annotation amend annotation

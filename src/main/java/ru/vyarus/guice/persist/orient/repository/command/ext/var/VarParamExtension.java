@@ -8,13 +8,14 @@ import ru.vyarus.guice.persist.orient.repository.command.core.param.CommandParam
 import ru.vyarus.guice.persist.orient.repository.command.core.spi.CommandExtension;
 import ru.vyarus.guice.persist.orient.repository.command.core.spi.CommandMethodDescriptor;
 import ru.vyarus.guice.persist.orient.repository.command.core.spi.SqlCommandDescriptor;
-import ru.vyarus.guice.persist.orient.repository.core.MethodDefinitionException;
 import ru.vyarus.guice.persist.orient.repository.core.spi.parameter.MethodParamExtension;
 import ru.vyarus.guice.persist.orient.repository.core.spi.parameter.ParamInfo;
 
 import javax.inject.Singleton;
 import java.util.List;
 import java.util.Map;
+
+import static ru.vyarus.guice.persist.orient.repository.core.MethodDefinitionException.check;
 
 /**
  * {@link Var} param extension.
@@ -35,9 +36,8 @@ public class VarParamExtension implements
         final Map<String, Integer> varsMapping = Maps.newHashMap();
         for (ParamInfo<Var> param : paramsInfo) {
             final String name = Strings.emptyToNull(param.annotation.value());
-            MethodDefinitionException.check(name != null, "Variable name required");
-            MethodDefinitionException.check(!varsMapping.containsKey(name),
-                    "Duplicate variable with name %s", name);
+            check(name != null, "Variable name required");
+            check(!varsMapping.containsKey(name), "Duplicate variable with name '%s'", name);
             varsMapping.put(name, param.position);
         }
         descriptor.extDescriptors.put(KEY, varsMapping);

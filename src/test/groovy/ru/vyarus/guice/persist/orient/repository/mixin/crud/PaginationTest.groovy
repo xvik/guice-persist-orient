@@ -4,6 +4,7 @@ import com.google.inject.Inject
 import com.orientechnologies.orient.core.record.impl.ODocument
 import ru.vyarus.guice.persist.orient.AbstractTest
 import ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxAction
+import ru.vyarus.guice.persist.orient.repository.RepositoryException
 import ru.vyarus.guice.persist.orient.repository.mixin.crud.support.DocumentDao
 import ru.vyarus.guice.persist.orient.repository.mixin.crud.support.ObjectDao
 import ru.vyarus.guice.persist.orient.support.model.Model
@@ -63,7 +64,7 @@ class PaginationTest extends AbstractTest {
         when: "calling bad page"
         objectDao.getPage(5, 3)
         then: "bad page exception"
-        thrown(IllegalStateException)
+        thrown(RepositoryException)
 
         when: "selecting all records"
         List<Model> all = objectDao.getAll(0, -1);

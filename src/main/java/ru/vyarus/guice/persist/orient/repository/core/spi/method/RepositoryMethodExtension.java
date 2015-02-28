@@ -27,6 +27,8 @@ public interface RepositoryMethodExtension<T extends RepositoryMethodDescriptor,
      * Called  to compute extension specific method descriptor. Descriptor is cached, so
      * all reflection and other slow logic used to analyze method will be called one time.
      * Descriptor should contain everything for fast execution.
+     * <p>Use {@link ru.vyarus.guice.persist.orient.repository.core.MethodDefinitionException} for usage specific
+     * errors.</p>
      *
      * @param context    repository method context
      * @param annotation method annotation instance (extension annotation)

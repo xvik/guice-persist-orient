@@ -4,6 +4,7 @@ import com.google.inject.Inject
 import com.orientechnologies.orient.core.sql.OCommandSQL
 import ru.vyarus.guice.persist.orient.AbstractTest
 import ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxAction
+import ru.vyarus.guice.persist.orient.repository.RepositoryException
 import ru.vyarus.guice.persist.orient.repository.command.ext.elvar.support.ElVarsCases
 import ru.vyarus.guice.persist.orient.repository.command.ext.elvar.support.ObjVar
 import ru.vyarus.guice.persist.orient.repository.command.ext.elvar.support.VarDefinitionEnum
@@ -90,16 +91,16 @@ class ElVarExecutionTest extends AbstractTest {
         when: "wrong placeholder name"
         repository.findByField("bad", 'John');
         then: "mistype catches"
-        thrown(IllegalStateException)
+        thrown(RepositoryException)
 
         when: "null instead of placeholder"
         repository.findByField(null, 'John');
         then: "mistype catches"
-        thrown(IllegalStateException)
+        thrown(RepositoryException)
 
         when: "bad placeholder with no defaults defined"
         repository.functionWithPlaceholder('bad');
         then: "mistype not catches and failed inside orient"
-        thrown(IllegalStateException)
+        thrown(RepositoryException)
     }
 }

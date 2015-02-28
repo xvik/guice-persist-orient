@@ -1,6 +1,5 @@
 package ru.vyarus.guice.persist.orient.repository.command.ext.listen;
 
-import com.google.common.base.Preconditions;
 import com.orientechnologies.orient.core.command.OCommandRequest;
 import com.orientechnologies.orient.core.command.OCommandRequestAbstract;
 import com.orientechnologies.orient.core.command.OCommandResultListener;
@@ -16,6 +15,7 @@ import javax.inject.Singleton;
 import java.util.List;
 
 import static ru.vyarus.guice.persist.orient.repository.core.MethodDefinitionException.check;
+import static ru.vyarus.guice.persist.orient.repository.core.MethodExecutionException.checkExec;
 
 /**
  * {@link Listen} parameter annotation.
@@ -57,13 +57,13 @@ public class ListenParamExtension implements
     @SuppressWarnings("PMD.AvoidLiteralsInIfCondition")
     public void amendCommand(final OCommandRequest query, final CommandMethodDescriptor descriptor,
                              final Object instance, final Object... arguments) {
-        check(query instanceof OCommandRequestAbstract,
+        checkExec(query instanceof OCommandRequestAbstract,
                 "@%s can't be applied to query, because command object %s doesn't support it",
                 Listen.class.getSimpleName(), query.getClass().getName());
         final Integer position = (Integer) descriptor.extDescriptors.get(KEY);
         final OCommandResultListener listener = (OCommandResultListener) arguments[position];
         // null listener makes no sense: method is void and results are not handled anywhere
-        Preconditions.checkNotNull(listener, "Listener can't be null");
+        checkExec(listener != null, "Listener can't be null");
         ((OCommandRequestAbstract) query).setResultListener(listener);
         // return type is void and as an optimization limit applied in query extension..
         // which is wrong in this particular case

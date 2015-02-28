@@ -3,6 +3,7 @@ package ru.vyarus.guice.persist.orient.repository.command.ext.timeout
 import com.google.inject.Inject
 import com.orientechnologies.orient.core.command.OCommandContext
 import ru.vyarus.guice.persist.orient.AbstractTest
+import ru.vyarus.guice.persist.orient.repository.RepositoryException
 import ru.vyarus.guice.persist.orient.repository.command.ext.timeout.support.TimeoutCases
 import ru.vyarus.guice.persist.orient.repository.command.ext.timeout.support.ext.TimeoutCheckExtension
 import ru.vyarus.guice.persist.orient.support.model.Model
@@ -33,7 +34,7 @@ class TimeoutExecutionTest extends AbstractTest {
         TimeoutCheckExtension.expected = null
         dao.all()
         then: 'check failed'
-        thrown(IllegalStateException)
+        thrown(RepositoryException)
 
         when: "executing with timeout"
         TimeoutCheckExtension.expected = new TimeoutDescriptor(200, OCommandContext.TIMEOUT_STRATEGY.EXCEPTION)

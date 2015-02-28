@@ -1,7 +1,6 @@
 package ru.vyarus.guice.persist.orient.repository.delegate.ext.generic;
 
 import com.google.common.collect.Lists;
-import ru.vyarus.guice.persist.orient.repository.core.MethodDefinitionException;
 import ru.vyarus.guice.persist.orient.repository.core.spi.parameter.MethodParamExtension;
 import ru.vyarus.guice.persist.orient.repository.core.spi.parameter.ParamInfo;
 import ru.vyarus.guice.persist.orient.repository.delegate.param.DelegateParamsContext;
@@ -12,6 +11,8 @@ import ru.vyarus.java.generics.resolver.context.GenericsContext;
 import javax.inject.Singleton;
 import java.lang.reflect.Method;
 import java.util.List;
+
+import static ru.vyarus.guice.persist.orient.repository.core.MethodDefinitionException.check;
 
 /**
  * @author Vyacheslav Rusakov
@@ -51,12 +52,11 @@ public class GenericParamExtension implements MethodParamExtension<DelegateMetho
         final String generic = paramInfo.annotation.value();
         final int position = paramInfo.position;
         final Method method = context.getDescriptorContext().method;
-        MethodDefinitionException.check(method.getParameterTypes()[position].equals(Class.class),
+        check(method.getParameterTypes()[position].equals(Class.class),
                 "Generic type parameter must be Class, but it's %s", paramInfo.type.getSimpleName());
 
         final Class<?> type = generics.generic(generic);
-        MethodDefinitionException.check(type != null,
-                "Generic type name '%s' not found in %s ", generic, generics.currentClass());
+        check(type != null, "Generic type name '%s' not found in %s", generic, generics.currentClass());
         return new ParamInfo(paramInfo.position, type);
     }
 }

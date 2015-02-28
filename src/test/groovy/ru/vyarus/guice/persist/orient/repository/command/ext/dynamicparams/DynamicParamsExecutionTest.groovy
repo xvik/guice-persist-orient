@@ -2,6 +2,7 @@ package ru.vyarus.guice.persist.orient.repository.command.ext.dynamicparams
 
 import com.google.inject.Inject
 import ru.vyarus.guice.persist.orient.AbstractTest
+import ru.vyarus.guice.persist.orient.repository.RepositoryException
 import ru.vyarus.guice.persist.orient.support.modules.BootstrapModule
 import ru.vyarus.guice.persist.orient.support.modules.RepositoryTestModule
 import spock.guice.UseModules
@@ -72,21 +73,21 @@ class DynamicParamsExecutionTest extends AbstractTest {
         when: "mix named and positional args"
         repository.mixNamedWithPos('name1', 'nick1')
         then: "error"
-        thrown(IllegalStateException)
+        thrown(RepositoryException)
 
         when: "mix positional and named args"
         repository.mixPosWithNamed('name1', [nick: 'nick1'])
         then: "error"
-        thrown(IllegalStateException)
+        thrown(RepositoryException)
 
         when: "named params with null as key"
         repository.namedMap([(null): 'name1', nick: 'nick1'])
         then: "error"
-        thrown(IllegalStateException)
+        thrown(RepositoryException)
 
         when: "named params with empty string as key"
         repository.namedMap([' ': 'name1', nick: 'nick1'])
         then: "error"
-        thrown(IllegalStateException)
+        thrown(RepositoryException)
     }
 }

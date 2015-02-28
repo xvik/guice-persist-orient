@@ -5,6 +5,7 @@ import com.google.inject.Inject
 import com.orientechnologies.orient.core.exception.ODatabaseException
 import com.orientechnologies.orient.core.id.ORecordId
 import ru.vyarus.guice.persist.orient.AbstractTest
+import ru.vyarus.guice.persist.orient.repository.RepositoryException
 import ru.vyarus.guice.persist.orient.repository.mixin.crud.support.ObjectDao
 import ru.vyarus.guice.persist.orient.support.model.Model
 import ru.vyarus.guice.persist.orient.support.modules.RepositoryTestModule
@@ -182,7 +183,7 @@ class ObjectCrudTest extends AbstractTest {
         when: "check incorrect connection type"
         objectDao.badCall()
         then: "bad connection param"
-        thrown(IllegalStateException)
+        thrown(RepositoryException)
 
         when: "check graph connection type, recognized with annotation"
         objectDao.graphCall()
@@ -192,7 +193,7 @@ class ObjectCrudTest extends AbstractTest {
         when: "invocation fails"
         objectDao.invocationFail()
         then: "fail"
-        thrown(IllegalStateException)
+        thrown(RepositoryException)
 
         when: "specific selection"
         objectDao.paramSpecific(1, 1, 'hjh')

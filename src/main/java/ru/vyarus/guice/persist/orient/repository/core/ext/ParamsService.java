@@ -53,8 +53,9 @@ public class ParamsService {
             try {
                 processParameter(context, descriptor.getClass(), i, types[i], annotations[i]);
             } catch (Exception ex) {
-                throw new IllegalStateException(String.format("Error on method %s#%s parameter %s",
-                        method.getDeclaringClass(), method.getName(), i), ex);
+                // it may seem redundant, but, for example, in case of delegate this will be important
+                throw new IllegalStateException(String.format("Error processing parameter %s on method %s",
+                        i, RepositoryUtils.methodToString(method)), ex);
             }
         }
         paramsContext.setOrdinals(context.ordinal);
@@ -92,6 +93,7 @@ public class ParamsService {
                         context.extParams.get(entry.getKey())));
             } catch (Throwable th) {
                 final DescriptorContext descriptorContext = paramsContext.getDescriptorContext();
+                // it may seem redundant, but, for example, in case of delegate this will be important
                 throw new IllegalStateException(
                         String.format("Error processing %s parameter extension on method %s",
                                 entry.getValue().getClass().getSimpleName(),

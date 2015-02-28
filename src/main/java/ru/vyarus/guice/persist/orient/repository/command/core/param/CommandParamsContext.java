@@ -116,8 +116,8 @@ public class CommandParamsContext extends ParamsContext<CommandMethodDescriptor>
             final List<String> vars = Lists.newArrayList();
             vars.addAll(dynamicElValues);
             vars.addAll(staticElValues.keySet());
-            check(vars.isEmpty(), "El vars declared, while command doesn't contain variables: ",
-                    Joiner.on(", ").join(vars));
+            check(vars.isEmpty(), "El vars declared, while command '%s' doesn't contain variables: %s",
+                    descriptor.command, Joiner.on(", ").join(vars));
         }
     }
 }

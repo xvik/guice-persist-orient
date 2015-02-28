@@ -2,6 +2,7 @@ package ru.vyarus.guice.persist.orient.repository.delegate.ext.repository
 
 import com.google.inject.Inject
 import ru.vyarus.guice.persist.orient.AbstractTest
+import ru.vyarus.guice.persist.orient.repository.RepositoryException
 import ru.vyarus.guice.persist.orient.repository.delegate.ext.repository.support.RepositoryRoot
 import ru.vyarus.guice.persist.orient.support.model.Model
 import ru.vyarus.guice.persist.orient.support.modules.RepositoryTestModule
@@ -32,11 +33,11 @@ class RepositoryParamTest extends AbstractTest {
         when: "incompatible repo type"
         repository.badType()
         then: "fail"
-        thrown(IllegalStateException)
+        thrown(RepositoryException)
 
         when: "duplicate repo param"
         repository.duplicate()
         then: "fail"
-        thrown(IllegalStateException)
+        thrown(RepositoryException)
     }
 }

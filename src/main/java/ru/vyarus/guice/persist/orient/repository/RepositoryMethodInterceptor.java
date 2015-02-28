@@ -3,7 +3,9 @@ package ru.vyarus.guice.persist.orient.repository;
 import com.google.inject.Inject;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
+import ru.vyarus.guice.persist.orient.repository.core.MethodDefinitionException;
 import ru.vyarus.guice.persist.orient.repository.core.MethodDescriptorFactory;
+import ru.vyarus.guice.persist.orient.repository.core.MethodExecutionException;
 import ru.vyarus.guice.persist.orient.repository.core.result.converter.ResultConverter;
 import ru.vyarus.guice.persist.orient.repository.core.spi.RepositoryMethodDescriptor;
 import ru.vyarus.guice.persist.orient.repository.core.spi.method.RepositoryMethodExtension;
@@ -49,7 +51,7 @@ public class RepositoryMethodInterceptor implements MethodInterceptor {
         try {
             descriptor = factory.create(method, type);
         } catch (Throwable th) {
-            throw new IllegalStateException(String.format("Failed to analyze repository method %s",
+            throw new MethodDefinitionException(String.format("Failed to analyze repository method %s",
                     RepositoryUtils.methodToString(type, method)), th);
         }
         return descriptor;
@@ -64,7 +66,7 @@ public class RepositoryMethodInterceptor implements MethodInterceptor {
             final RepositoryMethodExtension extension = (RepositoryMethodExtension) descriptor.methodExtension.get();
             return extension.execute(descriptor, methodInvocation.getThis(), arguments);
         } catch (Throwable th) {
-            throw new IllegalStateException(String.format(
+            throw new MethodExecutionException(String.format(
                     "Failed to execute repository method %s with arguments %s",
                     RepositoryUtils.methodToString(descriptor.repositoryRootType, method),
                     Arrays.toString(arguments)), th);
@@ -76,7 +78,7 @@ public class RepositoryMethodInterceptor implements MethodInterceptor {
         try {
             return resultConverter.convert(descriptor.result, result);
         } catch (Throwable th) {
-            throw new IllegalStateException(String.format(
+            throw new MethodExecutionException(String.format(
                     "Failed to convert execution result (%s) of repository method %s",
                     result == null ? null : result.getClass().getSimpleName(),
                     RepositoryUtils.methodToString(descriptor.repositoryRootType, method)), th);

@@ -5,6 +5,7 @@ import com.google.inject.Inject
 import com.orientechnologies.orient.core.id.ORecordId
 import com.orientechnologies.orient.core.record.impl.ODocument
 import ru.vyarus.guice.persist.orient.AbstractTest
+import ru.vyarus.guice.persist.orient.repository.RepositoryException
 import ru.vyarus.guice.persist.orient.repository.mixin.crud.support.DocumentDao
 import ru.vyarus.guice.persist.orient.support.modules.RepositoryTestModule
 import spock.guice.UseModules
@@ -96,7 +97,7 @@ class DocumentCrudTest extends AbstractTest {
         when: "check incorrect connection type"
         documentDao.badCall()
         then: "bad connection param"
-        thrown(IllegalStateException)
+        thrown(RepositoryException)
 
         when: "check graph connection type, recognized with annotation"
         documentDao.graphCall()

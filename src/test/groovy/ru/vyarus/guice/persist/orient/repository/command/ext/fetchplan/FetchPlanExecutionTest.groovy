@@ -3,6 +3,7 @@ package ru.vyarus.guice.persist.orient.repository.command.ext.fetchplan
 import com.google.inject.Inject
 import ru.vyarus.guice.persist.orient.AbstractTest
 import ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxAction
+import ru.vyarus.guice.persist.orient.repository.RepositoryException
 import ru.vyarus.guice.persist.orient.repository.command.ext.fetchplan.support.CustomModelModule
 import ru.vyarus.guice.persist.orient.repository.command.ext.fetchplan.support.FetchPlanCases
 import ru.vyarus.guice.persist.orient.repository.command.ext.fetchplan.support.ext.CheckCommandExtension
@@ -30,7 +31,7 @@ class FetchPlanExecutionTest extends AbstractTest {
         when: "checking that expected plan check works"
         dao.selectBasket("*:-1")
         then: 'check failed'
-        thrown(IllegalStateException)
+        thrown(RepositoryException)
 
         when: "custom plan"
         CheckCommandExtension.expectedPlan = "*:-1"

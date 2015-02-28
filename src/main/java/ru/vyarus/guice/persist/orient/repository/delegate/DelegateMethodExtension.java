@@ -2,7 +2,6 @@ package ru.vyarus.guice.persist.orient.repository.delegate;
 
 import com.google.common.base.Strings;
 import com.google.inject.Injector;
-import ru.vyarus.guice.persist.orient.repository.core.MethodExecutionException;
 import ru.vyarus.guice.persist.orient.repository.core.ext.SpiService;
 import ru.vyarus.guice.persist.orient.repository.core.spi.DescriptorContext;
 import ru.vyarus.guice.persist.orient.repository.core.spi.method.RepositoryMethodExtension;
@@ -15,7 +14,6 @@ import ru.vyarus.java.generics.resolver.GenericsResolver;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.util.Arrays;
 
 /**
  * {@link Delegate} repository method extension.
@@ -59,16 +57,17 @@ public class DelegateMethodExtension implements RepositoryMethodExtension<Delega
             args = prepareArguments(descriptor, arguments);
             amendParameters(args, descriptor, repositoryInstance, arguments);
         } catch (Exception ex) {
-            throw new IllegalArgumentException("Failed to prepare arguments", ex);
+            throw new DelegateMethodException(String.format(
+                    "Failed to prepare arguments for calling delegate method %s",
+                    RepositoryUtils.methodToString(descriptor.target, descriptor.method)), ex);
         }
         try {
             final Object instance = descriptor.instanceProvider.get();
             return descriptor.method.invoke(instance, args);
         } catch (Throwable th) {
-            throw new MethodExecutionException(String.format(
-                    "Failed to invoke delegate method %s with arguments %s",
-                    RepositoryUtils.methodToString(descriptor.target, descriptor.method),
-                    Arrays.toString(args)), th);
+            throw new DelegateMethodException(String.format(
+                    "Failed to invoke delegate method %s",
+                    RepositoryUtils.methodToString(descriptor.target, descriptor.method)), th);
         }
     }
 

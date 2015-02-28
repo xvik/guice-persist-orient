@@ -5,7 +5,7 @@ import ru.vyarus.guice.persist.orient.repository.command.core.el.ElDescriptor;
 import ru.vyarus.guice.persist.orient.repository.command.core.param.ParamsDescriptor;
 
 /**
- * Query method extensions descriptor.
+ * Command method extensions descriptor.
  *
  * @author Vyacheslav Rusakov
  * @since 03.02.2015
@@ -28,7 +28,7 @@ public class CommandMethodDescriptor extends RepositoryMethodDescriptor<CommandE
     public ParamsDescriptor params;
 
     /**
-     * Query variables descriptor.
+     * Query el variables descriptor.
      */
     public ElDescriptor el;
 }

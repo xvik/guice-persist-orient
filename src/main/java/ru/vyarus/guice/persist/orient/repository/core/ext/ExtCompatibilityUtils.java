@@ -6,7 +6,6 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.vyarus.guice.persist.orient.repository.core.MethodDefinitionException;
 import ru.vyarus.guice.persist.orient.repository.core.spi.RepositoryMethodDescriptor;
 import ru.vyarus.guice.persist.orient.repository.core.spi.amend.AmendExecutionExtension;
 import ru.vyarus.guice.persist.orient.repository.core.spi.amend.AmendMethod;
@@ -18,6 +17,8 @@ import ru.vyarus.java.generics.resolver.GenericsResolver;
 import javax.annotation.Nonnull;
 import java.lang.annotation.Annotation;
 import java.util.List;
+
+import static ru.vyarus.guice.persist.orient.repository.core.MethodDefinitionException.check;
 
 /**
  * Extensions compatibility utilities. Most compatibility checks are done by descriptor, used during method
@@ -42,7 +43,7 @@ public final class ExtCompatibilityUtils {
     public static void checkParamExtensionCompatibility(
             final Class<? extends RepositoryMethodDescriptor> descriptorType,
             final Class<? extends MethodParamExtension> paramExtType) {
-        MethodDefinitionException.check(isCompatible(paramExtType, MethodParamExtension.class, descriptorType),
+        check(isCompatible(paramExtType, MethodParamExtension.class, descriptorType),
                 "Param extension %s is incompatible with descriptor %s", paramExtType.getSimpleName(),
                 descriptorType.getSimpleName());
     }
@@ -66,7 +67,7 @@ public final class ExtCompatibilityUtils {
                     }
                 });
         for (Class<? extends AmendMethodExtension> ext : exts) {
-            MethodDefinitionException.check(isCompatible(ext, AmendMethodExtension.class, descriptorType),
+            check(isCompatible(ext, AmendMethodExtension.class, descriptorType),
                     "Amend extension %s is incompatible with descriptor %s", ext.getSimpleName(),
                     descriptorType.getSimpleName());
         }

@@ -3,6 +3,7 @@ package ru.vyarus.guice.persist.orient.repository.command.ext.named
 import com.google.inject.Inject
 import ru.vyarus.guice.persist.orient.AbstractTest
 import ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxAction
+import ru.vyarus.guice.persist.orient.repository.RepositoryException
 import ru.vyarus.guice.persist.orient.support.model.Model
 import ru.vyarus.guice.persist.orient.support.modules.RepositoryTestModule
 import spock.guice.UseModules
@@ -36,16 +37,16 @@ class NamedParamsExecutionTest extends AbstractTest {
         when: "positional params with warning"
         res = dao.parametersPositionalWithOrdinal('John', 'Doe');
         then: "ordinal and named params can't be used together"
-        thrown(IllegalStateException)
+        thrown(RepositoryException)
 
         when: "named params wrong declaration"
-        res = dao.parametersNames('John', 'Doe');
+        dao.parametersNames('John', 'Doe');
         then: "error"
-        thrown(IllegalStateException)
+        thrown(RepositoryException)
 
         when: "named params with duplicate"
-        res = dao.parametersNamesDuplicateName('John', 'Doe');
+        dao.parametersNamesDuplicateName('John', 'Doe');
         then: "error"
-        thrown(IllegalStateException)
+        thrown(RepositoryException)
     }
 }

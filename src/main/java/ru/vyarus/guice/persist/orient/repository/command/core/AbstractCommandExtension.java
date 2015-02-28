@@ -5,12 +5,11 @@ import com.google.common.collect.Maps;
 import com.orientechnologies.orient.core.command.OCommandRequest;
 import ru.vyarus.guice.persist.orient.repository.command.core.el.ElAnalyzer;
 import ru.vyarus.guice.persist.orient.repository.command.core.el.ElUtils;
-import ru.vyarus.guice.persist.orient.repository.command.core.param.ParamsDescriptor;
 import ru.vyarus.guice.persist.orient.repository.command.core.param.CommandParamsContext;
+import ru.vyarus.guice.persist.orient.repository.command.core.param.ParamsDescriptor;
 import ru.vyarus.guice.persist.orient.repository.command.core.spi.CommandExtension;
 import ru.vyarus.guice.persist.orient.repository.command.core.spi.CommandMethodDescriptor;
 import ru.vyarus.guice.persist.orient.repository.command.core.spi.SqlCommandDescriptor;
-import ru.vyarus.guice.persist.orient.repository.core.MethodExecutionException;
 import ru.vyarus.guice.persist.orient.repository.core.ext.SpiService;
 import ru.vyarus.guice.persist.orient.repository.core.spi.DescriptorContext;
 import ru.vyarus.guice.persist.orient.repository.core.spi.RepositoryMethodDescriptor;
@@ -73,7 +72,8 @@ public abstract class AbstractCommandExtension<T extends CommandMethodDescriptor
             query = createQueryCommand(descriptor, desc);
             amendCommand(query, descriptor, repositoryInstance, arguments);
         } catch (Exception ex) {
-            throw new IllegalArgumentException("Failed to prepare command for execution", ex);
+            throw new CommandMethodException(String.format("Failed to prepare command '%s' execution",
+                    descriptor.command), ex);
         }
 
         return executeCommand(descriptor, desc, query);
@@ -161,7 +161,7 @@ public abstract class AbstractCommandExtension<T extends CommandMethodDescriptor
             final String params = desc.useNamedParams
                     ? joiner.withKeyValueSeparator("=").join(desc.namedParams)
                     : joiner.join(desc.params);
-            throw new MethodExecutionException(String.format("Failed to execute query '%s' with parameters: %s",
+            throw new CommandMethodException(String.format("Failed to execute command '%s' with parameters: %s",
                     desc.command, params), th);
         }
     }

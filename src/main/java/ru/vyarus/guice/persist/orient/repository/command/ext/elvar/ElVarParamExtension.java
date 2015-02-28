@@ -1,6 +1,5 @@
 package ru.vyarus.guice.persist.orient.repository.command.ext.elvar;
 
-import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
@@ -14,6 +13,7 @@ import ru.vyarus.guice.persist.orient.repository.command.core.spi.CommandMethodD
 import ru.vyarus.guice.persist.orient.repository.command.core.spi.SqlCommandDescriptor;
 import ru.vyarus.guice.persist.orient.repository.core.spi.parameter.MethodParamExtension;
 import ru.vyarus.guice.persist.orient.repository.core.spi.parameter.ParamInfo;
+import ru.vyarus.guice.persist.orient.repository.core.util.RepositoryUtils;
 
 import javax.inject.Singleton;
 import java.lang.reflect.Method;
@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import static ru.vyarus.guice.persist.orient.repository.core.MethodDefinitionException.check;
+import static ru.vyarus.guice.persist.orient.repository.core.MethodExecutionException.checkExec;
 
 /**
  * {@link ElVar} parameter extension.
@@ -78,11 +79,11 @@ public class ElVarParamExtension implements
         final boolean safe = param.annotation.safe() || isSafeType(param.type);
         final String[] allowed = param.annotation.allowedValues();
         if (!safe && allowed.length == 0) {
-            LOGGER.warn("No default values registered for variable parameter {}. Either use safe "
+            LOGGER.warn("No default values registered for method {} variable parameter {}. Either use safe "
                             + "types (enum, number, primitives etc) or define possible values in annotation. "
                             + "If you sure that parameter is secured from injection, set safe flag to remove "
                             + "this warning.",
-                    name, method.getDeclaringClass(), method.getName());
+                    RepositoryUtils.methodToString(method), name);
         }
         if (allowed.length > 0) {
             elvars.values.putAll(name, Arrays.asList(allowed));
@@ -120,7 +121,7 @@ public class ElVarParamExtension implements
             final String strValue = Strings.nullToEmpty(converter.convert(value));
             // check value with defaults
             if (defaults.containsKey(name)) {
-                Preconditions.checkArgument(defaults.get(name).contains(strValue),
+                checkExec(defaults.get(name).contains(strValue),
                         "Illegal value for variable '%s': '%s'", name, strValue);
             }
             res.put(name, strValue);

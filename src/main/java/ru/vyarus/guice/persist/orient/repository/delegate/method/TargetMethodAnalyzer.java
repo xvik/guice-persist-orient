@@ -4,10 +4,10 @@ import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
-import ru.vyarus.guice.persist.orient.repository.core.MethodDefinitionException;
 import ru.vyarus.guice.persist.orient.repository.core.ext.ExtUtils;
 import ru.vyarus.guice.persist.orient.repository.core.spi.DescriptorContext;
 import ru.vyarus.guice.persist.orient.repository.core.spi.parameter.ParamInfo;
+import ru.vyarus.guice.persist.orient.repository.core.util.RepositoryUtils;
 import ru.vyarus.java.generics.resolver.GenericsResolver;
 import ru.vyarus.java.generics.resolver.context.GenericsContext;
 
@@ -15,10 +15,11 @@ import javax.annotation.Nonnull;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+
+import static ru.vyarus.guice.persist.orient.repository.core.MethodDefinitionException.check;
 
 /**
  * Searches for target delegate method.
@@ -39,7 +40,7 @@ public final class TargetMethodAnalyzer {
         final Method method = context.method;
         final List<Class<?>> params = context.generics.resolveParameters(method);
         final List<MatchedMethod> possibilities = findPossibleMethods(params, target, methodHint);
-        MethodDefinitionException.check(!possibilities.isEmpty(),
+        check(!possibilities.isEmpty(),
                 "No matched method found in target bean %s for delegation", target.getName());
         // if method hint wasn't used trying repository method name for guessing
         return resolveMethod(methodHint != null ? null : method.getName(),
@@ -90,8 +91,8 @@ public final class TargetMethodAnalyzer {
                     extended = true;
                 }
             } catch (Exception ex) {
-                throw new IllegalStateException(String.format("Error on method %s#%s parameter %s",
-                        method.getDeclaringClass(), method.getName(), i), ex);
+                throw new IllegalStateException(String.format("Error analysing method %s parameter %s",
+                        RepositoryUtils.methodToString(method), i), ex);
             }
         }
         MatchedMethod res = null;
@@ -185,13 +186,14 @@ public final class TargetMethodAnalyzer {
 
     private static void checkGuessSuccess(final boolean condition,
                                           final Collection<MatchedMethod> possibilities) {
-        MethodDefinitionException.check(condition,
-                "Can't detect exact target delegate method: %s. Try to rename repository method to "
-                        + "match target method name or specify exact method using annotation",
+        check(condition,
+                "Can't detect exact target delegate method. Try to rename repository method to "
+                        + "match repository method name or specify exact method using annotation."
+                        + "Found possibilities: %s",
                 Joiner.on(",").join(Collections2.transform(possibilities, new Function<MatchedMethod, Object>() {
                     @Override
                     public Object apply(@Nonnull final MatchedMethod input) {
-                        return input.method.getName() + " " + Arrays.toString(input.method.getParameterTypes());
+                        return RepositoryUtils.methodToString(input.method);
                     }
                 })));
     }

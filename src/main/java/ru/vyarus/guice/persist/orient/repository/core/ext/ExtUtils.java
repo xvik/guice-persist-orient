@@ -2,7 +2,6 @@ package ru.vyarus.guice.persist.orient.repository.core.ext;
 
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +15,8 @@ import javax.annotation.Nonnull;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.List;
+
+import static ru.vyarus.guice.persist.orient.repository.core.MethodDefinitionException.check;
 
 /**
  * Utilities to resolve find extension annotations.
@@ -53,13 +54,13 @@ public final class ExtUtils {
      */
     public static Annotation findMethodAnnotation(final Method method) {
         List<Annotation> annotations = filterAnnotations(RepositoryMethod.class, method.getAnnotations());
-        Preconditions.checkState(annotations.size() <= 1, "Method must use only one annotation of: %s",
+        check(annotations.size() <= 1, "Method must use only one annotation of: %s",
                 method.getName(), toStringAnnotations(annotations));
         Annotation res = null;
         if (annotations.isEmpty()) {
             // some annotations may be defined on mixin type (e.g. Delegate)
             annotations = filterAnnotations(RepositoryMethod.class, method.getDeclaringClass().getAnnotations());
-            Preconditions.checkState(annotations.size() <= 1, "Type %s must use only one annotation of: %s",
+            check(annotations.size() <= 1, "Type %s must use only one annotation of: %s",
                     method.getDeclaringClass().getName(), toStringAnnotations(annotations));
         }
         if (!annotations.isEmpty()) {
@@ -79,7 +80,7 @@ public final class ExtUtils {
      */
     public static Annotation findParameterExtension(final Annotation... annotations) {
         final List<Annotation> anns = filterAnnotations(MethodParam.class, annotations);
-        Preconditions.checkState(anns.size() <= 1, "Parameter may have just one extension annotation of: %s",
+        check(anns.size() <= 1, "Parameter may have just one extension annotation of: %s",
                 toStringAnnotations(anns));
         Annotation res = null;
         if (!anns.isEmpty()) {

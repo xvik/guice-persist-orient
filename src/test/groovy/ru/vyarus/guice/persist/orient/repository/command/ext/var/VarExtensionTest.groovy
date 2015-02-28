@@ -3,6 +3,7 @@ package ru.vyarus.guice.persist.orient.repository.command.ext.var
 import com.google.inject.Inject
 import com.orientechnologies.orient.core.command.OCommandRequest
 import ru.vyarus.guice.persist.orient.AbstractTest
+import ru.vyarus.guice.persist.orient.repository.RepositoryException
 import ru.vyarus.guice.persist.orient.repository.command.core.spi.CommandExtension
 import ru.vyarus.guice.persist.orient.repository.command.core.spi.CommandMethodDescriptor
 import ru.vyarus.guice.persist.orient.repository.command.core.spi.SqlCommandDescriptor
@@ -40,7 +41,7 @@ class VarExtensionTest extends AbstractTest {
         expected = ['1']
         dao.string('dsfsd')
         then: "fail - validation works"
-        thrown(IllegalStateException)
+        thrown(RepositoryException)
 
         when: "using script variable"
         expected = ['tst']
@@ -63,11 +64,11 @@ class VarExtensionTest extends AbstractTest {
         when: "variable name is empty"
         dao.empty("fgg")
         then: "error"
-        thrown(IllegalStateException)
+        thrown(RepositoryException)
 
         when: "duplicate variable name"
         dao.duplicate("fgg", "sdsd")
         then: "error"
-        thrown(IllegalStateException)
+        thrown(RepositoryException)
     }
 }

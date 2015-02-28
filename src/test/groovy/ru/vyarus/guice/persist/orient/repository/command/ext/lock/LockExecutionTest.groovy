@@ -3,6 +3,7 @@ package ru.vyarus.guice.persist.orient.repository.command.ext.lock
 import com.google.inject.Inject
 import com.orientechnologies.orient.core.storage.OStorage
 import ru.vyarus.guice.persist.orient.AbstractTest
+import ru.vyarus.guice.persist.orient.repository.RepositoryException
 import ru.vyarus.guice.persist.orient.repository.command.ext.lock.support.LockCases
 import ru.vyarus.guice.persist.orient.repository.command.ext.lock.support.ext.CheckLockExtension
 import ru.vyarus.guice.persist.orient.support.model.Model
@@ -25,7 +26,7 @@ class LockExecutionTest extends AbstractTest {
         when: "checking that lock check works"
         dao.lock()
         then: 'check failed'
-        thrown(IllegalStateException)
+        thrown(RepositoryException)
 
         when: "call method with lock"
         CheckLockExtension.expected = OStorage.LOCKING_STRATEGY.KEEP_EXCLUSIVE_LOCK

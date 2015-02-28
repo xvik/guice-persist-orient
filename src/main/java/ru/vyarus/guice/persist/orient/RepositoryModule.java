@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vyarus.guice.persist.orient.db.DbType;
 import ru.vyarus.guice.persist.orient.repository.RepositoryMethodInterceptor;
+import ru.vyarus.guice.persist.orient.repository.core.MethodDefinitionException;
 import ru.vyarus.guice.persist.orient.repository.core.executor.RepositoryExecutor;
 import ru.vyarus.guice.persist.orient.repository.core.executor.impl.DocumentRepositoryExecutor;
 import ru.vyarus.guice.persist.orient.repository.core.ext.ExtUtils;
@@ -42,7 +43,7 @@ import java.lang.reflect.Method;
  * <p>After execution result could be automatically converted (e.g. between collections, arrays, get first element
  * of result list, etc.). See {@link ru.vyarus.guice.persist.orient.repository.core.result.converter.ResultConverter}.
  * </p>
- * <p>Based on guice-persist jpa module com.google.inject.persist.jpa.JpaPersistModule</p>
+ * <p>Based on guice-persist jpa module {@link com.google.inject.persist.jpa.JpaPersistModule}</p>
  *
  * @author Vyacheslav Rusakov
  * @since 30.07.2014
@@ -82,7 +83,7 @@ public class RepositoryModule extends AbstractModule {
                 try {
                     return ExtUtils.findMethodAnnotation(method) != null;
                 } catch (Exception ex) {
-                    throw new IllegalStateException(String.format("Error declaration on method %s",
+                    throw new MethodDefinitionException(String.format("Error declaration on method %s",
                             RepositoryUtils.methodToString(method)), ex);
                 }
             }

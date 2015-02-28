@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vyarus.guice.persist.orient.db.DbType;
 import ru.vyarus.guice.persist.orient.repository.core.result.ResultDescriptor;
+import ru.vyarus.guice.persist.orient.repository.core.util.RepositoryUtils;
 
 import java.lang.reflect.Method;
 import java.util.Set;
@@ -53,7 +54,7 @@ public final class ExecutorAnalyzer {
                 executor = find(requestedType, executors);
             }
         }
-        check(executor != null, "Executor not found for type set in @Use annotation " + requestedType);
+        check(executor != null, "Executor not found for type set in annotation %s", requestedType);
         return executor;
     }
 
@@ -78,8 +79,8 @@ public final class ExecutorAnalyzer {
                 && !executor.getType().equals(requestedType)) {
             LOGGER.warn(
                     "Connection hint {} ignored, because correct execution type recognized from return type "
-                            + "in repository method {}#{}",
-                    connectionHint, method.getDeclaringClass(), method.getName());
+                            + "in repository method {}",
+                    connectionHint, RepositoryUtils.methodToString(method));
         }
         return requestedType;
     }

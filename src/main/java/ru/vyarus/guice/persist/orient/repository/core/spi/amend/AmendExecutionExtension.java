@@ -14,6 +14,8 @@ package ru.vyarus.guice.persist.orient.repository.core.spi.amend;
  * <p>Use {@link ru.vyarus.guice.persist.orient.repository.core.util.Order} annotation to order extensions.</p>
  * <p>Execution extensions type is checked during descriptor creation and incompatible extensions are filtered out
  * (check using specific extension type defined in repository method descriptor generic).</p>
+ * <p>Use {@link ru.vyarus.guice.persist.orient.repository.core.MethodExecutionException} for usage specific
+ * errors.</p>
  *
  * @author Vyacheslav Rusakov
  * @see ru.vyarus.guice.persist.orient.repository.core.spi.amend.AmendMethodExtension

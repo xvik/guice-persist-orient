@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 import static ru.vyarus.guice.persist.orient.repository.core.MethodDefinitionException.check;
+import static ru.vyarus.guice.persist.orient.repository.core.MethodExecutionException.checkExec;
 
 /**
  * {@link DynamicParams} parameter extension.
@@ -56,12 +57,12 @@ public class DynamicParamsExtension implements
             return;
         }
         if (desc.named) {
-            check(sql.useNamedParams || sql.params.length == 0, "Can't apply named dynamic params, "
+            checkExec(sql.useNamedParams || sql.params.length == 0, "Can't apply named dynamic params, "
                     + "because positional params already used");
             sql.params = null;
             sql.namedParams = composeNamed((Map) value, sql.namedParams);
         } else {
-            check(!sql.useNamedParams || sql.namedParams.isEmpty(), "Can't apply positional dynamic params, "
+            checkExec(!sql.useNamedParams || sql.namedParams.isEmpty(), "Can't apply positional dynamic params, "
                     + "because named params already used");
             sql.namedParams = null;
             sql.params = composePositional(value, sql.params);

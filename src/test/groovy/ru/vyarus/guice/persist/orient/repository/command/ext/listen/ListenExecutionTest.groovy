@@ -3,6 +3,7 @@ package ru.vyarus.guice.persist.orient.repository.command.ext.listen
 import com.google.inject.Inject
 import com.orientechnologies.orient.core.command.OCommandResultListener
 import ru.vyarus.guice.persist.orient.AbstractTest
+import ru.vyarus.guice.persist.orient.repository.RepositoryException
 import ru.vyarus.guice.persist.orient.support.modules.BootstrapModule
 import ru.vyarus.guice.persist.orient.support.modules.RepositoryTestModule
 import spock.guice.UseModules
@@ -22,7 +23,7 @@ class ListenExecutionTest extends AbstractTest {
         when: "attaching listener"
         def res = []
         repository.select(new OCommandResultListener() {
-            int i=0;
+            int i = 0;
 
             @Override
             boolean result(Object iRecord) {
@@ -44,26 +45,26 @@ class ListenExecutionTest extends AbstractTest {
         when: "wrong listener type defined"
         repository.wrongType(null)
         then: "error"
-        thrown(IllegalStateException)
+        thrown(RepositoryException)
 
         when: "duplicate listener definition"
         repository.duplicate(null, null)
         then: "error"
-        thrown(IllegalStateException)
+        thrown(RepositoryException)
 
         when: "listener used with update query"
         repository.updateWithListener(null, null, null)
         then: "error"
-        thrown(IllegalStateException)
+        thrown(RepositoryException)
 
         when: "listener used with not void method"
         repository.returnType({} as OCommandResultListener)
         then: "error"
-        thrown(IllegalStateException)
+        thrown(RepositoryException)
 
         when: "calling with null listener"
         repository.select(null)
         then: "error"
-        thrown(IllegalStateException)
+        thrown(RepositoryException)
     }
 }

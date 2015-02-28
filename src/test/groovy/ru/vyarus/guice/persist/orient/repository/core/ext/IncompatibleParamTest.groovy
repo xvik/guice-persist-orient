@@ -2,11 +2,10 @@ package ru.vyarus.guice.persist.orient.repository.core.ext
 
 import com.google.inject.Inject
 import ru.vyarus.guice.persist.orient.AbstractTest
+import ru.vyarus.guice.persist.orient.repository.RepositoryException
 import ru.vyarus.guice.persist.orient.repository.core.ext.support.IncompatibleParam
 import ru.vyarus.guice.persist.orient.support.modules.RepositoryTestModule
 import spock.guice.UseModules
-import spock.lang.Specification
-
 
 /**
  * @author Vyacheslav Rusakov 
@@ -23,6 +22,6 @@ class IncompatibleParamTest extends AbstractTest {
         when: "calling repo method with incompatible parameter extension"
         repository.selectAll(Object.class)
         then: "incompatible param detected"
-        thrown(IllegalStateException)
+        thrown(RepositoryException)
     }
 }

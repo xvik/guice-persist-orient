@@ -34,6 +34,8 @@ public interface MethodParamExtension<T extends RepositoryMethodDescriptor, P ex
 
     /**
      * Called to process all annotated method parameters at once.
+     * <p>Use {@link ru.vyarus.guice.persist.orient.repository.core.MethodDefinitionException} for usage specific
+     * errors.</p>
      *
      * @param descriptor repository method descriptor
      * @param context    params context
