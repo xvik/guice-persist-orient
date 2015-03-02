@@ -1,4 +1,8 @@
-package ru.vyarus.guice.persist.orient.repository.core.ext.support.result
+package ru.vyarus.guice.persist.orient.repository.core.ext.result.support
+
+import ru.vyarus.guice.persist.orient.repository.core.ext.result.support.ext.DummyConverter
+import ru.vyarus.guice.persist.orient.repository.core.ext.result.support.ext.DummyConverter2
+
 /**
  * @author Vyacheslav Rusakov 
  * @since 02.03.2015

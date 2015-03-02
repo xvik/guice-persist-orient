@@ -24,8 +24,8 @@ import java.lang.annotation.Target;
 public @interface ResultConverter {
 
     /**
-     * Extension instance is obtained from guice context. Prefer using singleton scope for extension, because
-     * obtained instance is attached to descriptor.
+     * Extension instance is obtained from guice context. Prefer using singleton scope for performance.
+     * Other scopes will also work properly.
      *
      * @return result converter extension type.
      */

@@ -38,7 +38,7 @@ public class ResultService {
         final ResultConversionDescriptor desc = new ResultConversionDescriptor();
         desc.useDefaultConverter = true;
         if (ext != null) {
-            final ru.vyarus.guice.persist.orient.repository.core.spi.result.ResultConverter ann = ext.getClass()
+            final ru.vyarus.guice.persist.orient.repository.core.spi.result.ResultConverter ann = ext.annotationType()
                     .getAnnotation(ru.vyarus.guice.persist.orient.repository.core.spi.result.ResultConverter.class);
             desc.useDefaultConverter = ann.applyDefaultConverter();
             desc.customConverter = injector.getProvider(ann.value());

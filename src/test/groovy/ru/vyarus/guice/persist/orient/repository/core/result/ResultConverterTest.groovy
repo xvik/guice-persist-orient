@@ -306,7 +306,7 @@ class ResultConverterTest extends AbstractTest {
 
         when: "result is Integer and void expected"
         res = converter.convert(new ResultDescriptor(
-                returnType: ResultType.PLAIN,
+                returnType: ResultType.VOID,
                 expectType: void,
                 entityType: Integer),
                 1)

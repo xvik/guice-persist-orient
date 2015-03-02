@@ -64,7 +64,7 @@ class DbTypeRecognitionTest extends AbstractRepositoryDefinitionTest {
         desc = lookup(DbRecognitionCases.getMethod("update"))
         then: "document provider recognized"
         desc.executor.class == DocumentRepositoryExecutor
-        desc.result.returnType == ResultType.PLAIN
+        desc.result.returnType == ResultType.VOID
 
         when: "primitive return type, default document"
         desc = lookup(DbRecognitionCases.getMethod("updateWithCount"))

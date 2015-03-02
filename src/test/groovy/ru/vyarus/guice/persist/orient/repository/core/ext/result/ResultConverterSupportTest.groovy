@@ -1,10 +1,10 @@
-package ru.vyarus.guice.persist.orient.repository.core.ext
+package ru.vyarus.guice.persist.orient.repository.core.ext.result
 
 import ru.vyarus.guice.persist.orient.repository.core.MethodDefinitionException
-import ru.vyarus.guice.persist.orient.repository.core.ext.support.result.ConvRepo
-import ru.vyarus.guice.persist.orient.repository.core.ext.support.result.ConvRepo2
-import ru.vyarus.guice.persist.orient.repository.core.ext.support.result.DummyConverter
-import ru.vyarus.guice.persist.orient.repository.core.ext.support.result.RootConvRepo
+import ru.vyarus.guice.persist.orient.repository.core.ext.result.support.ConvRepo
+import ru.vyarus.guice.persist.orient.repository.core.ext.result.support.ConvRepo2
+import ru.vyarus.guice.persist.orient.repository.core.ext.result.support.ext.DummyConverter
+import ru.vyarus.guice.persist.orient.repository.core.ext.result.support.RootConvRepo
 import ru.vyarus.guice.persist.orient.repository.core.ext.util.ExtUtils
 import spock.lang.Specification
 
@@ -33,7 +33,7 @@ class ResultConverterSupportTest extends Specification {
         res.value() == "root"
 
         when: "inspect method with illegal declaration"
-        res = ExtUtils.findResultConverter(ConvRepo.getMethod("illegal"), RootConvRepo)
+        ExtUtils.findResultConverter(ConvRepo.getMethod("illegal"), RootConvRepo)
         then: "error"
         thrown(MethodDefinitionException)
     }

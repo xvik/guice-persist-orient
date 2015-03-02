@@ -1,6 +1,5 @@
 package ru.vyarus.guice.persist.orient.repository.core.ext.service.result.converter;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.common.primitives.Primitives;
@@ -23,7 +22,6 @@ import java.util.*;
 @Singleton
 @SuppressWarnings("PMD.AvoidDuplicateLiterals")
 public class DefaultResultConverter implements ResultConverter {
-    private static final List<Class> VOID_TYPES = ImmutableList.<Class>of(Void.class, void.class);
 
     @Override
     @SuppressWarnings("unchecked")
@@ -33,7 +31,7 @@ public class DefaultResultConverter implements ResultConverter {
         final Class<?> returnClass = expectType.isPrimitive() ? Primitives.wrap(expectType) : expectType;
 
         Object res = null;
-        if (result != null && !VOID_TYPES.contains(returnClass)) {
+        if (result != null && !ResultType.VOID.equals(desc.returnType)) {
             res = returnClass.isAssignableFrom(result.getClass())
                     ? result : convertResult(desc.returnType, returnClass, desc.entityType, result);
         }

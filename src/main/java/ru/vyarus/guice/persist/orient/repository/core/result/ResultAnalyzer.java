@@ -1,5 +1,6 @@
 package ru.vyarus.guice.persist.orient.repository.core.result;
 
+import com.google.common.collect.ImmutableList;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +13,7 @@ import ru.vyarus.java.generics.resolver.util.NoGenericException;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 import static ru.vyarus.guice.persist.orient.repository.core.MethodDefinitionException.check;
 import static ru.vyarus.guice.persist.orient.repository.core.result.ResultType.*;
@@ -24,6 +26,7 @@ import static ru.vyarus.guice.persist.orient.repository.core.result.ResultType.*
  */
 public final class ResultAnalyzer {
     private static final Logger LOGGER = LoggerFactory.getLogger(ResultAnalyzer.class);
+    private static final List<Class> VOID_TYPES = ImmutableList.<Class>of(Void.class, void.class);
 
     private ResultAnalyzer() {
     }
@@ -44,25 +47,31 @@ public final class ResultAnalyzer {
 
         ResultType type;
         Class<?> entityClass;
-        if (!ODocument.class.isAssignableFrom(returnClass)
-                && (Collection.class.isAssignableFrom(returnClass)
-                || Iterator.class.isAssignableFrom(returnClass)
-                || Iterable.class.isAssignableFrom(returnClass))) {
+        if (isCollection(returnClass)) {
             type = COLLECTION;
             entityClass = resolveGenericType(method, context.generics);
         } else if (returnClass.isArray()) {
             type = ARRAY;
             entityClass = returnClass.getComponentType();
+        } else if (VOID_TYPES.contains(returnClass)) {
+            type = VOID;
+            entityClass = Void.class;
         } else {
             type = PLAIN;
             // support for guava and jdk8 optionals
             entityClass = Optionals.isOptional(returnClass)
                     ? resolveGenericType(method, context.generics) : returnClass;
         }
-
         descriptor.returnType = type;
         descriptor.entityType = entityClass;
         return descriptor;
+    }
+
+    private static boolean isCollection(final Class<?> type) {
+        return !ODocument.class.isAssignableFrom(type)
+                && (Collection.class.isAssignableFrom(type)
+                || Iterator.class.isAssignableFrom(type)
+                || Iterable.class.isAssignableFrom(type));
     }
 
     private static Class<?> resolveExpectedType(final Class<?> returnClass, final Class<?> returnCollectionType) {

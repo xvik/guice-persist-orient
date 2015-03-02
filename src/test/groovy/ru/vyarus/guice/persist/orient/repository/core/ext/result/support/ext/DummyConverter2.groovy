@@ -1,4 +1,4 @@
-package ru.vyarus.guice.persist.orient.repository.core.ext.support.result
+package ru.vyarus.guice.persist.orient.repository.core.ext.result.support.ext
 
 import ru.vyarus.guice.persist.orient.repository.core.spi.result.ResultConverter
 
