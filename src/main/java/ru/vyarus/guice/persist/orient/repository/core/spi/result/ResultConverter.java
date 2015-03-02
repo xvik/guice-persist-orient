@@ -11,7 +11,9 @@ import java.lang.annotation.Target;
  * or replace it completely for some methods.
  * <p>Extension must use custom annotation, annotated with this one.</p>
  * <p>Note that simple conversion cases could be solved using just guice aop. These extensions should be used,
- * when default converter must be disabled or additional conversion must be parametrized (from annotation).</p>
+ * when default converter must be disabled or additional conversion must be parametrized (from annotation).
+ * Also extension may be useful when descriptor result type analysis object could be useful
+ * (to avoid manual reflection).</p>
  * <p>Method may have only one converter extension.</p>
  * <p>Annotation could be defined on method or type to apply to all methods. Annotation on method overrides
  * declared type or repository type annotation.</p>
