@@ -49,6 +49,16 @@ class DetachExecutionTest extends AbstractTest {
         res2.size() == 10
         res2.iterator().next().name.startsWith('name')
 
+        when: "detach iterable object"
+        res2 = repository.selectIterableDetach()
+        then: "detached"
+        res2.iterator().next().name == ('name0')
+
+        when: "detach iterator object"
+        res2 = repository.selectIteratorDetach()
+        then: "detached"
+        res2.iterator().next().name == ('name0')
+
         when: "detach custom collection object"
         res2 = repository.selectCustomCollectionDetach()
         then: "detached"

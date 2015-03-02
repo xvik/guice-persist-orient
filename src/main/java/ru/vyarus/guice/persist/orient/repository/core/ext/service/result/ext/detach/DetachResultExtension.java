@@ -10,6 +10,7 @@ import ru.vyarus.guice.persist.orient.repository.core.spi.result.ResultExtension
 import javax.inject.Singleton;
 import java.lang.reflect.Array;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 import static ru.vyarus.guice.persist.orient.repository.core.MethodExecutionException.checkExec;
@@ -52,17 +53,25 @@ public class DetachResultExtension implements ResultExtension<DetachResult> {
     }
 
     private Object handleCollection(final Object result, final OObjectDatabaseTx connection) {
+        final boolean isIterator = result instanceof Iterator;
         @SuppressWarnings("unchecked")
-        final Collection<Object> col = (Collection<Object>) result;
+        final Collection<Object> col = isIterator ? Lists.newArrayList((Iterator) result)
+                : (Collection<Object>) result;
+        final Collection res = detachCollection(col, connection);
+        return isIterator ? res.iterator() : res;
+    }
+
+    @SuppressWarnings("unchecked")
+    private Collection detachCollection(final Collection result, final OObjectDatabaseTx connection) {
         final List<Object> tmp = Lists.newArrayList();
-        for (Object obj : col) {
+        for (Object obj : result) {
             tmp.add(obj == null ? null : connection.detachAll(obj, true));
         }
-        col.clear();
+        result.clear();
         for (Object obj : tmp) {
-            col.add(obj);
+            result.add(obj);
         }
-        return col;
+        return result;
     }
 
     private Object handleArray(final Object result, final OObjectDatabaseTx connection) {

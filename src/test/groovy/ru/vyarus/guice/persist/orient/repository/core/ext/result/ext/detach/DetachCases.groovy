@@ -37,6 +37,14 @@ interface DetachCases {
     @DetachResult
     Set<Model> selectSetDetach()
 
+    @Query("select from Model")
+    @DetachResult
+    Iterable<Model> selectIterableDetach()
+
+    @Query("select from Model")
+    @DetachResult
+    Iterator<Model> selectIteratorDetach()
+
     @Query(value = "select from Model", returnAs = LinkedList)
     @DetachResult
     Collection<Model> selectCustomCollectionDetach()
