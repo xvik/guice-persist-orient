@@ -4,6 +4,7 @@ import ru.vyarus.guice.persist.orient.repository.command.core.spi.CommandExtensi
 import ru.vyarus.guice.persist.orient.repository.command.core.spi.CommandMethodDescriptor
 import ru.vyarus.guice.persist.orient.repository.command.ext.pagination.LimitParamExtension
 import ru.vyarus.guice.persist.orient.repository.core.MethodDefinitionException
+import ru.vyarus.guice.persist.orient.repository.core.ext.util.ExtCompatibilityUtils
 import ru.vyarus.guice.persist.orient.repository.core.spi.parameter.MethodParamExtension
 import ru.vyarus.guice.persist.orient.repository.delegate.ext.generic.GenericParamExtension
 import ru.vyarus.guice.persist.orient.repository.delegate.spi.DelegateMethodDescriptor

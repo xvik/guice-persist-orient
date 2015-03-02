@@ -1,8 +1,11 @@
-package ru.vyarus.guice.persist.orient.repository.core.ext;
+package ru.vyarus.guice.persist.orient.repository.core.ext.service;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.inject.Injector;
+import ru.vyarus.guice.persist.orient.repository.core.ext.util.ExtCompatibilityUtils;
+import ru.vyarus.guice.persist.orient.repository.core.ext.util.ExtUtils;
+import ru.vyarus.guice.persist.orient.repository.core.spi.DescriptorContext;
 import ru.vyarus.guice.persist.orient.repository.core.spi.RepositoryMethodDescriptor;
 import ru.vyarus.guice.persist.orient.repository.core.spi.amend.AmendExecutionExtension;
 import ru.vyarus.guice.persist.orient.repository.core.spi.amend.AmendMethod;
@@ -52,11 +55,12 @@ public class AmendExtensionsService {
     @SuppressWarnings("unchecked")
     public void registerExtensions(final RepositoryMethodDescriptor descriptor,
                                    final ParamsContext paramsContext) {
-        final Method method = paramsContext.getDescriptorContext().method;
+        final DescriptorContext context = paramsContext.getExtensionsContext();
+        final Method method = context.method;
         final List<AmendExecutionExtension> extensions = Lists.newArrayList();
         // incompatible extensions will be silently filtered (if defined on type)
         final List<Annotation> amendAnnotations = ExtUtils
-                .findAmendAnnotations(method, paramsContext.getDescriptorContext().type, descriptor.getClass());
+                .findAmendAnnotations(method, context.type, descriptor.getClass());
         for (Annotation ann : amendAnnotations) {
             final AmendExecutionExtension ext = processExtension(ann, descriptor);
             if (ext != null) {

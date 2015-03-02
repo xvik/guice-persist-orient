@@ -8,7 +8,7 @@ package ru.vyarus.guice.persist.orient.repository.core.result;
  */
 public enum ResultType {
     /**
-     * Plain object (single result or update query result).
+     * Plain object (single result, update query result or void).
      */
     PLAIN,
     /**

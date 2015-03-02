@@ -1,6 +1,6 @@
-package ru.vyarus.guice.persist.orient.repository.core.result.converter;
+package ru.vyarus.guice.persist.orient.repository.core.ext.service.result.converter;
 
-import ru.vyarus.guice.persist.orient.repository.RepositoryException;
+import ru.vyarus.guice.persist.orient.repository.core.MethodExecutionException;
 
 /**
  * Thrown to indicate problem during result conversion.
@@ -8,7 +8,7 @@ import ru.vyarus.guice.persist.orient.repository.RepositoryException;
  * @author Vyacheslav Rusakov
  * @since 28.08.2014
  */
-public class ResultConversionException extends RepositoryException {
+public class ResultConversionException extends MethodExecutionException {
 
     public ResultConversionException(final String message) {
         super(message);

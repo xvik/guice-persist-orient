@@ -31,7 +31,7 @@ import java.lang.annotation.Annotation;
  * @param <T> required descriptor type
  * @param <A> extension annotation type
  * @author Vyacheslav Rusakov
- * @see ru.vyarus.guice.persist.orient.repository.core.ext.AmendExtensionsService
+ * @see ru.vyarus.guice.persist.orient.repository.core.ext.service.AmendExtensionsService
  * @since 07.02.2015
  */
 public interface AmendMethodExtension<T extends RepositoryMethodDescriptor, A extends Annotation> {

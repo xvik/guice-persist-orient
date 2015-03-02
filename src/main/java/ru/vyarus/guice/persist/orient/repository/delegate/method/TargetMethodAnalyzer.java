@@ -4,7 +4,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
-import ru.vyarus.guice.persist.orient.repository.core.ext.ExtUtils;
+import ru.vyarus.guice.persist.orient.repository.core.ext.util.ExtUtils;
 import ru.vyarus.guice.persist.orient.repository.core.spi.DescriptorContext;
 import ru.vyarus.guice.persist.orient.repository.core.spi.parameter.ParamInfo;
 import ru.vyarus.guice.persist.orient.repository.core.util.RepositoryUtils;

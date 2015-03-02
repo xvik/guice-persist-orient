@@ -1,4 +1,4 @@
-package ru.vyarus.guice.persist.orient.repository.core.result.converter;
+package ru.vyarus.guice.persist.orient.repository.core.ext.service.result.converter;
 
 import com.google.inject.ImplementedBy;
 import ru.vyarus.guice.persist.orient.repository.core.result.ResultDescriptor;

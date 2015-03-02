@@ -1,10 +1,12 @@
-package ru.vyarus.guice.persist.orient.repository.core.ext;
+package ru.vyarus.guice.persist.orient.repository.core.ext.service;
 
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.inject.Injector;
+import ru.vyarus.guice.persist.orient.repository.core.ext.util.ExtCompatibilityUtils;
+import ru.vyarus.guice.persist.orient.repository.core.ext.util.ExtUtils;
 import ru.vyarus.guice.persist.orient.repository.core.spi.DescriptorContext;
 import ru.vyarus.guice.persist.orient.repository.core.spi.RepositoryMethodDescriptor;
 import ru.vyarus.guice.persist.orient.repository.core.spi.parameter.MethodParam;
@@ -27,7 +29,7 @@ import java.util.Map;
  * <p>Service itself simply parse parameters, founds extensions, set ordinal parameters (without extensions) into
  * params context and executing extensions on annotated parameters.</p>
  * <p>All found extensions are stored in context for processing by
- * {@link ru.vyarus.guice.persist.orient.repository.core.ext.AmendExtensionsService}</p>
+ * {@link AmendExtensionsService}</p>
  *
  * @author Vyacheslav Rusakov
  * @since 03.02.2015

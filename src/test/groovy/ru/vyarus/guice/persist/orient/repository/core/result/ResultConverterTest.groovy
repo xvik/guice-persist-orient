@@ -5,8 +5,8 @@ import com.google.common.collect.Maps
 import com.google.common.collect.Sets
 import com.google.inject.Inject
 import ru.vyarus.guice.persist.orient.AbstractTest
-import ru.vyarus.guice.persist.orient.repository.core.result.converter.DefaultResultConverter
-import ru.vyarus.guice.persist.orient.repository.core.result.converter.ResultConversionException
+import ru.vyarus.guice.persist.orient.repository.core.ext.service.result.converter.DefaultResultConverter
+import ru.vyarus.guice.persist.orient.repository.core.ext.service.result.converter.ResultConversionException
 import ru.vyarus.guice.persist.orient.support.modules.DefaultModule
 import spock.guice.UseModules
 

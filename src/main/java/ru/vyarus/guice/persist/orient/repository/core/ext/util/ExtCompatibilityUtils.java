@@ -1,4 +1,4 @@
-package ru.vyarus.guice.persist.orient.repository.core.ext;
+package ru.vyarus.guice.persist.orient.repository.core.ext.util;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;

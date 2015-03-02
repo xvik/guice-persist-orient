@@ -7,6 +7,7 @@ import ru.vyarus.guice.persist.orient.repository.core.ext.support.Root
 import ru.vyarus.guice.persist.orient.repository.core.ext.support.exts.CmdAmend
 import ru.vyarus.guice.persist.orient.repository.core.ext.support.exts.DelegateAmend
 import ru.vyarus.guice.persist.orient.repository.core.ext.support.exts.UniversalAmend
+import ru.vyarus.guice.persist.orient.repository.core.ext.util.ExtUtils
 import ru.vyarus.guice.persist.orient.repository.delegate.spi.DelegateMethodDescriptor
 import spock.lang.Specification
 

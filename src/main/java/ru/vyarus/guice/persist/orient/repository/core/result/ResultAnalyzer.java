@@ -3,7 +3,7 @@ package ru.vyarus.guice.persist.orient.repository.core.result;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.vyarus.guice.persist.orient.repository.core.result.converter.Optionals;
+import ru.vyarus.guice.persist.orient.repository.core.ext.service.result.converter.Optionals;
 import ru.vyarus.guice.persist.orient.repository.core.spi.DescriptorContext;
 import ru.vyarus.guice.persist.orient.repository.core.util.RepositoryUtils;
 import ru.vyarus.java.generics.resolver.context.GenericsContext;

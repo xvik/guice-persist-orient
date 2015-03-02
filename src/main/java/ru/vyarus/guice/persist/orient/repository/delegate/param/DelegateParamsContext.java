@@ -34,4 +34,10 @@ public class DelegateParamsContext extends ParamsContext<DelegateMethodDescripto
         params.ordinalParams = Lists.transform(getOrdinals(), PARAM_INDEX_FUNCTION);
         descriptor.params = params;
     }
+
+    @Override
+    public DescriptorContext getExtensionsContext() {
+        // extensions must be searched on calling repository and not on delegate bean
+        return getCallerContext();
+    }
 }

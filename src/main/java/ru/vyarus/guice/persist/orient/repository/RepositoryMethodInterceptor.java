@@ -6,7 +6,7 @@ import org.aopalliance.intercept.MethodInvocation;
 import ru.vyarus.guice.persist.orient.repository.core.MethodDefinitionException;
 import ru.vyarus.guice.persist.orient.repository.core.MethodDescriptorFactory;
 import ru.vyarus.guice.persist.orient.repository.core.MethodExecutionException;
-import ru.vyarus.guice.persist.orient.repository.core.result.converter.ResultConverter;
+import ru.vyarus.guice.persist.orient.repository.core.ext.SpiService;
 import ru.vyarus.guice.persist.orient.repository.core.spi.RepositoryMethodDescriptor;
 import ru.vyarus.guice.persist.orient.repository.core.spi.method.RepositoryMethodExtension;
 import ru.vyarus.guice.persist.orient.repository.core.util.RepositoryUtils;
@@ -22,7 +22,8 @@ import java.util.Arrays;
  * ({@link ru.vyarus.guice.persist.orient.repository.core.spi.method.RepositoryMethodExtension}).
  * <p>General workflow: method descriptor is computed or cached instance used, method parameters parsed and
  * extension specific logic called, result is optionally converted using
- * {@link ru.vyarus.guice.persist.orient.repository.core.result.converter.ResultConverter}.</p>
+ * {@link ru.vyarus.guice.persist.orient.repository.core.ext.service.result.converter.ResultConverter} or registered
+ * conversion extension {@link ru.vyarus.guice.persist.orient.repository.core.spi.result.ResultConverter}.</p>
  *
  * @author Vyacheslav Rusakov
  * @see ru.vyarus.guice.persist.orient.repository.command.query.QueryMethodExtension
@@ -36,7 +37,7 @@ public class RepositoryMethodInterceptor implements MethodInterceptor {
     @Inject
     private MethodDescriptorFactory factory;
     @Inject
-    private ResultConverter resultConverter;
+    private SpiService spiService;
 
     public Object invoke(final MethodInvocation methodInvocation) throws Throwable {
         final Class<?> repositoryType = RepositoryUtils.resolveRepositoryClass(methodInvocation.getThis());
@@ -76,7 +77,7 @@ public class RepositoryMethodInterceptor implements MethodInterceptor {
     private Object convertResult(final Method method, final RepositoryMethodDescriptor descriptor,
                                  final Object result) {
         try {
-            return resultConverter.convert(descriptor.result, result);
+            return spiService.convert(descriptor, result);
         } catch (Throwable th) {
             throw new MethodExecutionException(String.format(
                     "Failed to convert execution result (%s) of repository method %s",

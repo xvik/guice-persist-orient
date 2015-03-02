@@ -13,8 +13,8 @@ import ru.vyarus.guice.persist.orient.repository.RepositoryMethodInterceptor;
 import ru.vyarus.guice.persist.orient.repository.core.MethodDefinitionException;
 import ru.vyarus.guice.persist.orient.repository.core.executor.RepositoryExecutor;
 import ru.vyarus.guice.persist.orient.repository.core.executor.impl.DocumentRepositoryExecutor;
-import ru.vyarus.guice.persist.orient.repository.core.ext.ExtUtils;
-import ru.vyarus.guice.persist.orient.repository.core.result.converter.ResultConverter;
+import ru.vyarus.guice.persist.orient.repository.core.ext.util.ExtUtils;
+import ru.vyarus.guice.persist.orient.repository.core.ext.service.result.converter.ResultConverter;
 import ru.vyarus.guice.persist.orient.repository.core.util.RepositoryUtils;
 
 import javax.inject.Singleton;
@@ -41,7 +41,8 @@ import java.lang.reflect.Method;
  * descriptors are cached to reuse on future calls. In order to process method, extension is called with prepared
  * descriptor.</p>
  * <p>After execution result could be automatically converted (e.g. between collections, arrays, get first element
- * of result list, etc.). See {@link ru.vyarus.guice.persist.orient.repository.core.result.converter.ResultConverter}.
+ * of result list, etc.).
+ * See {@link ru.vyarus.guice.persist.orient.repository.core.ext.service.result.converter.ResultConverter}.
  * </p>
  * <p>Based on guice-persist jpa module {@link com.google.inject.persist.jpa.JpaPersistModule}</p>
  *

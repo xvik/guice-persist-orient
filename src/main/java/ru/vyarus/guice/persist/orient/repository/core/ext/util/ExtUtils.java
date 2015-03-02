@@ -1,4 +1,4 @@
-package ru.vyarus.guice.persist.orient.repository.core.ext;
+package ru.vyarus.guice.persist.orient.repository.core.ext.util;
 
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
@@ -10,6 +10,7 @@ import ru.vyarus.guice.persist.orient.repository.core.spi.amend.AmendMethod;
 import ru.vyarus.guice.persist.orient.repository.core.spi.amend.AmendMethodExtension;
 import ru.vyarus.guice.persist.orient.repository.core.spi.method.RepositoryMethod;
 import ru.vyarus.guice.persist.orient.repository.core.spi.parameter.MethodParam;
+import ru.vyarus.guice.persist.orient.repository.core.spi.result.ResultConverter;
 
 import javax.annotation.Nonnull;
 import java.lang.annotation.Annotation;
@@ -53,20 +54,7 @@ public final class ExtUtils {
      * @return found annotation or null
      */
     public static Annotation findMethodAnnotation(final Method method) {
-        List<Annotation> annotations = filterAnnotations(RepositoryMethod.class, method.getAnnotations());
-        check(annotations.size() <= 1, "Method must use only one annotation of: %s",
-                method.getName(), toStringAnnotations(annotations));
-        Annotation res = null;
-        if (annotations.isEmpty()) {
-            // some annotations may be defined on mixin type (e.g. Delegate)
-            annotations = filterAnnotations(RepositoryMethod.class, method.getDeclaringClass().getAnnotations());
-            check(annotations.size() <= 1, "Type %s must use only one annotation of: %s",
-                    method.getDeclaringClass().getName(), toStringAnnotations(annotations));
-        }
-        if (!annotations.isEmpty()) {
-            res = annotations.get(0);
-        }
-        return res;
+        return findSingleExtAnnotation(method, RepositoryMethod.class);
     }
 
 
@@ -115,6 +103,47 @@ public final class ExtUtils {
         if (root != method.getDeclaringClass()) {
             // global extensions may be applied on repository level
             merge(res, filterAnnotations(AmendMethod.class, root.getAnnotations()), descriptorType);
+        }
+        return res;
+    }
+
+    /**
+     * Searches for result converter annotations (annotations annotated with
+     * {@link ru.vyarus.guice.persist.orient.repository.core.spi.result.ResultConverter}).
+     * <p>Annotation may be defined on method, type and probably globally on root repository type.
+     * If annotation is defined in two places then only more prioritized will be used.
+     * Priorities: method, direct method type, repository type (in simple cases the last two will be the same type).</p>
+     *
+     * @param method method to search converter
+     * @param root   root descriptor type
+     * @return found converter annotation or null
+     */
+    public static Annotation findResultConverter(final Method method, final Class<?> root) {
+        Annotation res = findSingleExtAnnotation(method, ResultConverter.class);
+        if (res == null) {
+            final List<Annotation> annotations = filterAnnotations(ResultConverter.class, root.getAnnotations());
+            check(annotations.size() <= 1, "Root %s must use only one annotation of: %s",
+                    root.getName(), toStringAnnotations(annotations));
+            if (!annotations.isEmpty()) {
+                res = annotations.get(0);
+            }
+        }
+        return res;
+    }
+
+    private static Annotation findSingleExtAnnotation(final Method method, final Class<? extends Annotation> type) {
+        List<Annotation> annotations = filterAnnotations(type, method.getAnnotations());
+        check(annotations.size() <= 1, "Method must use only one annotation of: %s",
+                toStringAnnotations(annotations));
+        Annotation res = null;
+        if (annotations.isEmpty()) {
+            // some annotations may be defined on mixin type (e.g. Delegate)
+            annotations = filterAnnotations(type, method.getDeclaringClass().getAnnotations());
+            check(annotations.size() <= 1, "Type %s must use only one annotation of: %s",
+                    method.getDeclaringClass().getName(), toStringAnnotations(annotations));
+        }
+        if (!annotations.isEmpty()) {
+            res = annotations.get(0);
         }
         return res;
     }

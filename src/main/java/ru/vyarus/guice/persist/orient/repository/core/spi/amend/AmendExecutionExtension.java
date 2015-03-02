@@ -4,7 +4,7 @@ package ru.vyarus.guice.persist.orient.repository.core.spi.amend;
  * Amend extensions modifies (or extends) repository method behaviour.
  * Method extensions may be completely different, so base interface did not contain anything.
  * It is used just in general extension detection mechanism (handled by
- * {@link ru.vyarus.guice.persist.orient.repository.core.ext.AmendExtensionsService}).
+ * {@link ru.vyarus.guice.persist.orient.repository.core.ext.service.AmendExtensionsService}).
  * <p>For example of amend extension see @Size and @Limit parameter annotations: core query extension is
  * not aware of  pagination, but provides custom amend interface, which allows pagination extensions to
  * modify query and command object.</p>

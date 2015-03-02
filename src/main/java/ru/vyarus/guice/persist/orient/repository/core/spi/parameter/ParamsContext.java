@@ -34,7 +34,8 @@ public abstract class ParamsContext<T extends RepositoryMethodDescriptor> {
 
     /**
      * Ordinal parameters are method parameters without any extension annotation.
-     * Called by {@link ru.vyarus.guice.persist.orient.repository.core.ext.ParamsService} after parameters analysis.
+     * Called by {@link ru.vyarus.guice.persist.orient.repository.core.ext.service.ParamsService}
+     * after parameters analysis.
      *
      * @param ordinals ordinal parameters
      */
@@ -43,7 +44,8 @@ public abstract class ParamsContext<T extends RepositoryMethodDescriptor> {
     }
 
     /**
-     * Called by {@link ru.vyarus.guice.persist.orient.repository.core.ext.ParamsService} after parameters analysis.
+     * Called by {@link ru.vyarus.guice.persist.orient.repository.core.ext.service.ParamsService}
+     * after parameters analysis.
      *
      * @param extensions parameter extensions
      */
@@ -64,19 +66,31 @@ public abstract class ParamsContext<T extends RepositoryMethodDescriptor> {
      *
      * @return list of ordinal parameters (not affected with param extension)
      */
-    protected List<ParamInfo> getOrdinals() {
+    public List<ParamInfo> getOrdinals() {
         return ordinals;
     }
 
     /**
      * Value set only after parameters processing and used in
-     * {@link ru.vyarus.guice.persist.orient.repository.core.ext.AmendExtensionsService} to compose complete
+     * {@link ru.vyarus.guice.persist.orient.repository.core.ext.service.AmendExtensionsService} to compose complete
      * extensions list.
      *
      * @return list of resolved parameter extensions
      */
     public List<MethodParamExtension> getExtensions() {
         return extensions;
+    }
+
+    /**
+     * Usually extensions defined on repository type and descriptorContext should be used for extensions.
+     * But, for example, in case of delegate, descriptorContext is target delegate method context.
+     * Its ok for method analysis, but extensions should still work from repository. So for such contexts,
+     * this method must be overridden to provide correct context.
+     *
+     * @return context to use for amend and result extensions resolution.
+     */
+    public DescriptorContext getExtensionsContext() {
+        return getDescriptorContext();
     }
 
     /**

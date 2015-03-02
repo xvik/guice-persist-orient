@@ -6,6 +6,7 @@ import ru.vyarus.guice.persist.orient.AbstractTest
 import ru.vyarus.guice.persist.orient.repository.command.core.spi.CommandExtension
 import ru.vyarus.guice.persist.orient.repository.command.core.spi.CommandMethodDescriptor
 import ru.vyarus.guice.persist.orient.repository.command.core.spi.SqlCommandDescriptor
+import ru.vyarus.guice.persist.orient.repository.core.ext.service.AmendExtensionsService
 import ru.vyarus.guice.persist.orient.repository.core.ext.support.SampleRepo
 import ru.vyarus.guice.persist.orient.support.modules.RepositoryTestModule
 import spock.guice.UseModules

@@ -3,6 +3,7 @@ package ru.vyarus.guice.persist.orient.repository.core.spi;
 import com.google.common.collect.Maps;
 import ru.vyarus.guice.persist.orient.db.DbType;
 import ru.vyarus.guice.persist.orient.repository.core.executor.RepositoryExecutor;
+import ru.vyarus.guice.persist.orient.repository.core.ext.service.result.ResultConversionDescriptor;
 import ru.vyarus.guice.persist.orient.repository.core.result.ResultDescriptor;
 import ru.vyarus.guice.persist.orient.repository.core.spi.amend.AmendExecutionExtension;
 import ru.vyarus.guice.persist.orient.repository.core.spi.method.RepositoryMethodExtension;
@@ -43,7 +44,7 @@ public abstract class RepositoryMethodDescriptor<E extends AmendExecutionExtensi
 
     /**
      * List of amend extensions, found on method.
-     * Assigned by {@link ru.vyarus.guice.persist.orient.repository.core.ext.AmendExtensionsService}
+     * Assigned by {@link ru.vyarus.guice.persist.orient.repository.core.ext.service.AmendExtensionsService}
      * after parameters processing.
      * <p>Extensions must be processed manually in method extension implementation (because these extensions
      * are totally different for different method extensions).</p>
@@ -74,4 +75,10 @@ public abstract class RepositoryMethodDescriptor<E extends AmendExecutionExtensi
      * Assigned executor instance.
      */
     public RepositoryExecutor executor;
+
+    /**
+     * Result conversion analysed and used by
+     * {@link ru.vyarus.guice.persist.orient.repository.core.ext.service.result.ResultService}.
+     */
+    public ResultConversionDescriptor resultConversion;
 }

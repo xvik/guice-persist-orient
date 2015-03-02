@@ -1,6 +1,10 @@
 package ru.vyarus.guice.persist.orient.repository.core.ext;
 
 import com.google.inject.Injector;
+import ru.vyarus.guice.persist.orient.repository.core.ext.service.AmendExtensionsService;
+import ru.vyarus.guice.persist.orient.repository.core.ext.service.ParamsService;
+import ru.vyarus.guice.persist.orient.repository.core.ext.service.result.ResultService;
+import ru.vyarus.guice.persist.orient.repository.core.ext.util.ExtUtils;
 import ru.vyarus.guice.persist.orient.repository.core.spi.DescriptorContext;
 import ru.vyarus.guice.persist.orient.repository.core.spi.RepositoryMethodDescriptor;
 import ru.vyarus.guice.persist.orient.repository.core.spi.method.RepositoryMethod;
@@ -25,14 +29,17 @@ public class SpiService {
     private final Injector injector;
     private final ParamsService paramsService;
     private final AmendExtensionsService amendExtensionsService;
+    private final ResultService resultService;
 
     @Inject
     public SpiService(final Injector injector,
                       final ParamsService paramsService,
-                      final AmendExtensionsService amendExtensionsService) {
+                      final AmendExtensionsService amendExtensionsService,
+                      final ResultService resultService) {
         this.injector = injector;
         this.paramsService = paramsService;
         this.amendExtensionsService = amendExtensionsService;
+        this.resultService = resultService;
     }
 
     /**
@@ -57,7 +64,7 @@ public class SpiService {
     /**
      * Parse method parameters. Resolves and applies all found parameter extensions.
      * Resolves execution extensions and store ordered list of all found extensions in descriptor
-     * (extension will use them directly).
+     * (extension will use them directly). Resolves result conversion extensions.
      * <p>Called by method extension directly.</p>
      *
      * @param descriptor    repository method descriptor
@@ -67,5 +74,10 @@ public class SpiService {
         paramsService.processParams(descriptor, paramsContext);
         // parameter extensions may also be amend extensions
         amendExtensionsService.registerExtensions(descriptor, paramsContext);
+        resultService.registerExtensions(descriptor, paramsContext.getExtensionsContext());
+    }
+
+    public Object convert(final RepositoryMethodDescriptor descriptor, final Object result) {
+        return resultService.convert(descriptor, result);
     }
 }
