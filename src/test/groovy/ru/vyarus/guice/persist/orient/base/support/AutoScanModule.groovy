@@ -1,9 +1,10 @@
 package ru.vyarus.guice.persist.orient.base.support
 
 import com.google.inject.AbstractModule
+import ru.vyarus.guice.persist.orient.OrientModule
 import ru.vyarus.guice.persist.orient.base.model.support.ModelAuto
 import ru.vyarus.guice.persist.orient.support.Config
-import ru.vyarus.guice.persist.orient.support.AutoScanSchemeOrientModule
+import ru.vyarus.guice.persist.orient.support.AutoScanSchemeModule
 
 /**
  * Module with predefined scheme mapping from annotated objects found in classpath.
@@ -14,6 +15,7 @@ class AutoScanModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        install(new AutoScanSchemeOrientModule(Config.DB, Config.USER, Config.PASS, ModelAuto.package.name))
+        install(new OrientModule(Config.DB, Config.USER, Config.PASS))
+        install(new AutoScanSchemeModule(ModelAuto.package.name))
     }
 }

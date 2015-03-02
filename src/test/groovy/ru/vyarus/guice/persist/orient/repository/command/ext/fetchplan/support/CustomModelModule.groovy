@@ -1,8 +1,9 @@
 package ru.vyarus.guice.persist.orient.repository.command.ext.fetchplan.support
 
 import com.google.inject.AbstractModule
+import ru.vyarus.guice.persist.orient.OrientModule
 import ru.vyarus.guice.persist.orient.RepositoryModule
-import ru.vyarus.guice.persist.orient.support.AutoScanSchemeOrientModule
+import ru.vyarus.guice.persist.orient.support.AutoScanSchemeModule
 import ru.vyarus.guice.persist.orient.support.Config
 
 /**
@@ -12,7 +13,8 @@ import ru.vyarus.guice.persist.orient.support.Config
 class CustomModelModule extends AbstractModule {
     @Override
     protected void configure() {
-        install(new AutoScanSchemeOrientModule(Config.DB, Config.USER, Config.PASS,
+        install(new OrientModule(Config.DB, Config.USER, Config.PASS))
+        install(new AutoScanSchemeModule(
                 "ru.vyarus.guice.persist.orient.repository.command.ext.fetchplan.support.model"))
         install(new RepositoryModule());
     }

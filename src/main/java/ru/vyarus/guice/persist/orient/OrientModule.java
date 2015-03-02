@@ -1,6 +1,5 @@
 package ru.vyarus.guice.persist.orient;
 
-import com.google.common.base.Strings;
 import com.google.inject.Binder;
 import com.google.inject.matcher.AbstractMatcher;
 import com.google.inject.matcher.Matcher;
@@ -14,8 +13,8 @@ import org.aopalliance.intercept.MethodInterceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vyarus.guice.persist.orient.db.DatabaseManager;
-import ru.vyarus.guice.persist.orient.db.pool.PoolManager;
 import ru.vyarus.guice.persist.orient.db.pool.DocumentPool;
+import ru.vyarus.guice.persist.orient.db.pool.PoolManager;
 import ru.vyarus.guice.persist.orient.db.transaction.TransactionManager;
 import ru.vyarus.guice.persist.orient.db.transaction.TxConfig;
 import ru.vyarus.guice.persist.orient.db.transaction.internal.TransactionInterceptor;
@@ -50,8 +49,8 @@ import java.lang.reflect.Method;
  * </ul>
  * There are predefined modules with predefined scheme initializers:
  * <ul>
- * <li>{@code ru.vyarus.guice.persist.orient.support.PackageSchemeOrientModule}</li>
- * <li>{@code ru.vyarus.guice.persist.orient.support.AutoScanSchemeOrientModule}</li>
+ * <li>{@link ru.vyarus.guice.persist.orient.support.PackageSchemeModule}</li>
+ * <li>{@link ru.vyarus.guice.persist.orient.support.AutoScanSchemeModule}</li>
  * </ul>
  * NOTE: it's better to not perform db updates in schema initializer, because schema updates
  * must be performed in no-tx mode.
@@ -92,7 +91,6 @@ public class OrientModule extends PersistModule {
     private final String uri;
     private final String user;
     private final String password;
-    private String pkg;
     private TxConfig txConfig;
     private boolean autoCreateDb = true;
 
@@ -110,18 +108,6 @@ public class OrientModule extends PersistModule {
         this.uri = uri;
         this.user = user;
         this.password = password;
-    }
-
-    /**
-     * Use if default object scheme initializers are used or your custom initializer depends on this options.
-     * <p>Custom initializer may reference this value as guice constant "orient.model.package"</p>
-     *
-     * @param basePackage package to use for scheme initializer
-     * @return module itself for chained calls
-     */
-    public OrientModule schemeMappingPackage(final String basePackage) {
-        this.pkg = basePackage;
-        return this;
     }
 
     /**
@@ -159,10 +145,6 @@ public class OrientModule extends PersistModule {
         bindConstant().annotatedWith(Names.named("orient.user")).to(user);
         bindConstant().annotatedWith(Names.named("orient.password")).to(password);
         bindConstant().annotatedWith(Names.named("orient.db.autocreate")).to(autoCreateDb);
-
-        // if package not provided empty string will mean root package (search all classpath)
-        // not required if provided scheme initializers not used
-        bindConstant().annotatedWith(Names.named("orient.model.package")).to(Strings.nullToEmpty(pkg));
 
         bind(TxConfig.class).annotatedWith(Names.named("orient.txconfig"))
                 .toInstance(txConfig == null ? new TxConfig() : txConfig);
