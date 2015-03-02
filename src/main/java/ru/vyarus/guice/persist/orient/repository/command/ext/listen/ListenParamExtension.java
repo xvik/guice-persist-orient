@@ -65,10 +65,5 @@ public class ListenParamExtension implements
         // null listener makes no sense: method is void and results are not handled anywhere
         checkExec(listener != null, "Listener can't be null");
         ((OCommandRequestAbstract) query).setResultListener(listener);
-        // return type is void and as an optimization limit applied in query extension..
-        // which is wrong in this particular case
-        if (query.getLimit() == 1) {
-            query.setLimit(-1);
-        }
     }
 }

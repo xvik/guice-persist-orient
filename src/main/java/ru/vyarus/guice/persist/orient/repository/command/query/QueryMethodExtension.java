@@ -8,7 +8,6 @@ import ru.vyarus.guice.persist.orient.repository.command.core.AbstractCommandExt
 import ru.vyarus.guice.persist.orient.repository.command.core.spi.CommandMethodDescriptor;
 import ru.vyarus.guice.persist.orient.repository.command.core.spi.SqlCommandDescriptor;
 import ru.vyarus.guice.persist.orient.repository.core.ext.SpiService;
-import ru.vyarus.guice.persist.orient.repository.core.result.ResultType;
 import ru.vyarus.guice.persist.orient.repository.core.spi.DescriptorContext;
 
 import javax.inject.Inject;
@@ -48,10 +47,6 @@ public class QueryMethodExtension extends AbstractCommandExtension<CommandMethod
         OCommandRequest command;
         if (isQuery) {
             command = new OSQLSynchQuery<Object>(query);
-            // result converter could take only first element of collection - no need to select everything
-            if (descriptor.result.returnType == ResultType.PLAIN) {
-                command.setLimit(1);
-            }
         } else {
             command = new OCommandSQL(query);
         }
