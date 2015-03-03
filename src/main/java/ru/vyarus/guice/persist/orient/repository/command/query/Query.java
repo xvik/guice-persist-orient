@@ -32,9 +32,9 @@ public @interface Query {
     String value();
 
     /**
-     * Returns the configured autoboxing collection class.
      * Use this clause to specify a collection impl to autobox result lists into. The impl must
      * have a default no-arg constructor and be a subclass of {@code java.util.Collection}.
+     * @return configured autoboxing collection class.
      */
     Class<? extends Collection> returnAs() default Collection.class;
 

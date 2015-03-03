@@ -19,7 +19,6 @@ import javax.inject.Singleton;
  * Combines most useful api together for simplified usage.
  * <p>Example usage:
  * {@code @Inject PersistentContext<OObjectDatabaseTx> context;}</p>
- * <p/>
  * <p>The following connection types could be used:</p>
  * <ul>
  * <li>{@link com.orientechnologies.orient.object.db.OObjectDatabaseTx} for object db connection</li>

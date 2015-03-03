@@ -47,7 +47,7 @@ import java.lang.reflect.Method;
  * Useful if domian model located in different packages
  * or to provide more control on which entities are mapped.</li>
  * </ul>
- * There are predefined modules with predefined scheme initializers:
+ * There are predefined modules with predefined scheme initializers (must be used together with OrientModule):
  * <ul>
  * <li>{@link ru.vyarus.guice.persist.orient.support.PackageSchemeModule}</li>
  * <li>{@link ru.vyarus.guice.persist.orient.support.AutoScanSchemeModule}</li>
@@ -57,11 +57,10 @@ import java.lang.reflect.Method;
  * <p>To initialize or migrate database data you can define
  * {@code ru.vyarus.guice.persist.orient.db.data.DataInitializer}. By default,
  * no-op implementation registered.</p>
- * <p>Each pool will maintain its own transaction, but all transactions are orchestrated with
- * {@code ru.vyarus.guice.persist.orient.db.transaction.TransactionManager}.
- * Each pool maintains lazy transaction, so when transaction
- * manager starts new transaction, pool will not initialize connection, until connection will be requested.
- * Most likely, most of the time single connection type will be used and other pools will not do anything.</p>
+ * <p>All pools share the same transaction (object and graph connections use document connection internally).
+ * All transactions are orchestrated with {@code ru.vyarus.guice.persist.orient.db.transaction.TransactionManager}.
+ * Pool maintains lazy transaction, so when transaction
+ * manager starts new transaction, pool will not initialize connection, until connection will be requested.</p>
  * <p>It's possible to override default transaction manager implementation: simply register new manager
  * implementation of {@code ru.vyarus.guice.persist.orient.db.transaction.TransactionManager}</p>
  * <p>Transaction could be initialized with @Transactional annotation or using transaction templates (
@@ -79,9 +78,12 @@ import java.lang.reflect.Method;
  * for notx transaction type, otherwise fail)</li>
  * </ul>
  * Provider will fail to provide connection if unit of work is not defined (using annotation or transactional template)
+ * <p>In most cases use {@link ru.vyarus.guice.persist.orient.db.PersistentContext}, which combines provider,
+ * templates and access to transaction manager (single point to access almost all api).</p>
  * <p>Persistent service must be manually started or stopped: obtain PersistService and call .start() and .stop() when
  * appropriate. This will start/stop all registered pools. Without initialization any try
  * to obtain connection will fail.</p>
+ * <p>Local database auto creation is enabled by default. Disable it if required.</p>
  *
  * @see ru.vyarus.guice.persist.orient.db.transaction.TransactionManager for details about transactions
  */
@@ -125,9 +127,8 @@ public class OrientModule extends PersistModule {
     }
 
     /**
-     * Use to disable auto creation. Auto creation works only for local connection types
-     * (local, plocal, memory).
-     * By default, local database auto creation is enabled (to maintain compatibility with previous behaviour).
+     * Use to disable auto creation. Auto creation works only for local connection types (plocal, memory).
+     * By default, local database auto creation is enabled.
      *
      * @param autoCreateDb true to enable auto creation, false to disable
      * @return module itself for chained calls

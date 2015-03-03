@@ -16,7 +16,7 @@ class OrderComparatorTest extends Specification {
 
         when: "sorting unsorted list"
         def list = [new Third(), new First(), new Second()]
-        list.sort(new OrderComparator())
+        Collections.sort(list, new OrderComparator())
         OrderComparator
         then: "sorted"
         list[0].class == First
