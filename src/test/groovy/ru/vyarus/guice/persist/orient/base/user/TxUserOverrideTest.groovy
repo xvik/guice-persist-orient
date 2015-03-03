@@ -2,7 +2,9 @@ package ru.vyarus.guice.persist.orient.base.user
 
 import com.orientechnologies.orient.core.exception.OSecurityAccessException
 import ru.vyarus.guice.persist.orient.AbstractTest
+import ru.vyarus.guice.persist.orient.db.PersistException
 import ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxAction
+import ru.vyarus.guice.persist.orient.db.user.UserActionException
 import ru.vyarus.guice.persist.orient.support.model.Model
 import ru.vyarus.guice.persist.orient.support.modules.PackageSchemeModule
 import spock.guice.UseModules
@@ -84,6 +86,24 @@ class TxUserOverrideTest extends AbstractTest {
         } as SpecificTxAction)
         then: "error"
         thrown(IllegalStateException)
+
+        when: "checked exception thrown"
+        context.doInTransaction({ db ->
+            context.doWithUser('test', {
+                throw new IOException()
+            })
+        } as SpecificTxAction)
+        then: "exception wrapped"
+        thrown(UserActionException)
+
+        when: "runtime checked exception thrown"
+        context.doInTransaction({ db ->
+            context.doWithUser('test', {
+                throw new PersistException("test")
+            })
+        } as SpecificTxAction)
+        then: "exception rethrown"
+        thrown(PersistException)
     }
 
 }

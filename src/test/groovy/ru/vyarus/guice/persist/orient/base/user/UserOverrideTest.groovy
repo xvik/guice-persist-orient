@@ -3,8 +3,10 @@ package ru.vyarus.guice.persist.orient.base.user
 import com.google.common.collect.Lists
 import com.orientechnologies.orient.core.exception.OSecurityAccessException
 import ru.vyarus.guice.persist.orient.AbstractTest
+import ru.vyarus.guice.persist.orient.db.PersistException
 import ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxAction
 import ru.vyarus.guice.persist.orient.db.user.SpecificUserAction
+import ru.vyarus.guice.persist.orient.db.user.UserActionException
 import ru.vyarus.guice.persist.orient.db.user.UserManager
 import ru.vyarus.guice.persist.orient.support.model.Model
 import ru.vyarus.guice.persist.orient.support.modules.PackageSchemeModule
@@ -65,5 +67,19 @@ class UserOverrideTest extends AbstractTest {
         } as SpecificUserAction)
         then: "override not allowed"
         thrown(IllegalStateException)
+
+        when: "checked exception thrown"
+        userManager.executeWithUser('test', 'test', {
+            throw new IOException()
+        } as SpecificUserAction)
+        then: "exception wrapped"
+        thrown(UserActionException)
+
+        when: "checked runtime exception thrown"
+        userManager.executeWithUser('test', 'test', {
+            throw new PersistException("test")
+        } as SpecificUserAction)
+        then: "exception rethrown"
+        thrown(PersistException)
     }
 }
