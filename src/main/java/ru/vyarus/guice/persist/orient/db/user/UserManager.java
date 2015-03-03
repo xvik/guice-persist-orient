@@ -22,7 +22,8 @@ import javax.inject.Singleton;
  * <p>By default, configured user and password returned. To use specific user use
  * {@code executeWithUser} method. Specific user binds to current thread. Most likely,
  * user changing logic will be implemented as filter to handle request processing as specific user.</p>
- * <p>Note: user can't be changed during ongoing transaction and if specific user already defined.</p>
+ * <p>User could be changed for ongoing transaction too in order to force security checks. This change will not
+ * affect connection user credentials.</p>
  *
  * @author Vyacheslav Rusakov
  * @since 04.11.2014
