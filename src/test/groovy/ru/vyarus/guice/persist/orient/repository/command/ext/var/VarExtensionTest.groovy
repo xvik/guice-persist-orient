@@ -25,8 +25,8 @@ class VarExtensionTest extends AbstractTest {
     VarCases dao
 
     def "Check variables"() {
-        List<String> expected
-        exts.addGlobalExtension(new CommandExtension() {
+        List<String> expected = null
+        exts.addGlobalExtension(new CommandExtension<CommandMethodDescriptor>() {
             @Override
             void amendCommandDescriptor(SqlCommandDescriptor sql, CommandMethodDescriptor descriptor, Object instance, Object... arguments) {
             }

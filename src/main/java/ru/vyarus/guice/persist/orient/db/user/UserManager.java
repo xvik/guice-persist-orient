@@ -3,12 +3,16 @@ package ru.vyarus.guice.persist.orient.db.user;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
+import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx;
+import com.orientechnologies.orient.core.metadata.security.OSecurityUser;
+import com.orientechnologies.orient.core.metadata.security.OUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vyarus.guice.persist.orient.db.transaction.TransactionManager;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Provider;
 import javax.inject.Singleton;
 
 /**
@@ -28,35 +32,45 @@ public class UserManager {
     private final Logger logger = LoggerFactory.getLogger(UserManager.class);
 
     private final TransactionManager transactionManager;
+    private final Provider<ODatabaseDocumentTx> connectionProvider;
     private final UserCredentials defaultUser;
     private final ThreadLocal<UserCredentials> specificUser = new ThreadLocal<UserCredentials>();
+    private final ThreadLocal<OSecurityUser> specificTxUser = new ThreadLocal<OSecurityUser>();
 
     @Inject
     public UserManager(final TransactionManager transactionManager,
+                       final Provider<ODatabaseDocumentTx> connectionProvider,
                        @Named("orient.user") final String user,
                        @Named("orient.password") final String password) {
         this.transactionManager = transactionManager;
+        this.connectionProvider = connectionProvider;
         this.defaultUser = create(user, password);
     }
 
     /**
-     * @return current user name (specific or default)
+     * Note: in case of tx user change, connection user remain the same.
+     *
+     * @return current connection credentials user name (specific or default)
      */
     public String getUser() {
         return getCurrentUser().user;
     }
 
     /**
-     * @return current user password (specific or default)
+     * Note: in case of tx user change, connection password remain the same.
+     *
+     * @return current connection credentials user password (specific or default)
      */
     public String getPassword() {
         return getCurrentUser().password;
     }
 
     /**
-     * Action approach is important to explicitly define scope of specific user and
-     * properly cleanup state (which may be not done in case of direct override).
-     * Propagates template exception.
+     * Changes connection credentials user outside of transaction. Used to affect multiple transactions.
+     * <p>Recursive user changes are not allowed, but user change inside transaction is allowed.</p>
+     * <p>Action approach is important to explicitly define scope of specific user and
+     * properly cleanup state (which may be not done in case of direct override).</p>
+     * <p>Propagates runtime exceptions (orient exceptions).</p>
      *
      * @param user       specific user name
      * @param password   specific user password
@@ -77,11 +91,68 @@ public class UserManager {
         try {
             result = userAction.execute();
         } catch (Throwable th) {
-            Throwables.propagate(th);
+            Throwables.propagateIfPossible(th);
+            throw new UserActionException(String.format("Failed to perform operation under user '%s'", user), th);
         } finally {
             specificUser.remove();
         }
-        // unreachable point
+        return result;
+    }
+
+    /**
+     * Changes current connection user. See {@link #executeWithTxUser(
+     *com.orientechnologies.orient.core.metadata.security.OSecurityUser, SpecificUserAction)}.
+     *
+     * @param user       user login
+     * @param userAction logic to execute with specific user
+     * @param <T>        type of returned result (may be Void)
+     * @return action result (may be null)
+     */
+    public <T> T executeWithTxUser(final String user, final SpecificUserAction<T> userAction) {
+        checkSpecificUserConditions(user);
+        final ODatabaseDocumentTx db = connectionProvider.get();
+        final OUser specificUser = db.getMetadata().getSecurity().getUser(user);
+        Preconditions.checkState(specificUser != null, "User '%s' not found", user);
+        return executeWithTxUser(specificUser, userAction);
+    }
+
+    /**
+     * Changes current connection user. Affects only current transaction and can't be used outside of transaction
+     * ({@link com.orientechnologies.orient.core.db.ODatabase#setUser(
+     *com.orientechnologies.orient.core.metadata.security.OSecurityUser)}).
+     * <p>Recursive user changes are not allowed, so attempt to change user under already changed user will
+     * lead to error. The only exception is change to the same user (in this case change is ignored).</p>
+     * <p>Action approach is important to explicitly define scope of specific user and
+     * properly cleanup state (which may be not done in case of direct override).</p>
+     * <p>Propagates runtime exceptions (orient exceptions).</p>
+     *
+     * @param user       specific user
+     * @param userAction logic to execute with specific user
+     * @param <T>        type of returned result (may be Void)
+     * @return action result (may be null)
+     */
+    public <T> T executeWithTxUser(final OSecurityUser user, final SpecificUserAction<T> userAction) {
+        final boolean userChanged = checkSpecificUserConditions(user.getName());
+        final ODatabaseDocumentTx db = connectionProvider.get();
+        final OSecurityUser original = db.getUser();
+        if (userChanged) {
+            // no need to track user change if user not changed
+            specificTxUser.set(user);
+            db.setUser(user);
+        }
+        T result = null;
+        try {
+            result = userAction.execute();
+        } catch (Throwable th) {
+            Throwables.propagateIfPossible(th);
+            throw new UserActionException(String.format("Failed to perform tx action with user '%s'",
+                    user.getName()), th);
+        } finally {
+            if (userChanged) {
+                db.setUser(original);
+                specificTxUser.remove();
+            }
+        }
         return result;
     }
 
@@ -93,6 +164,18 @@ public class UserManager {
 
     private UserCredentials getCurrentUser() {
         return Objects.firstNonNull(specificUser.get(), defaultUser);
+    }
+
+    private boolean checkSpecificUserConditions(final String login) {
+        Preconditions.checkState(transactionManager.isTransactionActive(),
+                "Tx user can't be changed outside of transaction");
+        final ODatabaseDocumentTx db = connectionProvider.get();
+        final OSecurityUser original = db.getUser();
+        final boolean userChanged = !original.getName().equals(login);
+        Preconditions.checkState(specificTxUser.get() == null || !userChanged,
+                "Specific user already defined for transaction as '%s'",
+                specificTxUser.get() == null ? null : specificTxUser.get().getName());
+        return userChanged;
     }
 
     /**

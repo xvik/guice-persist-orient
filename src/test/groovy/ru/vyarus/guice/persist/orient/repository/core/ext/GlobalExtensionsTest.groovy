@@ -25,7 +25,7 @@ class GlobalExtensionsTest extends AbstractTest {
 
     def "Check global extensions"() {
 
-        def ext = new CommandExtension() {
+        def ext = new CommandExtension<CommandMethodDescriptor>() {
             int executed = 0
 
             @Override

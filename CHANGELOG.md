@@ -18,8 +18,10 @@ TransactionManager. It should be used instead of low level staff (simplifies usa
 style (as well known and very similar realization). Not owned annotations (@Named, @Finder, @FirstResult, @MaxResults)
 replaced with spring-data like or orient specific annotations (@Param, @Query, @Function, @Skip, @Limit).
 Many annotations and classes renamed due to module rename.
+* Many new repository features
 * (breaking) schemeMappingPackage option removed from OrientModule. Shortcut modules now must be used together with
 OrientModule and not substitute it. Modules renamed to AutoScanSchemeModule and PackageSchemeModule.
+* Ability to change user inside transaction (for example for security checks).
 
 ### 2.1.0 (2015-01-06)
 * Finders now managed by guice and any additional aop could be applied. Abstract beans could define finder methods.

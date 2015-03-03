@@ -59,7 +59,6 @@ class CustomMixinDelegate implements CustomMixin {
         throw new UnsupportedOperationException()
     }
 
-    @Override
     void paramSpecific(int a, Object b, String c) {
         // most specific method must be chosen
     }

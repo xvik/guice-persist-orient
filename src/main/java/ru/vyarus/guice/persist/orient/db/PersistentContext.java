@@ -9,6 +9,8 @@ import ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxAction;
 import ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxTemplate;
 import ru.vyarus.guice.persist.orient.db.transaction.template.TxAction;
 import ru.vyarus.guice.persist.orient.db.transaction.template.TxTemplate;
+import ru.vyarus.guice.persist.orient.db.user.SpecificUserAction;
+import ru.vyarus.guice.persist.orient.db.user.UserManager;
 
 import javax.inject.Provider;
 import javax.inject.Singleton;
@@ -46,14 +48,17 @@ public class PersistentContext<C> {
     private final SpecificTxTemplate<C> template;
     private final Provider<C> provider;
     private final TransactionManager transactionManager;
+    private final UserManager userManager;
 
     @Inject
     public PersistentContext(final TxTemplate txTemplate, final SpecificTxTemplate<C> template,
-                             final Provider<C> provider, final TransactionManager transactionManager) {
+                             final Provider<C> provider, final TransactionManager transactionManager,
+                             final UserManager userManager) {
         this.txTemplate = txTemplate;
         this.template = template;
         this.provider = provider;
         this.transactionManager = transactionManager;
+        this.userManager = userManager;
     }
 
     /**
@@ -152,6 +157,23 @@ public class PersistentContext<C> {
     public <T> T doWithoutTransaction(final SpecificTxAction<T, C> action) {
         checkNotx();
         return template.doInTransaction(new TxConfig(OTransaction.TXTYPE.NOTX), action);
+    }
+
+    /**
+     * Execute logic with specific user. Changes user only inside transaction.
+     * Used, for example, to force security checks.
+     * <p>See {@link ru.vyarus.guice.persist.orient.db.user.UserManager#executeWithTxUser(
+     *String, ru.vyarus.guice.persist.orient.db.user.SpecificUserAction)}.</p>
+     * <p>Use {@link ru.vyarus.guice.persist.orient.db.user.UserManager} directly to change user for
+     * multiple transactions.</p>
+     *
+     * @param user   user login
+     * @param action action to execute under user
+     * @param <T>    type of returned result (may be Void)
+     * @return action result (may be null)
+     */
+    public <T> T doWithUser(final String user, final SpecificUserAction<T> action) {
+        return userManager.executeWithTxUser(user, action);
     }
 
     private void checkNotx() {
