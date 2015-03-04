@@ -76,9 +76,10 @@ public class DefaultTransactionManager implements TransactionManager {
             if (commitFailReason != null) {
                 rollback();
                 throw commitFailReason;
+            } else {
+                logger.trace("Transaction committed");
             }
         } finally {
-            logger.trace("Transaction committed");
             transaction.remove();
         }
     }

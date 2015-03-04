@@ -3,6 +3,7 @@ package ru.vyarus.guice.persist.orient;
 import com.google.inject.Binder;
 import com.google.inject.matcher.AbstractMatcher;
 import com.google.inject.matcher.Matcher;
+import com.google.inject.matcher.Matchers;
 import com.google.inject.multibindings.Multibinder;
 import com.google.inject.name.Names;
 import com.google.inject.persist.PersistModule;
@@ -15,6 +16,8 @@ import org.slf4j.LoggerFactory;
 import ru.vyarus.guice.persist.orient.db.DatabaseManager;
 import ru.vyarus.guice.persist.orient.db.pool.DocumentPool;
 import ru.vyarus.guice.persist.orient.db.pool.PoolManager;
+import ru.vyarus.guice.persist.orient.db.retry.Retry;
+import ru.vyarus.guice.persist.orient.db.retry.RetryMethodInterceptor;
 import ru.vyarus.guice.persist.orient.db.transaction.TransactionManager;
 import ru.vyarus.guice.persist.orient.db.transaction.TxConfig;
 import ru.vyarus.guice.persist.orient.db.transaction.internal.TransactionInterceptor;
@@ -160,6 +163,7 @@ public class OrientModule extends PersistModule {
 
         configurePools();
         configureInterceptor();
+        bindRetryInterceptor();
     }
 
     /**
@@ -231,23 +235,26 @@ public class OrientModule extends PersistModule {
     protected void bindInterceptor(final Matcher<? super Class<?>> classMatcher,
                                    final Matcher<? super Method> methodMatcher,
                                    final MethodInterceptor... interceptors) {
-        if (interceptors.length == 1 && interceptors[0] == getTransactionInterceptor()) {
-            // hack to correctly bind @Transactional annotation for java8:
-            // aop tries to intercept synthetic methods which cause a lot of warnings
-            // (and generally not correct)
-            super.bindInterceptor(classMatcher, new AbstractMatcher<Method>() {
-                @Override
-                public boolean matches(final Method method) {
-                    return !method.isSynthetic() && !method.isBridge() && methodMatcher.matches(method);
-                }
-            }, interceptors);
-        } else {
-            super.bindInterceptor(classMatcher, methodMatcher, interceptors);
-        }
+        // hack to correctly bind @Transactional annotation for java8:
+        // aop tries to intercept synthetic methods which cause a lot of warnings
+        // (and generally not correct)
+        super.bindInterceptor(classMatcher, new AbstractMatcher<Method>() {
+            @Override
+            public boolean matches(final Method method) {
+                return !method.isSynthetic() && !method.isBridge() && methodMatcher.matches(method);
+            }
+        }, interceptors);
     }
 
     @Override
     protected MethodInterceptor getTransactionInterceptor() {
         return interceptor;
+    }
+
+    protected void bindRetryInterceptor() {
+        // retry interceptor must be bound before transactional interceptor
+        final RetryMethodInterceptor retryInterceptor = new RetryMethodInterceptor();
+        requestInjection(retryInterceptor);
+        bindInterceptor(Matchers.any(), Matchers.annotatedWith(Retry.class), retryInterceptor);
     }
 }

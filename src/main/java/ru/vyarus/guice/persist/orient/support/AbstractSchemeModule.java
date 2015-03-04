@@ -16,10 +16,6 @@ public abstract class AbstractSchemeModule extends AbstractModule {
 
     private final String pkg;
 
-    public AbstractSchemeModule() {
-        this(null);
-    }
-
     public AbstractSchemeModule(final String pkg) {
         this.pkg = pkg;
     }

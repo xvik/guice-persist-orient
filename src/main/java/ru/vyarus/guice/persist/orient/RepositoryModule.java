@@ -13,8 +13,8 @@ import ru.vyarus.guice.persist.orient.repository.RepositoryMethodInterceptor;
 import ru.vyarus.guice.persist.orient.repository.core.MethodDefinitionException;
 import ru.vyarus.guice.persist.orient.repository.core.executor.RepositoryExecutor;
 import ru.vyarus.guice.persist.orient.repository.core.executor.impl.DocumentRepositoryExecutor;
-import ru.vyarus.guice.persist.orient.repository.core.ext.util.ExtUtils;
 import ru.vyarus.guice.persist.orient.repository.core.ext.service.result.converter.ResultConverter;
+import ru.vyarus.guice.persist.orient.repository.core.ext.util.ExtUtils;
 import ru.vyarus.guice.persist.orient.repository.core.util.RepositoryUtils;
 
 import javax.inject.Singleton;

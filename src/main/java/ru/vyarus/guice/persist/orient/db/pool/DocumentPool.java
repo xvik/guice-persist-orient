@@ -11,6 +11,9 @@ import ru.vyarus.guice.persist.orient.db.DbType;
 import ru.vyarus.guice.persist.orient.db.transaction.TransactionManager;
 import ru.vyarus.guice.persist.orient.db.user.UserManager;
 
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 /**
  * Document pool implementations.
  * Connection may be obtained (using provider) only inside unit of work (defined transaction).
@@ -24,6 +27,7 @@ import ru.vyarus.guice.persist.orient.db.user.UserManager;
  * @since 24.07.2014
  */
 public class DocumentPool implements PoolManager<ODatabaseDocumentTx> {
+    private static final Lock RESTART_LOCK = new ReentrantLock();
     private final Logger logger = LoggerFactory.getLogger(DocumentPool.class);
 
     private final TransactionManager transactionManager;
@@ -115,8 +119,7 @@ public class DocumentPool implements PoolManager<ODatabaseDocumentTx> {
             Preconditions.checkState(transactionManager.isTransactionActive(), String.format(
                     "Can't obtain connection from pool %s: no transaction defined.", getType()));
 
-            final ODatabaseDocumentTx db = checkAndRecoverConnection(
-                    poolFactory.get(uri, userManager.getUser(), userManager.getPassword()).acquire());
+            final ODatabaseDocumentTx db = checkAndAcquireConnection();
 
             db.begin(transactionManager.getActiveTransactionType());
             transaction.set(db);
@@ -136,7 +139,7 @@ public class DocumentPool implements PoolManager<ODatabaseDocumentTx> {
     private ODatabaseDocumentTx checkOpened(final ODatabaseDocumentTx db) {
         Preconditions.checkState(!db.isClosed(), String.format(
                 "Inconsistent %s pool state: thread-bound database closed! "
-                        + "This may happen if close/commit/rollback was called directly on "
+                        + "This may happen if close, commit or rollback was called directly on "
                         + "database connection object, which is not allowed (if you need full control "
                         + "on connection use manual setup and not pool managed connection)", getType()));
         return db;
@@ -147,34 +150,53 @@ public class DocumentPool implements PoolManager<ODatabaseDocumentTx> {
      * If connection closed, trying to recover by restarting entire pool.
      * <p>NOTE: This problem did not reproduced with new pool (2.0), but logic remain, just for the case.</p>
      *
-     * @param db connection to check
      * @return connection itself or new valid connection
      */
-    private ODatabaseDocumentTx checkAndRecoverConnection(final ODatabaseDocumentTx db) {
-        ODatabaseDocumentTx res = db;
-        if (db.isClosed()) {
-            logger.warn("ATTENTION: Pool {} return closed connection, restarting pool. "
-                    + "This is NOT normal situation: in spite of the fact that your logic will perform "
-                    + "correctly, you loose predefined connections which may be very harmful for "
-                    + "performance (especially if problem appear often). Most likely reason is "
-                    + "closing underlying: e.g. connection.commit().close() or "
-                    + "connection.getUnderlying().close(). Check your code: you should not call "
-                    + "begin/commit/rollback/close (construct your own connection if you need "
-                    + "full control, otherwise trust to transaction manager).", getType());
-            final String localUri = uri;
-            stop();
-            start(localUri);
-            poolFactory.get(uri, userManager.getUser(), userManager.getPassword()).close();
-            res = poolFactory.get(uri, userManager.getUser(), userManager.getPassword()).acquire();
+    private ODatabaseDocumentTx checkAndAcquireConnection() {
+        ODatabaseDocumentTx res = acquireConnection();
+        if (res.isClosed()) {
+            RESTART_LOCK.lock();
+            try {
+                // shield from concurrent restart
+                res = acquireConnection();
+                if (res.isClosed()) {
+                    restartPool();
+                    res = acquireConnection();
+                }
+            } finally {
+                RESTART_LOCK.unlock();
+            }
         }
-        Preconditions.checkState(!res.isClosed(), String.format(
-                "Pool %s return closed connection, even pool restart didn't help.. "
-                        + "something is terribly wrong", getType()));
+        if (res.isClosed()) {
+            final String message = String.format(
+                    "Pool %s return closed connection, even pool restart didn't help.. "
+                            + "something is terribly wrong", getType());
+            logger.error(message);
+            throw new IllegalStateException(message);
+        }
         return res;
     }
 
     @Override
     public DbType getType() {
         return DbType.DOCUMENT;
+    }
+
+    private ODatabaseDocumentTx acquireConnection() {
+        return poolFactory.get(uri, userManager.getUser(), userManager.getPassword()).acquire();
+    }
+
+    private void restartPool() {
+        logger.warn("ATTENTION: Pool {} return closed connection, restarting pool. "
+                + "This is NOT normal situation: in spite of the fact that your logic will perform "
+                + "correctly, you loose predefined connections which may be very harmful for "
+                + "performance (especially if problem appear often). Most likely reason is "
+                + "closing underlying: e.g. connection.commit().close() or "
+                + "connection.getUnderlying().close(). Check your code: you should not call "
+                + "begin/commit/rollback/close (construct your own connection if you need "
+                + "full control, otherwise trust to transaction manager).", getType());
+        final String localUri = uri;
+        stop();
+        start(localUri);
     }
 }

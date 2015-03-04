@@ -22,6 +22,7 @@ Many annotations and classes renamed due to module rename.
 * (breaking) schemeMappingPackage option removed from OrientModule. Shortcut modules now must be used together with
 OrientModule and not substitute it. Modules renamed to AutoScanSchemeModule and PackageSchemeModule.
 * Ability to change user inside transaction (for example for security checks).
+* Retry annotation to catch ONeedRetryException and re-execute method.
 
 ### 2.1.0 (2015-01-06)
 * Finders now managed by guice and any additional aop could be applied. Abstract beans could define finder methods.

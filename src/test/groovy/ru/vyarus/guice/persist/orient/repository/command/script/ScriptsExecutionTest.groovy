@@ -3,6 +3,7 @@ package ru.vyarus.guice.persist.orient.repository.command.script
 import com.google.inject.Inject
 import ru.vyarus.guice.persist.orient.AbstractTest
 import ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxAction
+import ru.vyarus.guice.persist.orient.repository.RepositoryException
 import ru.vyarus.guice.persist.orient.support.model.Model
 import ru.vyarus.guice.persist.orient.support.modules.RepositoryTestModule
 import spock.guice.UseModules
@@ -19,7 +20,7 @@ class ScriptsExecutionTest extends AbstractTest {
 
     def "Check script methods"() {
 
-        context.doInTransaction({db ->
+        context.doInTransaction({ db ->
             db.save(new Model(name: "first", nick: 'done'))
         } as SpecificTxAction)
 //
@@ -35,10 +36,20 @@ class ScriptsExecutionTest extends AbstractTest {
 
         when: "executing js script"
         dao.jsScript()
-        res = context.doInTransaction({db ->
+        res = context.doInTransaction({ db ->
             db.countClass(Model)
         } as SpecificTxAction)
         then: "ok"
         res == 1001
+
+        when: "positional params"
+        dao.positional('test')
+        then: "error"
+        thrown(RepositoryException)
+
+        when: "positional hack"
+        dao.positionalHack('test')
+        then: "ok"
+        true
     }
 }
