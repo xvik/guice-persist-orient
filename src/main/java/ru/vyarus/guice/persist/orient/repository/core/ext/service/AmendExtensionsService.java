@@ -12,7 +12,7 @@ import ru.vyarus.guice.persist.orient.repository.core.spi.amend.AmendMethod;
 import ru.vyarus.guice.persist.orient.repository.core.spi.amend.AmendMethodExtension;
 import ru.vyarus.guice.persist.orient.repository.core.spi.parameter.MethodParamExtension;
 import ru.vyarus.guice.persist.orient.repository.core.spi.parameter.ParamsContext;
-import ru.vyarus.guice.persist.orient.repository.core.util.OrderComparator;
+import ru.vyarus.guice.persist.orient.db.util.OrderComparator;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -26,7 +26,7 @@ import java.util.Set;
  * Resolves and applies amend extensions. Analyze found params extensions (provided in params context)
  * and compose all found extensions in descriptor. Composed extensions must be used directly
  * by method extensions (because contracts are very different for different repository method types).
- * <p>Resolved extensions are sorted using {@link ru.vyarus.guice.persist.orient.repository.core.util.Order}
+ * <p>Resolved extensions are sorted using {@link ru.vyarus.guice.persist.orient.db.util.Order}
  * annotations.</p>
  * <p>Extension compatibility is strictly checked for extensions defined on method. Type level extension
  * are simply filtered if they are incompatible with current descriptor (extensions has required descriptor

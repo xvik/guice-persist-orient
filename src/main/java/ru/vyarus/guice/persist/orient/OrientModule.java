@@ -44,9 +44,9 @@ import java.lang.reflect.Method;
  * implementation. By default no-op implementation registered. Two implementations provided to
  * automatically initialize scheme from domain objects:
  * <ul>
- * <li>{@code ru.vyarus.guice.persist.orient.db.scheme.PackageSchemeInitializer}.
+ * <li>{@link ru.vyarus.guice.persist.orient.db.scheme.impl.PackageSchemeInitializer}.
  * Useful if all domain entities located in one package</li>
- * <li>{@code ru.vyarus.guice.persist.orient.db.scheme.AutoScanSchemeInitializer}.
+ * <li>{@link ru.vyarus.guice.persist.orient.db.scheme.impl.AutoScanSchemeInitializer}.
  * Useful if domian model located in different packages
  * or to provide more control on which entities are mapped.</li>
  * </ul>

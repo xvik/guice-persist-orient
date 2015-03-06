@@ -1,6 +1,6 @@
 package ru.vyarus.guice.persist.orient.repository.core.result.projection
 
-import ru.vyarus.guice.persist.orient.db.scheme.annotation.VertexType
+import ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.type.vertex.VertexType
 
 /**
  * Checks projection wil not occur on single element vertex.

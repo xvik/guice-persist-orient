@@ -1,6 +1,6 @@
 package ru.vyarus.guice.persist.orient.support.model
 
-import ru.vyarus.guice.persist.orient.db.scheme.annotation.EdgeType
+import ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.type.edge.EdgeType
 
 import javax.persistence.Version
 

@@ -2,7 +2,7 @@ package ru.vyarus.guice.persist.orient.repository.command.ext.pagination;
 
 import com.orientechnologies.orient.core.command.OCommandRequest;
 import ru.vyarus.guice.persist.orient.repository.core.MethodDefinitionException;
-import ru.vyarus.guice.persist.orient.repository.core.util.Order;
+import ru.vyarus.guice.persist.orient.db.util.Order;
 import ru.vyarus.guice.persist.orient.repository.command.core.spi.CommandExtension;
 import ru.vyarus.guice.persist.orient.repository.command.core.spi.CommandMethodDescriptor;
 import ru.vyarus.guice.persist.orient.repository.command.core.spi.SqlCommandDescriptor;

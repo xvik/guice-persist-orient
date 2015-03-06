@@ -49,7 +49,7 @@ public abstract class RepositoryMethodDescriptor<E extends AmendExecutionExtensi
      * <p>Extensions must be processed manually in method extension implementation (because these extensions
      * are totally different for different method extensions).</p>
      * <p>Extensions in this list are sorted according to
-     * {@link ru.vyarus.guice.persist.orient.repository.core.util.Order} annotations.</p>
+     * {@link ru.vyarus.guice.persist.orient.db.util.Order} annotations.</p>
      */
     public List<E> amendExtensions;
 

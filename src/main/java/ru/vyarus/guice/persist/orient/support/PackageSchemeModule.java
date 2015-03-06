@@ -1,6 +1,6 @@
 package ru.vyarus.guice.persist.orient.support;
 
-import ru.vyarus.guice.persist.orient.db.scheme.PackageSchemeInitializer;
+import ru.vyarus.guice.persist.orient.db.scheme.impl.PackageSchemeInitializer;
 import ru.vyarus.guice.persist.orient.db.scheme.SchemeInitializer;
 
 /**
@@ -9,12 +9,12 @@ import ru.vyarus.guice.persist.orient.db.scheme.SchemeInitializer;
  * <p>Use it together with main OrientModule.</p>
  *
  * @author Vyacheslav Rusakov
- * @see ru.vyarus.guice.persist.orient.db.scheme.PackageSchemeInitializer
+ * @see ru.vyarus.guice.persist.orient.db.scheme.impl.PackageSchemeInitializer
  * @since 26.07.2014
  */
 public class PackageSchemeModule extends AbstractSchemeModule {
 
-    public PackageSchemeModule(final String pkg) {
+    public PackageSchemeModule(final String... pkg) {
         super(pkg);
     }
 

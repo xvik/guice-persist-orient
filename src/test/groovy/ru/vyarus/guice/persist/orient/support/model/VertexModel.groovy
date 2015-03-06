@@ -1,6 +1,6 @@
 package ru.vyarus.guice.persist.orient.support.model
 
-import ru.vyarus.guice.persist.orient.db.scheme.annotation.VertexType
+import ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.type.vertex.VertexType
 
 import javax.persistence.Version
 

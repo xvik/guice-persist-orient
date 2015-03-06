@@ -1,6 +1,6 @@
 package ru.vyarus.guice.persist.orient.support;
 
-import com.google.common.base.Strings;
+import com.google.common.base.Joiner;
 import com.google.inject.AbstractModule;
 import com.google.inject.name.Names;
 import com.google.inject.persist.PersistService;
@@ -8,16 +8,19 @@ import com.google.inject.persist.PersistService;
 /**
  * Base class for provided scheme initializers.
  * If no package specified then assuming root package should be used.
+ * <p>Initialization performed with
+ * {@link ru.vyarus.guice.persist.orient.db.scheme.initializer.ObjectSchemeInitializer}, which extends default orient
+ * registration abilities. Custom plugins may be used.</p>
  *
  * @author Vyacheslav Rusakov
  * @since 02.03.2015
  */
 public abstract class AbstractSchemeModule extends AbstractModule {
 
-    private final String pkg;
+    private final String pkgs;
 
-    public AbstractSchemeModule(final String pkg) {
-        this.pkg = pkg;
+    public AbstractSchemeModule(final String... pkgs) {
+        this.pkgs = pkgs.length == 0 ? "" : Joiner.on(',').join(pkgs);
     }
 
     @Override
@@ -27,7 +30,7 @@ public abstract class AbstractSchemeModule extends AbstractModule {
 
         // if package not provided empty string will mean root package (search all classpath)
         // not required if provided scheme initializers not used
-        bindConstant().annotatedWith(Names.named("orient.model.package")).to(Strings.nullToEmpty(pkg));
+        bindConstant().annotatedWith(Names.named("orient.model.package")).to(pkgs);
 
         bindSchemeInitializer();
     }

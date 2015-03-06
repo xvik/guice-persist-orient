@@ -21,7 +21,7 @@ import java.lang.annotation.Annotation;
  * <p>Use {@link ru.vyarus.guice.persist.orient.repository.core.spi.RepositoryMethodDescriptor#extDescriptors} to
  * store extension specific data to use it execution extension part (and leave extension instance stateless).</p>
  * <p>Extensions executed in order of annotations resolution, but you may use
- * {@link ru.vyarus.guice.persist.orient.repository.core.util.Order} annotation if extension also implements
+ * {@link ru.vyarus.guice.persist.orient.db.util.Order} annotation if extension also implements
  * {@link ru.vyarus.guice.persist.orient.repository.core.spi.amend.AmendExecutionExtension} to affect execution
  * order.</p>
  * <p>If extension defined on type, and it's incompatible with currently analyzed method (by required descriptor),

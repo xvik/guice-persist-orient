@@ -1,6 +1,7 @@
 package ru.vyarus.guice.persist.orient.db.scheme;
 
 import com.google.inject.ImplementedBy;
+import ru.vyarus.guice.persist.orient.db.scheme.impl.NoOpSchemeInitializer;
 
 /**
  * <p>Initialize or update database schema just after database opening or creation.
@@ -8,9 +9,9 @@ import com.google.inject.ImplementedBy;
  * By default no-op implementation will be used.</p>
  * There are two predefined implementations:
  * <ul>
- *     <li>{@code ru.vyarus.guice.persist.orient.db.scheme.PackageSchemeInitializer} which update scheme from
+ *     <li>{@link ru.vyarus.guice.persist.orient.db.scheme.impl.PackageSchemeInitializer} which update scheme from
  *     using all classes in defined package (more suitable for standard package by layer approach)</li>
- *     <li>{@code ru.vyarus.guice.persist.orient.db.scheme.AutoScanSchemeInitializer} which update scheme from
+ *     <li>{@link ru.vyarus.guice.persist.orient.db.scheme.impl.AutoScanSchemeInitializer} which update scheme from
  *     all annotated beans in classpath (more suitable for package by feature approach)</li>
  * </ul>
  * Schema modifications must be performed without transaction (orient requirement), and implementation will

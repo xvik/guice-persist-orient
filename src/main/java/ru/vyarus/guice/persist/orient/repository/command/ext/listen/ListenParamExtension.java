@@ -9,7 +9,7 @@ import ru.vyarus.guice.persist.orient.repository.command.core.spi.CommandMethodD
 import ru.vyarus.guice.persist.orient.repository.command.core.spi.SqlCommandDescriptor;
 import ru.vyarus.guice.persist.orient.repository.core.spi.parameter.MethodParamExtension;
 import ru.vyarus.guice.persist.orient.repository.core.spi.parameter.ParamInfo;
-import ru.vyarus.guice.persist.orient.repository.core.util.Order;
+import ru.vyarus.guice.persist.orient.db.util.Order;
 
 import javax.inject.Singleton;
 import java.util.List;

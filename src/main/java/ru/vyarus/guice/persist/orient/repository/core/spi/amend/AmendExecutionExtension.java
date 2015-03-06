@@ -11,7 +11,7 @@ package ru.vyarus.guice.persist.orient.repository.core.spi.amend;
  * Amend extension can't be registered directly, but it's more like method extension api.
  * To register such extension custom amend annotation extension or parameter extension must be registered and
  * if extension will implement amend execution interface it will be automatically registered.
- * <p>Use {@link ru.vyarus.guice.persist.orient.repository.core.util.Order} annotation to order extensions.</p>
+ * <p>Use {@link ru.vyarus.guice.persist.orient.db.util.Order} annotation to order extensions.</p>
  * <p>Execution extensions type is checked during descriptor creation and incompatible extensions are filtered out
  * (check using specific extension type defined in repository method descriptor generic).</p>
  * <p>Use {@link ru.vyarus.guice.persist.orient.repository.core.MethodExecutionException} for usage specific

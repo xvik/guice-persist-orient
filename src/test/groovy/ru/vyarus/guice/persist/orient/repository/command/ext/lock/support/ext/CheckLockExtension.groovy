@@ -7,7 +7,7 @@ import ru.vyarus.guice.persist.orient.repository.command.core.spi.CommandExtensi
 import ru.vyarus.guice.persist.orient.repository.command.core.spi.CommandMethodDescriptor
 import ru.vyarus.guice.persist.orient.repository.command.core.spi.SqlCommandDescriptor
 import ru.vyarus.guice.persist.orient.repository.core.spi.amend.AmendMethodExtension
-import ru.vyarus.guice.persist.orient.repository.core.util.Order
+import ru.vyarus.guice.persist.orient.db.util.Order
 
 /**
  * @author Vyacheslav Rusakov 
