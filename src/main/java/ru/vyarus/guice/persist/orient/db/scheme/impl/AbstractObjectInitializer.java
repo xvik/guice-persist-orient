@@ -60,9 +60,9 @@ public abstract class AbstractObjectInitializer implements SchemeInitializer {
     }
 
     /**
-     * Called to init schema with predefined object connection.
+     * @return found model classes in classpath
      */
-    protected List<Class<?>> scan() {
+    private List<Class<?>> scan() {
         final List<Class<?>> modelClasses = Lists.newArrayList();
         final Predicate<Class<?>> predicate = new Predicate<Class<?>>() {
             @Override
@@ -84,7 +84,7 @@ public abstract class AbstractObjectInitializer implements SchemeInitializer {
         return modelClasses;
     }
 
-    protected void registerClasses(final Iterable<Class<?>> classes) {
+    private void registerClasses(final Iterable<Class<?>> classes) {
         for (Class<?> cls : classes) {
             schemeInitializer.register(cls);
         }
