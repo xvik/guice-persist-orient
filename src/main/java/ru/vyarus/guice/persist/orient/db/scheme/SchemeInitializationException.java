@@ -17,4 +17,17 @@ public class SchemeInitializationException extends PersistException {
     public SchemeInitializationException(final String message, final Throwable cause) {
         super(message, cause);
     }
+
+    /**
+     * Shortcut to check and throw scheme exception.
+     *
+     * @param condition condition to validate
+     * @param message   fail message
+     * @param args      fail message arguments
+     */
+    public static void check(final boolean condition, final String message, final Object... args) {
+        if (!condition) {
+            throw new SchemeInitializationException(String.format(message, args));
+        }
+    }
 }
