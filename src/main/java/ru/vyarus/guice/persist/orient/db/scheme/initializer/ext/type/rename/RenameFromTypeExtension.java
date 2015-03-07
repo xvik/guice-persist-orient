@@ -2,6 +2,8 @@ package ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.type.rename;
 
 import com.google.common.base.Strings;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.core.spi.SchemeDescriptor;
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.core.spi.type.TypeExtension;
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.core.util.SchemeUtils;
@@ -21,6 +23,7 @@ import static ru.vyarus.guice.persist.orient.db.scheme.SchemeInitializationExcep
 // class rename should be performed before other extensions
 @Order(-10)
 public class RenameFromTypeExtension implements TypeExtension<RenameFrom> {
+    private final Logger logger = LoggerFactory.getLogger(RenameFromTypeExtension.class);
 
     @Override
     public void beforeRegistration(final OObjectDatabaseTx db, final SchemeDescriptor descriptor,
@@ -35,6 +38,7 @@ public class RenameFromTypeExtension implements TypeExtension<RenameFrom> {
             SchemeUtils.command(db, "alter class %s name %s", oldName, name);
             // not a new registration anymore
             descriptor.initialRegistration = false;
+            logger.debug("Scheme class {} renamed from {}", name, oldName);
         }
     }
 

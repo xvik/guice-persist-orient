@@ -28,11 +28,11 @@ public final class ExtUtils {
     }
 
     /**
-     * @param filed model class field
+     * @param field model class field
      * @return all field extension found on field or empty list
      */
-    public static List<Annotation> findFieldAnnotations(final Field filed) {
-        return filterAnnotations(SchemeFieldInit.class, filed.getAnnotations());
+    public static List<Annotation> findFieldAnnotations(final Field field) {
+        return filterAnnotations(SchemeFieldInit.class, field.getAnnotations());
     }
 
 

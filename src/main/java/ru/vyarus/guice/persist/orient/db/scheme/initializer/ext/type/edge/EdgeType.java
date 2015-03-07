@@ -15,6 +15,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * <p>Keeps track of object hierarchy: if annotated entity extend some other entity (e.g. VersionedEntity) then this
  * base class must extend edge type (E) and initializer will try to do it.</p>
  * <p>It's more safe to only annotate topmost classes.</p>
+ * <p>Sample sql: alter class Model superclass E, create class Model extends E</p>
  *
  * @author Vyacheslav Rusakov
  * @since 03.08.2014

@@ -3,14 +3,11 @@ package ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.type.rename
 import ru.vyarus.guice.persist.orient.db.scheme.SchemeInitializationException
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.core.util.SchemeUtils
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.AbstractSchemeExtensionTest
-import ru.vyarus.guice.persist.orient.support.modules.DefaultModule
-import spock.guice.UseModules
 
 /**
  * @author Vyacheslav Rusakov 
  * @since 07.03.2015
  */
-@UseModules(DefaultModule)
 class RenameFromModelTest extends AbstractSchemeExtensionTest {
 
     @Override
@@ -43,7 +40,7 @@ class RenameFromModelTest extends AbstractSchemeExtensionTest {
 
     def "Check both models already exist"() {
 
-        when: "rename model when old not exist"
+        when: "rename model when both exist"
         // register new model
         schemeInitializer.register(RenameModel)
         // register old model

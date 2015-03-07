@@ -102,7 +102,7 @@ public class ObjectSchemeInitializer {
         desc.modelClass = model;
         desc.modelHierarchy = SchemeUtils.resolveHierarchy(model);
         desc.modelRootClass = desc.modelHierarchy.get(desc.modelHierarchy.size() - 1);
-        desc.initialRegistration = !db.getEntityManager().getRegisteredEntities().contains(model);
+        desc.initialRegistration = db.getMetadata().getSchema().getClass(model.getSimpleName()) == null;
         desc.registered = false;
         return desc;
     }

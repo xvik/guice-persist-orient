@@ -13,6 +13,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * so data will be preserved.
  * <p>If old class not exist in db, no action will be performed.</p>
  * <p>If new class already registered, exception will be thrown, because rename is impossible.</p>
+ * <p>Sample sql: alter class OldModel name Model</p>
  *
  * @author Vyacheslav Rusakov
  * @since 07.03.2015
