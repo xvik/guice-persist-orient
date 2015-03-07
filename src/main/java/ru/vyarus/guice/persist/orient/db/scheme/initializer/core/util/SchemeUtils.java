@@ -6,11 +6,7 @@ import com.orientechnologies.orient.core.metadata.schema.OClass;
 import com.orientechnologies.orient.core.sql.OCommandSQL;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import org.slf4j.Logger;
-import ru.vyarus.guice.persist.orient.db.scheme.initializer.core.spi.field.SchemeFieldInit;
-import ru.vyarus.guice.persist.orient.db.scheme.initializer.core.spi.type.SchemeTypeInit;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
 import java.util.List;
 
 /**
@@ -38,22 +34,6 @@ public final class SchemeUtils {
             current = current.getSuperclass();
         }
         return res;
-    }
-
-    /**
-     * @param type model type
-     * @return all type extensions found or empty list
-     */
-    public static List<Annotation> findTypeAnnotations(final Class<?> type) {
-        return filterAnnotations(SchemeTypeInit.class, type.getAnnotations());
-    }
-
-    /**
-     * @param filed model class field
-     * @return all field extension found on field or empty list
-     */
-    public static List<Annotation> findFieldAnnotations(final Field filed) {
-        return filterAnnotations(SchemeFieldInit.class, filed.getAnnotations());
     }
 
     /**
@@ -93,16 +73,5 @@ public final class SchemeUtils {
      */
     public static void command(final OObjectDatabaseTx db, final String command, final Object... args) {
         db.command(new OCommandSQL(String.format(command, args))).execute();
-    }
-
-    private static List<Annotation> filterAnnotations(final Class<? extends Annotation> type,
-                                                      final Annotation... annotations) {
-        final List<Annotation> res = Lists.newArrayList();
-        for (Annotation ann : annotations) {
-            if (ann.annotationType().isAnnotationPresent(type)) {
-                res.add(ann);
-            }
-        }
-        return res;
     }
 }

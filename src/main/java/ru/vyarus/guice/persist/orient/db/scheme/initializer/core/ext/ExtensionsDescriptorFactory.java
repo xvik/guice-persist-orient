@@ -7,7 +7,6 @@ import ru.vyarus.guice.persist.orient.db.scheme.initializer.core.spi.field.Field
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.core.spi.field.SchemeFieldInit;
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.core.spi.type.SchemeTypeInit;
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.core.spi.type.TypeExtension;
-import ru.vyarus.guice.persist.orient.db.scheme.initializer.core.util.SchemeUtils;
 import ru.vyarus.guice.persist.orient.db.util.OrderComparator;
 
 import javax.inject.Inject;
@@ -56,7 +55,7 @@ public class ExtensionsDescriptorFactory {
 
     private List<ExtensionsDescriptor.Ext<TypeExtension, Class>> prepareTypeExtensions(final Class<?> model) {
         final List<ExtensionsDescriptor.Ext<TypeExtension, Class>> res = Lists.newArrayList();
-        final List<Annotation> typeExtensions = SchemeUtils.findTypeAnnotations(model);
+        final List<Annotation> typeExtensions = ExtUtils.findTypeAnnotations(model);
         for (Annotation ann : typeExtensions) {
             res.add(createTypeExtension(ann, model));
         }
@@ -78,7 +77,7 @@ public class ExtensionsDescriptorFactory {
 
     private List<ExtensionsDescriptor.Ext<FieldExtension, Field>> prepareFieldExtensions(final Field field) {
         final List<ExtensionsDescriptor.Ext<FieldExtension, Field>> res = Lists.newArrayList();
-        final List<Annotation> fieldExtensions = SchemeUtils.findFieldAnnotations(field);
+        final List<Annotation> fieldExtensions = ExtUtils.findFieldAnnotations(field);
         for (Annotation ann : fieldExtensions) {
             res.add(createFieldExtension(ann, field));
         }

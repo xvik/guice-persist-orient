@@ -1,4 +1,4 @@
-package ru.vyarus.guice.persist.orient.db.scheme.initializer.core.util.support.ext
+package ru.vyarus.guice.persist.orient.db.scheme.initializer.core.ext.support
 
 /**
  * @author Vyacheslav Rusakov 
