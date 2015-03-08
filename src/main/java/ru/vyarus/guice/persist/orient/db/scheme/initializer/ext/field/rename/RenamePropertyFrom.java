@@ -16,6 +16,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * <p>Sample sql: alter property Model.oldName name newName</p>
  *
  * @author Vyacheslav Rusakov
+ * @see <a href="http://www.orientechnologies.com/docs/last/orientdb.wiki/SQL-Alter-Property.html">docs</a>
  * @since 07.03.2015
  */
 @Target(FIELD)

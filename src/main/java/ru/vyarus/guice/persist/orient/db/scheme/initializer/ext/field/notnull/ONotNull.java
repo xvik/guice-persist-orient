@@ -1,4 +1,4 @@
-package ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.field.mandatory;
+package ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.field.notnull;
 
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.core.spi.field.SchemeFieldInit;
 
@@ -9,20 +9,20 @@ import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * Scheme model field extension to mark property as mandatory.
- * <p>Sample sql: alter property Model.name mandatory true</p>
+ * Scheme model field extension to mark property as not null. Name changed to avoid collision with javax validation.
+ * <p>Sample sql: alter property Model.name notnull true</p>
  *
  * @author Vyacheslav Rusakov
  * @see <a href="http://www.orientechnologies.com/docs/last/orientdb.wiki/SQL-Alter-Property.html">docs</a>
- * @since 08.03.2015
+ * @since 09.03.2015
  */
 @Target(FIELD)
 @Retention(RUNTIME)
-@SchemeFieldInit(MandatoryPropertyExtension.class)
-public @interface Mandatory {
+@SchemeFieldInit(NotNullFieldExtension.class)
+public @interface ONotNull {
 
     /**
-     * @return true to make property mandatory, false to unset mandatory
+     * @return true to make property not null, false to allow null values
      */
     boolean value() default true;
 }
