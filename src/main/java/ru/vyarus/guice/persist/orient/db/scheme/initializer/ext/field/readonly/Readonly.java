@@ -1,4 +1,4 @@
-package ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.field.mandatory;
+package ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.field.readonly;
 
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.core.spi.field.SchemeFieldInit;
 
@@ -9,20 +9,20 @@ import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * Scheme model field extension to mark property as mandatory (or remove mandatory marker).
- * <p>Sample sql: alter property Model.name mandatory true</p>
+ * Scheme model field extension to mark property as read only (or remove readonly marker).
+ * <p>Sample sql: alter property Model.name readonly true</p>
  *
  * @author Vyacheslav Rusakov
  * @see <a href="http://www.orientechnologies.com/docs/last/orientdb.wiki/SQL-Alter-Property.html">docs</a>
- * @since 08.03.2015
+ * @since 09.03.2015
  */
 @Target(FIELD)
 @Retention(RUNTIME)
-@SchemeFieldInit(MandatoryPropertyExtension.class)
-public @interface Mandatory {
+@SchemeFieldInit(ReadonlyFieldExtension.class)
+public @interface Readonly {
 
     /**
-     * @return true to make property mandatory, false to unset mandatory
+     * @return true to make property readonly, false to allow modification
      */
     boolean value() default true;
 }

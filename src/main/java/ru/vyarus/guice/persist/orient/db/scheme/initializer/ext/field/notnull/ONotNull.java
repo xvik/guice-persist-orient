@@ -9,7 +9,8 @@ import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * Scheme model field extension to mark property as not null. Name changed to avoid collision with javax validation.
+ * Scheme model field extension to mark property as not null (or remove notnull marker).
+ * Name changed to avoid collision with javax validation.
  * <p>Sample sql: alter property Model.name notnull true</p>
  *
  * @author Vyacheslav Rusakov
