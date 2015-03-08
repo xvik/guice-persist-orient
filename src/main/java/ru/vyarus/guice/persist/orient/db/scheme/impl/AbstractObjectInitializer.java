@@ -49,8 +49,6 @@ public abstract class AbstractObjectInitializer implements SchemeInitializer {
     @Override
     public void initialize() {
         final OObjectDatabaseTx db = dbProvider.get();
-        // auto create schema for new classes
-        db.setAutomaticSchemaGeneration(true);
         registerClasses(scan());
         // important to guarantee correct state in dynamic environments (like tests or using different databases)
         db.getMetadata().getSchema().synchronizeSchema();

@@ -62,6 +62,8 @@ public class ObjectSchemeInitializer {
      */
     public void register(final Class<?> model) {
         final OObjectDatabaseTx db = dbProvider.get();
+        // auto create schema for new classes
+        db.setAutomaticSchemaGeneration(true);
         // processing lower hierarchy types first
         try {
             for (Class<?> type : Lists.reverse(SchemeUtils.resolveHierarchy(model))) {
