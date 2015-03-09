@@ -12,6 +12,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 /**
  * Scheme model field extension to create index on field. If index name not set, className.fieldName will be used.
  * If index with provided name exist, but with different type, index will be re-created.
+ * <p>Use {@link Indexes} to define more than one index.</p>
  * <p>Annotation doesn't cover all possible index options.</p>
  *
  * @author Vyacheslav Rusakov

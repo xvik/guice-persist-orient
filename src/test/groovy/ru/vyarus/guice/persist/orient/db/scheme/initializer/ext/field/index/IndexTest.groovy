@@ -1,6 +1,5 @@
 package ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.field.index
 
-import com.orientechnologies.orient.core.hook.ORecordHook
 import com.orientechnologies.orient.core.metadata.schema.OClass
 import com.orientechnologies.orient.core.metadata.schema.OType
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.AbstractSchemeExtensionTest
@@ -49,5 +48,16 @@ class IndexTest extends AbstractSchemeExtensionTest {
         clazz.getClassIndexes().size() == 2
         clazz.getClassIndex("IndexModel.foo").getType() == OClass.INDEX_TYPE.NOTUNIQUE.name()
         clazz.getClassIndex("customName").getType() == OClass.INDEX_TYPE.FULLTEXT.name()
+    }
+
+    def "Check multiple indexes"() {
+
+        when: "multiple indexes defined"
+        schemeInitializer.register(MultipleIndexesModel)
+        def clazz = db.getMetadata().getSchema().getClass(MultipleIndexesModel)
+        then: "indexes created"
+        clazz.getClassIndexes().size() == 2
+        clazz.getClassIndex("test1").getType() == OClass.INDEX_TYPE.NOTUNIQUE.name()
+        clazz.getClassIndex("test2").getType() == OClass.INDEX_TYPE.FULLTEXT.name()
     }
 }
