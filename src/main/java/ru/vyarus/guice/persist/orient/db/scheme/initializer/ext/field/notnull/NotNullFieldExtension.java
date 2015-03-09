@@ -31,12 +31,11 @@ public class NotNullFieldExtension implements FieldExtension<ONotNull> {
                                   final Field field, final ONotNull annotation) {
         final String name = field.getName();
         final boolean notnull = annotation.value();
-        final String type = descriptor.modelClass.getSimpleName();
         final OProperty property = db.getMetadata().getSchema()
-                .getClass(type).getProperty(name);
+                .getClass(descriptor.schemeClass).getProperty(name);
         if (property.isNotNull() != notnull) {
             property.setNotNull(notnull);
-            logger.debug("Set {}.{} property notnull={}", type, name, notnull);
+            logger.debug("Set {}.{} property notnull={}", descriptor.schemeClass, name, notnull);
         }
     }
 }

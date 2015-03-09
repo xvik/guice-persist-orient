@@ -102,6 +102,7 @@ public class ObjectSchemeInitializer {
     private SchemeDescriptor buildDescriptor(final OObjectDatabaseTx db, final Class<?> model) {
         final SchemeDescriptor desc = new SchemeDescriptor();
         desc.modelClass = model;
+        desc.schemeClass = model.getSimpleName();
         desc.modelHierarchy = SchemeUtils.resolveHierarchy(model);
         desc.modelRootClass = desc.modelHierarchy.get(desc.modelHierarchy.size() - 1);
         desc.initialRegistration = db.getMetadata().getSchema().getClass(model.getSimpleName()) == null;

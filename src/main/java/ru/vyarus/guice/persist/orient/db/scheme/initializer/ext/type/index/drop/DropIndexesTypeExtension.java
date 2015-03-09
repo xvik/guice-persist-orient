@@ -24,7 +24,7 @@ public class DropIndexesTypeExtension implements TypeExtension<DropIndexes> {
             final OIndexManagerProxy indexManager = db.getMetadata().getIndexManager();
             if (indexManager.existsIndex(index)) {
                 indexManager.dropIndex(index);
-                logger.debug("Index {} dropped for type {}", index, descriptor.modelClass.getSimpleName());
+                logger.debug("Index {} dropped for type {}", index, descriptor.schemeClass);
             }
         }
     }

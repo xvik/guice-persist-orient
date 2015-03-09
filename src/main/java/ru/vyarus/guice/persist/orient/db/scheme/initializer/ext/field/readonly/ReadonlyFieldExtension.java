@@ -31,12 +31,11 @@ public class ReadonlyFieldExtension implements FieldExtension<Readonly> {
                                   final Field field, final Readonly annotation) {
         final String name = field.getName();
         final boolean readonly = annotation.value();
-        final String type = descriptor.modelClass.getSimpleName();
         final OProperty property = db.getMetadata().getSchema()
-                .getClass(type).getProperty(name);
+                .getClass(descriptor.schemeClass).getProperty(name);
         if (property.isReadonly() != readonly) {
             property.setReadonly(readonly);
-            logger.debug("Set {}.{} property readonly={}", type, name, readonly);
+            logger.debug("Set {}.{} property readonly={}", descriptor.schemeClass, name, readonly);
         }
     }
 }

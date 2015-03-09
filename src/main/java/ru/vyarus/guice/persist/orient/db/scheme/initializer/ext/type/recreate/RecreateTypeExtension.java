@@ -25,8 +25,8 @@ public class RecreateTypeExtension implements TypeExtension<Recreate> {
     public void beforeRegistration(final OObjectDatabaseTx db, final SchemeDescriptor descriptor,
                                    final Recreate annotation) {
         if (!descriptor.initialRegistration) {
-            db.getMetadata().getSchema().dropClass(descriptor.modelClass.getSimpleName());
-            logger.debug("Model {} scheme dropped for re-creation", descriptor.modelClass.getSimpleName());
+            db.getMetadata().getSchema().dropClass(descriptor.schemeClass);
+            logger.debug("Model {} scheme dropped for re-creation", descriptor.schemeClass);
             // now its fresh registration
             descriptor.initialRegistration = true;
         }

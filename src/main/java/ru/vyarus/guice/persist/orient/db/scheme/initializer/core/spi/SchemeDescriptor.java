@@ -24,6 +24,11 @@ public class SchemeDescriptor {
     public Class<?> modelClass;
 
     /**
+     * String representation of orient scheme class name (modelClass.simpleName).
+     */
+    public String schemeClass;
+
+    /**
      * Model class hierarchy types (ignoring interfaces, only types that will be mapped to orient schema).
      */
     public List<Class<?>> modelHierarchy;

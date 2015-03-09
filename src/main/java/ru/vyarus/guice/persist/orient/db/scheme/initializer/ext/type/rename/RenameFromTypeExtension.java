@@ -29,7 +29,7 @@ public class RenameFromTypeExtension implements TypeExtension<RenameFrom> {
     public void beforeRegistration(final OObjectDatabaseTx db, final SchemeDescriptor descriptor,
                                    final RenameFrom annotation) {
         final String oldName = Strings.emptyToNull(annotation.value().trim());
-        final String name = descriptor.modelClass.getSimpleName();
+        final String name = descriptor.schemeClass;
         check(oldName != null, "Old name not specified");
         check(!oldName.equals(name), "Defined old name is the same as current model name: %s", name);
         if (db.getMetadata().getSchema().getClass(oldName) != null) {

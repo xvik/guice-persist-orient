@@ -36,7 +36,7 @@ public class RenameFromFieldExtension implements FieldExtension<RenamePropertyFr
         check(!oldName.equals(name), "Defined old name is the same as current property name: %s", name);
         // if class not registered no need  to rename
         if (!descriptor.initialRegistration) {
-            final String modelName = descriptor.modelClass.getSimpleName();
+            final String modelName = descriptor.schemeClass;
             final OClass scheme = db.getMetadata().getSchema().getClass(modelName);
             // old property not exist - no need to rename
             if (scheme.getProperty(oldName) != null) {

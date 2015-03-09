@@ -33,7 +33,7 @@ public class IndexFieldExtension implements FieldExtension<Index> {
     public void afterRegistration(final OObjectDatabaseTx db, final SchemeDescriptor descriptor,
                                   final Field field, final Index annotation) {
         final String property = field.getName();
-        final String model = descriptor.modelClass.getSimpleName();
+        final String model = descriptor.schemeClass;
         final String name = Objects.firstNonNull(Strings.emptyToNull(annotation.name().trim()), model + '.' + property);
         final OClass clazz = db.getMetadata().getSchema().getClass(model);
         final OIndex<?> classIndex = clazz.getClassIndex(name);

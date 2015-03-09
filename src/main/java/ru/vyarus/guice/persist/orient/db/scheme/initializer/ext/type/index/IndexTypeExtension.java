@@ -31,10 +31,9 @@ public class IndexTypeExtension implements TypeExtension<CompositeIndex> {
     public void afterRegistration(final OObjectDatabaseTx db, final SchemeDescriptor descriptor,
                                   final CompositeIndex annotation) {
         // single field index definition intentionally allowed (no check)
-        final String model = descriptor.modelClass.getSimpleName();
         final String name = Strings.emptyToNull(annotation.name().trim());
         Preconditions.checkArgument(name != null, "Index name required");
-        final OClass clazz = db.getMetadata().getSchema().getClass(model);
+        final OClass clazz = db.getMetadata().getSchema().getClass(descriptor.schemeClass);
         final OIndex<?> classIndex = clazz.getClassIndex(name);
         final OClass.INDEX_TYPE type = annotation.type();
         if (!descriptor.initialRegistration && classIndex != null) {

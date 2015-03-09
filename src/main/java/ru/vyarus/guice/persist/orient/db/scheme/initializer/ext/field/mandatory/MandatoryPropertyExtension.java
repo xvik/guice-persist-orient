@@ -31,12 +31,11 @@ public class MandatoryPropertyExtension implements FieldExtension<Mandatory> {
                                   final Field field, final Mandatory annotation) {
         final String name = field.getName();
         final boolean mandatory = annotation.value();
-        final String type = descriptor.modelClass.getSimpleName();
         final OProperty property = db.getMetadata().getSchema()
-                .getClass(type).getProperty(name);
+                .getClass(descriptor.schemeClass).getProperty(name);
         if (property.isMandatory() != mandatory) {
             property.setMandatory(mandatory);
-            logger.debug("Set {}.{} property mandatory={}", type, name, mandatory);
+            logger.debug("Set {}.{} property mandatory={}", descriptor.schemeClass, name, mandatory);
         }
     }
 }
