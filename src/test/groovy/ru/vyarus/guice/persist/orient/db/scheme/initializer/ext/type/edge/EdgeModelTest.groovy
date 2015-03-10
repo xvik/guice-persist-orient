@@ -5,8 +5,6 @@ import ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.AbstractSchemeEx
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.type.vertex.ComplexVertexModel
 import ru.vyarus.guice.persist.orient.support.model.EdgeModel
 import ru.vyarus.guice.persist.orient.support.model.VertexModel
-import spock.lang.Specification
-
 
 /**
  * @author Vyacheslav Rusakov 

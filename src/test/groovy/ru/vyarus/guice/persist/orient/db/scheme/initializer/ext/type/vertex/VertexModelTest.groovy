@@ -1,9 +1,6 @@
 package ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.type.vertex
 
-import ru.vyarus.guice.persist.orient.db.scheme.SchemeInitializationException
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.AbstractSchemeExtensionTest
-import ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.type.edge.BadComplexEdgeModel
-import ru.vyarus.guice.persist.orient.support.model.EdgeModel
 import ru.vyarus.guice.persist.orient.support.model.VertexModel
 
 /**

@@ -2,8 +2,6 @@ package ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.type.index.drop
 
 import com.orientechnologies.orient.core.metadata.schema.OClass
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.AbstractSchemeExtensionTest
-import spock.lang.Specification
-
 
 /**
  * @author Vyacheslav Rusakov 

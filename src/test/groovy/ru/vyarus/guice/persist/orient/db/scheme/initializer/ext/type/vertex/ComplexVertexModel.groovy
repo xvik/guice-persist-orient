@@ -1,6 +1,5 @@
 package ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.type.vertex
 
-import ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.type.vertex.VertexType
 import ru.vyarus.guice.persist.orient.support.model.VertexModel
 
 /**
@@ -10,5 +9,5 @@ import ru.vyarus.guice.persist.orient.support.model.VertexModel
  * @since 04.08.2014
  */
 @VertexType
-class ComplexVertexModel extends VertexModel{
+class ComplexVertexModel extends VertexModel {
 }
