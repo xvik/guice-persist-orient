@@ -20,7 +20,7 @@ import java.util.Collection;
  * {@code @Function("function1")}</p>
  *
  * @author Vyacheslav Rusakov
- * @see <a href="http://www.orientechnologies.com/docs/last/orientdb.wiki/SQL-Functions.html">docs</a>
+ * @see <a href="http://www.orientechnologies.com/docs/last/orientdb.wiki/Functions.html">docs</a>
  * @since 02.02.2015
  */
 @Target(ElementType.METHOD)
