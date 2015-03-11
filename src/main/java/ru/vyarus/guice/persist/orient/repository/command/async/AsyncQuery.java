@@ -18,6 +18,8 @@ import java.lang.annotation.Target;
  * {@link ru.vyarus.guice.persist.orient.repository.command.ext.elvar.ElVar}).</p>
  *
  * @author Vyacheslav Rusakov
+ * @see <a href="http://www.orientechnologies.com/docs/last/orientdb.wiki/Document-Database.html#asynchronous-query">
+ *     docs</a>
  * @since 27.02.2015
  */
 @Target(ElementType.METHOD)

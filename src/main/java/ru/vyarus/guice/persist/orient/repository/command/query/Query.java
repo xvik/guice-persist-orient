@@ -19,6 +19,7 @@ import java.util.Collection;
  * {@link ru.vyarus.guice.persist.orient.repository.command.ext.elvar.ElVar}).</p>
  *
  * @author Vyacheslav Rusakov
+ * @see <a href="http://www.orientechnologies.com/docs/last/orientdb.wiki/SQL.html">docs</a>
  * @since 02.02.2015
  */
 @Target(ElementType.METHOD)

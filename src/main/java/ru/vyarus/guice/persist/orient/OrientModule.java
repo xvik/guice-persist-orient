@@ -26,40 +26,35 @@ import javax.inject.Singleton;
 import java.lang.reflect.Method;
 
 /**
- * <p>Module provides integration for orient db with guice through guice-persist.</p>
- * Orient storage format is unified within database types (object, document, graph), so it's possible to use
- * the same database as object, document or graph.
- * This provides different use-cases:
- * <ul>
- * <li>use object connection for schema initialization and graph connection to work with db</li>
- * <li>use graph connection for complex selects and object db for entities manipulation</li>
- * <li>etc</li>
- * </ul>
+ * Module provides integration for orient db with guice through guice-persist.
+ * <p>Orient storage format is unified within database types (object, document, graph), so it's possible to use
+ * the same database as object, document or graph.</p>
+ * <p>For example, object connection could be used for schema initialization and property updates
+ * and graph connection to work with relations</p>
  * <p>Module initialize set of connection pools. By default its object, document and graph
  * (but depends on available jars in classpath:
  * if graph or object jars are not in classpath these pools will not be loaded). Set of pools may be modified
  * by overriding {@code #configurePools()} method.</p>
- * To initialize (create or update) database schema register
+ * <p>To initialize (create or update) database schema register
  * {@code ru.vyarus.guice.persist.orient.db.scheme.SchemeInitializer}
- * implementation. By default no-op implementation registered. Two implementations provided to
- * automatically initialize scheme from domain objects:
+ * implementation. By default no-op implementation registered. </p>
+ * Two implementations provided to automatically initialize scheme from domain objects:
  * <ul>
- * <li>{@link ru.vyarus.guice.persist.orient.db.scheme.impl.PackageSchemeInitializer}.
- * Useful if all domain entities located in one package</li>
- * <li>{@link ru.vyarus.guice.persist.orient.db.scheme.impl.AutoScanSchemeInitializer}.
- * Useful if domian model located in different packages
- * or to provide more control on which entities are mapped.</li>
- * </ul>
- * There are predefined modules with predefined scheme initializers (must be used together with OrientModule):
- * <ul>
- * <li>{@link ru.vyarus.guice.persist.orient.support.PackageSchemeModule}</li>
- * <li>{@link ru.vyarus.guice.persist.orient.support.AutoScanSchemeModule}</li>
+ * <li>{@link ru.vyarus.guice.persist.orient.support.PackageSchemeModule}.
+ * Useful if all domain entities located in one package (package by layer)</li>
+ * <li>{@link ru.vyarus.guice.persist.orient.support.AutoScanSchemeModule}.
+ * Useful if domain model located in different packages or to provide more control on which entities are mapped
+ * (package by feature).</li>
  * </ul>
  * NOTE: it's better to not perform db updates in schema initializer, because schema updates
  * must be performed in no-tx mode.
+ * <p>Both default initializers use extended object mapper
+ * {@link ru.vyarus.guice.persist.orient.db.scheme.initializer.ObjectSchemeInitializer}, build around
+ * default orient object mapper. It allows defining custom annotations (plugins).</p>
  * <p>To initialize or migrate database data you can define
- * {@code ru.vyarus.guice.persist.orient.db.data.DataInitializer}. By default,
- * no-op implementation registered.</p>
+ * {@link ru.vyarus.guice.persist.orient.db.data.DataInitializer}. By default,
+ * no-op implementation registered. Data initializer called without transaction, because different initialization
+ * cases are possible.</p>
  * <p>All pools share the same transaction (object and graph connections use document connection internally).
  * All transactions are orchestrated with {@code ru.vyarus.guice.persist.orient.db.transaction.TransactionManager}.
  * Pool maintains lazy transaction, so when transaction
@@ -71,17 +66,19 @@ import java.lang.reflect.Method;
  * {@code ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxTemplate}. To define transaction type
  * for specific transaction (or switch off transaction within unit of work) use @TxType annotation.
  * Also this could be done with transaction templates.</p>
- * To obtain database connection in application beans use provider:
+ * To work with database objects use {@link ru.vyarus.guice.persist.orient.db.PersistentContext}:
  * <ul>
- * <li>Provider&lt;OObjectDatabaseTx&gt; for object db connection</li>
- * <li>Provider&lt;ODatabaseDocumentTx&gt; for document db connection</li>
- * <li>Provider&lt;OrientBaseGraph&gt; for graph db connection (transactional or not)</li>
- * <li>Provider&lt;OrientGraph&gt; for transactional graph db connection (will fail if notx transaction type)</li>
- * <li>Provider&lt;OrientGraphNoTx&gt; for non transactional graph db connection (will provide only
+ * <li>PersistentContext&lt;OObjectDatabaseTx&gt; for object db connection</li>
+ * <li>PersistentContext&lt;ODatabaseDocumentTx&gt; for document db connection</li>
+ * <li>PersistentContext&lt;OrientBaseGraph&gt; for graph db connection (transactional or not)</li>
+ * <li>PersistentContext&lt;OrientGraph&gt; for transactional graph db connection
+ * (will fail if notx transaction type)</li>
+ * <li>PersistentContext&lt;OrientGraphNoTx&gt; for non transactional graph db connection (will provide only
  * for notx transaction type, otherwise fail)</li>
  * </ul>
+ * It is also possible to obtain connection by using provider directly {@code Provider<OObjectDatabaseTx>}.
  * Provider will fail to provide connection if unit of work is not defined (using annotation or transactional template)
- * <p>In most cases use {@link ru.vyarus.guice.persist.orient.db.PersistentContext}, which combines provider,
+ * <p>{@link ru.vyarus.guice.persist.orient.db.PersistentContext} combines provider,
  * templates and access to transaction manager (single point to access almost all api).</p>
  * <p>Persistent service must be manually started or stopped: obtain PersistService and call .start() and .stop() when
  * appropriate. This will start/stop all registered pools. Without initialization any try

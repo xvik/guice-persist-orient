@@ -18,6 +18,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * <p>For pagination ise it with {@link Limit} annotation</p>
  *
  * @author Vyacheslav Rusakov
+ * @see <a href="http://www.orientechnologies.com/docs/last/orientdb.wiki/Pagination.html">docs</a>
  * @since 06.02.2015
  */
 @Documented
