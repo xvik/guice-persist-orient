@@ -33,5 +33,10 @@ class LockExecutionTest extends AbstractTest {
         List<Model> res = dao.lock()
         then: "ok"
         res.size() == 10
+
+        when: "call update method with lock"
+        def cnt = dao.lockedUpdate("test")
+        then: "ok"
+        cnt == 10
     }
 }

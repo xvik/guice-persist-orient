@@ -21,4 +21,8 @@ interface LockCases {
     @LockStrategy(OStorage.LOCKING_STRATEGY.KEEP_EXCLUSIVE_LOCK)
     @Query("select from Model")
     List<Model> lock()
+
+    @LockStrategy(OStorage.LOCKING_STRATEGY.KEEP_EXCLUSIVE_LOCK)
+    @Query("update Model set name = ?")
+    int lockedUpdate(String name)
 }
