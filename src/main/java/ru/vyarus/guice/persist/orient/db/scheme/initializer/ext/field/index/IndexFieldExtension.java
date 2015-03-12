@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.core.spi.SchemeDescriptor;
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.core.spi.field.FieldExtension;
+import ru.vyarus.guice.persist.orient.db.scheme.initializer.core.util.SchemeUtils;
 
 import javax.inject.Singleton;
 import java.lang.reflect.Field;
@@ -42,7 +43,7 @@ public class IndexFieldExtension implements FieldExtension<Index> {
             if (!classIndex.getType().equalsIgnoreCase(type.toString())) {
                 logger.debug("Dropping current index {}, because of type mismatch: {}, when required {}",
                         name, classIndex.getType(), type);
-                db.getMetadata().getIndexManager().dropIndex(name);
+                SchemeUtils.dropIndex(db, name);
             } else {
                 // index ok
                 return;

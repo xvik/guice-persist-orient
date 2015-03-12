@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.core.spi.SchemeDescriptor;
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.core.spi.type.TypeExtension;
+import ru.vyarus.guice.persist.orient.db.scheme.initializer.core.util.SchemeUtils;
 
 import javax.inject.Singleton;
 
@@ -23,7 +24,7 @@ public class DropIndexesTypeExtension implements TypeExtension<DropIndexes> {
         for (String index : annotation.value()) {
             final OIndexManagerProxy indexManager = db.getMetadata().getIndexManager();
             if (indexManager.existsIndex(index)) {
-                indexManager.dropIndex(index);
+                SchemeUtils.dropIndex(db, index);
                 logger.debug("Index {} dropped for type {}", index, descriptor.schemeClass);
             }
         }
