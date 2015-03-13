@@ -14,7 +14,7 @@ import java.util.List;
  * @since 01.11.2014
  */
 @ProvidedBy(DynamicSingletonProvider.class)
-public abstract class PageSupportDelegate implements Pagination {
+public abstract class PageSupportDelegate implements PageSupport {
 
     @SuppressWarnings("unchecked")
     public Page getPage(@Repository final Pagination repository, final int page, final int pageSize) {
