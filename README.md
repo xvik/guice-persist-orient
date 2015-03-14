@@ -309,7 +309,7 @@ For example, to create vertex scheme:
 public class MyVertex {..}
 ```
 
-No MyVertex could be used with graph api and with object api.
+Now MyVertex could be used with graph api and with object api.
 Graph relations may be created dynamically (even if they are not mapped in object).
 
 Remember that scheme created from objects maintain same hierarchy as your objects. E.g. if you use provided `VersionedEntity` class as base
@@ -683,6 +683,27 @@ Model selectAll();
 ```
 
 Note: limit is not required, but preferred, as soon as you don't need other results
+
+##### Projection
+
+In some cases single value is preferred, for example:
+
+```java
+@Query("select count(@rid) from Model)
+int count();
+```
+
+Orient returns ODocument from query with single field (count).
+Default result converter could recognize when document or vertex contain just one property and return only simple value.
+
+Another case is when you select single field:
+
+```java
+@Query("select name from Model")
+String[] selectNames()
+```
+
+Read more about [projection](https://github.com/xvik/guice-persist-orient/wiki/Repository-result-handling#result-projection)
 
 ##### Result type definition
 
