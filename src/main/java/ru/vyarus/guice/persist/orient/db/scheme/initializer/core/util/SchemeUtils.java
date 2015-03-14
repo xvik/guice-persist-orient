@@ -81,7 +81,7 @@ public final class SchemeUtils {
      *
      * @param db        database object
      * @param indexName index name
-     * @see {@link com.orientechnologies.orient.core.index.OIndexManagerProxy#dropIndex(java.lang.String)}
+     * @see com.orientechnologies.orient.core.index.OIndexManagerProxy#dropIndex(java.lang.String)
      */
     @SuppressFBWarnings("RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT")
     public static void dropIndex(final OObjectDatabaseTx db, final String indexName) {
