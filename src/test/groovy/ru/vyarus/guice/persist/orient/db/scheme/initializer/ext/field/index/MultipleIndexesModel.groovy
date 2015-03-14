@@ -8,7 +8,7 @@ import com.orientechnologies.orient.core.metadata.schema.OClass
  */
 class MultipleIndexesModel {
 
-    @Indexes([
+    @Index.List([
             @Index(value = OClass.INDEX_TYPE.NOTUNIQUE, name = "test1"),
             @Index(value = OClass.INDEX_TYPE.FULLTEXT, name = "test2")
     ])

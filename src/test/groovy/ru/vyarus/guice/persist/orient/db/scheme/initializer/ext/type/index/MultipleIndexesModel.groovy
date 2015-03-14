@@ -6,7 +6,7 @@ import com.orientechnologies.orient.core.metadata.schema.OClass
  * @author Vyacheslav Rusakov 
  * @since 09.03.2015
  */
-@CompositeIndexes([
+@CompositeIndex.List([
         @CompositeIndex(name = "test", type = OClass.INDEX_TYPE.NOTUNIQUE, fields = ["foo", "bar"]),
         @CompositeIndex(name = "test2", type = OClass.INDEX_TYPE.DICTIONARY, fields = ["foo", "bar"])
 ])

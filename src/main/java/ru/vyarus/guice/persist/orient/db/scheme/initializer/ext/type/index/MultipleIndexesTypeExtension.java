@@ -8,13 +8,13 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 /**
- * {@link CompositeIndexes} scheme model type extension.
+ * {@link CompositeIndex.List} scheme model type extension.
  *
  * @author Vyacheslav Rusakov
  * @since 09.03.2015
  */
 @Singleton
-public class MultipleIndexesTypeExtension implements TypeExtension<CompositeIndexes> {
+public class MultipleIndexesTypeExtension implements TypeExtension<CompositeIndex.List> {
 
     private final IndexTypeExtension extension;
 
@@ -25,7 +25,7 @@ public class MultipleIndexesTypeExtension implements TypeExtension<CompositeInde
 
     @Override
     public void beforeRegistration(final OObjectDatabaseTx db, final SchemeDescriptor descriptor,
-                                   final CompositeIndexes annotation) {
+                                   final CompositeIndex.List annotation) {
         for (CompositeIndex index : annotation.value()) {
             extension.beforeRegistration(db, descriptor, index);
         }
@@ -33,7 +33,7 @@ public class MultipleIndexesTypeExtension implements TypeExtension<CompositeInde
 
     @Override
     public void afterRegistration(final OObjectDatabaseTx db, final SchemeDescriptor descriptor,
-                                  final CompositeIndexes annotation) {
+                                  final CompositeIndex.List annotation) {
         for (CompositeIndex index : annotation.value()) {
             extension.afterRegistration(db, descriptor, index);
         }

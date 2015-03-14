@@ -9,13 +9,13 @@ import javax.inject.Singleton;
 import java.lang.reflect.Field;
 
 /**
- * {@link Indexes} scheme model field extension.
+ * {@link Index.List} scheme model field extension.
  *
  * @author Vyacheslav Rusakov
  * @since 09.03.2015
  */
 @Singleton
-public class MultipleIndexesFiledExtension implements FieldExtension<Indexes> {
+public class MultipleIndexesFiledExtension implements FieldExtension<Index.List> {
 
     private final IndexFieldExtension extension;
 
@@ -26,7 +26,7 @@ public class MultipleIndexesFiledExtension implements FieldExtension<Indexes> {
 
     @Override
     public void beforeRegistration(final OObjectDatabaseTx db, final SchemeDescriptor descriptor,
-                                   final Field field, final Indexes annotation) {
+                                   final Field field, final Index.List annotation) {
         for (Index index : annotation.value()) {
             extension.beforeRegistration(db, descriptor, field, index);
         }
@@ -34,7 +34,7 @@ public class MultipleIndexesFiledExtension implements FieldExtension<Indexes> {
 
     @Override
     public void afterRegistration(final OObjectDatabaseTx db, final SchemeDescriptor descriptor,
-                                  final Field field, final Indexes annotation) {
+                                  final Field field, final Index.List annotation) {
         for (Index index : annotation.value()) {
             extension.afterRegistration(db, descriptor, field, index);
         }

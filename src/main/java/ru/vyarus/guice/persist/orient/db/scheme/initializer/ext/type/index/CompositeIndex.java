@@ -12,7 +12,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 /**
  * Scheme model type extension to create index on multiple fields.
  * If index with provided name exist, but with different type, index will be re-created.
- * <p>Use {@link CompositeIndexes} to define more than one index.</p>
+ * <p>Use {@link CompositeIndex.List} to define more than one index.</p>
  * <p>Annotation doesn't cover all possible index options.</p>
  *
  * @author Vyacheslav Rusakov
@@ -38,4 +38,20 @@ public @interface CompositeIndex {
      * @return index fields
      */
     String[] fields();
+
+    /**
+     * Scheme model type extension to group multiply composite index definitions.
+     *
+     * @author Vyacheslav Rusakov
+     * @since 09.03.2015
+     */
+    @Target(TYPE)
+    @Retention(RUNTIME)
+    @SchemeTypeInit(MultipleIndexesTypeExtension.class)
+    public @interface List {
+        /**
+         * @return index definitions
+         */
+        CompositeIndex[] value();
+    }
 }
