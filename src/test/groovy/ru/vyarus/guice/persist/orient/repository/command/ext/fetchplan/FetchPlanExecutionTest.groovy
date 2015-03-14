@@ -35,38 +35,26 @@ class FetchPlanExecutionTest extends AbstractTest {
 
         when: "custom plan"
         CheckCommandExtension.expectedPlan = "*:-1"
-        Basket res = context.doInTransaction({ db ->
-            // -1 no limits
-            def basket = dao.selectBasket("*:-1")
-            assert basket.name == 'one'
-            assert basket.items.size() == 1
-            basket
-        } as SpecificTxAction)
+        // -1 no limits
+        def basket = dao.selectBasket("*:-1")
         then: "loaded"
-        res
+        basket.name == 'one'
+        basket.items.size() == 1
 
         when: "other custom plan"
         CheckCommandExtension.expectedPlan = "*:-2"
-        res = context.doInTransaction({ db ->
-            // do not load anything except object
-            def basket = dao.selectBasket("*:-2")
-            assert basket.name == 'one'
-            assert basket.items.size() == 1
-            basket
-        } as SpecificTxAction)
+        // do not load anything except object
+        basket = dao.selectBasket("*:-2")
         then: "loaded"
-        res
+        basket.name == 'one'
+        basket.items.size() == 1
 
         when: "no default plan"
         CheckCommandExtension.expectedPlan = null
-        res = context.doInTransaction({ db ->
-            // do not load anything except object
-            def basket = dao.selectBasketNoDefault(null)
-            assert basket.name == 'one'
-            assert basket.items.size() == 1
-            basket
-        } as SpecificTxAction)
+        // do not load anything except object
+        basket = dao.selectBasketNoDefault(null)
         then: "loaded"
-        res
+        basket.name == 'one'
+        basket.items.size() == 1
     }
 }
