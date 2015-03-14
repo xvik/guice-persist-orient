@@ -3,6 +3,7 @@ package ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.type.index;
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import com.google.common.collect.Sets;
 import com.orientechnologies.orient.core.index.OIndex;
 import com.orientechnologies.orient.core.metadata.schema.OClass;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
@@ -13,6 +14,9 @@ import ru.vyarus.guice.persist.orient.db.scheme.initializer.core.spi.type.TypeEx
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.core.util.SchemeUtils;
 
 import javax.inject.Singleton;
+import java.util.HashSet;
+
+import static ru.vyarus.guice.persist.orient.db.scheme.SchemeInitializationException.check;
 
 /**
  * @author Vyacheslav Rusakov
@@ -37,7 +41,12 @@ public class IndexTypeExtension implements TypeExtension<CompositeIndex> {
         final OClass clazz = db.getMetadata().getSchema().getClass(descriptor.schemeClass);
         final OIndex<?> classIndex = clazz.getClassIndex(name);
         final OClass.INDEX_TYPE type = annotation.type();
+        final String[] fields = annotation.fields();
         if (!descriptor.initialRegistration && classIndex != null) {
+            final HashSet<String> indexFields = Sets.newHashSet(classIndex.getDefinition().getFields());
+            check(indexFields.equals(Sets.newHashSet(fields)),
+                    "Existing index '%s' fields '%s' are different from '%s'.",
+                    name, Joiner.on(',').join(indexFields), Joiner.on(',').join(fields));
             if (!classIndex.getType().equalsIgnoreCase(type.toString())) {
                 logger.debug("Dropping current index {}, because of type mismatch: {}, when required {}",
                         name, classIndex.getType(), type);
@@ -47,9 +56,7 @@ public class IndexTypeExtension implements TypeExtension<CompositeIndex> {
                 return;
             }
         }
-        clazz.createIndex(name, type, annotation.fields());
-        if (logger.isDebugEnabled()) {
-            logger.debug("Index {} ({}) {} created", name, Joiner.on(',').join(annotation.fields()), type);
-        }
+        clazz.createIndex(name, type, fields);
+        logger.debug("Index {} ({}) {} created", name, Joiner.on(',').join(fields), type);
     }
 }

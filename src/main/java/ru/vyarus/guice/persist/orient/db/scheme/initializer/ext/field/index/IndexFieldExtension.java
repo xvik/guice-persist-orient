@@ -1,7 +1,9 @@
 package ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.field.index;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
 import com.google.common.base.Strings;
+import com.google.common.collect.Sets;
 import com.orientechnologies.orient.core.index.OIndex;
 import com.orientechnologies.orient.core.metadata.schema.OClass;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
@@ -13,6 +15,9 @@ import ru.vyarus.guice.persist.orient.db.scheme.initializer.core.util.SchemeUtil
 
 import javax.inject.Singleton;
 import java.lang.reflect.Field;
+import java.util.HashSet;
+
+import static ru.vyarus.guice.persist.orient.db.scheme.SchemeInitializationException.check;
 
 /**
  * {@link Index} scheme model field extension.
@@ -40,6 +45,10 @@ public class IndexFieldExtension implements FieldExtension<Index> {
         final OIndex<?> classIndex = clazz.getClassIndex(name);
         final OClass.INDEX_TYPE type = annotation.value();
         if (!descriptor.initialRegistration && classIndex != null) {
+            final HashSet<String> indexFields = Sets.newHashSet(classIndex.getDefinition().getFields());
+            check(indexFields.equals(Sets.newHashSet(property)),
+                    "Existing index '%s' fields '%s' are different from '%s'.",
+                    name, Joiner.on(",").join(indexFields), property);
             if (!classIndex.getType().equalsIgnoreCase(type.toString())) {
                 logger.debug("Dropping current index {}, because of type mismatch: {}, when required {}",
                         name, classIndex.getType(), type);

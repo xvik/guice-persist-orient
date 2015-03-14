@@ -19,6 +19,8 @@
     <!-- pools -->
     <logger name="ru.vyarus.guice.persist.orient.db.pool" level="DEBUG"/>
 
+    <logger name="ru.vyarus.guice.persist.orient.db.scheme.initializer" level="DEBUG"/>
+
     <root level="WARN">
         <appender-ref ref="STDOUT"/>
     </root>

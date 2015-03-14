@@ -2,6 +2,7 @@ package ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.field.index
 
 import com.orientechnologies.orient.core.metadata.schema.OClass
 import com.orientechnologies.orient.core.metadata.schema.OType
+import ru.vyarus.guice.persist.orient.db.scheme.SchemeInitializationException
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.AbstractSchemeExtensionTest
 
 /**
@@ -48,6 +49,18 @@ class IndexTest extends AbstractSchemeExtensionTest {
         clazz.getClassIndexes().size() == 2
         clazz.getClassIndex("IndexModel.foo").getType() == OClass.INDEX_TYPE.NOTUNIQUE.name()
         clazz.getClassIndex("customName").getType() == OClass.INDEX_TYPE.FULLTEXT.name()
+    }
+
+    def "Check existing index with different fields"() {
+
+        when: "index already exist with different fields"
+        def clazz = db.getMetadata().getSchema().createClass(IndexModel)
+        clazz.createProperty("foo", OType.STRING)
+        clazz.createProperty("bar", OType.STRING)
+        clazz.createIndex('IndexModel.foo', OClass.INDEX_TYPE.DICTIONARY, "bar")
+        schemeInitializer.register(IndexModel)
+        then: "error"
+        thrown(SchemeInitializationException)
     }
 
     def "Check multiple indexes"() {
