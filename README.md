@@ -786,13 +786,13 @@ Generic value Model will be used for command `select from Model` and return type
 which will allow to select proper connection (object if Model is mapped entity).
 
 You may use as many generics as you need. Any repository hierarchy depth will be correctly resolved, so
-you can even use composition mixins, which wil simply combine commonly used generics:
+you can even use composition mixins, which wil simply combine commonly used mixins:
 
 ```java
 public interface RepositoryBase<T> extends Mixin1<T>, Mixin2<T> {}
 ```
 
-Note that you don't need to set ProvidedBy annotation on generics, because it's just interfaces and they are not used separately.
+Note that you don't need to set ProvidedBy annotation on mixins, because it's just interfaces and they are not used as repository instances.
 
 ##### Delegate mixins
 
