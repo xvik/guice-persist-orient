@@ -8,21 +8,23 @@
 
 [OrientDB](http://www.orientechnologies.com/orientdb/) is document, graph and object database (see [intro](https://www.youtube.com/watch?v=o_7NCiTLVis) and [starter course](http://www.orientechnologies.com/getting-started/)).
 Underlying format is almost the same for all database types, which allows us to use single database in any way. For example, schema creation and updates
-may be performed as object database (jpa style) and graph queries for complex cases. 
+may be performed as object database (jpa style) and graph api may be used for creating relations.
 
 Features:
-* Integration through [guice-persist](https://github.com/google/guice/wiki/GuicePersist) (UnitOfWork, PersistService, @Transactional, dynamic finders supported)
+* For orient 2.x
+* Integration through [guice-persist](https://github.com/google/guice/wiki/GuicePersist) (UnitOfWork, PersistService, @Transactional)
 * Support for [document](http://www.orientechnologies.com/docs/last/orientdb.wiki/Document-Database.html), [object](http://www.orientechnologies.com/docs/last/orientdb.wiki/Object-Database.html) and
 [graph](http://www.orientechnologies.com/docs/last/orientdb.wiki/Graph-Database-Tinkerpop.html) databases
 * Database types support according to classpath (object and graph db support activated by adding jars to classpath)
+* All three database types may be used in single transaction (changes will be visible between different apis)
+* Hooks for schema migration and data initialization extensions
+* Extension for orient object to scheme mapper with plugins support
 * Auto mapping entities in package to db scheme or using classpath scanning to map annotated entities
 * Auto db creation (for memory, local and plocal)
-* Hooks for schema migration and data initialization extensions
-* All three database types may be used in single unit of work (but each type will use its own transaction)
-* Different db users may be used (for example, for schema initialization or to use orient security model)
-* Finders concept extended from guice-persist with support of method delegates, hierarchies and complete generics recognition. 
-This allows writing generic parts (mixins) and re-use them in many finders (thanks to multiple inheritance in interfaces).
-Out of the box crud and pagination mixins provided.
+* Different db users may be used (for example, for schema initialization or to use orient security model), including support for user change inside transaction
+* Support method retry on ONeedRetryException
+* Spring-data like repositories with advanced features (e.g. generics usage in query). Great abilities for creating reusable parts (mixins). Support plugins.
+* Out of the box crud and pagination mixins provided.
 
 ### Setup
 
@@ -38,7 +40,7 @@ Maven:
 <dependency>
 <groupId>ru.vyarus</groupId>
 <artifactId>guice-persist-orient</artifactId>
-<version>2.1.0</version>
+<version>3.0.0</version>
 <exclusions>
   <exclusion>
       <groupId>com.orientechnologies</groupId>
@@ -55,7 +57,7 @@ Maven:
 Gradle:
 
 ```groovy
-compile ('ru.vyarus:guice-persist-orient:2.1.0'){
+compile ('ru.vyarus:guice-persist-orient:3.0.0'){
     exclude module: 'orientdb-graphdb'
     exclude module: 'orientdb-object'       
 }
@@ -101,37 +103,9 @@ install(new OrientModule(url, user, password)
                 .defaultTransactionConfig(new TxConfig(OTransaction.TXTYPE.NOTX));
 ```
 
-If provided scheme initializers used it's better to specify model package (more details below):
-
-```java
-install(new OrientModule(url, user, password)
-                .schemeMappingPackage("my.model.package");
-```
-
-There are two shortcut modules with predefined scheme initializers from objects:
-* `PackageSchemeOrientModule` when all model classes in the same package
-* `AutoScanSchemeOrientModule` when model classes spread across application (module use classpath scanning to find `@Persistent` annotated entities)
-
-#### Dynamic finders
-
-To use dynamic finders register finders module:
-
-```java
-install(new FinderModule());
-```
-
-Default connection type could be specified to use when connection type can't be detected from finder return type (by default it will be document connection):
-
-```java
-install(new FinderModule()  
-            .defaultConnectionType(DbType.OBJECT));
-```
-
-NOTE: classpath scanning is deprecated and will be removed soon! Now finders could be dynamically resolved with help of guice JIT (see below)
-
 ### Usage
 
-##### Lifecycle
+#### Lifecycle
 
 You need to manually start/stop persist service in your code (because only you can control application lifecycle).
 On start connection pools will be initialized, database created (if required) and scheme/data initializers called. Stop will shutdown
@@ -150,13 +124,43 @@ public void onAppShutdown(){
 }
 ```
 
-##### Unit of work (transaction)
+#### Unit of work (transaction)
 
-To define unit of work use: 
+Unit of work defines transaction scope. Actual orient transaction will start only on first connection acquire (so basically, unit of work
+may not contain actual orient transaction, but for simplicity both may be considered equal).
+
+Unit of work may be defined by:
 * `@Transactional` annotation on guice bean or single method (additional `@TxType` annotation allows to define different transaction type for specific unit of work)
-* Inject `TxTemplate` or `SpecificTxTemplate` beans into your service and use them
+* Inject `PersistentContext` bean into your service and use its methods
+* Using `TransactionalManager` begin() and end() methods.
 
-Example of no tx unit of work with annotation:
+First two options are better, because they automatically manage rollbacks and avoid not closed (forgot to call end) transactions.
+Read more about [orient transactions](http://www.orientechnologies.com/docs/last/orientdb.wiki/Transactions.html)
+
+**NOTE**: orient 2 is more strict about transactions: now ODocument could be created only inside transaction and object proxy
+can't be used outside of transaction (but from 2.0.5 proxies work again).
+
+When you get error:
+
+```
+Database instance is not set in current thread. Assure to set it with: ODatabaseRecordThreadLocal.INSTANCE.set(db)
+```
+
+It almost certainly means that you perform transactional operation outside of transaction. Simply enlarge transaction scope.
+
+###### Examples
+
+Defining transaction for all methods in bean (both method1 and method2 will be executed in transaction):
+
+```java
+@Transactional
+public class MyBean {
+    public void method1() ...
+    public void method2() ...
+}
+```
+
+Defining no tx transaction on method:
 
 ```java
 @Transactional
@@ -164,10 +168,15 @@ Example of no tx unit of work with annotation:
 public void method()
 ```
 
-TxTemplate example:
+Notx usually used for scheme updates, but in some cases may be used to speed up execution (but in most cases its better to use transaction for consistency).
+
+Using `PersistentContext`:
 
 ```java
-txTemplate.doInTransaction(new TxAction<Void>() {
+@Inject PersistentContext<OObjectDatabaseTx> context;
+
+...
+context.doInTransaction(new TxAction<Void>() {
         @Override
         public Void execute() throws Throwable {
             // something
@@ -176,37 +185,19 @@ txTemplate.doInTransaction(new TxAction<Void>() {
     });
 ```
 
-TxTemplate with custom config:
+Using `TransactionalManager`:
 
 ```java
-txTemplate.doInTransaction(new TxConfig(OTransaction.TXTYPE.NOTX), new TxAction<Void>() {
-        @Override
-        public Void execute() throws Throwable {
-            // something
-            return null;
-        }
-    });
+@Inject TransactionalManager manager;
+...
+manager.begin();
+try {
+// do something
+    manager.end();
+} catch (Exception ex) {
+    manager.rollback()
+}
 ```
-
-`TxTemplate` is a generic template to define unit of work, but you will need to use provider to obtain connection.
-If you need only specific connection type, use specific template:
-
-```java
-specificTxTemplate.doInTransaction(new SpecificTxAction<Object, OObjectDatabaseTx>() {
-        @Override
-        public Object execute(OObjectDatabaseTx db) throws Throwable {
-            // something
-            return null;
-        }
-    })
-```
-
-To obtain connection use one of the following providers:
-* `Provider<OObjectDatabaseTx>` for object database connection
-* `Provider<ODatabaseDocumentTx>` for document database connection
-* `Provider<OrientBaseGraph>` for graph database connection (transactional or not)
-* `Provider<OrientGraph>` for transactional graph database connection (will fail if notx transaction type)
-* `Provider<OrientGraphNoTx>` for non transactional graph database connection (will provide only for notx transaction type, otherwise fail)
 
 NOTE: in contrast to spring default proxies, in guice when you call bean method inside the same bean, annotation interceptor will still work.
 So it's possible to define few units of work withing single bean using annotations:
@@ -225,559 +216,34 @@ void doTx1() {..}
 void doTx2() {..}
 ```
 
-##### Different users
+#### Connections
 
-To use different db user for one or more transactions, get `UserManager` bean from context:
+Document is the core connection type. Object and graph apis use document connection internally.
+Connection object mainly defines result of queries: document connection will always return ODocument,
+object connection returns mapped pojos (actually proxies) and ODocument for fields selections and
+graph api returns Vertex and Edge types.
+And of course connections provide specific apis for types.
 
-```java
-userManager.executeWithUser('user', 'password', new SpecificUserAction<Void>() {
-    @Override
-    public Void execute() throws Throwable {
-        // do work
-    }
-})
-```
+You can use any connections within single transaction and changes made in one connection type will be visible
+in other connections. This allows you, for example to update data using object api and create relations using graph api.
 
-`SpecificUserAction` defines scope of user overriding. This will not implicitly start transaction, but simply
-binds different user to current thread.
+To access connection object inside transaction use `PersistentContext` generified with the type of required connection.
 
-Overriding may be used in scheme initialization to use more powerful user or to use [orient security model](http://www.orientechnologies.com/docs/last/orientdb.wiki/Security.html)
-(in this case overriding may be done, for example in servlet filter).
+* `PersistentContext<OObjectDatabaseTx>` for object database connection
+* `PersistentContext<ODatabaseDocumentTx>` for document database connection
+* `PersistentContext<OrientBaseGraph>` for graph database connection (transactional or not)
+* `PersistentContext<OrientGraph>` for transactional graph database connection (will fail if notx transaction type)
+* `PersistentContext<OrientGraphNoTx>` for non transactional graph database connection (will provide only for notx transaction type, otherwise fail)
 
-Limitations:
-* User can't be overridden during transaction (override it before transaction start)
-* Overridden user can't be changed (inside overriding scope other overrides are not allowed)
+Note: you can't use both OrientGraph and OrientGraphNoTx in the same transaction (type must be used according to transaction type).
+OrientBaseGraph may be used in places where both types are possible (its the base class for both).
 
-### Dynamic finders
+`PersistentContext` methods are shortcuts for low level api (simplifies usage). You can extend it to add more shortcut methods
+or make your own: it is not used internally and exists only for public usage.
 
-Finders allows you to define queries using just annotation, removing all boilerplate code.
+See full [api description](https://github.com/xvik/guice-persist-orient/wiki/Core-API)
 
-```java
-@Finder(query = "select from Model where name=? and nick=?")
-List<Model> parametersPositional(String name, String nick);
-```
-
-Finder methods may be defined on interfaces or abstract methods. There are two main approaches of finders usage:
-* Use interfaces with finder methods. Suitable if entire dao layer could be written with sql queries. Benefit of this approach is
-more clear interface (without abstract keyword on each method) and easy mocking (any implementation could be directly configured in guice module)
-* Use finders on abstract classes to supplement existing dao methods. This approach will be more common, because it requires just
-to mark usual dao class as abstract and use abstract methods with sql in annotations.
-
-Ofc, both approaches could be mixed (some daos could be interfaces and some abstract classes).
-
-Guice doesn't allow using abstract types, but it's possible with [a bit of magic](https://github.com/xvik/guice-ext-annotations).
-
-Abstract types (abstract class or interface containing finder methods) could be registered directly in guice module:
-
-```java
-bind(MyInterfaceDao.class).to(DynamicClassGenerator.generate(MyInterfaceDao.class)).in(Singleton.class)
-```
-
-Or dynamic resolution could be used (guice JIT resolution):
-
-```java
-@ProvidedBy(DynamicSingletonProvider.class)
-public interface MyInterfaceDao
-```
-
-When some bean require this dao as dependency, guice will call provider, which will generate proper class for guice.
-(dynamic resolution completely replaces classpath scanning: only actually used finders will be created)
-Note, this will automatically make bean singleton, which should be desirable in most cases. If you need custom scope
-use `DynamicClassProvider` with `@ScopeAnnotation` annotation (see details in [guice-ext-annotations](https://github.com/xvik/guice-ext-annotations))
-
-IMPORTANT: guice will control instance creation, so guice AOP features will completely work!
-So `@Transactional` annotation may be used (generally not the best idea to limit transaction to finder method, but in some cases could be suitable).
-
-##### Finder kinds
-
-There are two types of finder methods:
-* Sql finders, which allows to define sql queries (select/insert/update) on methods. Most useful for daos
-* Delegate finders, delegates call of interface method into guice bean method. Most useful for mixins
-
-The most powerful thing is finder mixins: interfaces in java support multiple inheritance, and so allows better reuse of generic parts.
-Mixins may be used as with interface daos as with abstract class dao.
-
-Going a bit forward, imagine you have few different daos for different entities. Some of them have `name` property.
-Normally you will have to write select by name query in each dao (can't be moved to some base class, because not all entities contains name).
-Simple mixin could be defined:
-
-```java
-public interface FindByNameMixin<T> {
-
-    @Finder(query = "select from ${T} where name=?")
-    T findByName(String name);
-}
-```
-
-Now some daos could simply implement this interface. Note that any number of mixins cold be used with
-interface or abstract class, so mixins could greatly affect code reuse (parts which was impossible to share due to
-single inheritance limitation).
-
-Complicated mixins could be written using delegate finders. For example see `PaginationMixin`.
-See `DocumentCrudMixin` and `ObjectCrudMixin` as example of replacing of abstract dao with mixin.
-Such mixins allows to comfortably use interfaces for daos.
-
-More on mixins read below.
-
-#### Sql finders
-
-Example interface method:
-
-```java
-@Finder(query = "select from Model where name=? and nick=?")
-List<Model> parametersPositional(String name, String nick);
-```
-
-Used with bean (e.g. to supplement usual dao methods):
-
-```java
-@Finder(query = "select from Model")
-public List<Model> selectAll() {
-    throw new UnsupportedOperationException("Should be handled with finder interceptor");
-}
-```
-
-##### Annotations
-
-`@Finder` allows you
-* to use [function](http://www.orientechnologies.com/docs/last/orientdb.wiki/Functions.html) with `namedQuery` attribute (there are no named queries in orient, but functions are close concept (but better))
-* define query with `query` attribute
-* override result collection implementation with `returnAs` attribute
-
-Function call:
-
-```java
-@Finder(namedQuery = "function1")
-List<Model> function();
-```
-
-Query with positional parameters:
-
-```java
-@Finder(query = "select from Model where name=? and nick=?")
-List<Model> parametersPositional(String name, String nick)
-```
-
-Query with named parameters:
-
-```java
-@Finder(query = "select from Model where name=:name and nick=:nick")
-List<Model> parametersNamed(@Named("name") String name, @Named("nick") String nick)
-```
-
-Both `com.google.inject.name.Named` and `javax.inject.Named` annotations supported
-
-Update query example:
-
-```java
-@Finder(query = "update Model set name=?")
-int updateWithCount(String name)
-```
-
-Update query return type could be `void`, `int`, `long`, `Integer` and `Long`.
-
-`@FirstResult` and `@MaxResults` may be used to limit query results ([pagination](http://www.orientechnologies.com/docs/last/orientdb.wiki/Pagination.html)):
-
-```java
-@Finder(query = "select from Model where name=? and nick=?")
-List<Model> parametersPaged(String name, String nick, @FirstResult int start, @MaxResults int max)
-```
-
-You can use `Long`, `Integer`, `long` and `int` for start/max values.
-First result is used as orient `SKIP` declaration (you can think of it as first result, counting from 0)
-
-For function call only `@MaxResults` may be used.
-
-`@Use` annotation may be used to specify connection type to use for query:
-
-```java
-@Finder(query = "update Model set name='changed'")
-@Use(DbType.OBJECT)
-void updateUsingObjectConnection()
-```
-
-It may be important for proper return type: different connections may return different objects (ODocument for document, model instances for object and
-Vertex and Edge for graph). For update queries connection type can't be detected and it always executed with default connection 
-(document, but may be changed in module configuration), but it may be important to execute it in the same transaction with other changes 
-(e.g. if you work in object connection and want update in the same connection).
-
-##### Placeholders
-
-Custom placeholders may be used in queries:
-
-```java
-@Finder(query = "select from User where ${provider} = ?")
-Optional<User> findByProvider(@Placeholder("provider") AuthProvider provider, String providerId);
-```
-
-Placeholders are useful mostly when we have a bunch of almost similar queries. In example above we have user object
-with oauth tokens stored for various providers. Without placeholder, we would need to write separate query for each
-provider, but with placeholder it could be written as single finder call with enum as additional parameter (very natural).
-
-Placeholder parameters may be strings or enums. Of course, enum is preferred, as most strict contract, but in some 
-cases strings may be more helpful. Enum converted to value using enum.toString(), so override it to provide correct 
-placeholder value (most likely different from enum.name()).
-
-By using raw string we introduce great opportunity for sql injections (placeholder may insert not just field name, 
-but entire subquery). In order to secure string placeholders, use `@PlaceholderValues` annotation to define possible 
-placeholder values (and `@Placeholders` to define multiple placeholders):
-
-```java
-@Finder(query = "select from Model where ${field} = ?")
-@PlaceholderValues(name = "field", values = {"name", "nick"})
-Model findByField(@Placeholder("field") String field, String value);
-
-
-@Finder( query = "select from Model where ${field1} = ? and ${field2} = ?")
-@Placeholders({
-      @PlaceholderValues(name="field1", values = {"name", "nick"}),
-      @PlaceholderValues(name="field2", values = {"name", "nick"})
-})
-Model findByTwoFields(@Placeholder("field1") String field1, @Placeholder("field2") String field2,
-                      String value1, String value2);
-```
-
-This way, any other value passed to placeholder parameter will be rejected (string usage become secure as enum).
-You can use string placeholders without strict definition, but in this case make sure security will not be violated.
-
-##### Generics (generified mixins)
-
-Finder interfaces could extend other interfaces - entire finder interface hierarchy is parsed and all generics properly
-resolved. For example:
-
-```java
-public interface Base<T> {
-    @Finder(query = "..")
-    List<T> getSomething();
-}
-
-public interface ActualFinder extends Base<Model> {}
-```
-
-Is absolutely valid finder. Return type will be properly resolved with real generic value and all detections/conversions
-could apply. The only problem is query.
-
-To solve this problem, queries support generic placeholders:
-
-```java
-@Finder(query = "select from ${T}")
-List<T> getSomething();
-```
-
-No matter how complicated generic is, it will still be resolved, e.g.:
-
-```java
-public interface Base<T, K extends List<T>> {
-    @Finder(query = "select from ${T}")
-    K getSomething();
-}
-```
-
-Generics correctly resolved even for multiple hierarchy levels.
-
-Generified base interfaces are the simplest type of mixins (generic reusable parts).
-
-#### Delegate finder
-
-Delegates execution to guice bean method, for example interface method:
-
-```java
-@FinderDelegate(TargetBean.class)
-List<Model> selectSomething();
-```
-
-On execution, delegating method will be found in TargetBean and executed. 
-This allows writing queries using java api, but still use interface finder to call it. So finder become single point
-for your entity's dao methods, whereas actual implementation could be decomposed by multiple beans.
- 
-Delegation will work on beans too:
- 
-```java
-@FinderDelegate(TargetBean.class)
-public List<Model> selectSomething() {
-  throw new UnsupportedOperationException("Should be handled with finder interceptor");
-}
-```
-
-##### Method lookup algorithm
-
-`@FinderDelegate` annotation allows you to define
-* target implementation type with `value` attribute
-* exact target method name with `method` attribute (this must be used as last resort, because it introduce weak contract and not refactor-friendly)
-* override result collection implementation with `returnAs` attribute (the same as with `@Finder` annotation)
-
-Method is searched only as direct public method of target bean, ignoring it's hierarchy. 
-This may change in future, but currently this reduces scope for searching.
-
-Algorithm:
-* If method name set directly (annotation method attribute), look only methods with this name. If method name not set look all public methods.
-* Check all methods for parameter compatibility. Target method must have compatible parameters
-at the same order(!) Special parameters (see below) may appear at any position (before/after/between).
-* If more then one method found, use finder method name to reduce results (this should be the most useful hint)
-* Method with special parameters is prioritized. So if few methods found but only one has additional parameters - it will be chosen.
-* Next methods are filtered by most specific parameters (e.g. two methods with the same name but one declares
-String parameter and other Object; first one will be chosen as more specific).
-* If we still have more than one possibility, error will be thrown.
-
-##### Delegate method implementation specifics
-
-Delegate bean may be not aware that it is delegate (maybe already existent bean). In this case method parameters must be 1 to 1
-compatible to finder parameters.
-
-If delegated method written specifically for finder, it may use extended annotated parameters:
-* `@FinderGeneric` pass resolved finder interface generic type as parameter
-* `@FinderInstance` pass finder itself as parameter; parameter type may be any type finder is assignable to
-* `@FinderDb` pass resolved connection type object as parameter (see connection type detection below); parameter type should be assignable with connection 
-(e.g. for document and object `ODatabaseComplex` may be used as common abstraction)
-
-For example, suppose we have generic finder mixin:
-
-```java
-public interface MyBase<T> {
-
-    @FinderDelegate(TargetBean.class)
-    List<T> doSomething1(int a)
-    
-    @FinderDelegate(TargetBean.class)    
-    List<T> doSomething2(int b)
-    
-    @FinderDelegate(TargetBean.class)    
-    List<T> doSomething3(int c, int d)
-}
-
-public class TargetBean {
-
-    List doSomething1(@FinderGeneric("T") Class<?> type, int a) {...}
-    
-    List doSomething2(int b, @FinderInstance MyBase finder) {...}
-    
-    List doSomething3(int c, @FinderDb ODatabaseComplex db, int b) {...}
-}
-```
-
-All three methods would be properly resolved (thanks to method names). Also this shows that position of extended 
-parameter is not important (only order of usual parameters is important). And of course, more than one special parameter
-may be used for single method.
-
-Now suppose we have root finder implementing mixin:
-
-```java
-public Finder extends MyBase<Model> {}
-```
-
-If we call `doSomething1`, `Model` will be passed as first parameter.
-For `doSomething2` `Finder` will be passed (proxy around interface). And for `doSomething3` `OObjectDatabaseTx` will be passed
-as db connection instance (suppose that Model is registered entity type).
-
-Connection parameter may be used to simply avoid using provider for obtaining connection (suppose
-you're writing delegated graph query):
-
-```java
-public List<Vertex> doSearch(@FinderDb OrientGraph db, Integer someParam) {
-    db.//do something using connection object directly
-}
-```
-
-##### Delegate mixins
-
-In root finder you must use `@FinderDelegate` annotation on methods, but for mixins, you may place annotation
-on type (example above could be re-written):
-
-```java
-@FinderDelegate(TargetBean.class)
-public interface MyBase<T> {
-    ...
-}    
-```    
-
-All methods will search for delegating method in `TargetBean`.
-
-The best possible way for writing delegate mixins is to implement finder interface by implementing bean: 
-this makes the most strongest contract between finder mixin interface and implementation (also, IDE will provide direct
-reference for implementation from interface).
-
-In case, when you need extended method parameters: implement direct method as throwing exception and write extended method
-below it, e.g:
-
-```java
-@Override
-public T create() {
-    // finder should choose extended method instead of direct implementation
-    throw new UnsupportedOperationException("Method create(Class) must be called");
-}
-
-public T create(@FinderGeneric("T") final Class<T> type) {
-    return dbProvider.get().newInstance(type);
-}
-```
-
-Writing delegation mixins is a bit hard, but resulted mixins are very easy (obvious) to use.
-
-##### Delegate beans
-
-Delegate beans are obtained from guice context, so you can use any scopes for beans. But most of the time singleton
-will perfectly fits your needs.
-
-It is not required to explicitly register delegate beans - guice will be able to create instance in runtime even if bean
-was not registered.
-
-##### Bundled mixins
-
-Few mixins provided out of the box. 
-
-Crud mixins are the most common thing: most likely these methods are implemented in your `AbstractDao` or something like this.
-
-`ObjectCrudMixin` provides base crud methods for object finder:
-
-```java
-public interface MyEntityDao extends ObjectCrudMixin<MyEntity> {}
-```
-
-Now MyEntityDao has all basic crud methods (create, get, delete etc).
-
-`DocumentCrudMixin` provides base crud methods for document dao.
-
-```java
-public interface MyEntityDao extends DocumentCrudMixin<MyEntity> {}
-```
-
-Set mixin generic value only if you have reference entity class. Generic affects only `getAll` method: if generic not set
-you will not be able to use only this method.
-
-`PaginationMixin` provides simple pagination for your entity or document (but document should have reference type, 
-at least to specifyschema type name (may be empty class))
-
-```java
-public interface MyEntityDao extends ObjectCrudMixin<MyEntity>, PaginationMixin<MyEntity, MyEntity> {}
-
-...
-// return page
-Page page = myFinderDao.getPage(1, 20);
-```
-
-In order to use pagination mixin, crud mixin is not required (used in example just to show how mixins could be combined).
-Pagination mixin is the most complex one and good place to inspire how to write non trivial mixins.
-
-#### Return types
-
-You can use: `Iterable`, `Collection`, `List`, `Set`, any collection implementation, array, single element or `Iterator`.
-Single elements (single object return) may be wrapped with `Optional` (guava (com.google.common.base.Optional) 
-or jdk8 (java.util.Optional)). Collections should not be wrapped
-with optional, because finder will never return null for collection or array. 
-Query execution result will be converted in accordance with specified return type.
-
-```java
-@Finder(query = "select from Model")
-Model selectAll()
-```
-
-```java
-@Finder(query = "select from Model")
-Optional<Model> selectAll()
-```
-
-First result will be returned (query implicitly limited to one element)
-
-```java
-@Finder(query = "select from Model")
-Model[] selectAll()
-```
-Returned collection will be converted to array.
-
-Sometimes it may be desirable to change default returned collection implementation, e.g. to sort elements:
-
-```java
-@Finder(query = "select from Model", returnAs = TreeSet.class)
-Set<Model> selectAll()
-```
-
-TreeSet collection will be returned. The same result will be if set method return type to TreeSet 
-(but it's not best practice to define implementation as return type).
-
-###### Result projection
-
-In orient, when you query for some aggregated function (like count) or selecting just one field, ODocument
-or Vertex objects will be returned (for document/object and graph connections). This is usually not the desired behaviour.
-
-Projection is unwrapping from document or vertex if it contains just one property. Unwrapping is triggered by return type, e.g.
-
-```java
-@Finder(query = "select count(@rid) from Model")
-int getCount();
-```
-
-Here return type is int, but actual query will return ODocument. Result converter will detect this, look that document contains
-just one field (count) and return just this field value. 
-Note that actual field value could be long or double, conversion to int will also be performed automatically.
-If return type would be ODocument - no conversion will occur.
-
-When we need just one field from multiple rows:
-
-```java
-@Finder(query = "select name from Model")
-String[] getNamesArray();
-```
-
-Query returns collection of ODocument, but result converter will look return type and unwrap documents returning you simple array.
-
-Automatic projection will work ONLY with array: if you try to set return type as List<String> you will actually get list 
-of documents (due to type erasure this would be valid in runtime). Detection not implemented for collections because
-at least one element is required to check, but orient tends to return iterators, which mean entire iterator must be repackaged to 
-a new one just for one check (probably redundant). To reduce this overhead, projection is triggered only by arrays (easy to check - no overhead).
-
-For graph connection this will also work:
-
-```java
-@Finder(query = "select name from Model")
-@Use(DbType.GRAPH)
-String[] getNamesArray();
-```
-
-This time orient will return Vertex instances and result converter will look if vertex contains just one property and if so 
-will unwrap single value.
-
-Special case: by default, result converter took first collection element if single result required. So projection may be used like this:
-
-```java
-@Finder(query = "select name from Model")
-String getNamesArray();
-```
-
-Here collection reduced to one element and single element projected to single value.
-
-#### Connection type detection
-
-Connection type can be detected for queries using method return type. 
-If you specify generic for returned collection (or iterator) or use typed array (not Object[]) or in case of single element,
-connection type will be detected like this:
-* If returned class is registered with object entity manager, object connection will be used
-* If `ODocument` class returned - document connection used 
-* If `Vertex` or `Edge` classes returned - graph connection
-
-But, for example, even if you try to select not object itself, but fields you will get ODocument, even in object connection
-(kind of result set in jdbc). For such case document connection will be selected (according to return type), 
-but it may be part of object connection logic (e.g. all other queries in object connection). In this case `@Use` annotation will help.
-
-#### Performance
-
-Finders involve a lot of reflection (especially delegates), but it doesn't mean they are slow. 
-Finder method is checked on first invocation (so when app starts it doesn't mean everything is ok).
-On first finder invocation method descriptor object is composed and cached. On next call everything proxy will have to do
-is to prepare special parameters (placeholders, custom delegate params etc) and perform result conversion (which may not occur).
-
-There is very simple benchmark in tests `FinderBenchmarkTest`, you can play with it and see real overhead (yes it's groovy so numbers 
-are not accurate, but you can see the big picture).
-
-```
-Direct method call: 352,5 μs
-Reflection method call: 352,1 μs
-Sql finder call: 353,0 μs
-Delegate finder method call: 353,4 μs
-```
-
-Again, don't believe this numbers, it's just to show there is no large overhead with finders.
-
-### Schema initialization
+#### Scheme initialization
 
 Module will automatically create database if it's not exist and perform default graph initialization if graph database support enabled (jar available).
 
@@ -795,49 +261,63 @@ install(new OrientModule(url, user, password));
 bind(SchemeInitializer.class).to(MySchemeInitializer.class);
 ```
 
-Scheme initializer is called in notx unit of work (orient requires database schema updates to be performed without transaction).
+Scheme initializer is called in notx unit of work (orient requires database scheme updates to be performed without transaction).
 
 By default, no-op implementation enabled.
 
-Two default implementations provided for schema initialization from pojos (jpa like):
-* `PackageSchemeInitializer` - use all classes in package to init or update scheme (package should be specified as module constructor argument)
-* `AutoScanSchemeInitializer` - search classpath for entities annotated with `@Persistent` annotation and use them to create/update scheme 
-(search scope may be reduced by specifying package in module constructor).
 
+##### Object scheme mapping
 
-There are predefined shortcut modules for each initializer: `PackageSchemeOrientModule` and `AutoScanSchemeOrientModule`
+Database scheme may be initialized from classes (jpa like).
+See [orient object mapping documentation](http://www.orientechnologies.com/docs/last/orientdb.wiki/Object-2-Record-Java-Binding.html) for object mapping
+ ([and general object database page](http://www.orientechnologies.com/docs/last/orientdb.wiki/Object-Database.html)).
 
-Both initializers support grahp compatible entities creation (default orient scheme auto creation used). By default, you will be able just query stored records with graph connection.
-To be able to create graph vertixes and edges, classes must extend V and E classes in scheme.
+Default orient object scheme mapper is limited in [some cases](https://github.com/xvik/guice-persist-orient/wiki/Object-scheme-initializer#default-object-scheme-mapping).
+Special scheme mapper implementation provided (extension to default orient mapper).
 
-You can use special annotations on entities: 
-* `@VertexType` to make your type derive from `V` in scheme
-* `@EdgeType` to make your type derive from `E` in scheme
+It provides additional mapping annotations:
+* [@EdgeType](https://github.com/xvik/guice-persist-orient/wiki/Object-scheme-initializer#edgetype) - register class as edge type
+* [@VertexType](https://github.com/xvik/guice-persist-orient/wiki/Object-scheme-initializer#vertextype) - register class as vertex type
+* [@RenameFrom](https://github.com/xvik/guice-persist-orient/wiki/Object-scheme-initializer#renamefrom) - renames existing scheme class before class registration
+* [@Recreate](https://github.com/xvik/guice-persist-orient/wiki/Object-scheme-initializer#recreate) - drop and create fresh scheme on each start
+* [@CompositeIndex](https://github.com/xvik/guice-persist-orient/wiki/Object-scheme-initializer#compositeindex) - creates composite index for class (index span multiple properties)
+* [@DropIndexes](https://github.com/xvik/guice-persist-orient/wiki/Object-scheme-initializer#dropindexes) - drops existing indexes on start
+* [@RenamePropertyFrom](https://github.com/xvik/guice-persist-orient/wiki/Object-scheme-initializer#renamepropertyfrom) - renames existing scheme property before class registration
+* [@Index](https://github.com/xvik/guice-persist-orient/wiki/Object-scheme-initializer#index) - creates index for annotated field
+* [@Readonly](https://github.com/xvik/guice-persist-orient/wiki/Object-scheme-initializer#readonly) - marks property as readonly
+* [@ONotNull](https://github.com/xvik/guice-persist-orient/wiki/Object-scheme-initializer#onotnull) - marks property as not null
+* [@Mandatory](https://github.com/xvik/guice-persist-orient/wiki/Object-scheme-initializer#mandatory) - marks property as mandatory
 
-This allows to use objects for scheme update for graphs too. 
-You can freely use such annotated entities for object or document queries (difference will be only for graph - it will be able to create).
+New annotation could be easily [implemented as extensions](https://github.com/xvik/guice-persist-orient/wiki/Object-scheme-initializer#extensions)
+(and all existing annotation are extensions and may be replaced).
+
+Default modules provided with custom initializers (which use extended scheme mapping mechanism):
+* `PackageSchemeModule` - register all model classes in specific package (or packages). Useful when all model classes located in one package
+* `AutoScanSchemeModule` - registers all model classes annotated with `@Persistent` annotation. Useful for package by feature approach,
+when model classes contained within related logic
+
+Module must be registered together with main `OrientModule`, for example:
+
+```java
+install(new AutoScanSchemeModule("my.model.root.package"));
+```
+
+For example, to create vertex scheme:
+
+```java
+@VertexType
+public class MyVertex {..}
+```
+
+No MyVertex could be used with graph api and with object api.
+Graph relations may be created dynamically (even if they are not mapped in object).
 
 Remember that scheme created from objects maintain same hierarchy as your objects. E.g. if you use provided `VersionedEntity` class as base
 class for entities, it will be also registered in scheme (nothing bad, you may not notice it).
 But for graphs hierarchies more important: both vertex and edge objects can't extend same class (root class in hierarchy must extend V or E).
 So if you use `@VertexType` or `@EdgeType` annotations make sure their hierarchy not intersect.
 
-### Object mapping specifics
-
-See [orient object mapping documentation](http://www.orientechnologies.com/docs/last/orientdb.wiki/Object-2-Record-Java-Binding.html) for object mapping
- ([and general object database page](http://www.orientechnologies.com/docs/last/orientdb.wiki/Object-Database.html)).
-
-* Orient ignore package, so class may be moved between packages
-* When entity field removed, orient will hold all data already stored in records of that field
-* When entity field type changes, orient WILL NOT migrate automatically (you need to handle it manually, using custom scheme initializer or through
-[orient studio](http://www.orientechnologies.com/docs/last/orientdb-studio.wiki/Home-page.html)).
-* When class renamed orient will register it as new entity and you will have to manually migrate all data
-(it's possible to use sql commands to rename entity in scheme)
-* To use entity within optimistic transaction, it must have version field (annotated with @Version). You should add field manually or extend all entities from 
-provided base class: `VersionedEntity`
-* JPA annotations can be used to [define cascades](http://www.orientechnologies.com/docs/last/orientdb.wiki/Object-Database.html#cascade-deleting)
-
-### Data initialization
+#### Data initialization
 
 To initialize (or migrate) data register implementation of
 
@@ -854,114 +334,527 @@ bind(DataInitializer.class).to(YourDataInitializerImpl.class);
 ```
 
 Initializer is called WITHOUT predefined unit of work, because of different possible requirements.
-You should define unit of work (maybe more than one) yourself (using annotation or template).
+You should define unit of work (maybe more than one) yourself (with annotation or manual).
 
-### Under the hood
+#### Change user
 
-Orient module initialize connection pool for each database type. Unit of work didn't trigger direct connection acquire from pool
-to not acquire redundant resources (for example, if all three database types initialized, most likely you will use one or two 
-during single unit of work).
-
-To configure pool sizes use global configuration (default is min 1 max 20):
+To use different db user for one or more transactions use `UserManager`:
 
 ```java
-OGlobalConfiguration.DB_POOL_MIN.setValue(1)
-OGlobalConfiguration.DB_POOL_MAX.setValue(20)
-```
-
-Each pool (each connection type) will start it's own independent transaction within unit of work. It should not be limitation 
-with proper scopes definition (use one connection type just for reads and other for updates or update different entities within 
-different connection types or define smaller units of work). Each pool acquires connection and opens transaction only after
-requesting connection through appropriate provider.
-
-Transaction is thread-bound (the same as unit of work).
-
-IF you use more than one connection type within same unit of work and one transaction will fail, other connection will still be committed and rollback will be called
-only on failed connection.
-
-You can fine-tune transaction to rollback only in soecific exceptions or not rollback on some exceptions (see @Transactional annotation and TxConfig).
-
-Read more about [orient transactions](http://www.orientechnologies.com/docs/last/orientdb.wiki/Transactions.html)
-
-Default transaction manager implementation could be overridden by simply registering different implementation of TransactionManager interface:
-
-```java
-bind(TransactionManager.class).to(CustomTransactionManagerImpl.class)
-```
-
-Pools implementation could also be changed. For example, current graph pool is actually document pool (because graph api 'sits' above document connection).
-So it is possible to share document and graph connections: just implement graph pool to acquire connection from document pool.
-It wasn't done, because of inconsistency: document and object transactions would be different and graph will share document transaction.. a bit confusing.
-
-Custom pools registration example:
-
-```java
-public class MyOrientModule extends OrientModule {
-
+@Inject UserManager userManager;
+...
+userManager.executeWithUser('user', 'password', new SpecificUserAction<Void>() {
     @Override
-    protected void configurePools() {
-        bindPool(ODatabaseDocumentTx.class, DocumentPool.class);
-        bindPool(OObjectDatabaseTx.class, ObjectPool.class);
-        bindPool(OrientGraph.class, MyCustomGraphPool.class);
-        // note that for graph few entities could be provided: OrientGraph, OrientGraphNoTx, OrientBaseGraph.
-        // default implementation registers additional providers to handle all cases
-        // see ru.vyarus.guice.persist.orient.support.pool.GraphPoolBinder
+    public Void execute() throws Throwable {
+        // do work
+    }
+})
+```
+
+`SpecificUserAction` defines scope of user overriding. This will not implicitly start transaction, but simply
+binds different user to current thread.
+
+Overriding may be used in scheme initialization to use more powerful user or to use [orient security model](http://www.orientechnologies.com/docs/last/orientdb.wiki/Security.html)
+(in this case overriding may be done, for example in servlet filter).
+
+Nested user override is not allowed (to avoid confusion). But you can use user overriding inside transaction.
+
+##### Change tx user
+
+User may be overridden inside transaction:
+
+```java
+// context is PersistentContext
+context.doWithUser('user', new SpecificUserAction<Void>() {
+    @Override
+    public Void execute() throws Throwable {
+        // do work
+    }
+})
+```
+
+This changes current connection object user. As a result orient security checks will work for overridden user.
+Nested user override is not allowed (to avoid confusion).
+
+More about [user override](https://github.com/xvik/guice-persist-orient/wiki/Core-API#user-manager)
+
+#### Retry
+
+Due to orient implementation specifics, you may face [OConcurrentModificationException](http://www.orientechnologies.com/docs/last/orientdb.wiki/Troubleshooting-Java.html#oconcurrentmodificationexception-cannot-update-record-xy-in-storage-z-because-the-version-is-not-the-latest-probably-you-are-updating-an-old-record-or-it-has-been-modified-by-another-user-dbva-yourvb)
+When you was trying to save object its expected - optimistic locking (object contains version and if db version is different
+then your object considered stale, and you cant save it).
+
+But, for example, even query like this may fail:
+
+```
+update Model set name = 'updated'
+```
+
+In concurrent environment this query also may cause OConcurrentModificationException.
+There is a special base class for such exceptions: ONeedRetryException.
+So by design some operations may fail initially, but succeed on repeated execution.
+
+To fix such places you can use `@Retry` annotation. It catches exception and if its ONeedRetryException (or any cause is retry exception)
+it will repeat method execution.
+
+```java
+@Retry(100)
+@Transactional
+public void update()
+```
+
+Annotation must be defined outside of transaction, because retry exception is casted on commit and it's impossible to
+catch it inside transaction. If @Retry annotated method will be executed under transaction, it will fail (catches redundant definition
+and avid error because of "expected behaviour".
+So be careful using it: be sure not to use annotated methods in transaction.
+
+@Retry may be used with @Transactional on the same method (retry applied before).
+
+In some cases using script instead of query solves concurrent update problem (even without retry):
+
+```
+begin
+update Model set name='updated'
+commit
+```
+
+Anyway, always write concurrent tests to be sure.
+
+
+## Repository
+
+Repository annotations simplify writing dao or repository objects.
+Repositories are very close to spring-data repositories and following description will follow this approach.
+But repository methods may be used in any way (like dao or as additional methods for beans).
+
+Repositories mainly cover query definitions (removing all boilerplate code).
+If you need something like spring-data specifications, you can use [orientqb](https://github.com/raymanrt/orientqb)
+
+Example repository query method:
+
+```java
+@Query("select from Model where name=? and nick=?")
+List<Model> find(String name, String nick);
+```
+
+Repositories implementation is based on extensions (every annotation you'll see is an extension).
+Custom extensions supported, so you can change almost everything.
+
+### Setup
+
+To use repository features register repository module in guice context:
+
+```java
+install(new RepositoryModule());
+```
+
+### Guice abstract types support
+
+Repository methods defined with annotations, so interface and abstract methods are ideal candidates to use them.
+Guice doesn't allow using abstract types, but it's possible with [a bit of magic](https://github.com/xvik/guice-ext-annotations).
+
+Abstract types (abstract class or interface containing repository methods) could be registered directly in guice module:
+
+```java
+bind(MyInterfaceRepository.class).to(DynamicClassGenerator.generate(MyInterfaceRepository.class)).in(Singleton.class)
+```
+
+Or dynamic resolution could be used (guice JIT resolution):
+
+```java
+@ProvidedBy(DynamicSingletonProvider.class)
+public interface MyRepository
+```
+
+When some bean require this dao as dependency, guice will call provider, which will generate proper class for guice.
+(dynamic resolution completely replaces classpath scanning: only actually used repositories will be created)
+Note, this will automatically make bean singleton, which should be desirable in most cases. If you need custom scope
+use `DynamicClassProvider` with `@ScopeAnnotation` annotation (see details in [guice-ext-annotations](https://github.com/xvik/guice-ext-annotations))
+
+Note: Intellij IDEA will warn you that ProvidedBy annotation is incorrectly typed, but it's ok, because provider is too generic.
+There is nothing I can do with it and it's the best (the simplest) way I know (without explicit classpath scanning, which is redundant).
+
+IMPORTANT: guice will control instance creation, so guice AOP features will completely work!
+`@Transactional` annotation may be used (generally not the best idea to limit transaction to repository method, but in some cases could be suitable).
+You can think of repository interface or abstract class as of usual guice bean (no limitations).
+
+Repository methods are applied using aop (that's why they could be used everywhere).
+
+### Repositories overview
+
+Method annotations:
+* [@Query](https://github.com/xvik/guice-persist-orient/wiki/Repository-command-methods#query)  - select/update/insert query
+* [@Function](https://github.com/xvik/guice-persist-orient/wiki/Repository-command-methods#function) - function call
+* [@Script](https://github.com/xvik/guice-persist-orient/wiki/Repository-command-methods#script) - script call (sql, js etc)
+* [@AsyncQuery](https://github.com/xvik/guice-persist-orient/wiki/Repository-command-methods#asyncquery) - async query call
+* [@Delegate](https://github.com/xvik/guice-persist-orient/wiki/Repository-delegate-methods#delegate-method) - delegate call to other bean method
+
+All except delegate are command methods (build around orient command objects).
+
+Command methods parameters annotations:
+* [@Param](https://github.com/xvik/guice-persist-orient/wiki/Repository-command-methods#param) - named parameter
+* [@ElVar](https://github.com/xvik/guice-persist-orient/wiki/Repository-command-methods#elvar) - query variable value (substituted in string before query execution)
+* [@Var](https://github.com/xvik/guice-persist-orient/wiki/Repository-command-methods#var) - orient command variable ($var), may be used by query during execution
+* [@Skip and @Limit](https://github.com/xvik/guice-persist-orient/wiki/Repository-command-methods#skip-and-limit) - orient pagination
+* [@FetchPlan](https://github.com/xvik/guice-persist-orient/wiki/Repository-command-methods#fetchplan) - defines fetch plan for query
+* [@Listen](https://github.com/xvik/guice-persist-orient/wiki/Repository-command-methods#listen) - to provide query listener (required for async queries)
+* [@DynamicParams](https://github.com/xvik/guice-persist-orient/wiki/Repository-command-methods#dynamicparams) - map dynamic count of parameters from array/collection/map
+
+Delegate method parameters annotations:
+* [@Generic](https://github.com/xvik/guice-persist-orient/wiki/Repository-delegate-methods#generic) - generic type value of caller repository (now exact class could be specified where to search generic)
+* [@Repository](https://github.com/xvik/guice-persist-orient/wiki/Repository-delegate-methods#reository) - caller repository instance
+* [@Connection](https://github.com/xvik/guice-persist-orient/wiki/Repository-delegate-methods#connection) - db connection object, selected by repository method
+
+Command methods amend annotations:
+* [@Timeout](https://github.com/xvik/guice-persist-orient/wiki/Repository-command-methods#timeout) - defines query timeout and timeout strategy
+* [@LockStrategy](https://github.com/xvik/guice-persist-orient/wiki/Repository-command-methods#lockstrategy) - defines query lock strategy
+
+Result converter annotations:
+* [@NoConversion](https://github.com/xvik/guice-persist-orient/wiki/Repository-result-handling#result-extensions) - disable default result conversion logic
+* [@DetachResult](https://github.com/xvik/guice-persist-orient/wiki/Repository-result-handling#detaching-results) - detaches result objects (list or simple object): returned result will contain simple objects instead of proxies
+
+#### Defining repository
+
+```java
+@Transactional
+@ProvidedBy(DynamicSingletonProvider.class)
+public interface ModelRepository {
+
+    @Query("select from Model")
+    List<Model> selectAll();
+
+    @Query("update Model set name = ? where name = ?")
+    int updateName(String newName, String oldName);
+
+    @Query("insert into Model (name) values(:name)")
+    Model create(@Param("name") String name);
+}
+```
+
+Note: also, repository methods could be used to supplement existing bean, but suggest to use pure interface repositories.
+
+```java
+@Transactional
+@ProvidedBy(DynamicSingletonProvider.class)
+public abstract class MyDao {
+
+    @Query("select from Model")
+    public abstract List<Model> selectAll();
+
+    // normal method
+    public void doSomething() {
+        ...
     }
 }
 ```
 
-#### Dynamic finders
+Note: @Transactional is not required (annotation usage depends on your service architecture, but repository method
+must be used inside transaction).
 
-By analogy with orient module pools, finder module use executor instances for each connection type. 
-Executor is responsible for query execution in exact connection. Default executors could be overridden by overriding FinderModule:
+
+#### Usage examples
+
+[Function](http://www.orientechnologies.com/docs/last/orientdb.wiki/Functions.html) call:
 
 ```java
-public class MyFinderModule extends FinderModule {
-    @Override
-    protected void configureExecutors() {
-          bindExecutor(CustomDocumentFinderExecutor.class);
-          bindExecutor(CustomObjectFinderExecutor.class);
-          bindExecutor(CustomGraphFinderExecutor.class);
-    }      
+@Function("function1")
+List<Model> function();
+```
+
+Positional parameters:
+
+```java
+@Query("select from Model where name=? and nick=?")
+List<Model> parametersPositional(String name, String nick)
+```
+
+Named parameters:
+
+```java
+@Query( "select from Model where name=:name and nick=:nick")
+List<Model> parametersNamed(@Param("name") String name, @Param("nick") String nick)
+```
+
+[Pagination](http://www.orientechnologies.com/docs/last/orientdb.wiki/Pagination.html):
+
+```java
+@Query("select from Model where name=? and nick=?")
+List<Model> parametersPaged(String name, String nick, @Skip int skip, @Limit int limit)
+```
+
+[El variable](https://github.com/xvik/guice-persist-orient/wiki/Repository-command-methods#el-variables):
+
+```java
+@Query("select from Model where ${prop}=?")
+List<Model> findBy(@ElVar("prop") String prop, String value)
+```
+
+[Fetch plan](http://www.orientechnologies.com/docs/last/orientdb.wiki/Fetching-Strategies.html) parameter:
+
+```java
+@Query("select from Model")
+List<Model> selectAll(@FetchPlan("*:0") String plan);
+```
+
+[Sql](http://www.orientechnologies.com/docs/last/orientdb.wiki/SQL-batch.html) script:
+
+```java
+@Script("begin" +
+  "let account = create vertex Account set name = :name" +
+  "let city = select from City where name = :city" +
+  "let edge = create edge Lives from $account to $city" +
+  "commit retry 100" +
+  "return $edge")
+Edge linkCity(@Param("name") String name, @Param("city") String city)
+```
+
+[Js](http://www.orientechnologies.com/docs/last/orientdb.wiki/Javascript-Command.html) script:
+
+```java
+@Script(language = "javascript", value =
+ "for( i = 0; i < 1000; i++ ){" +
+     "db.command('insert into Model(name) values (\"test'+i+'\")');" +
+ "}")
+void jsScript()
+```
+
+[Async](http://www.orientechnologies.com/docs/last/orientdb.wiki/Document-Database.html#asynchronous-query) query:
+
+```java
+@AsyncQuery("select from Model")
+void select(@Listen OCommandResultListener listener)
+```
+
+Dynamic parameters:
+
+```java
+@Query('select from Model where ${cond}')
+List<ODocument> findWhere(@ElVar("cond") String cond, @DynamicParams Object... params);
+```
+
+[Delegate](https://github.com/xvik/guice-persist-orient/wiki/Repository-delegate-methods) example:
+
+```java
+public class SomeBean {
+   public List getAll() {
+      ...
+   }
+}
+
+@Delegate(SomeBean.class)
+List getAll();
+```
+
+Read more about method usage in wiki:
+* [Command methods](https://github.com/xvik/guice-persist-orient/wiki/Repository-command-methods)
+* [Delegate methods](https://github.com/xvik/guice-persist-orient/wiki/Repository-delegate-methods)
+
+Writing extensions:
+* [Extending commands](https://github.com/xvik/guice-persist-orient/wiki/Repository-command-methods-internals)
+* [Extending delegates](https://github.com/xvik/guice-persist-orient/wiki/Repository-delegate-methods-internals)
+
+#### Return types
+
+You can use Iterable, Collection, List, Set, any collection implementation, array, single element or Iterator as return type.
+Conversion between types will be applied automatically.
+
+```java
+@Query("select from Model")
+List<Model> selectAll();
+
+@Query("select from Model")
+Set<Model> selectAll();
+
+@Query("select from Model")
+Model[] selectAll();
+
+@Query("select from Model")
+Iterable<Model> selectAll();
+
+@Query("select from Model")
+Iterator<Model> selectAll();
+```
+
+If you define single result, when query produce multiple results, first result would be automatically taken:
+
+```java
+@Query("select from Model limit 1")
+Model selectAll();
+```
+
+Note: limit is not required, but preferred, as soon as you don't need other results
+
+##### Result type definition
+
+It is very important to always define exact return type. Connection type defines type of result object:
+object connection always return ODocument, object return mapped objects (but ODocument for field calls)
+and graph - Vertex and Edge.
+
+Result type is used internally to detect connection type for query.
+
+For example, if you write:
+
+```java
+@Query("select from Model")
+List selectAll();
+```
+
+You will actually receive List<ODocument>, because without generic it's impossible to detect required return type
+and document connection used for query.
+
+For example, in this case graph connection would be selected:
+
+```java
+@Query("select from Model")
+List<Vertex> selectAll();
+```
+
+##### Result conversion
+
+Every repository method result is converted with default converter (as described above).
+
+You can use result conversion extension, for example:
+
+```java
+@Query("select from Model")
+@NoConversion
+List<Model> selectAll();
+```
+
+NoConversion disables conversion mechanism and you receive result object as is.
+
+With object connection, orient always return proxy objects, which usage outside of transaction is limited
+(same as in jpa). You can use detach converter to receive pure pojos:
+
+```java
+@Query("select from Model")
+@DetachResult
+List<Model> selectAll();
+```
+
+Read more about [converter mechanism and writing custom converters](https://github.com/xvik/guice-persist-orient/wiki/Repository-result-handling).
+
+#### Mixins
+
+Java support multiple inheritance for interfaces and you can inherit multiple interfaces in classes.
+So interfaces are ideal for writing small reusable parts (mixins).
+
+##### Command mixins
+
+El variables in commands support references to class generics, so you can use it for generic repository logic:
+
+```java
+public interface MyMixin<T> {
+
+    @Query("select from ${T}")
+    List<T> selectAll()
+}
+
+@Transactional
+@ProvidedBy(DynamicSingletonProvider.class)
+public interface ModelRepository extends MyMixin<Model> {}
+```
+
+When you call mixin method from repository instance
+
+```java
+repository.selectAll()
+```
+
+Generic value Model will be used for command `select from Model` and return type will be resolved as List<Model>,
+which will allow to select proper connection (object if Model is mapped entity).
+
+You may use as many generics as you need. Any repository hierarchy depth will be correctly resolved, so
+you can even use composition mixins, which wil simply combine commonly used generics:
+
+```java
+public interface RepositoryBase<T> extends Mixin1<T>, Mixin2<T> {}
+```
+
+Note that you don't need to set ProvidedBy annotation on generics, because it's just interfaces and they are not used separately.
+
+##### Delegate mixins
+
+Delegates are also support generalization through extensions:
+
+```java
+public class DelegateBean {
+    public List selectAll(@Generic("T") Class model) {
+
+    }
+}
+
+public interface MyMixin<T> {
+    @Delegate(DelegateBean.class)
+    List<T> selectAll()
 }
 ```
 
-Sql command object builder, used by default executors may be overridden:
+When delegate bean called from mixin, it will receive generic value (of calling mixin) as parameter.
+
+Read more about [mixins usage](https://github.com/xvik/guice-persist-orient/wiki/Repository-mixins)
+
+##### Bundled mixins
+
+Few mixins provided out of the box:
+
+* `ObjectCrud`
+* `DocumentCrud`
+* `Pagination`
+
+Crud mixins are the most common thing: commonly these methods are implemented in `AbstractDao` or something like this.
+
+`ObjectCrudMixin` provides base crud methods for object repository:
 
 ```java
-bind(CommandBuilder.class).to(CustomCommandBuilder.class);
+public interface MyEntityRepository extends ObjectCrud<MyEntity> {}
 ```
 
-Custom query execution result converter may be defined:
+Now MyEntityDao has all basic crud methods (create, get, delete etc).
+
+`DocumentCrudMixin` provides base crud methods for document repository.
 
 ```java
-bind(ResultConverter.class).to(MyCustomResultConverter.class);
+public interface MyEntityDao extends DocumentCrud<MyEntity> {}
 ```
 
-#### Dynamic finders cache
+Set mixin generic value only if you have reference entity class. Generic affects only `getAll` and `create` methods: if generic not set
+you will not be able to use only this method.
 
-If you use JRebel or other class reloading tool (maybe some other reason) you will need to disable finder descriptors caching.
-
-To do it set system property or environment variable:
-
-```
-ru.vyarus.guice.persist.orient.finder.internal.FinderDescriptorFactory.cache=false
-```
-
-Or from code:
+`Pagination` provides simple pagination for your entity or document (but document should have reference type,
+at least to specify schema type name (may be empty class))
 
 ```java
-FinderDescriptorFactory.disableCache();
+public interface MyEntityRepository extends ObjectCrud<MyEntity>, Pagination<MyEntity, MyEntity> {}
+
+...
+// return page
+Page page = repository.getPage(1, 20);
 ```
 
-Also you can clear cache manually (on instance):
+In order to use pagination mixin, crud mixin is not required (used in example just to mention one more time that mixins could be combined).
+Pagination mixin is the most complex one and good place to inspire how to [write more complex reusable logic](https://github.com/xvik/guice-persist-orient/wiki/Repository-mixins#implementation).
+
+#### Validation
+
+You can use [guice-validator](https://github.com/xvik/guice-validator) to apply runtime validation (jsr 303) for repository methods:
 
 ```java
-factory.clearCache()
+@Query("select from Model where name = ?")
+@Size(min = 1)
+List<Model> select(@NotNull String name)
 ```
 
-Note: generics-resolver use it's own [cache for generics resolution](https://github.com/xvik/generics-resolver#cache).
-If you disable cache before start, generics cache will also be disabled. Static methods (disable and clear cache)
+Now this query throw ConstraintViolationException if null provided as parameter or no results returned.
+
+Important: register validator module before guice-persist-orient modules!
+This way validation will be checked before @Transactional or repository methods logic.
+
+### Advanced topics
+
+* [How repositories work](https://github.com/xvik/guice-persist-orient/wiki/Repository-internals)
+* [Connection pools definition](https://github.com/xvik/guice-persist-orient/wiki/Pools)
+* [Internal caches](https://github.com/xvik/guice-persist-orient/wiki/Cache)
 
 ### Orient configuration
 

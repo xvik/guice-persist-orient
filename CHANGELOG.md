@@ -1,3 +1,4 @@
+### 3.0.0 (2015-03-14)
 * Orient 2 compatibility
 * DocumentPool use OPartitionedDatabasePool instead of deprecated ODatabaseDocumentPool
 * (breaking) Default pools implementation now rely on document pool only (no more separate transactions for each type).
