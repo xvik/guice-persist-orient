@@ -782,7 +782,7 @@ When you call mixin method from repository instance
 repository.selectAll()
 ```
 
-Generic value Model will be used for command `select from Model` and return type will be resolved as List<Model>,
+Generic value Model will be used for command `select from Model` and return type will be resolved as `List<Model>`,
 which will allow to select proper connection (object if Model is mapped entity).
 
 You may use as many generics as you need. Any repository hierarchy depth will be correctly resolved, so
