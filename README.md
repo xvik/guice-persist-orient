@@ -710,7 +710,7 @@ Read more about [projection](https://github.com/xvik/guice-persist-orient/wiki/R
 ##### Result type definition
 
 It is very important to always define exact return type. Connection type defines type of result object:
-object connection always return ODocument, object return mapped objects (but ODocument for field calls)
+document connection always return ODocument, object return mapped objects (but ODocument for field calls)
 and graph - Vertex and Edge.
 
 Result type is used internally to detect connection type for query.
@@ -722,7 +722,7 @@ For example, if you write:
 List selectAll();
 ```
 
-You will actually receive List<ODocument>, because without generic it's impossible to detect required return type
+You will actually receive `List<ODocument>`, because without generic it's impossible to detect required return type
 and document connection used for query.
 
 For example, in this case graph connection would be selected:
@@ -736,7 +736,7 @@ List<Vertex> selectAll();
 
 Every repository method result is converted with default converter (as described above).
 
-You can use result conversion extension, for example:
+You can use more specific result conversion extension, for example:
 
 ```java
 @Query("select from Model")
@@ -827,15 +827,15 @@ Few mixins provided out of the box:
 
 Crud mixins are the most common thing: commonly these methods are implemented in `AbstractDao` or something like this.
 
-`ObjectCrudMixin` provides base crud methods for object repository:
+`ObjectCrud` mixin provides base crud methods for object repository:
 
 ```java
 public interface MyEntityRepository extends ObjectCrud<MyEntity> {}
 ```
 
-Now MyEntityDao has all basic crud methods (create, get, delete etc).
+Now MyEntityRepository has all basic crud methods (create, get, delete etc).
 
-`DocumentCrudMixin` provides base crud methods for document repository.
+`DocumentCrud` mixin provides base crud methods for document repository.
 
 ```java
 public interface MyEntityDao extends DocumentCrud<MyEntity> {}
