@@ -63,6 +63,8 @@ compile ('ru.vyarus:guice-persist-orient:3.0.0'){
 }
 ```
 
+For orient 1.x use version 2.1.0 (see [old docs](https://github.com/xvik/guice-persist-orient/tree/orient-1.x))
+
 By default, only document database support is enabled. 
 
 Remove exclusions to enable object and graph db support.
