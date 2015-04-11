@@ -6,7 +6,9 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.inject.persist.PersistService;
 import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx;
+import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.core.tx.OTransaction;
+import java.util.ArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vyarus.guice.persist.orient.db.data.DataInitializer;
@@ -39,7 +41,10 @@ public class DatabaseManager implements PersistService {
     private final Logger logger = LoggerFactory.getLogger(DatabaseManager.class);
 
     private final String uri;
+    private final String user;
+    private final String password;
     private final boolean autoCreate;
+    private final boolean dropInsecureOnAutoCreate;
 
     private final List<PoolManager> pools;
     private final SchemeInitializer modelInitializer;
@@ -50,17 +55,25 @@ public class DatabaseManager implements PersistService {
     private boolean initialized;
     private Set<DbType> supportedTypes;
 
+    //CHECKSTYLE:OFF
     @Inject
     public DatabaseManager(
+            @Named("orient.user") final String user,
+            @Named("orient.password") final String password,
             @Named("orient.uri") final String uri,
             @Named("orient.db.autocreate") final boolean autoCreate,
+            @Named("orient.db.autocreate.dropinsecure") final boolean dropInsecureOnAutoCreate,
             final Set<PoolManager> pools,
             final SchemeInitializer modelInitializer,
             final DataInitializer dataInitializer,
             final TxTemplate txTemplate) {
+    //CHECKSTYLE:ON
 
         this.uri = Preconditions.checkNotNull(uri, "Database name required");
         this.autoCreate = autoCreate;
+        this.dropInsecureOnAutoCreate = dropInsecureOnAutoCreate;
+        this.user = Preconditions.checkNotNull(user, "Database user name required");
+        this.password = Preconditions.checkNotNull(password, "Database user password required");
         this.pools = Lists.newArrayList(pools);
         this.modelInitializer = modelInitializer;
         this.dataInitializer = dataInitializer;
@@ -139,10 +152,38 @@ public class DatabaseManager implements PersistService {
             if (autoCreate && isLocalDatabase() && !database.exists()) {
                 logger.info("Creating database: '{}'", uri);
                 database.create();
+                setupLocalDatabaseUser(database);
             }
         } finally {
             database.close();
         }
+    }
+    
+    private void setupLocalDatabaseUser(final ODatabaseDocumentTx database) {
+        final List<String> insecureUsersToDrop = new ArrayList<String>();
+        boolean userHasExisted = false;
+        
+        for (ODocument insecureDefaultUser : database.getMetadata().getSecurity().getAllUsers()) {
+            final String currentDbUser = insecureDefaultUser.field("name");
+            if (currentDbUser.equalsIgnoreCase(user)) {
+                userHasExisted = true;
+                insecureDefaultUser.field("password", password);
+                insecureDefaultUser.save();
+            } else {
+                insecureUsersToDrop.add(currentDbUser);
+            }
+        }
+        if (!userHasExisted) {
+            database.getMetadata().getSecurity().createUser(user, password, 
+                new String[]{"admin"}); 
+        }
+        
+        if (dropInsecureOnAutoCreate) {
+            for (String insecureUserToDrop : insecureUsersToDrop) {
+                database.getMetadata().getSecurity().dropUser(insecureUserToDrop);
+            }
+        }
+        
     }
 
     /**

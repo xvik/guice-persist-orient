@@ -95,6 +95,7 @@ public class OrientModule extends PersistModule {
     private final String password;
     private TxConfig txConfig;
     private boolean autoCreateDb = true;
+    private boolean dropInsecureUsersOnAC = true;
 
     private Multibinder<PoolManager> poolsMultibinder;
     private MethodInterceptor interceptor;
@@ -137,6 +138,18 @@ public class OrientModule extends PersistModule {
         this.autoCreateDb = autoCreateDb;
         return this;
     }
+    
+    /**
+     * Use to disable auto deletion of insecure user accounts. This only works in combination with auto creation.
+     * By default, dropping of insecure users on auto creation is enabled.
+     *
+     * @param dropInsecureUsersOnAutoCreate  true to enable dropping insecure users, false to disable
+     * @return module itself for chained calls
+     */
+    public OrientModule dropInsecureUsersOnAutoCreate(final boolean dropInsecureUsersOnAutoCreate) {
+        this.dropInsecureUsersOnAC = dropInsecureUsersOnAutoCreate;
+        return this;
+    }
 
     @Override
     protected void configurePersistence() {
@@ -146,6 +159,8 @@ public class OrientModule extends PersistModule {
         bindConstant().annotatedWith(Names.named("orient.user")).to(user);
         bindConstant().annotatedWith(Names.named("orient.password")).to(password);
         bindConstant().annotatedWith(Names.named("orient.db.autocreate")).to(autoCreateDb);
+        bindConstant().annotatedWith(Names.named("orient.db.autocreate.dropinsecure"))
+                .to(dropInsecureUsersOnAC);
 
         bind(TxConfig.class).annotatedWith(Names.named("orient.txconfig"))
                 .toInstance(txConfig == null ? new TxConfig() : txConfig);
