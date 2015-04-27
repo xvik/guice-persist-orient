@@ -14,18 +14,18 @@ dependencies {
     compile 'com.google.inject:guice:4.0-beta5'
     compile 'com.google.inject.extensions:guice-persist:4.0-beta5'
     compile 'com.google.inject.extensions:guice-multibindings:4.0-beta5'
-    compile 'org.slf4j:slf4j-api:1.7.10'
-    compile "com.orientechnologies:orientdb-core:2.0.6"
-    compile "com.orientechnologies:orientdb-object:2.0.6"
-    compile("com.orientechnologies:orientdb-graphdb:2.0.6") {
+    compile 'org.slf4j:slf4j-api:1.7.12'
+    compile "com.orientechnologies:orientdb-core:2.0.8"
+    compile "com.orientechnologies:orientdb-object:2.0.8"
+    compile("com.orientechnologies:orientdb-graphdb:2.0.8") {
         // excluded to remove old groovy dependency
         exclude module: 'gremlin-groovy'
     }
 
 
     testCompile 'junit:junit:4.12'
-    testCompile 'ch.qos.logback:logback-classic:1.1.2'
-    testCompile 'org.slf4j:jul-to-slf4j:1.7.10'
+    testCompile 'ch.qos.logback:logback-classic:1.1.3'
+    testCompile 'org.slf4j:jul-to-slf4j:1.7.12'
     testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
     testCompile 'org.spockframework:spock-guice:1.0-groovy-2.4'
     testCompile 'ru.vyarus:guice-validator:1.1.0'

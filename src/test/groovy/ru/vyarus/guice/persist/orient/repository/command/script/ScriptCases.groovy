@@ -16,7 +16,7 @@ interface ScriptCases {
             return \$model.nick""")
     String nick()
 
-    // positional parameters not supported, but they could be referenced as named (':0')
+    // positional parameters not supported before 2.0.7, but they could be referenced as named (':0')
     @Script("""
         update model set name = ?
         """)

@@ -44,8 +44,8 @@ class ScriptsExecutionTest extends AbstractTest {
 
         when: "positional params"
         dao.positional('test')
-        then: "error"
-        thrown(RepositoryException)
+        then: "ok"
+        true
 
         when: "positional hack"
         dao.positionalHack('test')

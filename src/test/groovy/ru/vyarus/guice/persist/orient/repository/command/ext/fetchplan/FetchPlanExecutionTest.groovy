@@ -24,9 +24,12 @@ class FetchPlanExecutionTest extends AbstractTest {
 
     def "Check fetchplan binding"() {
 
+        setup:
         context.doInTransaction({ db ->
             db.save(new Basket(name: 'one', items: [new Item(name: 'test', person: new Person(name: 'john'))]))
         } as SpecificTxAction)
+        // use long transaction, because object proxy and document doesn't work outside of transaction scope
+        context.getTransactionManager().begin()
 
         when: "checking that expected plan check works"
         dao.selectBasket("*:-1")
@@ -56,5 +59,8 @@ class FetchPlanExecutionTest extends AbstractTest {
         then: "loaded"
         basket.name == 'one'
         basket.items.size() == 1
+
+        cleanup:
+        context.transactionManager.end()
     }
 }

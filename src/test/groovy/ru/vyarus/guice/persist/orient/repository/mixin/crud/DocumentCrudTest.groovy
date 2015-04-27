@@ -22,6 +22,10 @@ class DocumentCrudTest extends AbstractTest {
 
     def "Check document crud mixin"() {
 
+        setup:
+        // use long transaction, because object proxy and document doesn't work outside of transaction scope
+        context.transactionManager.begin()
+
         when: "storing document"
         ODocument doc = documentDao.create()
         doc.field('name', 'name')
@@ -80,6 +84,9 @@ class DocumentCrudTest extends AbstractTest {
         doc = documentDao.get(id)
         then: "document removed"
         doc == null
+
+        cleanup:
+        context.transactionManager.end()
     }
 
     def "Check document custom mixin"() {

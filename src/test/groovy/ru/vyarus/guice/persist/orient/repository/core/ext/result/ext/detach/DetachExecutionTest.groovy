@@ -23,9 +23,9 @@ class DetachExecutionTest extends AbstractTest {
         when: "check objects can be used outside of transaction"
         List<Model> res = repository.select();
         def model = res[0]
-        then: "proxy can be used outside of transaction"
+        then: "proxy can be used outside of transaction, but data will be incomplete"
         model.class != Model
-        model.name == 'name0'
+        model.name == null
 
         when: "detach list of objects"
         res = repository.selectDetach()

@@ -20,8 +20,6 @@ import java.util.Collection;
  * {@link ru.vyarus.guice.persist.orient.repository.command.ext.elvar.ElVar}).</p>
  * <p>By default, sql function expected, but if other language required set it explicitly.</p>
  * <p>Scripts are very similar to {@link ru.vyarus.guice.persist.orient.repository.command.function.Function}</p>
- * <p>WARNING: script did not support positional parameters (?)! Use named parameters or reference positional
- * parameters by name (e.g. ':0' for first parameter instead of '?')</p>
  * <p>Note that using script instead of update query, like this "begin update... commit" solves
  * concurrent modification problem, even without retry.</p>
  *
