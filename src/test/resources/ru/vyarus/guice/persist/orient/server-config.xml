@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<orient-server>
+    <handlers>
+        <!-- SERVER SIDE SCRIPT INTERPRETER. WARNING! THIS CAN BE A SECURITY HOLE:
+            ENABLE IT ONLY IF CLIENTS ARE TRUCT, TO TURN ON SET THE 'ENABLED' PARAMETER
+            TO 'true' -->
+        <!--<handler-->
+                <!--class="com.orientechnologies.orient.server.handler.OServerSideScriptInterpreter">-->
+            <!--<parameters>-->
+                <!--<parameter name="enabled" value="true"/>-->
+                <!--<parameter name="allowedLanguages" value="SQL"/>-->
+            <!--</parameters>-->
+        <!--</handler>-->
+    </handlers>
+    <network>
+        <protocols>
+            <!-- Default registered protocol. It reads commands using the HTTP protocol
+                and write data locally -->
+            <protocol name="binary"
+                      implementation="com.orientechnologies.orient.server.network.protocol.binary.ONetworkProtocolBinary"/>
+        </protocols>
+        <listeners>
+            <listener protocol="binary" ip-address="0.0.0.0" port-range="2424-2430" socket="default"/>
+        </listeners>
+        <cluster>
+        </cluster>
+    </network>
+    <storages>
+    </storages>
+    <users>
+        <user resources="*" password="root" name="root"/>
+        <user resources="connect,server.listDatabases,server.dblist" password="guest" name="guest"/>
+    </users>
+    <properties>
+        <!-- DATABASE POOL: size min/max -->
+        <entry name="db.pool.min" value="1"/>
+        <entry name="db.pool.max" value="5"/>
+
+        <!-- PROFILER: configures the profiler as <seconds-for-snapshot>,<archive-snapshot-size>,<summary-size> -->
+        <entry name="profiler.enabled" value="false"/>
+        <!-- <entry name="profiler.config" value="30,10,10" /> -->
+
+        <!-- LOG: enable/Disable logging. Levels are: finer, fine, finest, info,
+            warning -->
+        <entry name="log.console.level" value="info"/>
+        <entry name="log.file.level" value="fine"/>
+    </properties>
+</orient-server>

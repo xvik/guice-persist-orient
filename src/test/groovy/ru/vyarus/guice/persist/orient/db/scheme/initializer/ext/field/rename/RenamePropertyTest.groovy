@@ -22,12 +22,14 @@ class RenamePropertyTest extends AbstractSchemeExtensionTest {
         SchemeUtils.command(db, "create property RenamePropertyModel.foo string")
         schemeInitializer.register(RenamePropertyModel)
         then: "property renamed"
+        db.getMetadata().getSchema().getClass('RenamePropertyModel').getProperty("bar") != null
         db.getMetadata().getSchema().getClass('RenamePropertyModel').getProperty("foo") == null
 
         when: "renaming already renamed property"
         schemeInitializer.clearModelCache()
         schemeInitializer.register(RenamePropertyModel)
         then: "nothing happen"
+        db.getMetadata().getSchema().getClass('RenamePropertyModel').getProperty("bar") != null
         db.getMetadata().getSchema().getClass('RenamePropertyModel').getProperty("foo") == null
     }
 

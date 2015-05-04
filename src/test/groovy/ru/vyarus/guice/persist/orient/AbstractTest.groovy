@@ -1,6 +1,7 @@
 package ru.vyarus.guice.persist.orient
 
 import com.google.inject.persist.PersistService
+import com.orientechnologies.orient.core.Orient
 import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx
 import ru.vyarus.guice.persist.orient.db.PersistentContext
@@ -24,7 +25,12 @@ abstract class AbstractTest extends Specification {
     PersistentContext<OObjectDatabaseTx> context
 
     void setup() {
+        doSetup()
         persist.start()
+    }
+
+    void doSetup() {
+        // the only way in spock to execute something before setup (or allow setup override) is this hack
     }
 
     void cleanup() {
@@ -37,6 +43,8 @@ abstract class AbstractTest extends Specification {
             }
         } as SpecificTxAction<Void, OObjectDatabaseTx>)
         persist.stop()
-        new ODatabaseDocumentTx(Config.DB).open(Config.USER, Config.PASS).drop()
+        if (!Config.DB.contains("remote")) {
+            new ODatabaseDocumentTx(Config.DB).open(Config.USER, Config.PASS).drop()
+        }
     }
 }

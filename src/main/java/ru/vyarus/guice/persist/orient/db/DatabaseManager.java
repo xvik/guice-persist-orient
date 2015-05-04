@@ -132,16 +132,18 @@ public class DatabaseManager implements PersistService {
 
     protected void createIfRequired() {
         // create if required (without creation work with db is impossible)
-        final ODatabaseDocumentTx database = new ODatabaseDocumentTx(uri);
-        try {
-            // memory, local, plocal modes support simplified db creation,
-            // but remote database must be created differently
-            if (autoCreate && isLocalDatabase() && !database.exists()) {
-                logger.info("Creating database: '{}'", uri);
-                database.create();
+        // memory, local, plocal modes support simplified db creation,
+        // but remote database must be created differently
+        if (autoCreate && isLocalDatabase()) {
+            final ODatabaseDocumentTx database = new ODatabaseDocumentTx(uri);
+            try {
+                if (!database.exists()) {
+                    logger.info("Creating database: '{}'", uri);
+                    database.create();
+                }
+            } finally {
+                database.close();
             }
-        } finally {
-            database.close();
         }
     }
 

@@ -3,6 +3,7 @@ package ru.vyarus.guice.persist.orient.db.scheme.initializer;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
+import com.orientechnologies.orient.object.metadata.schema.OSchemaProxyObject;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import ru.vyarus.guice.persist.orient.db.scheme.SchemeInitializationException;
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.core.ext.ExtensionsDescriptor;
@@ -70,8 +71,7 @@ public class ObjectSchemeInitializer {
                 processType(db, type);
             }
         } catch (Throwable th) {
-            throw new SchemeInitializationException("Failed to register model class "
-                    + model.getName(), th);
+            throw new SchemeInitializationException("Failed to register model class " + model.getName(), th);
         }
     }
 
@@ -89,11 +89,20 @@ public class ObjectSchemeInitializer {
         }
         final ExtensionsDescriptor extDesc = extFactory.resolveExtensions(model);
 
+        // synchronize before registration to make sure actual scheme will be used (some classes may be registered
+        // manually and not visible in schema yet)
+        final OSchemaProxyObject schema = db.getMetadata().getSchema();
+        schema.synchronizeSchema();
+        schema.reload();
         final SchemeDescriptor desc = buildDescriptor(db, model);
 
+        // synchronization is performed after each extension to make sure local schema model is actual
+        // (especially important for remote connection)
         executeBefore(extDesc, desc, db);
         db.getEntityManager().registerEntityClass(model);
         desc.registered = true;
+        schema.synchronizeSchema();
+        schema.reload();
         executeAfter(extDesc, desc, db);
         processingCache.add(model);
     }
@@ -113,26 +122,32 @@ public class ObjectSchemeInitializer {
     @SuppressWarnings("unchecked")
     private void executeBefore(final ExtensionsDescriptor extDesc, final SchemeDescriptor desc,
                                final OObjectDatabaseTx db) {
+        final OSchemaProxyObject schema = db.getMetadata().getSchema();
         for (ExtensionsDescriptor.Ext<TypeExtension, Class> ext : extDesc.type) {
             ext.extension.beforeRegistration(db, desc, ext.annotation);
+            schema.reload();
         }
         for (Map.Entry<String, ExtensionsDescriptor.Ext<FieldExtension, Field>> entry
                 : extDesc.fields.entries()) {
             final ExtensionsDescriptor.Ext<FieldExtension, Field> ext = entry.getValue();
             ext.extension.beforeRegistration(db, desc, ext.source, ext.annotation);
+            schema.reload();
         }
     }
 
     @SuppressWarnings("unchecked")
     private void executeAfter(final ExtensionsDescriptor extDesc, final SchemeDescriptor desc,
                               final OObjectDatabaseTx db) {
+        final OSchemaProxyObject schema = db.getMetadata().getSchema();
         for (ExtensionsDescriptor.Ext<TypeExtension, Class> ext : extDesc.type) {
             ext.extension.afterRegistration(db, desc, ext.annotation);
+            schema.reload();
         }
         for (Map.Entry<String, ExtensionsDescriptor.Ext<FieldExtension, Field>> entry
                 : extDesc.fields.entries()) {
             final ExtensionsDescriptor.Ext<FieldExtension, Field> ext = entry.getValue();
             ext.extension.afterRegistration(db, desc, ext.source, ext.annotation);
+            schema.reload();
         }
     }
 }

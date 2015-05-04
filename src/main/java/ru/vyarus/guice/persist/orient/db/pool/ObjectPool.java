@@ -31,7 +31,7 @@ public class ObjectPool implements PoolManager<OObjectDatabaseTx> {
     @Override
     public void start(final String uri) {
         // test connection and let orient configure database
-        new OObjectDatabaseTx(uri).open(userManager.getUser(), userManager.getPassword());
+        new OObjectDatabaseTx(uri).open(userManager.getUser(), userManager.getPassword()).close();
         logger.debug("Pool {} started for '{}'", getType(), uri);
     }
 

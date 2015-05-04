@@ -52,6 +52,7 @@ public abstract class AbstractObjectInitializer implements SchemeInitializer {
         registerClasses(scan());
         // important to guarantee correct state in dynamic environments (like tests or using different databases)
         db.getMetadata().getSchema().synchronizeSchema();
+        db.getMetadata().getSchema().reload();
         // if persistent context restarted, registration may be requested one more time
         // without cache clear it would be ignored (handy for tests)
         schemeInitializer.clearModelCache();

@@ -48,7 +48,7 @@ public class DocumentPool implements PoolManager<ODatabaseDocumentTx> {
         poolFactory = new OPartitionedDatabasePoolFactory();
         poolFactory.setMaxPoolSize(OGlobalConfiguration.DB_POOL_MAX.getValueAsInteger());
         // check database connection
-        new ODatabaseDocumentTx(uri).open(userManager.getUser(), userManager.getPassword());
+        new ODatabaseDocumentTx(uri).open(userManager.getUser(), userManager.getPassword()).close();
         logger.debug("Pool {} started for '{}'", getType(), uri);
     }
 
