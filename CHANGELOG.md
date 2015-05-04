@@ -1,3 +1,8 @@
+### 3.0.1 (2015-05-05)
+* Fix stale connections in pools
+* Fix sometimes redundant connection in db auto creation check
+* Fix schema extensions for remote connection (more often schema synchronization)
+
 ### 3.0.0 (2015-03-14)
 * Orient 2 compatibility
 * DocumentPool use OPartitionedDatabasePool instead of deprecated ODatabaseDocumentPool
