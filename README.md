@@ -134,7 +134,7 @@ may not contain actual orient transaction, but for simplicity both may be consid
 Unit of work may be defined by:
 * `@Transactional` annotation on guice bean or single method (additional `@TxType` annotation allows to define different transaction type for specific unit of work)
 * Inject `PersistentContext` bean into your service and use its methods
-* Using `TransactionalManager` begin() and end() methods.
+* Using `TransactionManager` begin() and end() methods.
 
 First two options are better, because they automatically manage rollbacks and avoid not closed (forgot to call end) transactions.
 Read more about [orient transactions](http://www.orientechnologies.com/docs/last/orientdb.wiki/Transactions.html)
@@ -187,10 +187,10 @@ context.doInTransaction(new TxAction<Void>() {
     });
 ```
 
-Using `TransactionalManager`:
+Using `TransactionManager`:
 
 ```java
-@Inject TransactionalManager manager;
+@Inject TransactionManager manager;
 ...
 manager.begin();
 try {
