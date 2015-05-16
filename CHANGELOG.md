@@ -1,3 +1,6 @@
+### 3.0.2 (2015-05-16)
+* Orient 2.0.9 compatibility: removed @LockStrategy extension, because lock setter removed from OCommandRequest (use sql [LOCK statement](http://orientdb.com/docs/last/orientdb.wiki/SQL-Query.html) instead)
+
 ### 3.0.1 (2015-05-05)
 * Fix stale connections in pools
 * Fix sometimes redundant connection in db auto creation check

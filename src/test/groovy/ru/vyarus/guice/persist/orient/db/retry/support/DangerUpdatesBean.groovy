@@ -25,7 +25,7 @@ interface DangerUpdatesBean {
     @Script("""
         begin
         update model set name=:0
-        commit
+        commit retry 10
         """)
     void updateWithScript(String name)
 

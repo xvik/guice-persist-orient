@@ -509,7 +509,6 @@ Delegate method parameters annotations:
 
 Command methods amend annotations:
 * [@Timeout](https://github.com/xvik/guice-persist-orient/wiki/Repository-command-methods#timeout) - defines query timeout and timeout strategy
-* [@LockStrategy](https://github.com/xvik/guice-persist-orient/wiki/Repository-command-methods#lockstrategy) - defines query lock strategy
 
 Result converter annotations:
 * [@NoConversion](https://github.com/xvik/guice-persist-orient/wiki/Repository-result-handling#result-extensions) - disable default result conversion logic
