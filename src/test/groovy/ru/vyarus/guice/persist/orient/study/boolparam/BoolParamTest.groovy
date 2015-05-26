@@ -47,14 +47,20 @@ class BoolParamTest extends AbstractTest {
         repository.save(new User(username: 'test2', active: true))
 
         when: 'query correct user by boolean parameter'
-        User user = repository.findActiveByUsername('test2')
+        User user = repository.findActiveByUsername('test2', true)
         then:'user found'
         user
         user.username == 'test2'
 
         when: 'query correct but inactive user'
-        user = repository.findActiveByUsername('test1')
+        user = repository.findActiveByUsername('test1', true)
         then: 'user should not be found'
         !user
+
+        when: 'query for inactive user'
+        user = repository.findActiveByUsername('test1', false)
+        then: 'user found'
+        user
+        user.username == 'test1'
     }
 }

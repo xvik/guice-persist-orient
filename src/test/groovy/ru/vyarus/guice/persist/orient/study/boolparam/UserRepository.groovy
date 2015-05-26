@@ -14,6 +14,6 @@ import ru.vyarus.guice.persist.orient.support.repository.mixin.crud.ObjectCrud
 @ProvidedBy(DynamicSingletonProvider)
 interface UserRepository extends ObjectCrud<User> {
 
-    @Query("select from User where username = ? and active = true limit 1")
-    User findActiveByUsername(String username);
+    @Query("select from User where username = ? and active = ? limit 1")
+    User findActiveByUsername(String username, boolean active);
 }
