@@ -5,7 +5,7 @@ repositories {
 }
 
 ext {
-    orient = '2.0.9'
+    orient = '2.0.10'
     guice = 4.0
 }
 
