@@ -1,3 +1,5 @@
+* Add @RidElVar parameter extension to bind rid directly into query from any source (string, object, document, vertex or collections).
+
 ### 3.0.2 (2015-05-16)
 * Orient 2.0.9 compatibility: removed @LockStrategy extension, because lock setter removed from OCommandRequest (use sql [LOCK statement](http://orientdb.com/docs/last/orientdb.wiki/SQL-Query.html) instead)
 
