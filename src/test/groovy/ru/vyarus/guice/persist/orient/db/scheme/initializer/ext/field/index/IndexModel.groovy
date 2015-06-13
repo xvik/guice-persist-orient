@@ -13,4 +13,7 @@ class IndexModel {
 
     @Index(value = OClass.INDEX_TYPE.FULLTEXT, name = "customName")
     String bar
+
+    @Index(value = OClass.INDEX_TYPE.NOTUNIQUE, name = "nulls", ignoreNullValues = false)
+    String nulls
 }

@@ -25,6 +25,7 @@ class CompositeIndexTest extends AbstractSchemeExtensionTest {
         clazz.getClassIndexes().size() == 1
         clazz.getClassIndex("test").getType() == OClass.INDEX_TYPE.NOTUNIQUE.name()
         clazz.getClassIndex("test").getDefinition().getFields() == ["foo", "bar"]
+        !clazz.getClassIndex("test").getDefinition().isNullValuesIgnored()
 
         when: "call for already registered indexes"
         schemeInitializer.clearModelCache()
@@ -34,6 +35,7 @@ class CompositeIndexTest extends AbstractSchemeExtensionTest {
         clazz.getClassIndexes().size() == 1
         clazz.getClassIndex("test").getType() == OClass.INDEX_TYPE.NOTUNIQUE.name()
         clazz.getClassIndex("test").getDefinition().getFields() == ["foo", "bar"]
+        !clazz.getClassIndex("test").getDefinition().isNullValuesIgnored()
     }
 
     def "Check index re-create"() {
@@ -48,6 +50,7 @@ class CompositeIndexTest extends AbstractSchemeExtensionTest {
         clazz.getClassIndexes().size() == 1
         clazz.getClassIndex("test").getType() == OClass.INDEX_TYPE.NOTUNIQUE.name()
         clazz.getClassIndex("test").getDefinition().getFields() == ["foo", "bar"]
+        !clazz.getClassIndex("test").getDefinition().isNullValuesIgnored()
     }
 
     def "Check existing index with different fields"() {

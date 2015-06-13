@@ -37,6 +37,12 @@ public @interface Index {
     String name() default "";
 
     /**
+     * @return false to allow null values, true (by default) to ignore null values
+     * @see <a href="http://orientdb.com/docs/last/orientdb.wiki/SQL-Create-Index.html#null-values">docs</a>
+     */
+    boolean ignoreNullValues() default true;
+
+    /**
      * Scheme model field extension to group multiply index definitions.
      * <p>Don't forget to assign different names, because default names will be the same.</p>
      *

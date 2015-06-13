@@ -6,7 +6,10 @@ import com.orientechnologies.orient.core.metadata.schema.OClass
  * @author Vyacheslav Rusakov 
  * @since 09.03.2015
  */
-@CompositeIndex(name = "test", type = OClass.INDEX_TYPE.NOTUNIQUE, fields = ["foo", "bar"])
+@CompositeIndex(name = "test",
+        type = OClass.INDEX_TYPE.NOTUNIQUE,
+        fields = ["foo", "bar"],
+        ignoreNullValues = false)
 class CompositeIndexModel {
 
     String foo

@@ -42,6 +42,12 @@ public @interface CompositeIndex {
     String[] fields();
 
     /**
+     * @return false to allow null values, true (by default) to ignore null values
+     * @see <a href="http://orientdb.com/docs/last/orientdb.wiki/SQL-Create-Index.html#null-values">docs</a>
+     */
+    boolean ignoreNullValues() default true;
+
+    /**
      * Scheme model type extension to group multiply composite index definitions.
      *
      * @author Vyacheslav Rusakov

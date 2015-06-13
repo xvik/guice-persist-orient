@@ -51,12 +51,17 @@ public class IndexTypeExtension implements TypeExtension<CompositeIndex> {
                 logger.debug("Dropping current index {}, because of type mismatch: {}, when required {}",
                         name, classIndex.getType(), type);
                 SchemeUtils.dropIndex(db, name);
+            } else if (classIndex.getDefinition().isNullValuesIgnored() != annotation.ignoreNullValues()) {
+                logger.debug("Dropping current index {}, because of ignore nulls setting mismatch: current {}",
+                        name, classIndex.getDefinition().isNullValuesIgnored());
+                SchemeUtils.dropIndex(db, name);
             } else {
                 // index ok
                 return;
             }
         }
-        clazz.createIndex(name, type, fields);
+        clazz.createIndex(name, type, fields)
+                .getDefinition().setNullValuesIgnored(annotation.ignoreNullValues());
         logger.debug("Index {} ({}) {} created", name, Joiner.on(',').join(fields), type);
     }
 }
