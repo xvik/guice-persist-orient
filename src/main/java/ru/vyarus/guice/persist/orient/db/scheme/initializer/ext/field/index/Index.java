@@ -14,7 +14,13 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * If index with provided name exist, but with different type, index will be re-created.
  * If existing index build on different properties, error will be thrown.
  * <p>Use {@link Index.List} to define more than one index.</p>
- * <p>Annotation doesn't cover all possible index options.</p>
+ * <p>Annotation doesn't cover all possible index options. Use specific annotations for advanced index types:
+ * {@link ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.field.index.fulltext.FulltextIndex} and
+ * {@link ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.field.index.lucene.LuceneIndex}.</p>
+ * <p>To make index
+ * <a href="http://orientdb.com/docs/last/orientdb.wiki/Indexes.html#case-insensitive-match">case insensitive</a>
+ * use {@link ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.field.ci.CaseInsensitive} annotation
+ * on field (in orient index ci and property ci flags are the same).</p>
  *
  * @author Vyacheslav Rusakov
  * @see <a href="http://www.orientechnologies.com/docs/last/orientdb.wiki/Indexes.html">docs</a>
@@ -43,7 +49,7 @@ public @interface Index {
     boolean ignoreNullValues() default true;
 
     /**
-     * Scheme model field extension to group multiply index definitions.
+     * Scheme model field extension to group multiple index definitions.
      * <p>Don't forget to assign different names, because default names will be the same.</p>
      *
      * @author Vyacheslav Rusakov
@@ -52,7 +58,7 @@ public @interface Index {
     @Target(FIELD)
     @Retention(RUNTIME)
     @SchemeFieldInit(MultipleIndexesFiledExtension.class)
-    public @interface List {
+    @interface List {
 
         /**
          * @return index definitions

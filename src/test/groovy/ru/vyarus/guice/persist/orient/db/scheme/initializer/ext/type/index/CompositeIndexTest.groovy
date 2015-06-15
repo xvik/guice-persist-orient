@@ -66,6 +66,18 @@ class CompositeIndexTest extends AbstractSchemeExtensionTest {
 
     }
 
+    def "Check existing index with the same fields but different order"() {
+
+        when: "index already exist with different fields"
+        def clazz = db.getMetadata().getSchema().createClass(CompositeIndexModel)
+        clazz.createProperty("foo", OType.STRING)
+        clazz.createProperty("bar", OType.STRING)
+        clazz.createIndex('test', OClass.INDEX_TYPE.NOTUNIQUE, "bar", "foo")
+        schemeInitializer.register(CompositeIndexModel)
+        then: "error"
+        thrown(SchemeInitializationException)
+    }
+
     def "Check multiple indexes definition"() {
 
         when: "multiple indexes defined"

@@ -3,7 +3,6 @@ package ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.type.index;
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
-import com.google.common.collect.Sets;
 import com.orientechnologies.orient.core.index.OIndex;
 import com.orientechnologies.orient.core.metadata.schema.OClass;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
@@ -11,12 +10,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.core.spi.SchemeDescriptor;
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.core.spi.type.TypeExtension;
-import ru.vyarus.guice.persist.orient.db.scheme.initializer.core.util.SchemeUtils;
+import ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.field.index.IndexValidationSupport;
 
 import javax.inject.Singleton;
-import java.util.HashSet;
-
-import static ru.vyarus.guice.persist.orient.db.scheme.SchemeInitializationException.check;
 
 /**
  * @author Vyacheslav Rusakov
@@ -38,23 +34,21 @@ public class IndexTypeExtension implements TypeExtension<CompositeIndex> {
         // single field index definition intentionally allowed (no check)
         final String name = Strings.emptyToNull(annotation.name().trim());
         Preconditions.checkArgument(name != null, "Index name required");
-        final OClass clazz = db.getMetadata().getSchema().getClass(descriptor.schemeClass);
+        final String model = descriptor.schemeClass;
+        final OClass clazz = db.getMetadata().getSchema().getClass(model);
         final OIndex<?> classIndex = clazz.getClassIndex(name);
         final OClass.INDEX_TYPE type = annotation.type();
         final String[] fields = annotation.fields();
         if (!descriptor.initialRegistration && classIndex != null) {
-            final HashSet<String> indexFields = Sets.newHashSet(classIndex.getDefinition().getFields());
-            check(indexFields.equals(Sets.newHashSet(fields)),
-                    "Existing index '%s' fields '%s' are different from '%s'.",
-                    name, Joiner.on(',').join(indexFields), Joiner.on(',').join(fields));
-            if (!classIndex.getType().equalsIgnoreCase(type.toString())) {
-                logger.debug("Dropping current index {}, because of type mismatch: {}, when required {}",
-                        name, classIndex.getType(), type);
-                SchemeUtils.dropIndex(db, name);
-            } else if (classIndex.getDefinition().isNullValuesIgnored() != annotation.ignoreNullValues()) {
-                logger.debug("Dropping current index {}, because of ignore nulls setting mismatch: current {}",
-                        name, classIndex.getDefinition().isNullValuesIgnored());
-                SchemeUtils.dropIndex(db, name);
+            final IndexValidationSupport support = new IndexValidationSupport(classIndex, logger);
+
+            support.checkFieldsCompatible(fields);
+
+            final boolean correct = support
+                    .isIndexSigns(classIndex.getDefinition().isNullValuesIgnored())
+                    .matchRequiredSigns(type, annotation.ignoreNullValues());
+            if (!correct) {
+                support.dropIndex(db);
             } else {
                 // index ok
                 return;
@@ -62,6 +56,6 @@ public class IndexTypeExtension implements TypeExtension<CompositeIndex> {
         }
         clazz.createIndex(name, type, fields)
                 .getDefinition().setNullValuesIgnored(annotation.ignoreNullValues());
-        logger.debug("Index {} ({}) {} created", name, Joiner.on(',').join(fields), type);
+        logger.info("Index '{}' ({} [{}]) {} created", name, model, Joiner.on(',').join(fields), type);
     }
 }

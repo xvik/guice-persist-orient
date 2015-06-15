@@ -48,7 +48,7 @@ public @interface CompositeIndex {
     boolean ignoreNullValues() default true;
 
     /**
-     * Scheme model type extension to group multiply composite index definitions.
+     * Scheme model type extension to group multiple composite index definitions.
      *
      * @author Vyacheslav Rusakov
      * @since 09.03.2015
@@ -56,7 +56,7 @@ public @interface CompositeIndex {
     @Target(TYPE)
     @Retention(RUNTIME)
     @SchemeTypeInit(MultipleIndexesTypeExtension.class)
-    public @interface List {
+    @interface List {
         /**
          * @return index definitions
          */

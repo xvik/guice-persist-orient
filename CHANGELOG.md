@@ -1,5 +1,8 @@
 * Add @RidElVar parameter extension to bind rid directly into query from any source (string, object, document, vertex or collections).
-* Add @CaseInsensitive scheme field extension: sets collate ci for case insensitive fields comparison in queries
+* Add @CaseInsensitive scheme field extension: sets collate ci for case insensitive fields comparison in queries. Also should be used for creation of ci indexes.
+* Add ignoreNullValues option support for @Index and @CompositeIndex scheme extensions
+* Add @FulltextIndex scheme field extension for fulltext index definitions
+* Add @LuceneIndex scheme field extension for fulltext lucene index definitions
 
 ### 3.0.2 (2015-05-16)
 * Orient 2.0.9 compatibility: removed @LockStrategy extension, because lock setter removed from OCommandRequest (use sql [LOCK statement](http://orientdb.com/docs/last/orientdb.wiki/SQL-Query.html) instead)

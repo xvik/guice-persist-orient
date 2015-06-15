@@ -26,6 +26,10 @@ dependencies {
         // excluded to remove old groovy dependency
         exclude module: 'gremlin-groovy'
     }
+    provided ("com.orientechnologies:orientdb-lucene:$orient") {
+        // excluded to remove old groovy dependency
+        exclude module: 'gremlin-groovy'
+    }
 
 
     testCompile 'junit:junit:4.12'

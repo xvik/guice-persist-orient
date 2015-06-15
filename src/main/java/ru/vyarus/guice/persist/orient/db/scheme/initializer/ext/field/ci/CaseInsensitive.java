@@ -17,7 +17,9 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * {@link ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.field.index.Index} (
  * <a href="http://orientdb.com/docs/last/orientdb.wiki/Indexes.html#case-insensitive-match">see doc</a>).
  * In orient ci marker always affects both property and index, so it's impossible to create default collate
- * property and ci index on it. Using filed annotation for both cases should remove confusion.</p>
+ * property and ci index on it (because sql engine will
+ * <a href="http://orientdb.com/docs/last/SQL.html#automatic-usage-of-indexes">use index automatically</a>).
+ * Using field annotation for both cases should remove confusion.</p>
  *
  * @author Vyacheslav Rusakov
  * @see <a href="http://www.orientechnologies.com/docs/last/orientdb.wiki/SQL-Alter-Property.html">docs</a>

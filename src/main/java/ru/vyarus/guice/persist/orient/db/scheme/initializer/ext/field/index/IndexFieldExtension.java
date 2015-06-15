@@ -1,9 +1,7 @@
 package ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.field.index;
 
-import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
 import com.google.common.base.Strings;
-import com.google.common.collect.Sets;
 import com.orientechnologies.orient.core.index.OIndex;
 import com.orientechnologies.orient.core.metadata.schema.OClass;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
@@ -11,13 +9,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.core.spi.SchemeDescriptor;
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.core.spi.field.FieldExtension;
-import ru.vyarus.guice.persist.orient.db.scheme.initializer.core.util.SchemeUtils;
 
 import javax.inject.Singleton;
 import java.lang.reflect.Field;
-import java.util.HashSet;
-
-import static ru.vyarus.guice.persist.orient.db.scheme.SchemeInitializationException.check;
 
 /**
  * {@link Index} scheme model field extension.
@@ -45,18 +39,15 @@ public class IndexFieldExtension implements FieldExtension<Index> {
         final OIndex<?> classIndex = clazz.getClassIndex(name);
         final OClass.INDEX_TYPE type = annotation.value();
         if (!descriptor.initialRegistration && classIndex != null) {
-            final HashSet<String> indexFields = Sets.newHashSet(classIndex.getDefinition().getFields());
-            check(indexFields.equals(Sets.newHashSet(property)),
-                    "Existing index '%s' fields '%s' are different from '%s'.",
-                    name, Joiner.on(",").join(indexFields), property);
-            if (!classIndex.getType().equalsIgnoreCase(type.toString())) {
-                logger.debug("Dropping current index {}, because of type mismatch: {}, when required {}",
-                        name, classIndex.getType(), type);
-                SchemeUtils.dropIndex(db, name);
-            } else if (classIndex.getDefinition().isNullValuesIgnored() != annotation.ignoreNullValues()) {
-                logger.debug("Dropping current index {}, because of ignore nulls setting mismatch: current {}",
-                                name, classIndex.getDefinition().isNullValuesIgnored());
-                SchemeUtils.dropIndex(db, name);
+            final IndexValidationSupport support = new IndexValidationSupport(classIndex, logger);
+
+            support.checkFieldsCompatible(property);
+
+            final boolean correct = support
+                    .isIndexSigns(classIndex.getDefinition().isNullValuesIgnored())
+                    .matchRequiredSigns(type, annotation.ignoreNullValues());
+            if (!correct) {
+                support.dropIndex(db);
             } else {
                 // index ok
                 return;
@@ -64,6 +55,6 @@ public class IndexFieldExtension implements FieldExtension<Index> {
         }
         clazz.createIndex(name, type, property)
                 .getDefinition().setNullValuesIgnored(annotation.ignoreNullValues());
-        logger.debug("Index {} ({}) {} created", name, property, type);
+        logger.info("Index '{}' ({} [{}]) {} created", name, model, property, type);
     }
 }
