@@ -3,6 +3,7 @@
 * Add ignoreNullValues option support for @Index and @CompositeIndex scheme extensions
 * Add @FulltextIndex scheme field extension for fulltext index definitions
 * Add @LuceneIndex scheme field extension for fulltext lucene index definitions
+* Fix modules usage in child injector
 
 ### 3.0.2 (2015-05-16)
 * Orient 2.0.9 compatibility: removed @LockStrategy extension, because lock setter removed from OCommandRequest (use sql [LOCK statement](http://orientdb.com/docs/last/orientdb.wiki/SQL-Query.html) instead)

@@ -2,6 +2,7 @@ package ru.vyarus.guice.persist.orient;
 
 import com.google.common.base.Objects;
 import com.google.inject.AbstractModule;
+import com.google.inject.internal.DynamicSingletonProvider;
 import com.google.inject.matcher.AbstractMatcher;
 import com.google.inject.matcher.Matchers;
 import com.google.inject.multibindings.Multibinder;
@@ -13,9 +14,14 @@ import ru.vyarus.guice.persist.orient.repository.RepositoryMethodInterceptor;
 import ru.vyarus.guice.persist.orient.repository.core.MethodDefinitionException;
 import ru.vyarus.guice.persist.orient.repository.core.executor.RepositoryExecutor;
 import ru.vyarus.guice.persist.orient.repository.core.executor.impl.DocumentRepositoryExecutor;
+import ru.vyarus.guice.persist.orient.repository.core.ext.SpiService;
+import ru.vyarus.guice.persist.orient.repository.core.ext.service.AmendExtensionsService;
+import ru.vyarus.guice.persist.orient.repository.core.ext.service.ParamsService;
+import ru.vyarus.guice.persist.orient.repository.core.ext.service.result.ResultService;
 import ru.vyarus.guice.persist.orient.repository.core.ext.service.result.converter.ResultConverter;
 import ru.vyarus.guice.persist.orient.repository.core.ext.util.ExtUtils;
 import ru.vyarus.guice.persist.orient.repository.core.util.RepositoryUtils;
+import ru.vyarus.guice.persist.orient.repository.delegate.DelegateMethodExtension;
 
 import javax.inject.Singleton;
 import java.lang.reflect.Method;
@@ -73,6 +79,14 @@ public class RepositoryModule extends AbstractModule {
 
         // extension points
         bind(ResultConverter.class);
+
+        // required explicit binding to inject correct injector instance (instead of always root injector)
+        bind(SpiService.class);
+        bind(AmendExtensionsService.class);
+        bind(ParamsService.class);
+        bind(ResultService.class);
+        bind(DelegateMethodExtension.class);
+        bind(DynamicSingletonProvider.class).in(Singleton.class);
 
         final RepositoryMethodInterceptor proxy = new RepositoryMethodInterceptor();
         requestInjection(proxy);
