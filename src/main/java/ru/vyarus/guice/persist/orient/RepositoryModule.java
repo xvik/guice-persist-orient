@@ -88,6 +88,17 @@ public class RepositoryModule extends AbstractModule {
         bind(DelegateMethodExtension.class);
         bind(DynamicSingletonProvider.class).in(Singleton.class);
 
+        configureAop();
+
+        executorsMultibinder = Multibinder.newSetBinder(binder(), RepositoryExecutor.class);
+
+        configureExecutors();
+    }
+
+    /**
+     * Configures repository annotations interceptor.
+     */
+    protected void configureAop() {
         final RepositoryMethodInterceptor proxy = new RepositoryMethodInterceptor();
         requestInjection(proxy);
         // repository specific method annotations (query, function, delegate, etc.)
@@ -103,10 +114,6 @@ public class RepositoryModule extends AbstractModule {
                 }
             }
         }, proxy);
-
-        executorsMultibinder = Multibinder.newSetBinder(binder(), RepositoryExecutor.class);
-
-        configureExecutors();
     }
 
     /**

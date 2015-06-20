@@ -2,7 +2,7 @@
 * Add @CaseInsensitive scheme field extension: sets collate ci for case insensitive fields comparison in queries. Also should be used for creation of ci indexes.
 * Add ignoreNullValues option support for @Index and @CompositeIndex scheme extensions
 * Add @FulltextIndex scheme field extension for fulltext index definitions
-* Add @LuceneIndex scheme field extension for fulltext lucene index definitions
+* Add @LuceneIndex and @CompositeLuceneIndex scheme extensions for fulltext lucene index definitions
 * Fix modules usage in child injector
 
 ### 3.0.2 (2015-05-16)

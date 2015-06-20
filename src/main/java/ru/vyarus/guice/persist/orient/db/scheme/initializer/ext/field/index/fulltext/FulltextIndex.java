@@ -13,10 +13,16 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * will be used. In contrast to {@link ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.field.index.Index}
  * it allows to configure fulltext specific options.
  * <p>Defaults taken from implementation class {@link com.orientechnologies.orient.core.index.OIndexFullText}.</p>
+ * <p>If index with the same name exists but created on different properties error will be thrown.
+ * If existing index is not fulltext, error will be thrown. Otherwise existing index will be dropped and new
+ * one created.</p>
  * <p>To make index
  * <a href="http://orientdb.com/docs/last/orientdb.wiki/Indexes.html#case-insensitive-match">case insensitive</a>
  * use {@link ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.field.ci.CaseInsensitive} annotation
  * on field (in orient index ci and property ci flags are the same).</p>
+ * <p>Composite fulltext index is not supported in orient. Use
+ * {@link ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.type.index.lucene.CompositeLuceneIndex} to
+ * create composite fulltext index.</p>
  *
  * @author Vyacheslav Rusakov
  * @see <a href="http://orientdb.com/docs/last/orientdb.wiki/FullTextIndex.html">docs</a>

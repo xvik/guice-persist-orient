@@ -15,6 +15,9 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * will be used.
  * <p>In order to use this index you will need to add
  * <a href="https://github.com/orientechnologies/orientdb-lucene/wiki">orient-lucene</a> dependency.</p>
+ * <p>If index with the same name exists but created on different properties error will be thrown.
+ * If existing index is not lucene, error will be thrown. Otherwise existing index will be dropped and new
+ * one created.</p>
  *
  * @author Vyacheslav Rusakov
  * @see <a href="http://orientdb.com/docs/last/orientdb-lucene.wiki/Full-Text-Index.html">docs</a>

@@ -39,7 +39,6 @@ public class FulltextIndexFieldExtension implements FieldExtension<FulltextIndex
     }
 
     @Override
-    @SuppressWarnings("PMD.ExcessiveMethodLength")
     public void afterRegistration(final OObjectDatabaseTx db, final SchemeDescriptor descriptor,
                                   final Field field, final FulltextIndex annotation) {
         final String property = field.getName();
