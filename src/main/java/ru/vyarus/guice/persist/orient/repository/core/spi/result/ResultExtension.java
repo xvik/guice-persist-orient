@@ -21,6 +21,9 @@ public interface ResultExtension<A extends Annotation> {
 
     /**
      * Called on descriptor creation phase to initialize converted from possible annotation parameters.
+     * Note: extension may set descriptor.connectionHint to force connection type selection (and avoid return
+     * type analysis). This is important because converter may return any type of object, which makes method
+     * return type analysis useless.
      *
      * @param descriptor repository method descriptor
      * @param annotation extension annotation

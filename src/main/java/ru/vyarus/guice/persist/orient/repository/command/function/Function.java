@@ -47,5 +47,5 @@ public @interface Function {
      *
      * @return connection hint
      */
-    DbType connection() default DbType.DOCUMENT;
+    DbType connection() default DbType.UNKNOWN;
 }

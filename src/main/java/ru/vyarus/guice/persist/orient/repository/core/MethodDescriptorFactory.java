@@ -105,12 +105,12 @@ public class MethodDescriptorFactory {
         if (Collection.class.equals(descriptor.returnCollectionHint)) {
             descriptor.returnCollectionHint = null;
         }
-        if (descriptor.connectionHint == DbType.DOCUMENT) {
+        if (descriptor.connectionHint == DbType.UNKNOWN) {
             descriptor.connectionHint = null;
         }
         descriptor.result = ResultAnalyzer.analyzeReturnType(context, descriptor.returnCollectionHint);
-        descriptor.executor = ExecutorAnalyzer.analyzeExecutor(method, descriptor.result, executors,
-                defaultExecutor, descriptor.connectionHint);
+        descriptor.executor = ExecutorAnalyzer.analyzeExecutor(descriptor.result, executors,
+                defaultExecutor, descriptor.connectionHint, descriptor.resultConversion.customConverter != null);
         return descriptor;
     }
 

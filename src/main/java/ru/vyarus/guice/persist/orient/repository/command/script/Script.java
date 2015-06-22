@@ -61,5 +61,5 @@ public @interface Script {
      *
      * @return connection hint
      */
-    DbType connection() default DbType.DOCUMENT;
+    DbType connection() default DbType.UNKNOWN;
 }

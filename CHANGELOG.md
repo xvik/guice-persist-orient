@@ -4,6 +4,7 @@
 * Add @FulltextIndex scheme field extension for fulltext index definitions
 * Add @LuceneIndex and @CompositeLuceneIndex scheme extensions for fulltext lucene index definitions
 * Fix modules usage in child injector
+* Improve connection hint support in repository annotations: now hint is always used in priority, which allows to write more complex result converters
 
 ### 3.0.2 (2015-05-16)
 * Orient 2.0.9 compatibility: removed @LockStrategy extension, because lock setter removed from OCommandRequest (use sql [LOCK statement](http://orientdb.com/docs/last/orientdb.wiki/SQL-Query.html) instead)
