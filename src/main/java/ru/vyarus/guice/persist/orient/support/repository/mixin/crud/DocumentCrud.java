@@ -3,6 +3,7 @@ package ru.vyarus.guice.persist.orient.support.repository.mixin.crud;
 import com.orientechnologies.orient.core.id.ORID;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import ru.vyarus.guice.persist.orient.repository.delegate.Delegate;
+import ru.vyarus.guice.persist.orient.support.repository.mixin.crud.delegate.DocumentCrudDelegate;
 
 import java.util.Iterator;
 
@@ -30,9 +31,6 @@ public interface DocumentCrud<T> {
     ODocument get(ORID id);
 
     /**
-     * Note: for object entities returns object proxy. If you need to use saved object just after save,
-     * use returned proxy instead of original object (original entity will not be updated with id or version).
-     *
      * @param entity entity to save or update
      * @return saved entity instance
      */

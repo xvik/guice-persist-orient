@@ -1,4 +1,4 @@
-package ru.vyarus.guice.persist.orient.support.repository.mixin.crud;
+package ru.vyarus.guice.persist.orient.support.repository.mixin.crud.delegate;
 
 import com.google.common.collect.Lists;
 import com.google.inject.ProvidedBy;
@@ -8,6 +8,7 @@ import com.orientechnologies.orient.core.id.ORecordId;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import com.orientechnologies.orient.object.enhancement.OObjectEntitySerializer;
 import ru.vyarus.guice.persist.orient.repository.delegate.ext.generic.Generic;
+import ru.vyarus.guice.persist.orient.support.repository.mixin.crud.BaseObjectCrud;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -15,19 +16,19 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Crud mixin object implementation.
+ * Base object crud mixins implementation.
  *
  * @param <T> object type
  * @author Vyacheslav Rusakov
- * @since 15.10.2014
+ * @since 21.06.2015
  */
 @ProvidedBy(DynamicSingletonProvider.class)
-public abstract class ObjectCrudDelegate<T> implements ObjectCrud<T> {
+public abstract class BaseObjectCrudDelegate<T> implements BaseObjectCrud<T> {
 
     private final Provider<OObjectDatabaseTx> dbProvider;
 
     @Inject
-    public ObjectCrudDelegate(final Provider<OObjectDatabaseTx> dbProvider) {
+    public BaseObjectCrudDelegate(final Provider<OObjectDatabaseTx> dbProvider) {
         this.dbProvider = dbProvider;
     }
 
@@ -45,23 +46,6 @@ public abstract class ObjectCrudDelegate<T> implements ObjectCrud<T> {
     public T save(final T entity) {
         return dbProvider.get().save(entity);
     }
-
-
-    @Override
-    public void delete(final T entity) {
-        dbProvider.get().delete(entity);
-    }
-
-    @Override
-    public void delete(final String id) {
-        dbProvider.get().delete(new ORecordId(id));
-    }
-
-    @Override
-    public void delete(final ORID id) {
-        dbProvider.get().delete(id);
-    }
-
 
     @Override
     public T attach(final T entity) {
