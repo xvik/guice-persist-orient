@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 import ru.vyarus.guice.persist.orient.repository.core.ext.service.result.converter.Optionals;
 import ru.vyarus.guice.persist.orient.repository.core.spi.DescriptorContext;
 import ru.vyarus.guice.persist.orient.repository.core.util.RepositoryUtils;
-import ru.vyarus.java.generics.resolver.context.GenericsContext;
+import ru.vyarus.java.generics.resolver.context.MethodGenericsContext;
 import ru.vyarus.java.generics.resolver.util.NoGenericException;
 
 import java.lang.reflect.Method;
@@ -41,7 +41,8 @@ public final class ResultAnalyzer {
     public static ResultDescriptor analyzeReturnType(final DescriptorContext context,
                                                      final Class<? extends Collection> returnCollectionType) {
         final Method method = context.method;
-        final Class<?> returnClass = context.generics.resolveReturnClass(method);
+        final MethodGenericsContext generics = context.generics.method(method);
+        final Class<?> returnClass = generics.resolveReturnClass();
         final ResultDescriptor descriptor = new ResultDescriptor();
         descriptor.expectType = resolveExpectedType(returnClass, returnCollectionType);
 
@@ -49,7 +50,7 @@ public final class ResultAnalyzer {
         Class<?> entityClass;
         if (isCollection(returnClass)) {
             type = COLLECTION;
-            entityClass = resolveGenericType(method, context.generics);
+            entityClass = resolveGenericType(method, generics);
         } else if (returnClass.isArray()) {
             type = ARRAY;
             entityClass = returnClass.getComponentType();
@@ -60,7 +61,7 @@ public final class ResultAnalyzer {
             type = PLAIN;
             // support for guava and jdk8 optionals
             entityClass = Optionals.isOptional(returnClass)
-                    ? resolveGenericType(method, context.generics) : returnClass;
+                    ? resolveGenericType(method, generics) : returnClass;
         }
         descriptor.returnType = type;
         descriptor.entityType = entityClass;
@@ -87,10 +88,10 @@ public final class ResultAnalyzer {
         return expected;
     }
 
-    private static Class<?> resolveGenericType(final Method method, final GenericsContext generics) {
+    private static Class<?> resolveGenericType(final Method method, final MethodGenericsContext generics) {
         Class res;
         try {
-            res = generics.resolveGenericOf(method.getGenericReturnType());
+            res = generics.resolveReturnTypeGeneric();
         } catch (NoGenericException e) {
             res = Object.class;
             LOGGER.warn(

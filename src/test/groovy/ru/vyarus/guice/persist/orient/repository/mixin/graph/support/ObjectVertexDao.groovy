@@ -1,4 +1,4 @@
-package ru.vyarus.guice.persist.orient.repository.mixin.crud.support
+package ru.vyarus.guice.persist.orient.repository.mixin.graph.support
 
 import com.google.inject.ProvidedBy
 import com.google.inject.internal.DynamicClassProvider

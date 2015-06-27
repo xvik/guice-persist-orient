@@ -6,6 +6,7 @@
 * Fix modules usage in child injector
 * Improve connection hint support in repository annotations: now hint is always used in priority, which allows to write more complex result converters
 * Add ObjectVertexCrud mixin to correctly work with vertexes from object api
+* Add EdgesSupport and EdgeTypeSupport mixins to simplify work with edges using object api
 
 ### 3.0.2 (2015-05-16)
 * Orient 2.0.9 compatibility: removed @LockStrategy extension, because lock setter removed from OCommandRequest (use sql [LOCK statement](http://orientdb.com/docs/last/orientdb.wiki/SQL-Query.html) instead)

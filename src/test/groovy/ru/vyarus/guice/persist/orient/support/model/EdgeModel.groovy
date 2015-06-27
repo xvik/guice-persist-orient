@@ -2,6 +2,7 @@ package ru.vyarus.guice.persist.orient.support.model
 
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.type.edge.EdgeType
 
+import javax.persistence.Id
 import javax.persistence.Version
 
 /**
@@ -18,6 +19,8 @@ import javax.persistence.Version
 class EdgeModel {
     String name
     String nick
+    @Id
+    String id;
     @Version
     Long version;
 }

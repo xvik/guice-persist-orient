@@ -38,7 +38,7 @@ public final class TargetMethodAnalyzer {
                                             final Class<?> target,
                                             final String methodHint) {
         final Method method = context.method;
-        final List<Class<?>> params = context.generics.resolveParameters(method);
+        final List<Class<?>> params = context.generics.method(method).resolveParameters();
         final List<MatchedMethod> possibilities = findPossibleMethods(params, target, methodHint);
         check(!possibilities.isEmpty(),
                 "No matched method found in target bean %s for delegation", target.getName());
@@ -79,7 +79,7 @@ public final class TargetMethodAnalyzer {
     private static MatchedMethod analyzeMethod(final Method method, final List<Class<?>> params,
                                                final GenericsContext targetGenerics) {
         final List<ParamInfo> ordinalParamsInfo = Lists.newArrayList();
-        final List<Class<?>> types = targetGenerics.type(method.getDeclaringClass()).resolveParameters(method);
+        final List<Class<?>> types = targetGenerics.method(method).resolveParameters();
         final Annotation[][] annotations = method.getParameterAnnotations();
         boolean extended = false;
         for (int i = 0; i < types.size(); i++) {

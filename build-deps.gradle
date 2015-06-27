@@ -13,7 +13,7 @@ dependencies {
     provided 'com.google.code.findbugs:jsr305:3.0.0'
     provided 'com.google.code.findbugs:annotations:3.0.0'
 
-    compile 'ru.vyarus:generics-resolver:1.2.1'
+    compile 'ru.vyarus:generics-resolver:2.0.0'
     compile 'ru.vyarus:guice-ext-annotations:1.1.1'
     compile 'org.javassist:javassist:3.16.1-GA'
     compile "com.google.inject:guice:$guice"

@@ -26,7 +26,7 @@ public abstract class ObjectVertexCrudDelegate<T> implements ObjectVertexCrud<T>
     public ObjectVertexCrudDelegate(final Provider<OrientBaseGraph> dbProvider) {
         this.dbProvider = dbProvider;
     }
-
+//todo add null checks
     @Override
     public void delete(final ORID id) {
         dbProvider.get().getVertex(id).remove();

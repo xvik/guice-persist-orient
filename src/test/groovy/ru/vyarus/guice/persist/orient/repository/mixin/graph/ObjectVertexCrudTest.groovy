@@ -1,8 +1,8 @@
-package ru.vyarus.guice.persist.orient.repository.mixin.crud
+package ru.vyarus.guice.persist.orient.repository.mixin.graph
 
 import com.orientechnologies.orient.core.id.ORecordId
 import ru.vyarus.guice.persist.orient.AbstractTest
-import ru.vyarus.guice.persist.orient.repository.mixin.crud.support.ObjectVertexDao
+import ru.vyarus.guice.persist.orient.repository.mixin.graph.support.ObjectVertexDao
 import ru.vyarus.guice.persist.orient.support.model.VertexModel
 import ru.vyarus.guice.persist.orient.support.modules.RepositoryTestModule
 import ru.vyarus.guice.persist.orient.util.transactional.TransactionalTest

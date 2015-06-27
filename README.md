@@ -72,6 +72,14 @@ Remove exclusions to enable object and graph db support.
 NOTE: It's very important for object db to use exact `javassist` version it depends on. If other libraries in 
 your classpath use `javassist`, check that newer or older version not appear in classpath.
 
+##### Snapshots
+
+You can use snapshot versions through [JitPack](https://jitpack.io):
+
+* Go to [JitPack project page](https://jitpack.io/#xvik/guice-persist-orient)
+* Select `Commits` section and click `Get it` on commit you want to use (top one - the most recent)
+* Follow displayed instruction: add repository and change dependency (NOTE: due to JitPack convention artifact group will be different)
+
 ### Install the Guice module
 
 ```java

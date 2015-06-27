@@ -14,6 +14,8 @@ import ru.vyarus.guice.persist.orient.support.repository.mixin.graph.delegate.Ob
  * (or simply extend V in general).
  * <p>It is important to use this mixin for vertex types, because delete methods use graph api, which
  * grants consistency checks.</p>
+ * <p>Use with {@link EdgesSupport} to add edges support methods. Or {@link EdgeTypeSupport} if only
+ * one edge type support required.</p>
  *
  * @param <T> entity type
  * @author Vyacheslav Rusakov
