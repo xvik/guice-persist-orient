@@ -2,7 +2,9 @@ package ru.vyarus.guice.persist.orient.repository.core.ext.service.result.ext.de
 
 import com.google.common.collect.Lists;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
+import javassist.util.proxy.Proxy;
 import ru.vyarus.guice.persist.orient.db.DbType;
+import ru.vyarus.guice.persist.orient.db.util.RidUtils;
 import ru.vyarus.guice.persist.orient.repository.core.ext.service.result.converter.ResultConversionException;
 import ru.vyarus.guice.persist.orient.repository.core.spi.RepositoryMethodDescriptor;
 import ru.vyarus.guice.persist.orient.repository.core.spi.result.ResultExtension;
@@ -38,7 +40,7 @@ public class DetachResultExtension implements ResultExtension<DetachResult> {
         Object res;
         switch (descriptor.result.returnType) {
             case PLAIN:
-                res = connection.detachAll(result, true);
+                res = detach(result, connection);
                 break;
             case COLLECTION:
                 res = handleCollection(result, connection);
@@ -65,7 +67,7 @@ public class DetachResultExtension implements ResultExtension<DetachResult> {
     private Collection detachCollection(final Collection result, final OObjectDatabaseTx connection) {
         final List<Object> tmp = Lists.newArrayList();
         for (Object obj : result) {
-            tmp.add(obj == null ? null : connection.detachAll(obj, true));
+            tmp.add(obj == null ? null : detach(obj, connection));
         }
         result.clear();
         for (Object obj : tmp) {
@@ -78,9 +80,19 @@ public class DetachResultExtension implements ResultExtension<DetachResult> {
         for (int i = 0; i < Array.getLength(result); i++) {
             final Object elt = Array.get(result, i);
             if (elt != null) {
-                Array.set(result, i, connection.detachAll(elt, true));
+                Array.set(result, i, detach(elt, connection));
             }
         }
         return result;
+    }
+
+    private Object detach(final Object pojo, final OObjectDatabaseTx connection) {
+        final Object res = connection.detachAll(pojo, true);
+        if (pojo instanceof Proxy) {
+            // when entity detached under transaction it gets temporal id
+            // this logic will catch real id after commit and set to object
+            RidUtils.trackIdChange((Proxy) pojo, res);
+        }
+        return res;
     }
 }

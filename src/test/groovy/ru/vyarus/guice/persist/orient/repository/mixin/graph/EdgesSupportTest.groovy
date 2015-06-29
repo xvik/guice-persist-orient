@@ -6,6 +6,7 @@ import com.tinkerpop.blueprints.impls.orient.OrientEdge
 import ru.vyarus.guice.persist.orient.AbstractTest
 import ru.vyarus.guice.persist.orient.repository.mixin.graph.support.EdgesDao
 import ru.vyarus.guice.persist.orient.support.model.EdgeModel
+import ru.vyarus.guice.persist.orient.support.model.Model
 import ru.vyarus.guice.persist.orient.support.model.VertexModel
 import ru.vyarus.guice.persist.orient.support.modules.RepositoryTestModule
 import ru.vyarus.guice.persist.orient.util.transactional.TransactionalTest
@@ -104,5 +105,31 @@ class EdgesSupportTest extends AbstractTest {
         model = dao.edgeToObject(edge)
         then: 'state preserved'
         model.name == 'changed'
+    }
+
+    def "Check object id restore after transaction"() {
+
+        setup:
+        VertexModel test = dao.save(new VertexModel(name: 'test1'))
+        VertexModel test2 = dao.save(new VertexModel(name: 'test2'))
+
+        when: "saving raw entity"
+        EdgeModel model = dao.createEdge(test, test2, new EdgeModel(name: "check id"))
+        then: "id correct"
+        dao.getEdge(model.getId()) != null
+
+    }
+
+    def "Check pure object id restore after transaction"() {
+
+        setup:
+        VertexModel test = dao.save(new VertexModel(name: 'test1'))
+        VertexModel test2 = dao.save(new VertexModel(name: 'test2'))
+
+        when: "saving raw entity"
+        EdgeModel model = dao.createEdge(EdgeModel.class, test, test2)
+        then: "id correct"
+        dao.getEdge(model.getId()) != null
+
     }
 }

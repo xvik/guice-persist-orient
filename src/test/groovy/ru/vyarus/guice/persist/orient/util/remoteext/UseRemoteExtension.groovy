@@ -16,7 +16,9 @@ class UseRemoteExtension extends AbstractAnnotationDrivenExtension<UseRemote> {
     @Override
     void visitSpec(SpecInfo spec) {
         UseRemoteInterceptor interceptor = new UseRemoteInterceptor()
-        spec.addSharedInitializerInterceptor(interceptor)
+        // important to run before guice interceptor
+        spec.sharedInitializerInterceptors.add(0, interceptor)
+        spec.addSetupSpecInterceptor(interceptor)
         spec.addCleanupSpecInterceptor(interceptor)
         spec.addSetupInterceptor(interceptor)
     }

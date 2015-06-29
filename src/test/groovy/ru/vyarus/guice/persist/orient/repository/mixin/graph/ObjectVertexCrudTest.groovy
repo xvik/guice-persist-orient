@@ -50,4 +50,13 @@ class ObjectVertexCrudTest extends AbstractTest {
         dao.findByName('test2') == null
         dao.countEdges() == 0
     }
+
+    def "Check object id restore after transaction"() {
+
+        when: "saving raw entity"
+        VertexModel model = dao.save(new VertexModel(name: "check id"))
+        then: "id correct"
+        dao.get(model.getId()) != null
+
+    }
 }

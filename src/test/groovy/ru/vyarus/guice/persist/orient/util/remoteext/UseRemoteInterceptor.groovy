@@ -16,8 +16,14 @@ class UseRemoteInterceptor extends AbstractMethodInterceptor {
     void interceptSharedInitializerMethod(IMethodInvocation invocation) throws Throwable {
         // important for guice to use correct urls
         ServerRule.setRemoteConf()
-        serverRule.startServer()
         invocation.proceed()
+    }
+
+    @Override
+    void interceptSetupSpecMethod(IMethodInvocation invocation) throws Throwable {
+        ServerRule.setRemoteConf()
+        serverRule.startServer()
+        invocation.proceed();
     }
 
     @Override

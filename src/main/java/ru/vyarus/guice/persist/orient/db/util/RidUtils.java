@@ -4,7 +4,12 @@ import com.google.common.base.Preconditions;
 import com.orientechnologies.orient.core.db.record.OIdentifiable;
 import com.orientechnologies.orient.core.id.ORID;
 import com.orientechnologies.orient.core.id.ORecordId;
+import com.orientechnologies.orient.core.record.OIdentityChangeListener;
+import com.orientechnologies.orient.core.record.ORecord;
+import com.orientechnologies.orient.core.record.ORecordInternal;
+import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.object.enhancement.OObjectEntitySerializer;
+import com.orientechnologies.orient.object.serialization.OObjectSerializerHelper;
 import javassist.util.proxy.Proxy;
 import ru.vyarus.guice.persist.orient.db.PersistException;
 
@@ -50,6 +55,46 @@ public final class RidUtils {
             res = resolveIdFromObject(value);
         }
         return res;
+    }
+
+    /**
+     * Shortcut for {@link #trackIdChange(ODocument, Object)}.
+     * Used when detaching pojo into pure object to fix temporal id in resulted pojo after commit.
+     *
+     * @param proxy object proxy
+     * @param pojo  detached pure pojo
+     */
+    public static void trackIdChange(final Proxy proxy, final Object pojo) {
+        final ODocument doc = OObjectEntitySerializer.getDocument(proxy);
+        if (doc != null) {
+            trackIdChange(doc, pojo);
+        }
+    }
+
+    /**
+     * When just created object is detached to pure pojo it gets temporary id.
+     * Real id is assigned only after transaction commit. This method tracks original
+     * document, intercepts its id change and sets correct id and version into pojo.
+     * So it become safe to use such pojo id outside of transaction.
+     *
+     * @param document original document
+     * @param pojo     pojo
+     */
+    public static void trackIdChange(final ODocument document, final Object pojo) {
+        if (document.getIdentity().isNew()) {
+            ORecordInternal.addIdentityChangeListener(document, new OIdentityChangeListener() {
+                @Override
+                public void onBeforeIdentityChange(final ORecord record) {
+                    // not needed
+                }
+
+                @Override
+                public void onAfterIdentityChange(final ORecord record) {
+                    OObjectSerializerHelper.setObjectID(record.getIdentity(), pojo);
+                    OObjectSerializerHelper.setObjectVersion(record.getRecordVersion().copy(), pojo);
+                }
+            });
+        }
     }
 
     private static String resolveIdFromObject(final Object value) {

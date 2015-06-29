@@ -23,4 +23,8 @@ class VertexModel {
     String id
     @Version
     Long version
+
+    void setId(String id) {
+        this.id = id
+    }
 }

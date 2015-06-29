@@ -7,6 +7,8 @@ import com.orientechnologies.orient.core.id.ORID;
 import com.orientechnologies.orient.core.id.ORecordId;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import com.orientechnologies.orient.object.enhancement.OObjectEntitySerializer;
+import javassist.util.proxy.Proxy;
+import ru.vyarus.guice.persist.orient.db.util.RidUtils;
 import ru.vyarus.guice.persist.orient.repository.delegate.ext.generic.Generic;
 import ru.vyarus.guice.persist.orient.support.repository.mixin.crud.BaseObjectCrud;
 
@@ -59,6 +61,11 @@ public abstract class BaseObjectCrudDelegate<T> implements BaseObjectCrud<T> {
         T res = null;
         if (entity != null) {
             res = dbProvider.get().detachAll(entity, true);
+            if (entity instanceof Proxy) {
+                // when entity detached under transaction it gets temporal id
+                // this logic will catch real id after commit and set to object
+                RidUtils.trackIdChange((Proxy) entity, res);
+            }
         }
         return res;
     }

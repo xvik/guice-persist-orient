@@ -67,4 +67,17 @@ class EdgeTypeSupportTest extends AbstractTest {
         then: 'ok'
         edge.name == 'edge test'
     }
+
+    def "Check pure object id restore after transaction"() {
+
+        setup:
+        VertexModel test = dao.save(new VertexModel(name: 'test1'))
+        VertexModel test2 = dao.save(new VertexModel(name: 'test2'))
+
+        when: "saving raw entity"
+        EdgeModel model = dao.createEdge(test, test2)
+        then: "id correct"
+        dao.getEdge(model.getId()) != null
+
+    }
 }

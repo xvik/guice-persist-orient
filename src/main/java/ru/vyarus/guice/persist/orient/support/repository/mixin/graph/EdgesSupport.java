@@ -102,6 +102,13 @@ public interface EdgesSupport {
     <T> T findEdgeBetween(Class<T> edgeClass, Object first, Object second);
 
     /**
+     * @param id  edge id
+     * @param <T> edge type
+     * @return found entity or null
+     */
+    <T> T getEdge(String id);
+
+    /**
      * Updates edge properties.
      *
      * @param edge object (object api) or orient edge

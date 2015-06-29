@@ -77,6 +77,12 @@ public interface EdgeTypeSupport<E, F, T> {
     E findEdgeBetween(F first, T second);
 
     /**
+     * @param id  edge id
+     * @return found entity or null
+     */
+    E getEdge(String id);
+
+    /**
      * Updates edge properties.
      *
      * @param edge object (object api)

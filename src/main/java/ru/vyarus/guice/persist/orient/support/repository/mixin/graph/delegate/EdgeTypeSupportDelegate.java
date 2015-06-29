@@ -52,6 +52,11 @@ public abstract class EdgeTypeSupportDelegate<E> implements EdgeTypeSupport<E, O
     }
 
     @Override
+    public E getEdge(final String id) {
+        return edgesSupport.getEdge(id);
+    }
+
+    @Override
     public void updateEdge(final E edge) {
         edgesSupport.updateEdge(edge);
     }

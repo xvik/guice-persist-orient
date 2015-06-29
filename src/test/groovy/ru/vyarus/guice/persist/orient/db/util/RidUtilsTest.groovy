@@ -11,6 +11,7 @@ import ru.vyarus.guice.persist.orient.db.PersistException
 import ru.vyarus.guice.persist.orient.db.PersistentContext
 import ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxAction
 import ru.vyarus.guice.persist.orient.db.util.support.First
+import ru.vyarus.guice.persist.orient.support.model.Model
 import ru.vyarus.guice.persist.orient.support.model.VertexModel
 import ru.vyarus.guice.persist.orient.support.modules.BootstrapModule
 import ru.vyarus.guice.persist.orient.support.modules.PackageSchemeModule
@@ -77,6 +78,28 @@ class RidUtilsTest extends AbstractTest {
         RidUtils.getRid(new OrientVertex())
         then: "special case: fake id exist even if object not stored"
         true
+    }
+
+    def "Check object id tracking"() {
+
+        when: "detaching just created object inside session"
+        Model model = context.doInTransaction({db ->
+            Model res = db.save(new Model(name: 'test'))
+            db.detach(res, true)
+        } as SpecificTxAction)
+        then: "invalid id"
+        new ORecordId(model.id).isNew()
+
+        when: "detaching just created object inside session with id tracking"
+        model = context.doInTransaction({db ->
+            Model res = db.save(new Model(name: 'test'))
+            Model detached = db.detach(res, true)
+            RidUtils.trackIdChange(res, detached)
+            detached
+        } as SpecificTxAction)
+        then: "valid id"
+        !new ORecordId(model.id).isNew()
+
     }
 
     def "Check error cases"() {

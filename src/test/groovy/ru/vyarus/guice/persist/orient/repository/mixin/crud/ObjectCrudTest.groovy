@@ -5,6 +5,7 @@ import com.google.inject.Inject
 import com.orientechnologies.orient.core.exception.ODatabaseException
 import com.orientechnologies.orient.core.id.ORecordId
 import ru.vyarus.guice.persist.orient.AbstractTest
+import ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxAction
 import ru.vyarus.guice.persist.orient.repository.RepositoryException
 import ru.vyarus.guice.persist.orient.repository.mixin.crud.support.ObjectDao
 import ru.vyarus.guice.persist.orient.support.model.Model
@@ -199,5 +200,33 @@ class ObjectCrudTest extends AbstractTest {
         objectDao.paramSpecific(1, 1, 'hjh')
         then: "correct specific method chosen"
         true
+    }
+
+    def "Check object id restore after transaction"() {
+
+        when: "saving raw entity"
+        Model model = objectDao.save(new Model(name: "check id"))
+        then: "id correct"
+        objectDao.get(model.getId()) != null
+
+    }
+
+    def "Check object id preserved on detach of new object"() {
+
+        when: "detaching not saved object"
+        Model model = context.doInTransaction({ db ->
+            Model res = db.save(new Model(name: "test"))
+            db.detach(res, true)
+        } as SpecificTxAction)
+        then: "id is not valid (unsaved)"
+        new ORecordId(model.getId()).isNew()
+
+        when: "detaching with mixin"
+        model = context.doInTransaction({ db ->
+            Model res = objectDao.save(new Model(name: "test"))
+            objectDao.detach(res)
+        } as SpecificTxAction)
+        then: "id is valid (tracked on commit and set correct)"
+        !new ORecordId(model.getId()).isNew()
     }
 }

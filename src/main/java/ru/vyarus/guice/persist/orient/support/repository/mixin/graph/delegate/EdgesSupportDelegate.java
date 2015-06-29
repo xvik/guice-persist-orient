@@ -3,6 +3,7 @@ package ru.vyarus.guice.persist.orient.support.repository.mixin.graph.delegate;
 import com.google.inject.ProvidedBy;
 import com.google.inject.Provider;
 import com.google.inject.internal.DynamicSingletonProvider;
+import com.orientechnologies.orient.core.id.ORecordId;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import com.tinkerpop.blueprints.Direction;
@@ -72,6 +73,11 @@ public abstract class EdgesSupportDelegate implements EdgesSupport {
     @Override
     public <T> T findEdgeBetween(final Class<T> edgeClass, final Object first, final Object second) {
         return findEdgeImpl(edgeClass, first, second, Direction.BOTH);
+    }
+
+    @Override
+    public <T> T getEdge(final String id) {
+        return objectDb.get().load(new ORecordId(id));
     }
 
     @Override
