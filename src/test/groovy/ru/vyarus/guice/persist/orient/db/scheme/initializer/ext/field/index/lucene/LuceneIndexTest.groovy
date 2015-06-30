@@ -4,6 +4,7 @@ import com.orientechnologies.orient.core.metadata.schema.OClass
 import com.orientechnologies.orient.core.metadata.schema.OType
 import org.apache.lucene.analysis.en.EnglishAnalyzer
 import ru.vyarus.guice.persist.orient.db.scheme.SchemeInitializationException
+import ru.vyarus.guice.persist.orient.db.scheme.initializer.core.util.SchemeUtils
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.AbstractSchemeExtensionTest
 
 /**
@@ -22,6 +23,7 @@ class LuceneIndexTest extends AbstractSchemeExtensionTest {
         when: "first class registration"
         schemeInitializer.register(LuceneIndexModel)
         def clazz = db.getMetadata().getSchema().getClass(LuceneIndexModel)
+        db.getMetadata().reload()
         then: "indexes created"
         clazz.getClassIndexes().size() == 2
         clazz.getClassIndex("LuceneIndexModel.defaults").getType() == OClass.INDEX_TYPE.FULLTEXT.name()
@@ -43,9 +45,12 @@ class LuceneIndexTest extends AbstractSchemeExtensionTest {
         def clazz = db.getMetadata().getSchema().createClass(LuceneIndexModel)
         clazz.createProperty("defaults", OType.STRING)
         clazz.createProperty("custom", OType.STRING)
-        clazz.createIndex("LuceneIndexModel.defaults", "FULLTEXT", null, null, "LUCENE", ["defaults"] as String[]);
-        clazz.createIndex("LuceneIndexModel.custom", "FULLTEXT", null, null, "LUCENE", ["custom"] as String[]);
+        SchemeUtils.command(db, "create index LuceneIndexModel.defaults on LuceneIndexModel (defaults) fulltext engine lucene")
+        SchemeUtils.command(db, "create index LuceneIndexModel.custom on LuceneIndexModel (custom) fulltext engine lucene")
+//        clazz.createIndex("LuceneIndexModel.defaults", "FULLTEXT", null, null, "LUCENE", ["defaults"] as String[]);
+//        clazz.createIndex("LuceneIndexModel.custom", "FULLTEXT", null, null, "LUCENE", ["custom"] as String[]);
         schemeInitializer.register(LuceneIndexModel)
+        db.getMetadata().reload()
         then: "indexes re-created"
         clazz.getClassIndexes().size() == 2
         clazz.getClassIndex("LuceneIndexModel.defaults").getMetadata() == null

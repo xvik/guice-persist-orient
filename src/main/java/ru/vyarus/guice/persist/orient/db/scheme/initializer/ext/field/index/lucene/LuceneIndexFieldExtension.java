@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.core.spi.SchemeDescriptor;
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.core.spi.field.FieldExtension;
+import ru.vyarus.guice.persist.orient.db.scheme.initializer.core.util.SchemeUtils;
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.field.index.IndexValidationSupport;
 
 import javax.inject.Singleton;
@@ -19,6 +20,8 @@ import java.lang.reflect.Field;
 
 /**
  * {@link LuceneIndex} scheme model field extension.
+ * Metadata is reloaded before inspection to grant correct state (important with remote connection).
+ * Sql query used for index creation instead of api because of the bug with remote connection (should be fixed in 2.1).
  *
  * @author Vyacheslav Rusakov
  * @since 14.06.2015
@@ -37,6 +40,7 @@ public class LuceneIndexFieldExtension implements FieldExtension<LuceneIndex> {
     @Override
     public void afterRegistration(final OObjectDatabaseTx db, final SchemeDescriptor descriptor,
                                   final Field field, final LuceneIndex annotation) {
+        db.getMetadata().getIndexManager().reload();
         final String property = field.getName();
         final String model = descriptor.schemeClass;
         final String name = Objects.firstNonNull(Strings.emptyToNull(annotation.name().trim()), model + '.' + property);
@@ -45,10 +49,8 @@ public class LuceneIndexFieldExtension implements FieldExtension<LuceneIndex> {
         final OClass.INDEX_TYPE type = OClass.INDEX_TYPE.FULLTEXT;
         if (!descriptor.initialRegistration && classIndex != null) {
             final IndexValidationSupport support = new IndexValidationSupport(classIndex, logger);
-
             support.checkTypeCompatible(type);
             support.checkFieldsCompatible(property);
-
 
             final boolean correct = support
                     .isIndexSigns(classIndex.getConfiguration().field("algorithm"), getAnalyzer(classIndex))
@@ -61,8 +63,8 @@ public class LuceneIndexFieldExtension implements FieldExtension<LuceneIndex> {
             }
         }
         final ODocument metadata = createMetadata(annotation);
-        clazz.createIndex(name, type.name(), null, metadata, OLuceneIndexFactory.LUCENE_ALGORITHM,
-                new String[]{property});
+        SchemeUtils.command(db, "create index %s on %s (%s) %s engine %s metadata %s",
+                name, model, property, type.name(), OLuceneIndexFactory.LUCENE_ALGORITHM, metadata.toJSON());
         logger.info("Lucene fulltext index '{}' ({} [{}]) created", name, model, property);
     }
 

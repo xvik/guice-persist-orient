@@ -4,6 +4,7 @@ import com.orientechnologies.orient.core.metadata.schema.OClass
 import com.orientechnologies.orient.core.metadata.schema.OType
 import org.apache.lucene.analysis.en.EnglishAnalyzer
 import ru.vyarus.guice.persist.orient.db.scheme.SchemeInitializationException
+import ru.vyarus.guice.persist.orient.db.scheme.initializer.core.util.SchemeUtils
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.AbstractSchemeExtensionTest
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.field.index.lucene.LuceneIndexFieldExtension
 
@@ -23,6 +24,7 @@ class CompositeLuceneIndexTest extends AbstractSchemeExtensionTest {
         when: "first class registration"
         schemeInitializer.register(CompositeLuceneIndexModel)
         def clazz = db.getMetadata().getSchema().getClass(CompositeLuceneIndexModel)
+        db.getMetadata().reload()
         then: "indexes created"
         clazz.getClassIndexes().size() == 1
         clazz.getClassIndex("test").getType() == OClass.INDEX_TYPE.FULLTEXT.name()
@@ -42,8 +44,10 @@ class CompositeLuceneIndexTest extends AbstractSchemeExtensionTest {
         def clazz = db.getMetadata().getSchema().createClass(CompositeLuceneIndexModel)
         clazz.createProperty("foo", OType.STRING)
         clazz.createProperty("bar", OType.STRING)
-        clazz.createIndex("test", "FULLTEXT", null, null, "LUCENE", ["foo", "bar"] as String[]);
+        SchemeUtils.command(db, "create index test on CompositeLuceneIndexModel (foo,bar) fulltext engine lucene")
+//        clazz.createIndex("test", "FULLTEXT", null, null, "LUCENE", ["foo", "bar"] as String[]);
         schemeInitializer.register(CompositeLuceneIndexModel)
+        db.getMetadata().reload()
         then: "indexes re-created"
         clazz.getClassIndexes().size() == 1
         clazz.getClassIndex("test").getMetadata().field(LuceneIndexFieldExtension.ANALYZER) == EnglishAnalyzer.name
@@ -55,7 +59,8 @@ class CompositeLuceneIndexTest extends AbstractSchemeExtensionTest {
         def clazz = db.getMetadata().getSchema().createClass(CompositeLuceneIndexModel)
         clazz.createProperty("foo", OType.STRING)
         clazz.createProperty("bar", OType.STRING)
-        clazz.createIndex("test", "FULLTEXT", null, null, "LUCENE", ["bar", "foo"] as String[]);
+        SchemeUtils.command(db, "create index test on CompositeLuceneIndexModel (bar,foo) fulltext engine lucene")
+//        clazz.createIndex("test", "FULLTEXT", null, null, "LUCENE", ["bar", "foo"] as String[]);
         schemeInitializer.register(CompositeLuceneIndexModel)
         then: "error"
         thrown(SchemeInitializationException)
@@ -78,6 +83,7 @@ class CompositeLuceneIndexTest extends AbstractSchemeExtensionTest {
         when: "multiple indexes defined"
         schemeInitializer.register(MultipleLuceneIndexesModel)
         def clazz = db.getMetadata().getSchema().getClass(MultipleLuceneIndexesModel)
+        db.getMetadata().reload()
         then: "indexes created"
         clazz.getClassIndexes().size() == 2
         clazz.getClassIndex("test1").getType() == OClass.INDEX_TYPE.FULLTEXT.name()
