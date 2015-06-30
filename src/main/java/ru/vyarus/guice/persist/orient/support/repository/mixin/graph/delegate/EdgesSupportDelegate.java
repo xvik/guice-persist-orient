@@ -1,5 +1,6 @@
 package ru.vyarus.guice.persist.orient.support.repository.mixin.graph.delegate;
 
+import com.google.common.base.Preconditions;
 import com.google.inject.ProvidedBy;
 import com.google.inject.Provider;
 import com.google.inject.internal.DynamicSingletonProvider;
@@ -10,6 +11,7 @@ import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.impls.orient.OrientBaseGraph;
 import com.tinkerpop.blueprints.impls.orient.OrientEdge;
+import com.tinkerpop.blueprints.impls.orient.OrientVertex;
 import ru.vyarus.guice.persist.orient.db.util.RidUtils;
 import ru.vyarus.guice.persist.orient.support.repository.mixin.graph.EdgesSupport;
 
@@ -62,7 +64,10 @@ public abstract class EdgesSupportDelegate implements EdgesSupport {
 
     @Override
     public void deleteEdge(final Object edge) {
-        graphDb.get().getEdge(RidUtils.getRid(edge)).remove();
+        final OrientEdge edgeImpl = graphDb.get().getEdge(RidUtils.getRid(edge));
+        if (edgeImpl != null) {
+            edgeImpl.remove();
+        }
     }
 
     @Override
@@ -107,21 +112,25 @@ public abstract class EdgesSupportDelegate implements EdgesSupport {
     private OrientEdge createEdgeImpl(final Class edgeClass, final Object from, final Object to) {
         final OrientBaseGraph graph = graphDb.get();
         return graph.addEdge("class:" + edgeClass.getSimpleName(),
-                graph.getVertex(RidUtils.getRid(from)),
-                graph.getVertex(RidUtils.getRid(to)), null);
+                getVertex(from),
+                getVertex(to), null);
     }
 
     @SuppressWarnings("unchecked")
     private <T> T findEdgeImpl(final Class<T> edgeClass, final Object first, final Object second,
                                final Direction direction) {
-        final OrientBaseGraph graph = graphDb.get();
-        final Iterator<Edge> it = graph.getVertex(RidUtils.getRid(first))
-                .getEdges(graph.getVertex(RidUtils.getRid(second)), direction,
+        final Iterator<Edge> it = getVertex(first)
+                .getEdges(getVertex(second), direction,
                         edgeClass.getSimpleName()).iterator();
         T res = null;
         if (it.hasNext()) {
             res = objectDb.get().load(((OrientEdge) it.next()).getIdentity());
         }
         return res;
+    }
+
+    private OrientVertex getVertex(final Object object) {
+        final String rid = RidUtils.getRid(object);
+        return Preconditions.checkNotNull(graphDb.get().getVertex(rid), "No vertex found for rid %s", rid);
     }
 }

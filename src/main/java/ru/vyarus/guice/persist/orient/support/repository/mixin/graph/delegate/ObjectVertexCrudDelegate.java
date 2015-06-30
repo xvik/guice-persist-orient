@@ -5,6 +5,7 @@ import com.google.inject.Provider;
 import com.google.inject.internal.DynamicSingletonProvider;
 import com.orientechnologies.orient.core.id.ORID;
 import com.tinkerpop.blueprints.impls.orient.OrientBaseGraph;
+import com.tinkerpop.blueprints.impls.orient.OrientVertex;
 import ru.vyarus.guice.persist.orient.db.util.RidUtils;
 import ru.vyarus.guice.persist.orient.support.repository.mixin.graph.ObjectVertexCrud;
 
@@ -26,15 +27,21 @@ public abstract class ObjectVertexCrudDelegate<T> implements ObjectVertexCrud<T>
     public ObjectVertexCrudDelegate(final Provider<OrientBaseGraph> dbProvider) {
         this.dbProvider = dbProvider;
     }
-//todo add null checks
+
     @Override
     public void delete(final ORID id) {
-        dbProvider.get().getVertex(id).remove();
+        final OrientVertex vertex = dbProvider.get().getVertex(id);
+        if (vertex != null) {
+            vertex.remove();
+        }
     }
 
     @Override
     public void delete(final String id) {
-        dbProvider.get().getVertex(id).remove();
+        final OrientVertex vertex = dbProvider.get().getVertex(id);
+        if (vertex != null) {
+            vertex.remove();
+        }
     }
 
     @Override
