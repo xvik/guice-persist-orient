@@ -63,6 +63,11 @@ public abstract class DocumentCrudDelegate implements DocumentCrud {
         return dbProvider.get().browseClass(type.getSimpleName());
     }
 
+    // delegate extension will found method by name and default converter will convert iterator to list
+    public Iterator<ODocument> getAllAsList(@Generic("T") final Class<?> type) {
+        return getAll(type);
+    }
+
     public ODocument create(@Generic("T") final Class<?> type) {
         // document creation requires db object bound to current thread, so to make sure
         // we need to start transaction (if not already started)

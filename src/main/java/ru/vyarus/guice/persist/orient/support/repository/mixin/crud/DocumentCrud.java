@@ -6,6 +6,7 @@ import ru.vyarus.guice.persist.orient.repository.delegate.Delegate;
 import ru.vyarus.guice.persist.orient.support.repository.mixin.crud.delegate.DocumentCrudDelegate;
 
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * Crud mixin for document repositories.
@@ -54,10 +55,22 @@ public interface DocumentCrud<T> {
     /**
      * NOTE: works only if generic parameter set. Method can't be used in case when queried type doesn't have
      * class reference.
+     * When working with large table its better to use this method, because db could load entities lazily, instead
+     * of loading all at once.
      *
      * @return all records of type
      */
     Iterator<ODocument> getAll();
+
+    /**
+     * NOTE: works only if generic parameter set. Method can't be used in case when queried type doesn't have
+     * class reference.
+     * When working with large table its better to use {@link #getAll()}, because db could load entities lazily,
+     * instead of loading all at once.
+     *
+     * @return all records of type
+     */
+    List<ODocument> getAllAsList();
 
     /**
      * Create new empty document.

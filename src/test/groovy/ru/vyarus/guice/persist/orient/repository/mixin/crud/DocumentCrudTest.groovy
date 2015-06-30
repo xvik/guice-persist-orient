@@ -40,6 +40,12 @@ class DocumentCrudTest extends AbstractTest {
         all.size() == 1
         all[0] instanceof ODocument
 
+        when: "selecting all records as list"
+        all = documentDao.getAllAsList()
+        then: "retrieved"
+        all.size() == 1
+        all[0] instanceof ODocument
+
         when: "loading document"
         doc = documentDao.get((String) doc.field('@rid'))
         then: "document found"

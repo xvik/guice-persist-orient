@@ -12,7 +12,9 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 /**
  * Result extension to detach result objects. Use detach to plain object.
  * <p>Extension works in very simple way: if plain result, its being unproxied. In case of collection,
- * collection is cleared and unproxied results added at the same order.</p>
+ * collection is cleared (to save the same collection type) and unproxied results added at the same order.</p>
+ * <p>If used with objects created in this transaction (and so having temporal id in time of detach),
+ * resulted pojo will be tracked and correct id set after transaction commit.</p>
  * <p>Be careful, because detach will lead to loading of entire object graph.</p>
  * <p>If used not with object connection, error will be thrown to indicate incorrect usage.</p>
  *

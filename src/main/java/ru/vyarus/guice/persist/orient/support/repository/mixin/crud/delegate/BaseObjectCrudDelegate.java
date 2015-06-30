@@ -93,6 +93,11 @@ public abstract class BaseObjectCrudDelegate<T> implements BaseObjectCrud<T> {
         return dbProvider.get().browseClass(type);
     }
 
+    // delegate extension will found method by name and default converter will convert iterator to list
+    public Iterator<T> getAllAsList(@Generic("T") final Class<T> type) {
+        return getAll(type);
+    }
+
     private List<T> detachAll(final List<T> entities) {
         final List<T> res = Lists.newArrayList();
         for (T entity : entities) {

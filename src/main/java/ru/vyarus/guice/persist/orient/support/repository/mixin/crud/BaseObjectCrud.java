@@ -47,6 +47,8 @@ public interface BaseObjectCrud<T> {
 
     /**
      * Calls attach first to simplify usage out of transaction.
+     * If detaching just created object (with temporary id until commit), returned pojo will be tracked
+     * and correct id set automatically after commit.
      *
      * @param entity entity object (proxy)
      * @return detached row entity (unproxied deeply)
@@ -55,6 +57,8 @@ public interface BaseObjectCrud<T> {
 
     /**
      * Calls attach first to simplify usage out of transaction.
+     * If detaching just created objects (with temporary id until commit), returned pojos will be tracked
+     * and correct id set automatically after commit.
      *
      * @param entities entities objects
      * @return detached entities list (unproxied deeply)
@@ -63,6 +67,8 @@ public interface BaseObjectCrud<T> {
 
     /**
      * Calls attach first to simplify usage out of transaction.
+     * If detaching just created object (with temporary id until commit), returned pojo will be tracked
+     * and correct id set automatically after commit.
      *
      * @param entities entities objects
      * @return detached entities list (unproxied deeply)
@@ -71,6 +77,8 @@ public interface BaseObjectCrud<T> {
 
     /**
      * Calls attach first to simplify usage out of transaction.
+     * If detaching just created object (with temporary id until commit), returned pojo will be tracked
+     * and correct id set automatically after commit.
      *
      * @param entities entities objects
      * @return detached entities list (unproxied deeply)
@@ -87,7 +95,18 @@ public interface BaseObjectCrud<T> {
     T create();
 
     /**
+     * When working with large table its better to use this method, because db could load entities lazily, instead
+     * of loading all at once.
+     *
      * @return all records of type
      */
     Iterator<T> getAll();
+
+    /**
+     * When working with large table its better to use {@link #getAll()}, because db could load entities lazily,
+     * instead of loading all at once.
+     *
+     * @return all records of type
+     */
+    List<T> getAllAsList();
 }

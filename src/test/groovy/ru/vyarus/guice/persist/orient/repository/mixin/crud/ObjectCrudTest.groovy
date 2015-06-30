@@ -40,6 +40,12 @@ class ObjectCrudTest extends AbstractTest {
         all.size() == 1
         all[0] instanceof Model
 
+        when: "selecting all records as list"
+        all = objectDao.getAllAsList()
+        then: "retrieved"
+        all.size() == 1
+        all[0] instanceof Model
+
         when: "loading object"
         model = objectDao.get(model.id)
         then: "object found"
