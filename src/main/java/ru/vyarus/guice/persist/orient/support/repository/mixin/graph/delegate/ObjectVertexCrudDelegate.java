@@ -4,6 +4,8 @@ import com.google.inject.ProvidedBy;
 import com.google.inject.Provider;
 import com.google.inject.internal.DynamicSingletonProvider;
 import com.orientechnologies.orient.core.id.ORID;
+import com.orientechnologies.orient.core.record.impl.ODocument;
+import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.impls.orient.OrientBaseGraph;
 import com.tinkerpop.blueprints.impls.orient.OrientVertex;
 import ru.vyarus.guice.persist.orient.db.util.RidUtils;
@@ -21,16 +23,16 @@ import javax.inject.Inject;
 @ProvidedBy(DynamicSingletonProvider.class)
 public abstract class ObjectVertexCrudDelegate<T> implements ObjectVertexCrud<T> {
 
-    private final Provider<OrientBaseGraph> dbProvider;
+    private final Provider<OrientBaseGraph> graphDb;
 
     @Inject
-    public ObjectVertexCrudDelegate(final Provider<OrientBaseGraph> dbProvider) {
-        this.dbProvider = dbProvider;
+    public ObjectVertexCrudDelegate(final Provider<OrientBaseGraph> graphDb) {
+        this.graphDb = graphDb;
     }
 
     @Override
     public void delete(final ORID id) {
-        final OrientVertex vertex = dbProvider.get().getVertex(id);
+        final OrientVertex vertex = graphDb.get().getVertex(id);
         if (vertex != null) {
             vertex.remove();
         }
@@ -38,7 +40,7 @@ public abstract class ObjectVertexCrudDelegate<T> implements ObjectVertexCrud<T>
 
     @Override
     public void delete(final String id) {
-        final OrientVertex vertex = dbProvider.get().getVertex(id);
+        final OrientVertex vertex = graphDb.get().getVertex(id);
         if (vertex != null) {
             vertex.remove();
         }
@@ -47,5 +49,19 @@ public abstract class ObjectVertexCrudDelegate<T> implements ObjectVertexCrud<T>
     @Override
     public void delete(final T entity) {
         delete(RidUtils.getRid(entity));
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public <V extends Vertex> V objectToVertex(final Object vertex) {
+        final ODocument doc = objectToDocument(vertex);
+        return (V) graphDb.get().getVertex(doc);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public T vertexToObject(final Vertex vertex) {
+        final OrientVertex orientVertex = (OrientVertex) vertex;
+        return documentToObject(orientVertex.getRecord());
     }
 }

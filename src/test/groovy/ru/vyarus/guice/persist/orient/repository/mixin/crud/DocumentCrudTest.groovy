@@ -118,4 +118,16 @@ class DocumentCrudTest extends AbstractTest {
         true
     }
 
+    def "Check duplicate remove"() {
+
+        when: "creating and deleting document"
+        ODocument doc = documentDao.create()
+        doc.field('name', 'name')
+        doc = documentDao.save(doc)
+        String id = doc.field('@rid')
+        documentDao.delete(id)
+        documentDao.delete(id)
+        then: 'second delete successful'
+        true
+    }
 }

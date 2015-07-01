@@ -1,6 +1,7 @@
 package ru.vyarus.guice.persist.orient.support.repository.mixin.graph;
 
 import com.orientechnologies.orient.core.id.ORID;
+import com.tinkerpop.blueprints.Vertex;
 import ru.vyarus.guice.persist.orient.repository.delegate.Delegate;
 import ru.vyarus.guice.persist.orient.support.repository.mixin.crud.BaseObjectCrud;
 import ru.vyarus.guice.persist.orient.support.repository.mixin.graph.delegate.ObjectVertexCrudDelegate;
@@ -38,4 +39,20 @@ public interface ObjectVertexCrud<T> extends BaseObjectCrud<T> {
      * @param id entity id to remove
      */
     void delete(ORID id);
+
+    /**
+     * Converts object api instance into orient vertex (preserving state).
+     *
+     * @param vertex vertex object instance
+     * @return orient vertex instance
+     */
+    <V extends Vertex> V objectToVertex(Object vertex);
+
+    /**
+     * Converts orient vertex into pojo (preserving state).
+     *
+     * @param vertex orient vertex instance
+     * @return object api pojo instance
+     */
+    T vertexToObject(Vertex vertex);
 }

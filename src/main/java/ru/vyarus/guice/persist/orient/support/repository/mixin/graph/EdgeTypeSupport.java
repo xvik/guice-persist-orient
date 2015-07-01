@@ -57,6 +57,13 @@ public interface EdgeTypeSupport<E, F, T> {
     void deleteEdge(E edge);
 
     /**
+     * Delete edge by id.
+     *
+     * @param id edge id
+     */
+    void deleteEdge(String id);
+
+    /**
      * Selects edge between connected nodes (any direction).
      * NOTE: if more than one edge of required type exist in db only first edge will be returned.
      *
@@ -77,7 +84,7 @@ public interface EdgeTypeSupport<E, F, T> {
     E findEdgeBetween(F first, T second);
 
     /**
-     * @param id  edge id
+     * @param id edge id
      * @return found entity or null
      */
     E getEdge(String id);

@@ -1,8 +1,11 @@
 package ru.vyarus.guice.persist.orient.repository.mixin.graph
 
 import com.orientechnologies.orient.core.id.ORecordId
+import com.tinkerpop.blueprints.impls.orient.OrientEdge
+import com.tinkerpop.blueprints.impls.orient.OrientVertex
 import ru.vyarus.guice.persist.orient.AbstractTest
 import ru.vyarus.guice.persist.orient.repository.mixin.graph.support.ObjectVertexDao
+import ru.vyarus.guice.persist.orient.support.model.EdgeModel
 import ru.vyarus.guice.persist.orient.support.model.VertexModel
 import ru.vyarus.guice.persist.orient.support.modules.RepositoryTestModule
 import ru.vyarus.guice.persist.orient.util.transactional.TransactionalTest
@@ -51,12 +54,46 @@ class ObjectVertexCrudTest extends AbstractTest {
         dao.countEdges() == 0
     }
 
+    @TransactionalTest
+    def "Check vertex conversions"() {
+
+        when: "converting not persisted vertex pojo"
+        VertexModel model = new VertexModel(name: 'test')
+        OrientVertex vertex = dao.objectToVertex(model)
+        then: 'state preserved'
+        vertex.getProperty("name") == 'test'
+
+        when: "converting persisted pojo"
+        model = dao.save(new VertexModel(name: 't'))
+        model.name = 'test'
+        vertex = dao.objectToVertex(model)
+        then: 'state preserved'
+        vertex.getProperty("name") == 'test'
+
+        when: "converting edge to pojo"
+        vertex.setProperty("name", "changed")
+        model = dao.vertexToObject(vertex)
+        then: 'state preserved'
+        model.name == 'changed'
+    }
+
     def "Check object id restore after transaction"() {
 
         when: "saving raw entity"
         VertexModel model = dao.save(new VertexModel(name: "check id"))
         then: "id correct"
         dao.get(model.getId()) != null
+
+    }
+
+    def "Check duplicate remove"() {
+
+        when: "creating and removing vertex pojo"
+        String id = dao.save(new VertexModel(name: "test")).id
+        dao.delete(id)
+        dao.delete(id)
+        then: "second delete successful"
+        true
 
     }
 }

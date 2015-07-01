@@ -71,8 +71,6 @@ public interface EdgesSupport {
     int deleteEdge(@ElVar("cls") Class edgeClass, @RidElVar("from") Object from, @RidElVar("to") Object to);
 
     /**
-     * Deletes edge from object instance.
-     *
      * @param edge edge instance (object api), document, vertex or rid
      */
     void deleteEdge(Object edge);

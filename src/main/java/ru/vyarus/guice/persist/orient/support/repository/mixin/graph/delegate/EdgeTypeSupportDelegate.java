@@ -43,6 +43,11 @@ public abstract class EdgeTypeSupportDelegate<E> implements EdgeTypeSupport<E, O
         edgesSupport.deleteEdge(edge);
     }
 
+    @Override
+    public void deleteEdge(final String id) {
+        edgesSupport.deleteEdge(id);
+    }
+
     public E findEdge(@Generic("E") final Class<E> edgeClass, final Object from, final Object to) {
         return edgesSupport.findEdge(edgeClass, from, to);
     }

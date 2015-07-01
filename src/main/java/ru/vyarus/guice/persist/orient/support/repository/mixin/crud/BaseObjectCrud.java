@@ -1,6 +1,7 @@
 package ru.vyarus.guice.persist.orient.support.repository.mixin.crud;
 
 import com.orientechnologies.orient.core.id.ORID;
+import com.orientechnologies.orient.core.record.impl.ODocument;
 import ru.vyarus.guice.persist.orient.repository.delegate.Delegate;
 import ru.vyarus.guice.persist.orient.support.repository.mixin.crud.delegate.BaseObjectCrudDelegate;
 
@@ -109,4 +110,20 @@ public interface BaseObjectCrud<T> {
      * @return all records of type
      */
     List<T> getAllAsList();
+
+    /**
+     * Converts object api instance into document (preserving state).
+     *
+     * @param object object instance
+     * @return document instance
+     */
+    ODocument objectToDocument(Object object);
+
+    /**
+     * Converts document into pojo (preserving state).
+     *
+     * @param document document instance
+     * @return object instance
+     */
+    T documentToObject(ODocument document);
 }

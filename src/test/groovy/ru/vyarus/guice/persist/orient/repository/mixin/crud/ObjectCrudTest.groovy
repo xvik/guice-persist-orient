@@ -4,12 +4,14 @@ import com.google.common.collect.Lists
 import com.google.inject.Inject
 import com.orientechnologies.orient.core.exception.ODatabaseException
 import com.orientechnologies.orient.core.id.ORecordId
+import com.orientechnologies.orient.core.record.impl.ODocument
 import ru.vyarus.guice.persist.orient.AbstractTest
 import ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxAction
 import ru.vyarus.guice.persist.orient.repository.RepositoryException
 import ru.vyarus.guice.persist.orient.repository.mixin.crud.support.ObjectDao
 import ru.vyarus.guice.persist.orient.support.model.Model
 import ru.vyarus.guice.persist.orient.support.modules.RepositoryTestModule
+import ru.vyarus.guice.persist.orient.util.transactional.TransactionalTest
 import spock.guice.UseModules
 
 /**
@@ -208,6 +210,29 @@ class ObjectCrudTest extends AbstractTest {
         true
     }
 
+    @TransactionalTest
+    def "Check object conversions"() {
+
+        when: "converting not persisted pojo"
+        Model model = new Model(name: 'test')
+        ODocument doc = objectDao.objectToDocument(model)
+        then: 'state preserved'
+        doc.field("name") == 'test'
+
+        when: "converting persisted pojo"
+        model = objectDao.save(new Model(name: 't'))
+        model.name = 'test'
+        doc = objectDao.objectToDocument(model)
+        then: 'state preserved'
+        doc.field("name") == 'test'
+
+        when: "converting document to pojo"
+        doc.field("name", "changed")
+        model = objectDao.documentToObject(doc)
+        then: 'state preserved'
+        model.name == 'changed'
+    }
+
     def "Check object id restore after transaction"() {
 
         when: "saving raw entity"
@@ -234,5 +259,16 @@ class ObjectCrudTest extends AbstractTest {
         } as SpecificTxAction)
         then: "id is valid (tracked on commit and set correct)"
         !new ORecordId(model.getId()).isNew()
+    }
+
+    def "Check duplicate remove"() {
+
+        when: "creating and removing pojo"
+        String id = objectDao.save(new Model(name: 'test')).id
+        objectDao.delete(id)
+        objectDao.delete(id)
+        then: "second delete successful"
+        true
+
     }
 }

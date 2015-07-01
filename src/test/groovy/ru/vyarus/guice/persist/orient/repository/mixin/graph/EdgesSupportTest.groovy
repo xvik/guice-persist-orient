@@ -132,4 +132,17 @@ class EdgesSupportTest extends AbstractTest {
         dao.getEdge(model.getId()) != null
 
     }
+
+    def "Check double remove"() {
+
+        setup:
+        VertexModel test = dao.save(new VertexModel(name: 'test1'))
+        VertexModel test2 = dao.save(new VertexModel(name: 'test2'))
+
+        when: "creating and removing edge pojo"
+        String id = dao.createEdge(EdgeModel.class, test, test2).id
+        dao.deleteEdge(id)
+        dao.deleteEdge(id)
+        then: "second delete successful"
+    }
 }

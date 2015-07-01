@@ -5,6 +5,7 @@ import com.google.inject.ProvidedBy;
 import com.google.inject.internal.DynamicSingletonProvider;
 import com.orientechnologies.orient.core.id.ORID;
 import com.orientechnologies.orient.core.id.ORecordId;
+import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import com.orientechnologies.orient.object.enhancement.OObjectEntitySerializer;
 import javassist.util.proxy.Proxy;
@@ -27,40 +28,40 @@ import java.util.List;
 @ProvidedBy(DynamicSingletonProvider.class)
 public abstract class BaseObjectCrudDelegate<T> implements BaseObjectCrud<T> {
 
-    private final Provider<OObjectDatabaseTx> dbProvider;
+    private final Provider<OObjectDatabaseTx> objectDb;
 
     @Inject
-    public BaseObjectCrudDelegate(final Provider<OObjectDatabaseTx> dbProvider) {
-        this.dbProvider = dbProvider;
+    public BaseObjectCrudDelegate(final Provider<OObjectDatabaseTx> objectDb) {
+        this.objectDb = objectDb;
     }
 
     @Override
     public T get(final String id) {
-        return dbProvider.get().load(new ORecordId(id));
+        return objectDb.get().load(new ORecordId(id));
     }
 
     @Override
     public T get(final ORID id) {
-        return dbProvider.get().load(id);
+        return objectDb.get().load(id);
     }
 
     @Override
     public T save(final T entity) {
-        return dbProvider.get().save(entity);
+        return objectDb.get().save(entity);
     }
 
     @Override
     public T attach(final T entity) {
         // com.orientechnologies.orient.object.db.OObjectDatabaseTx.attach() did not return object,
         // which is not always correct (new proxy could be created), so do attach directly
-        return OObjectEntitySerializer.attach(entity, dbProvider.get());
+        return OObjectEntitySerializer.attach(entity, objectDb.get());
     }
 
     @Override
     public T detach(final T entity) {
         T res = null;
         if (entity != null) {
-            res = dbProvider.get().detachAll(entity, true);
+            res = objectDb.get().detachAll(entity, true);
             if (entity instanceof Proxy) {
                 // when entity detached under transaction it gets temporal id
                 // this logic will catch real id after commit and set to object
@@ -86,16 +87,28 @@ public abstract class BaseObjectCrudDelegate<T> implements BaseObjectCrud<T> {
     }
 
     public T create(@Generic("T") final Class<T> type) {
-        return dbProvider.get().newInstance(type);
+        return objectDb.get().newInstance(type);
     }
 
     public Iterator<T> getAll(@Generic("T") final Class<T> type) {
-        return dbProvider.get().browseClass(type);
+        return objectDb.get().browseClass(type);
     }
 
     // delegate extension will found method by name and default converter will convert iterator to list
     public Iterator<T> getAllAsList(@Generic("T") final Class<T> type) {
         return getAll(type);
+    }
+
+    @Override
+    public ODocument objectToDocument(final Object object) {
+        return objectDb.get().pojo2Stream(object, new ODocument());
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public T documentToObject(final ODocument document) {
+        final T pojo = objectDb.get().newInstance(document.getClassName());
+        return (T) objectDb.get().stream2pojo(document, pojo, null, true);
     }
 
     private List<T> detachAll(final List<T> entities) {
