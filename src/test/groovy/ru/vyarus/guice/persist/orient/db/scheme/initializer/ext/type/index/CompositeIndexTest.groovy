@@ -74,8 +74,9 @@ class CompositeIndexTest extends AbstractSchemeExtensionTest {
         clazz.createProperty("bar", OType.STRING)
         clazz.createIndex('test', OClass.INDEX_TYPE.NOTUNIQUE, "bar", "foo")
         schemeInitializer.register(CompositeIndexModel)
-        then: "error"
-        thrown(SchemeInitializationException)
+        db.getMetadata().reload()
+        then: "ok"
+        clazz.getClassIndexes().size() == 1
     }
 
     def "Check multiple indexes definition"() {

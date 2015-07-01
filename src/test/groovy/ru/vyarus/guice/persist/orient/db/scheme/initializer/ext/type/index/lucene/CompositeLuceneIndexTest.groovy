@@ -62,8 +62,9 @@ class CompositeLuceneIndexTest extends AbstractSchemeExtensionTest {
         SchemeUtils.command(db, "create index test on CompositeLuceneIndexModel (bar,foo) fulltext engine lucene")
 //        clazz.createIndex("test", "FULLTEXT", null, null, "LUCENE", ["bar", "foo"] as String[]);
         schemeInitializer.register(CompositeLuceneIndexModel)
-        then: "error"
-        thrown(SchemeInitializationException)
+        db.getMetadata().reload()
+        then: "ok"
+        clazz.getClassIndexes().size() == 1
     }
 
     def "Check existing index with incompatible type"() {

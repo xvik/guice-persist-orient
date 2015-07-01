@@ -73,11 +73,10 @@ public class IndexValidationSupport {
      * @param fields new signature index fields
      */
     public void checkFieldsCompatible(final String... fields) {
-        final List<String> indexFields = index.getDefinition().getFields();
+        final Set<String> indexFields = Sets.newHashSet(index.getDefinition().getFields());
         final Joiner joiner = Joiner.on(",");
-        check(indexFields.equals(Lists.newArrayList(fields)),
-                "Existing index '%s' (class '%s') fields '%s' are different from '%s' "
-                        + "(order is important because sql engine rely on it).",
+        check(indexFields.equals(Sets.newHashSet(fields)),
+                "Existing index '%s' (class '%s') fields '%s' are different from '%s'.",
                 index.getName(), index.getDefinition().getClassName(), joiner.join(indexFields), joiner.join(fields));
     }
 

@@ -1,4 +1,4 @@
-package ru.vyarus.guice.persist.orient.study.indexci
+package ru.vyarus.guice.persist.orient.study.index.ci
 
 import com.orientechnologies.orient.core.collate.OCaseInsensitiveCollate
 import com.orientechnologies.orient.core.collate.ODefaultCollate

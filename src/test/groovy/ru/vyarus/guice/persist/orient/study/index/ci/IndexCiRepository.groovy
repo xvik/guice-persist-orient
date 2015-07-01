@@ -1,4 +1,4 @@
-package ru.vyarus.guice.persist.orient.study.indexci
+package ru.vyarus.guice.persist.orient.study.index.ci
 
 import com.google.inject.ProvidedBy
 import com.google.inject.internal.DynamicSingletonProvider
