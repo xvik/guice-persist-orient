@@ -51,10 +51,11 @@ public interface EdgesSupport {
     /**
      * Creates new edge from document. Useful for edges with properties.
      *
-     * @param from from node (orid, vertex, document or object)
-     * @param to   from node (orid, vertex, document or object)
-     * @param edge edge document (its fields will be used to init edge properties)
-     * @param <T>  edge entity type
+     * @param edgeClass edge entity class
+     * @param from      from node (orid, vertex, document or object)
+     * @param to        from node (orid, vertex, document or object)
+     * @param edge      edge document (its fields will be used to init edge properties)
+     * @param <T>       edge entity type
      * @return edge instance (using object api)
      */
     <T> T createEdge(Class<T> edgeClass, Object from, Object to, ODocument edge);
@@ -117,6 +118,7 @@ public interface EdgesSupport {
      * Converts object api instance into orient edge (preserving state).
      *
      * @param edge edge object instance
+     * @param <T>  edge type (simply Edge or OrientEdge)
      * @return orient edge instance
      */
     <T extends Edge> T objectToEdge(Object edge);

@@ -44,6 +44,7 @@ public interface ObjectVertexCrud<T> extends BaseObjectCrud<T> {
      * Converts object api instance into orient vertex (preserving state).
      *
      * @param vertex vertex object instance
+     * @param <V>    vertex type (Vertex or OrientVertex)
      * @return orient vertex instance
      */
     <V extends Vertex> V objectToVertex(Object vertex);
