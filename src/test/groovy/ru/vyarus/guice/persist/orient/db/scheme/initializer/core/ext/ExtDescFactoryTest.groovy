@@ -2,8 +2,11 @@ package ru.vyarus.guice.persist.orient.db.scheme.initializer.core.ext
 
 import com.google.inject.Inject
 import ru.vyarus.guice.persist.orient.AbstractTest
+import ru.vyarus.guice.persist.orient.db.scheme.SchemeInitializationException
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.core.ext.support.TestModel1
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.core.ext.support.TestModel2
+import ru.vyarus.guice.persist.orient.db.scheme.initializer.core.ext.support.bad.BadFieldExtModel
+import ru.vyarus.guice.persist.orient.db.scheme.initializer.core.ext.support.bad.BadTypeExtModel
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.core.ext.support.ext.FieldExtension2
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.core.ext.support.ext.FieldExtension3
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.core.ext.support.ext.TypeExtension2
@@ -41,5 +44,18 @@ class ExtDescFactoryTest extends AbstractTest {
         res.type[0].extension instanceof TypeExtension2
         res.type[1].extension instanceof TypeExtension3
         res.fields.isEmpty()
+    }
+
+    def "Check error extensions"() {
+
+        when: "resolving bad type extension"
+        factory.resolveExtensions(BadTypeExtModel)
+        then: "error"
+        thrown(SchemeInitializationException)
+
+        when: "resolving bad field extension"
+        factory.resolveExtensions(BadFieldExtModel)
+        then: "error"
+        thrown(SchemeInitializationException)
     }
 }

@@ -145,4 +145,20 @@ class EdgesSupportTest extends AbstractTest {
         dao.deleteEdge(id)
         then: "second delete successful"
     }
+
+    @TransactionalTest
+    def "Check edge update as orient edge"() {
+
+        setup:
+        VertexModel test = dao.save(new VertexModel(name: 'test1'))
+        VertexModel test2 = dao.save(new VertexModel(name: 'test2'))
+
+        when: "creating and updating edge"
+        OrientEdge edge = dao.objectToEdge(dao.createEdge(EdgeModel.class, test, test2))
+        edge.setProperty("name", "tttest")
+        dao.updateEdge(edge)
+        then: "updated"
+        dao.<EdgeModel>getEdge(edge.getIdentity().toString()).name == "tttest"
+
+    }
 }
