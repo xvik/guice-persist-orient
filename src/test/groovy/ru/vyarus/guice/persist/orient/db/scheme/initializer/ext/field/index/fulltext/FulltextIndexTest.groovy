@@ -48,11 +48,17 @@ class FulltextIndexTest extends AbstractSchemeExtensionTest {
 
 
         when: "call for already registered indexes"
+        def id = clazz.getClassIndex("FulltextIndexModel.defaults").getIdentity().toString()
+        def id2 = clazz.getClassIndex("FulltextIndexModel.hash").getIdentity().toString()
+        def id3 = clazz.getClassIndex("all_options").getIdentity().toString()
         schemeInitializer.clearModelCache()
         schemeInitializer.register(FulltextIndexModel)
         clazz = db.getMetadata().getSchema().getClass(FulltextIndexModel)
         then: "nothing changed"
         clazz.getClassIndexes().size() == 3
+        id == clazz.getClassIndex("FulltextIndexModel.defaults").getIdentity().toString()
+        id2 == clazz.getClassIndex("FulltextIndexModel.hash").getIdentity().toString()
+        id3 == clazz.getClassIndex("all_options").getIdentity().toString()
         clazz.getClassIndex("FulltextIndexModel.defaults").getType() == OClass.INDEX_TYPE.FULLTEXT.name()
         clazz.getClassIndex("FulltextIndexModel.hash").getType() == OClass.INDEX_TYPE.FULLTEXT_HASH_INDEX.name()
     }
@@ -64,12 +70,18 @@ class FulltextIndexTest extends AbstractSchemeExtensionTest {
         clazz.createProperty("defaults", OType.STRING)
         clazz.createProperty("hash", OType.STRING)
         clazz.createProperty("options", OType.STRING)
-        clazz.createIndex('FulltextIndexModel.defaults', OClass.INDEX_TYPE.FULLTEXT, "defaults")
+        clazz.createIndex('FulltextIndexModel.defaults', OClass.INDEX_TYPE.FULLTEXT_HASH_INDEX, "defaults")
         clazz.createIndex('FulltextIndexModel.hash', OClass.INDEX_TYPE.FULLTEXT, "hash")
         clazz.createIndex('all_options', OClass.INDEX_TYPE.FULLTEXT, "options")
+        def id = clazz.getClassIndex("FulltextIndexModel.defaults").getIdentity().toString()
+        def id2 = clazz.getClassIndex("FulltextIndexModel.hash").getIdentity().toString()
+        def id3 = clazz.getClassIndex("all_options").getIdentity().toString()
         schemeInitializer.register(FulltextIndexModel)
         then: "indexes re-created"
         clazz.getClassIndexes().size() == 3
+        id != clazz.getClassIndex("FulltextIndexModel.defaults").getIdentity().toString()
+        id2 != clazz.getClassIndex("FulltextIndexModel.hash").getIdentity().toString()
+        id3 != clazz.getClassIndex("all_options").getIdentity().toString()
         clazz.getClassIndex("FulltextIndexModel.defaults").getType() == OClass.INDEX_TYPE.FULLTEXT.name()
         clazz.getClassIndex("FulltextIndexModel.hash").getType() == OClass.INDEX_TYPE.FULLTEXT_HASH_INDEX.name()
         def custom = clazz.getClassIndex("all_options")

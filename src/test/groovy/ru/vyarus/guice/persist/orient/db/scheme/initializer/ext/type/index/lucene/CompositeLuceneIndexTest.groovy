@@ -30,11 +30,13 @@ class CompositeLuceneIndexTest extends AbstractSchemeExtensionTest {
         clazz.getClassIndex("test").getType() == OClass.INDEX_TYPE.FULLTEXT.name()
 
         when: "call for already registered indexes"
+        def id = clazz.getClassIndex("test").getIdentity().toString()
         schemeInitializer.clearModelCache()
         schemeInitializer.register(CompositeLuceneIndexModel)
         clazz = db.getMetadata().getSchema().getClass(CompositeLuceneIndexModel)
         then: "nothing changed"
         clazz.getClassIndexes().size() == 1
+        id == clazz.getClassIndex("test").getIdentity().toString()
         clazz.getClassIndex("test").getType() == OClass.INDEX_TYPE.FULLTEXT.name()
     }
 
@@ -44,27 +46,34 @@ class CompositeLuceneIndexTest extends AbstractSchemeExtensionTest {
         def clazz = db.getMetadata().getSchema().createClass(CompositeLuceneIndexModel)
         clazz.createProperty("foo", OType.STRING)
         clazz.createProperty("bar", OType.STRING)
-        SchemeUtils.command(db, "create index test on CompositeLuceneIndexModel (foo,bar) fulltext engine lucene")
+        SchemeUtils.command(db, "create index test on CompositeLuceneIndexModel (foo,bar) fulltext engine lucene metadata {\"marker\":\"true\"}")
 //        clazz.createIndex("test", "FULLTEXT", null, null, "LUCENE", ["foo", "bar"] as String[]);
+        db.getMetadata().reload()
+        // no way to compare indexes by id, because ids not assigned for lucene
+        assert clazz.getClassIndex("test").getMetadata().field("marker")
         schemeInitializer.register(CompositeLuceneIndexModel)
         db.getMetadata().reload()
         then: "indexes re-created"
         clazz.getClassIndexes().size() == 1
+        clazz.getClassIndex("test").getMetadata().field("marker") == null
         clazz.getClassIndex("test").getMetadata().field(LuceneIndexFieldExtension.ANALYZER) == EnglishAnalyzer.name
     }
 
     def "Check existing index with different fields"() {
 
-        when: "index already exist with different fields"
+        when: "index already exist with different fields order"
         def clazz = db.getMetadata().getSchema().createClass(CompositeLuceneIndexModel)
         clazz.createProperty("foo", OType.STRING)
         clazz.createProperty("bar", OType.STRING)
-        SchemeUtils.command(db, "create index test on CompositeLuceneIndexModel (bar,foo) fulltext engine lucene")
+        SchemeUtils.command(db, "create index test on CompositeLuceneIndexModel (bar,foo) fulltext engine lucene metadata {\"analyzer\":\"org.apache.lucene.analysis.en.EnglishAnalyzer\", \"marker\":\"true\"}")
 //        clazz.createIndex("test", "FULLTEXT", null, null, "LUCENE", ["bar", "foo"] as String[]);
+        db.getMetadata().reload()
+        assert clazz.getClassIndex("test").getMetadata().field("marker")
         schemeInitializer.register(CompositeLuceneIndexModel)
         db.getMetadata().reload()
-        then: "ok"
+        then: "index not changed"
         clazz.getClassIndexes().size() == 1
+        clazz.getClassIndex("test").getMetadata().field("marker")
     }
 
     def "Check existing index with incompatible type"() {
