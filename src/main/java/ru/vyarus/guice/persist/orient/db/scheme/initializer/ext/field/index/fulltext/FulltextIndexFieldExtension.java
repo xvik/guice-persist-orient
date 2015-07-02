@@ -2,6 +2,8 @@ package ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.field.index.ful
 
 import com.google.common.base.Objects;
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.orientechnologies.orient.core.index.OIndex;
 import com.orientechnologies.orient.core.metadata.schema.OClass;
 import com.orientechnologies.orient.core.record.impl.ODocument;
@@ -14,8 +16,6 @@ import ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.field.index.Inde
 
 import javax.inject.Singleton;
 import java.lang.reflect.Field;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * {@link FulltextIndex} scheme model field extension.
@@ -44,7 +44,6 @@ public class FulltextIndexFieldExtension implements FieldExtension<FulltextIndex
         final String property = field.getName();
         final String model = descriptor.schemeClass;
         final String name = Objects.firstNonNull(Strings.emptyToNull(annotation.name().trim()), model + '.' + property);
-        final List<String> stopWords = Arrays.asList(annotation.stopWords());
         final OClass clazz = db.getMetadata().getSchema().getClass(model);
         final OIndex<?> classIndex = clazz.getClassIndex(name);
         final OClass.INDEX_TYPE type = annotation.useHashIndex()
@@ -55,7 +54,7 @@ public class FulltextIndexFieldExtension implements FieldExtension<FulltextIndex
             support.checkTypeCompatible(OClass.INDEX_TYPE.FULLTEXT, OClass.INDEX_TYPE.FULLTEXT_HASH_INDEX);
             support.checkFieldsCompatible(property);
 
-            final boolean correct = isIndexCorrect(support, type, annotation, stopWords);
+            final boolean correct = isIndexCorrect(support, type, annotation);
             if (!correct) {
                 support.dropIndex(db);
             } else {
@@ -63,32 +62,33 @@ public class FulltextIndexFieldExtension implements FieldExtension<FulltextIndex
                 return;
             }
         }
-        final ODocument metadata = createMetadata(annotation, stopWords);
+        final ODocument metadata = createMetadata(annotation);
         clazz.createIndex(name, type.name(), null, metadata, null, new String[]{property});
         logger.info("Fulltext index '{}' ({} [{}]) {} created", name, model, property, type);
     }
 
     private boolean isIndexCorrect(final IndexValidationSupport support, final OClass.INDEX_TYPE type,
-                                   final FulltextIndex annotation, final List<String> stopWords) {
+                                   final FulltextIndex annotation) {
         final OIndex classIndex = support.getIndex();
         final ODocument metadata = classIndex.getConfiguration();
+        final Iterable<String> field = metadata.field(STOP_WORDS);
         return support
                 .isIndexSigns(metadata.field(INDEX_RADIX),
                         metadata.field(IGNORE_CHARS),
                         metadata.field(SEPARATOR_CHARS),
                         metadata.field(MIN_WORD_LENGTH),
-                        metadata.field(STOP_WORDS))
+                        Sets.newHashSet(field))
                 .matchRequiredSigns(type, annotation.indexRadix(),
                         annotation.ignoreChars(),
                         annotation.separatorChars(),
                         annotation.minWordLength(),
-                        stopWords);
+                        Sets.newHashSet(annotation.stopWords()));
     }
 
-    private ODocument createMetadata(final FulltextIndex annotation, final List<String> stopWords) {
+    private ODocument createMetadata(final FulltextIndex annotation) {
         final ODocument metadata = new ODocument();
         metadata.field(INDEX_RADIX, annotation.indexRadix());
-        metadata.field(STOP_WORDS, stopWords);
+        metadata.field(STOP_WORDS, Lists.newArrayList(annotation.stopWords()));
         metadata.field(SEPARATOR_CHARS, annotation.separatorChars());
         metadata.field(IGNORE_CHARS, annotation.ignoreChars());
         metadata.field(MIN_WORD_LENGTH, annotation.minWordLength());

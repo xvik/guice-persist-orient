@@ -51,7 +51,7 @@ public @interface FulltextIndex {
     /**
      * @return separator characters
      */
-    String separatorChars() default " \\r\\n\\t:;,.|+*/\\\\=!?[]()";
+    String separatorChars() default " \r\n\t:;,.|+*/\\=!?[]()";
 
     /**
      * @return minimum word length to index

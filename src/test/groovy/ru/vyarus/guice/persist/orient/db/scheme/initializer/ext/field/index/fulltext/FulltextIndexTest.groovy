@@ -29,7 +29,7 @@ class FulltextIndexTest extends AbstractSchemeExtensionTest {
         defaults.getType() == OClass.INDEX_TYPE.FULLTEXT.name()
         defaults.getMetadata().field(FulltextIndexFieldExtension.INDEX_RADIX) == true
         defaults.getMetadata().field(FulltextIndexFieldExtension.IGNORE_CHARS) == "'\""
-        defaults.getMetadata().field(FulltextIndexFieldExtension.SEPARATOR_CHARS) == " \\r\\n\\t:;,.|+*/\\\\=!?[]()"
+        defaults.getMetadata().field(FulltextIndexFieldExtension.SEPARATOR_CHARS) == " \r\n\t:;,.|+*/\\=!?[]()"
         defaults.getMetadata().field(FulltextIndexFieldExtension.MIN_WORD_LENGTH) == 3
         defaults.getMetadata().field(FulltextIndexFieldExtension.STOP_WORDS) == ["the", "in", "a", "at", "as", "and", "or", "for", "his", "her", "him",
                                                                                  "this", "that", "what", "which", "while", "up", "with", "be", "was", "were", "is"]
