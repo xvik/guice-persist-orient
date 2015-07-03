@@ -28,27 +28,27 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * <p>Example usage:</p>
  * <pre>{@code
  *  &copy;Query("select from (traverse out from ${id})")
- *  public List doSmth(@RidVar("id") String id)
+ *  public List doSmth(@RidElVar("id") String id)
  * }</pre>
  * Or
  * <pre>{@code
  *  &copy;Query("select from (traverse out from ${id})")
- *  public List doSmth(@RidVar("id") ODocument id)
+ *  public List doSmth(@RidElVar("id") ODocument id)
  * }</pre>
  * Or even raw Object to accept all cases (universal)
  * <pre>{@code
  *  &copy;Query("select from (traverse out from ${id})")
- *  public List doSmth(@RidVar("id") Object id)
+ *  public List doSmth(@RidElVar("id") Object id)
  * }</pre>
  * Or collection
  * <pre>{@code
  *  &copy;Query("select from (traverse out from ${ids})")
- *  public List doSmth(@RidVar("ids") List<ODocument> ids)
+ *  public List doSmth(@RidElVar("ids") List<ODocument> ids)
  * }</pre>
  * Or varag (array)
  * <pre>{@code
  *  &copy;Query("select from (traverse out from ${ids})")
- *  public List doSmth(@RidVar("ids") ODocument... ids)
+ *  public List doSmth(@RidElVar("ids") ODocument... ids)
  * }</pre>
  * @author Vyacheslav Rusakov
  * @since 02.06.2015
