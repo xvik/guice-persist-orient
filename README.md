@@ -40,7 +40,7 @@ Maven:
 <dependency>
 <groupId>ru.vyarus</groupId>
 <artifactId>guice-persist-orient</artifactId>
-<version>3.0.2</version>
+<version>3.1.0</version>
 <exclusions>
   <exclusion>
       <groupId>com.orientechnologies</groupId>
@@ -57,7 +57,7 @@ Maven:
 Gradle:
 
 ```groovy
-compile ('ru.vyarus:guice-persist-orient:3.0.2'){
+compile ('ru.vyarus:guice-persist-orient:3.1.0'){
     exclude module: 'orientdb-graphdb'
     exclude module: 'orientdb-object'       
 }
@@ -291,12 +291,16 @@ It provides additional mapping annotations:
 * [@RenameFrom](https://github.com/xvik/guice-persist-orient/wiki/Object-scheme-initializer#renamefrom) - renames existing scheme class before class registration
 * [@Recreate](https://github.com/xvik/guice-persist-orient/wiki/Object-scheme-initializer#recreate) - drop and create fresh scheme on each start
 * [@CompositeIndex](https://github.com/xvik/guice-persist-orient/wiki/Object-scheme-initializer#compositeindex) - creates composite index for class (index span multiple properties)
+* [@CompositeLuceneIndex](https://github.com/xvik/guice-persist-orient/wiki/Object-scheme-initializer#compositeluceneindex) - creates composite lucene index for class (index span multiple 
 * [@DropIndexes](https://github.com/xvik/guice-persist-orient/wiki/Object-scheme-initializer#dropindexes) - drops existing indexes on start
 * [@RenamePropertyFrom](https://github.com/xvik/guice-persist-orient/wiki/Object-scheme-initializer#renamepropertyfrom) - renames existing scheme property before class registration
 * [@Index](https://github.com/xvik/guice-persist-orient/wiki/Object-scheme-initializer#index) - creates index for annotated field
+* [@FulltextIndex](https://github.com/xvik/guice-persist-orient/wiki/Object-scheme-initializer#fulltextindex) - creates fulltext index for annotated field
+* [@LuceneIndex](https://github.com/xvik/guice-persist-orient/wiki/Object-scheme-initializer#luceneindex) - creates lucene index for annotated field
 * [@Readonly](https://github.com/xvik/guice-persist-orient/wiki/Object-scheme-initializer#readonly) - marks property as readonly
 * [@ONotNull](https://github.com/xvik/guice-persist-orient/wiki/Object-scheme-initializer#onotnull) - marks property as not null
 * [@Mandatory](https://github.com/xvik/guice-persist-orient/wiki/Object-scheme-initializer#mandatory) - marks property as mandatory
+* [@CaseInsensitive](https://github.com/xvik/guice-persist-orient/wiki/Object-scheme-initializer#caseinsensitive) - marks property as case insensitive
 
 New annotation could be easily [implemented as extensions](https://github.com/xvik/guice-persist-orient/wiki/Object-scheme-initializer#extensions)
 (and all existing annotation are extensions and may be replaced).
@@ -504,6 +508,7 @@ All except delegate are command methods (build around orient command objects).
 Command methods parameters annotations:
 * [@Param](https://github.com/xvik/guice-persist-orient/wiki/Repository-command-methods#param) - named parameter
 * [@ElVar](https://github.com/xvik/guice-persist-orient/wiki/Repository-command-methods#elvar) - query variable value (substituted in string before query execution)
+* [@RidElVar](https://github.com/xvik/guice-persist-orient/wiki/Repository-command-methods#ridelvar) - extract rid from provided object, document, vertex, string orid and insert into query as el var
 * [@Var](https://github.com/xvik/guice-persist-orient/wiki/Repository-command-methods#var) - orient command variable ($var), may be used by query during execution
 * [@Skip and @Limit](https://github.com/xvik/guice-persist-orient/wiki/Repository-command-methods#skip-and-limit) - orient pagination
 * [@FetchPlan](https://github.com/xvik/guice-persist-orient/wiki/Repository-command-methods#fetchplan) - defines fetch plan for query
@@ -828,21 +833,16 @@ Read more about [mixins usage](https://github.com/xvik/guice-persist-orient/wiki
 
 Few mixins provided out of the box:
 
-* `ObjectCrud`
-* `DocumentCrud`
-* `Pagination`
+* [DocumentCrud](https://github.com/xvik/guice-persist-orient/wiki/Repository-mixins#documentcrud)
+* [ObjectCrud](https://github.com/xvik/guice-persist-orient/wiki/Repository-mixins#objectcrud)
+* [ObjectVertexCrud](https://github.com/xvik/guice-persist-orient/wiki/Repository-mixins#objectvertexcrud)
+* [EdgesSupport](https://github.com/xvik/guice-persist-orient/wiki/Repository-mixins#edgessupport)
+* [EdgeTypeSupport](https://github.com/xvik/guice-persist-orient/wiki/Repository-mixins#edgetypesupport)
+* [Pagination](https://github.com/xvik/guice-persist-orient/wiki/Repository-mixins#pagination)
 
 Crud mixins are the most common thing: commonly these methods are implemented in `AbstractDao` or something like this.
 
-`ObjectCrud` mixin provides base crud methods for object repository:
-
-```java
-public interface MyEntityRepository extends ObjectCrud<MyEntity> {}
-```
-
-Now MyEntityRepository has all basic crud methods (create, get, delete etc).
-
-`DocumentCrud` mixin provides base crud methods for document repository.
+[DocumentCrud](https://github.com/xvik/guice-persist-orient/wiki/Repository-mixins#documentcrud) mixin provides base crud methods for document repository.
 
 ```java
 public interface MyEntityDao extends DocumentCrud<MyEntity> {}
@@ -851,7 +851,15 @@ public interface MyEntityDao extends DocumentCrud<MyEntity> {}
 Set mixin generic value only if you have reference entity class. Generic affects only `getAll` and `create` methods: if generic not set
 you will not be able to use only this method.
 
-`Pagination` provides simple pagination for your entity or document (but document should have reference type,
+[ObjectCrud](https://github.com/xvik/guice-persist-orient/wiki/Repository-mixins#objectcrud) mixin provides base crud methods for object repository:
+
+```java
+public interface MyEntityRepository extends ObjectCrud<MyEntity> {}
+```
+
+Now MyEntityRepository has all basic crud methods (create, get, delete etc).
+
+[Pagination](https://github.com/xvik/guice-persist-orient/wiki/Repository-mixins#pagination) provides simple pagination for your entity or document (but document should have reference type,
 at least to specify schema type name (may be empty class))
 
 ```java
@@ -864,6 +872,29 @@ Page page = repository.getPage(1, 20);
 
 In order to use pagination mixin, crud mixin is not required (used in example just to mention one more time that mixins could be combined).
 Pagination mixin is the most complex one and good place to inspire how to [write more complex reusable logic](https://github.com/xvik/guice-persist-orient/wiki/Repository-mixins#implementation).
+
+[ObjectVertexCrud](https://github.com/xvik/guice-persist-orient/wiki/Repository-mixins#objectvertexcrud), 
+[EdgesSupport](https://github.com/xvik/guice-persist-orient/wiki/Repository-mixins#edgessupport) and
+[EdgeTypeSupport](https://github.com/xvik/guice-persist-orient/wiki/Repository-mixins#edgetypesupport) mixins allows using graph features from object api.
+
+```java
+@vertexType
+public class Model {}
+
+@EdgeType
+public class ModelConnection {}
+
+@Transactional
+@ProvidedBy(DynamicSingletonProvider.class)
+public interface ModelRepository extends ObjectVertexCrud<Model>, 
+                       EdgeTypeSupport<ModelConnection, Model, Model> {}
+                       
+@Inject ModelRepository repository;
+...
+Model from = repository.save(new Model(..));
+Model to = repository.save(new Model(..));
+ModelConnection edge = repository.createEdge(from, to);
+```
 
 #### Validation
 
