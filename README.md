@@ -24,7 +24,7 @@ Features:
 * Different db users may be used (for example, for schema initialization or to use orient security model), including support for user change inside transaction
 * Support method retry on ONeedRetryException
 * Spring-data like repositories with advanced features (e.g. generics usage in query). Great abilities for creating reusable parts (mixins). Support plugins.
-* Out of the box crud and pagination mixins provided.
+* Basic crud mixins with ability to use object api for graphs
 
 ### Setup
 
