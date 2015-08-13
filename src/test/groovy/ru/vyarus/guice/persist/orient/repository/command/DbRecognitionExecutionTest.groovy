@@ -4,6 +4,7 @@ import com.google.inject.Inject
 import com.orientechnologies.orient.core.record.impl.ODocument
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx
 import com.tinkerpop.blueprints.Vertex
+import com.tinkerpop.blueprints.impls.orient.OrientVertex
 import ru.vyarus.guice.persist.orient.AbstractTest
 import ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxAction
 import ru.vyarus.guice.persist.orient.db.transaction.template.TxAction
@@ -51,6 +52,11 @@ class DbRecognitionExecutionTest extends AbstractTest {
 
         when: "graph select"
         List<Vertex> resVert = dao.selectAllAsVertex();
+        then:
+        resVert.size() == 1
+
+        when: "graph select"
+        List<OrientVertex> resOVert = dao.selectAllAsOrientVertex();
         then:
         resVert.size() == 1
     }

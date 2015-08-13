@@ -2,6 +2,7 @@ package ru.vyarus.guice.persist.orient.repository.command.descriptor
 
 import com.orientechnologies.orient.core.record.impl.ODocument
 import com.tinkerpop.blueprints.Vertex
+import com.tinkerpop.blueprints.impls.orient.OrientVertex
 import ru.vyarus.guice.persist.orient.repository.core.AbstractRepositoryDefinitionTest
 import ru.vyarus.guice.persist.orient.repository.core.executor.impl.DocumentRepositoryExecutor
 import ru.vyarus.guice.persist.orient.repository.core.executor.impl.GraphRepositoryExecutor
@@ -59,6 +60,13 @@ class DbTypeRecognitionTest extends AbstractRepositoryDefinitionTest {
         desc.executor.class == GraphRepositoryExecutor
         desc.result.returnType == ResultType.COLLECTION
         desc.result.entityType == Vertex
+
+        when: "graph db method, detection by list generic with derivative type"
+        desc = lookup(DbRecognitionCases.getMethod("selectAllAsOrientVertex"))
+        then: "graph provider recognized"
+        desc.executor.class == GraphRepositoryExecutor
+        desc.result.returnType == ResultType.COLLECTION
+        desc.result.entityType == OrientVertex
 
         when: "no return type, default document"
         desc = lookup(DbRecognitionCases.getMethod("update"))

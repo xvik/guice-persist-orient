@@ -3,8 +3,10 @@ package ru.vyarus.guice.persist.orient.repository.command.support
 import com.google.inject.ProvidedBy
 import com.google.inject.internal.DynamicSingletonProvider
 import com.google.inject.persist.Transactional
+import com.orientechnologies.orient.core.Orient
 import com.orientechnologies.orient.core.record.impl.ODocument
 import com.tinkerpop.blueprints.Vertex
+import com.tinkerpop.blueprints.impls.orient.OrientVertex
 import ru.vyarus.guice.persist.orient.db.DbType
 import ru.vyarus.guice.persist.orient.repository.command.query.Query
 import ru.vyarus.guice.persist.orient.support.model.Model
@@ -38,6 +40,10 @@ interface DbRecognitionCases {
     // graph db
     @Query("select from Model")
     List<Vertex> selectAllAsVertex()
+
+    // check derivative types recognition
+    @Query("select from Model")
+    List<OrientVertex> selectAllAsOrientVertex()
 
     // document db by default
     @Query("update Model set name='changed'")

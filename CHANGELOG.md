@@ -1,3 +1,5 @@
+* Improve graph connection recognition on repository methods: recognize all graph types implementing Vertex or Edge (e.g. OrientVertex, OrientEdge)
+
 ### 3.1.0 (2015-07-04)
 * Add @RidElVar parameter extension to bind rid directly into query from any source (string, object, document, vertex or collections).
 * Add @CaseInsensitive scheme field extension: sets collate ci for case insensitive fields comparison in queries. Also should be used for creation of ci indexes.
