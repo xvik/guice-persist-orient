@@ -1,3 +1,4 @@
+### 3.1.1 (2015-08-16)
 * Improve graph connection recognition on repository methods: recognize all graph types implementing Vertex or Edge (e.g. OrientVertex, OrientEdge)
 
 ### 3.1.0 (2015-07-04)
