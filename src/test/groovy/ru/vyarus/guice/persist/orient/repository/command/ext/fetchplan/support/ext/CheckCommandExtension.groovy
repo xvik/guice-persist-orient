@@ -28,6 +28,11 @@ class CheckCommandExtension implements AmendMethodExtension<CommandMethodDescrip
 
     @Override
     void amendCommand(OCommandRequest query, CommandMethodDescriptor descriptor, Object instance, Object... arguments) {
-        assert expectedPlan == query.getFetchPlan()
+        def idx = query.text.indexOf('FETCHPLAN');
+        def plan = null
+        if (idx >0){
+           plan = query.text.substring(idx+'FETCHPLAN'.length()).trim()
+        }
+        assert expectedPlan == plan
     }
 }

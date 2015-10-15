@@ -19,7 +19,7 @@ import ru.vyarus.guice.persist.orient.support.model.Model
 interface TimeoutCases {
 
     @Timeout(200l)
-    @Query("select from Model")
+    @Query("select from Model LIMIT 10")
     List<Model> all()
 
     // too short to execute, custom strategy will return empty list
@@ -29,7 +29,7 @@ interface TimeoutCases {
 
     // not applied timeout
     @Timeout(0l)
-    @Query("select from Model")
+    @Query("select from Model LIMIT 10")
     List<Model> noTimeout()
 
     // error: bad timeout
