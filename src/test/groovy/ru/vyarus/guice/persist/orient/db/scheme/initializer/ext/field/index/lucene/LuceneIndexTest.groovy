@@ -1,5 +1,6 @@
 package ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.field.index.lucene
 
+import com.orientechnologies.orient.core.Orient
 import com.orientechnologies.orient.core.metadata.schema.OClass
 import com.orientechnologies.orient.core.metadata.schema.OType
 import org.apache.lucene.analysis.en.EnglishAnalyzer
@@ -13,6 +14,12 @@ import ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.AbstractSchemeEx
  * @since 16.06.2015
  */
 class LuceneIndexTest extends AbstractSchemeExtensionTest {
+
+    void afterCleanup() {
+        // execute after base cleanup for more aggressive orient state flush
+        Orient.instance().shutdown()
+        Orient.instance().startup()
+    }
 
     @Override
     String getModelPackage() {

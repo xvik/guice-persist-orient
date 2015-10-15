@@ -17,7 +17,6 @@ class TxUserOverrideTest extends AbstractTest {
 
     def "Check tx user change"() {
 
-
         context.doInTransaction({ db ->
             db.getMetadata().getSecurity().createUser('test', 'test', 'reader')
             db.save(new Model(name: 'name', nick: 'nick'))

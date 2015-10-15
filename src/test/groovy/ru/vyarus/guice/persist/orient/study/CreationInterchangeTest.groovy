@@ -5,14 +5,12 @@ import com.google.inject.Inject
 import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx
 import com.orientechnologies.orient.core.record.impl.ODocument
 import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery
-import com.orientechnologies.orient.core.tx.OTransaction
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx
 import com.tinkerpop.blueprints.impls.orient.OrientBaseGraph
 import ru.vyarus.guice.persist.orient.AbstractTest
-import ru.vyarus.guice.persist.orient.db.transaction.TxConfig
 import ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxAction
 import ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxTemplate
-import ru.vyarus.guice.persist.orient.support.model.Model
+import ru.vyarus.guice.persist.orient.support.model.VertexModel
 import ru.vyarus.guice.persist.orient.support.modules.PackageSchemeModule
 import spock.guice.UseModules
 
@@ -31,20 +29,20 @@ class CreationInterchangeTest extends AbstractTest {
     def "Check object visible"() {
         when: "creating object"
         context.doInTransaction({ db ->
-            db.save(new Model(name: 'John', nick: 'Doe'))
+            db.save(new VertexModel(name: 'John', nick: 'Doe'))
         } as SpecificTxAction)
         List objects = context.doInTransaction({ db ->
-            db.query(new OSQLSynchQuery<Object>("select from Model"))
+            db.query(new OSQLSynchQuery<Object>("select from VertexModel"))
         } as SpecificTxAction<List, OObjectDatabaseTx>)
         List documents = documentTemplate.doInTransaction({ db ->
-            db.query(new OSQLSynchQuery<Object>("select from Model"))
+            db.query(new OSQLSynchQuery<Object>("select from VertexModel"))
         } as SpecificTxAction<List, ODatabaseDocumentTx>)
         List graphs = graphTemplate.doInTransaction({ db ->
             // graph returns iterable
-            Lists.newArrayList(db.getVerticesOfClass(Model.simpleName))
+            Lists.newArrayList(db.getVerticesOfClass(VertexModel.simpleName))
         } as SpecificTxAction<List, OrientBaseGraph>)
         List graphsQuery = graphTemplate.doInTransaction({ db ->
-            Lists.newArrayList(db.command(new OSQLSynchQuery<Object>("select from Model")))
+            Lists.newArrayList(db.command(new OSQLSynchQuery<Object>("select from VertexModel")))
         } as SpecificTxAction<List, OrientBaseGraph>)
         then: "other connections see it"
         objects.size() == 1
@@ -56,23 +54,23 @@ class CreationInterchangeTest extends AbstractTest {
     def "Check document visible"() {
         when: "creating document"
         documentTemplate.doInTransaction({ db ->
-            ODocument doc = new ODocument(Model.simpleName)
+            ODocument doc = new ODocument(VertexModel.simpleName)
             doc.field('name', 'John')
             doc.field('nick', 'Doe')
             db.save(doc)
         } as SpecificTxAction)
         List objects = context.doInTransaction({ db ->
-            db.query(new OSQLSynchQuery<Object>("select from Model"))
+            db.query(new OSQLSynchQuery<Object>("select from VertexModel"))
         } as SpecificTxAction<List, OObjectDatabaseTx>)
         List documents = documentTemplate.doInTransaction({ db ->
-            db.query(new OSQLSynchQuery<Object>("select from Model"))
+            db.query(new OSQLSynchQuery<Object>("select from VertexModel"))
         } as SpecificTxAction<List, ODatabaseDocumentTx>)
         List graphs = graphTemplate.doInTransaction({ db ->
             // graph returns iterable
-            Lists.newArrayList(db.getVerticesOfClass(Model.simpleName))
+            Lists.newArrayList(db.getVerticesOfClass(VertexModel.simpleName))
         } as SpecificTxAction<List, OrientBaseGraph>)
         List graphsQuery = graphTemplate.doInTransaction({ db ->
-            Lists.newArrayList(db.command(new OSQLSynchQuery<Object>("select from Model")))
+            Lists.newArrayList(db.command(new OSQLSynchQuery<Object>("select from VertexModel")))
         } as SpecificTxAction<List, OrientBaseGraph>)
         then: "other connections see it"
         objects.size() == 1
@@ -83,30 +81,21 @@ class CreationInterchangeTest extends AbstractTest {
 
     def "Check vertex visible"() {
         when: "creating document"
-        // graph can work with models not extending V, but to create it have to properly register scheme:
-        // remove auto registration and create through graph api, after that using graph to update scheme from Class
-        graphTemplate.doInTransaction(new TxConfig(OTransaction.TXTYPE.NOTX), { db ->
-            db.getRawGraph().getMetadata().getSchema().dropClass(Model.simpleName)
-            db.createVertexType(Model.simpleName)
-        } as SpecificTxAction)
-        context.doWithoutTransaction({ db ->
-            db.getEntityManager().registerEntityClass(Model)
-        } as SpecificTxAction)
         graphTemplate.doInTransaction({ db ->
-            db.addVertex("class:$Model.simpleName" as String, "name", "John", "nick", "Doe")
+            db.addVertex("class:$VertexModel.simpleName" as String, "name", "John", "nick", "Doe")
         } as SpecificTxAction)
         List objects = context.doInTransaction({ db ->
-            db.query(new OSQLSynchQuery<Object>("select from Model"))
+            db.query(new OSQLSynchQuery<Object>("select from VertexModel"))
         } as SpecificTxAction<List, OObjectDatabaseTx>)
         List documents = documentTemplate.doInTransaction({ db ->
-            db.query(new OSQLSynchQuery<Object>("select from Model"))
+            db.query(new OSQLSynchQuery<Object>("select from VertexModel"))
         } as SpecificTxAction<List, ODatabaseDocumentTx>)
         List graphs = graphTemplate.doInTransaction({ db ->
             // graph returns iterable
-            Lists.newArrayList(db.getVerticesOfClass(Model.simpleName))
+            Lists.newArrayList(db.getVerticesOfClass(VertexModel.simpleName))
         } as SpecificTxAction<List, OrientBaseGraph>)
         List graphsQuery = graphTemplate.doInTransaction({ db ->
-            Lists.newArrayList(db.command(new OSQLSynchQuery<Object>("select from Model")))
+            Lists.newArrayList(db.command(new OSQLSynchQuery<Object>("select from VertexModel")))
         } as SpecificTxAction<List, OrientBaseGraph>)
         then: "other connections see it"
         objects.size() == 1

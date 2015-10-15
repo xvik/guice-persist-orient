@@ -24,8 +24,13 @@ class DetachExecutionTest extends AbstractTest {
         List<Model> res = repository.select();
         def model = res[0]
         then: "proxy can be used outside of transaction, but data will be incomplete"
+        model != null
         model.class != Model
-        model.name == null
+
+        when: "trying to access property of proxy outside of transaction"
+        model.name
+        then: "npe because of internal orient implementation"
+        thrown(NullPointerException) // NPE due to orient implementation specifics (might be bug)
 
         when: "detach list of objects"
         res = repository.selectDetach()

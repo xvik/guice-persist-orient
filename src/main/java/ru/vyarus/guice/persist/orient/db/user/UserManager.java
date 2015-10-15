@@ -103,6 +103,7 @@ public class UserManager {
     /**
      * Changes current connection user. See {@link #executeWithTxUser(
      *com.orientechnologies.orient.core.metadata.security.OSecurityUser, SpecificUserAction)}.
+     * <p>LIMITATION: current user must have read right on users table.</p>
      *
      * @param user       user login
      * @param userAction logic to execute with specific user
@@ -110,11 +111,18 @@ public class UserManager {
      * @return action result (may be null)
      */
     public <T> T executeWithTxUser(final String user, final SpecificUserAction<T> userAction) {
-        checkSpecificUserConditions(user);
+        final boolean userChanged = checkSpecificUserConditions(user);
         final ODatabaseDocumentTx db = connectionProvider.get();
-        final OUser specificUser = db.getMetadata().getSecurity().getUser(user);
-        Preconditions.checkState(specificUser != null, "User '%s' not found", user);
-        return executeWithTxUser(specificUser, userAction);
+        T res;
+        if (userChanged) {
+            // this may cause security exception if current user has no access rights to users table
+            final OUser specificUser = db.getMetadata().getSecurity().getUser(user);
+            Preconditions.checkState(specificUser != null, "User '%s' not found", user);
+            res = executeWithTxUser(specificUser, userAction);
+        } else {
+            res = executeWithTxUser(db.getUser(), userAction);
+        }
+        return res;
     }
 
     /**

@@ -1,12 +1,12 @@
 package ru.vyarus.guice.persist.orient
 
 import com.google.inject.persist.PersistService
-import com.orientechnologies.orient.core.Orient
 import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx
 import ru.vyarus.guice.persist.orient.db.PersistentContext
 import ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxAction
 import ru.vyarus.guice.persist.orient.support.Config
+import ru.vyarus.guice.persist.orient.util.uniquedb.UniqueDb
 import spock.lang.Specification
 
 import javax.inject.Inject
@@ -18,6 +18,7 @@ import javax.inject.Inject
  * @author Vyacheslav Rusakov 
  * @since 18.07.2014
  */
+@UniqueDb
 abstract class AbstractTest extends Specification {
     @Inject
     PersistService persist
@@ -25,12 +26,7 @@ abstract class AbstractTest extends Specification {
     PersistentContext<OObjectDatabaseTx> context
 
     void setup() {
-        doSetup()
         persist.start()
-    }
-
-    void doSetup() {
-        // the only way in spock to execute something before setup (or allow setup override) is this hack
     }
 
     void cleanup() {
@@ -44,7 +40,21 @@ abstract class AbstractTest extends Specification {
         } as SpecificTxAction<Void, OObjectDatabaseTx>)
         persist.stop()
         if (!Config.DB.contains("remote")) {
-            new ODatabaseDocumentTx(Config.DB).open(Config.USER, Config.PASS).drop()
+            def db = new ODatabaseDocumentTx(Config.DB)
+            if (db.exists()) {
+                try {
+                    db.open(Config.USER, Config.PASS).drop()
+                } catch (Exception ex) {
+                    // manly resolves problem with lucene indexes
+                    // at this point test already pass so its perfectly ok to forbid some orient errors
+                    System.err.println("Db " + Config.DB + " drop error:");
+                    ex.printStackTrace()
+                }
+            }
         }
+        afterCleanup()
+    }
+
+    void afterCleanup() {
     }
 }

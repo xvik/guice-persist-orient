@@ -1,6 +1,7 @@
 package ru.vyarus.guice.persist.orient.repository.mixin.graph
 
 import ru.vyarus.guice.persist.orient.AbstractTest
+import ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxAction
 import ru.vyarus.guice.persist.orient.repository.mixin.graph.support.EdgeTypeDao
 import ru.vyarus.guice.persist.orient.support.model.EdgeModel
 import ru.vyarus.guice.persist.orient.support.model.VertexModel
@@ -76,8 +77,12 @@ class EdgeTypeSupportTest extends AbstractTest {
 
         when: "saving raw entity"
         EdgeModel model = dao.createEdge(test, test2)
+        // edge instance can't be detached because orient tries to operate on in/out fields
+        String id = context.doInTransaction({db ->
+            model.id
+        } as SpecificTxAction)
         then: "id correct"
-        dao.getEdge(model.getId()) != null
+        dao.getEdge(id) != null
 
     }
 
@@ -88,7 +93,11 @@ class EdgeTypeSupportTest extends AbstractTest {
         VertexModel test2 = dao.save(new VertexModel(name: 'test2'))
 
         when: "creating and removing edge pojo"
-        String id = dao.createEdge(test, test2).id
+        EdgeModel model = dao.createEdge(test, test2)
+        // edge instance can't be detached because orient tries to operate on in/out fields
+        String id = context.doInTransaction({db ->
+            model.id
+        } as SpecificTxAction)
         dao.deleteEdge(id)
         dao.deleteEdge(id)
         then: "second delete successful"

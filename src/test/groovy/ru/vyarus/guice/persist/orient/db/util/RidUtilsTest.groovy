@@ -15,6 +15,7 @@ import ru.vyarus.guice.persist.orient.support.model.Model
 import ru.vyarus.guice.persist.orient.support.model.VertexModel
 import ru.vyarus.guice.persist.orient.support.modules.BootstrapModule
 import ru.vyarus.guice.persist.orient.support.modules.PackageSchemeModule
+import ru.vyarus.guice.persist.orient.util.transactional.TransactionalTest
 import spock.guice.UseModules
 
 import javax.inject.Inject
@@ -29,12 +30,11 @@ class RidUtilsTest extends AbstractTest {
     @Inject
     PersistentContext<OrientGraph> graph
 
+    @TransactionalTest
     def "Check valid cases"() {
 
         setup:
-        VertexModel model = context.doInTransaction({ db ->
-            db.save(new VertexModel(name: 'test'))
-        } as SpecificTxAction)
+        VertexModel model = context.getConnection().save(new VertexModel(name: 'test'))
 
         when: "string rid"
         def res = RidUtils.getRid(model.id)
@@ -62,9 +62,7 @@ class RidUtilsTest extends AbstractTest {
         res == model.id
 
         when: "vertex"
-        Vertex vertex = graph.doInTransaction({ db ->
-            db.getVertex(model.id)
-        } as SpecificTxAction)
+        Vertex vertex = graph.getConnection().getVertex(model.id)
         res = RidUtils.getRid(vertex)
         then: "ok"
         res == model.id

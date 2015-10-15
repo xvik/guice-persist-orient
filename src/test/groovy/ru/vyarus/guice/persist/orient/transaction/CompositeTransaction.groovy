@@ -3,9 +3,8 @@ package ru.vyarus.guice.persist.orient.transaction
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx
 import ru.vyarus.guice.persist.orient.AbstractTest
 import ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxAction
-import ru.vyarus.guice.persist.orient.support.modules.BootstrapModule
+import ru.vyarus.guice.persist.orient.support.model.VertexModel
 import ru.vyarus.guice.persist.orient.support.modules.PackageSchemeModule
-import ru.vyarus.guice.persist.orient.support.service.InsertTransactionalService
 import ru.vyarus.guice.persist.orient.transaction.support.ComplexModificationService
 import spock.guice.UseModules
 
@@ -15,13 +14,18 @@ import javax.inject.Inject
  * @author Vyacheslav Rusakov 
  * @since 28.07.2014
  */
-@UseModules([PackageSchemeModule, BootstrapModule])
+@UseModules(PackageSchemeModule)
 class CompositeTransaction extends AbstractTest {
 
     @Inject
     ComplexModificationService service
-    @Inject
-    InsertTransactionalService insert
+
+    @Override
+    void setup() {
+        context.doWithoutTransaction({ db ->
+            10.times { db.save(new VertexModel(name: 'name' + it)) }
+        } as SpecificTxAction)
+    }
 
     def "Check using graph api to access object data"() {
         when: "retrieve rows created with object api (in data initializer) using graph api"
@@ -33,7 +37,7 @@ class CompositeTransaction extends AbstractTest {
     def "Check transaction isolation in pool"() {
         when: "Inserting element in object transaction and select everything using graph"
         List res = context.doInTransaction({ db ->
-            insert.insertRecord()
+            db.save(new VertexModel(name: 'name11'))
             service.selectWithGraph()
         } as SpecificTxAction<List, OObjectDatabaseTx>)
         then: "Graph connection select just inserted element"

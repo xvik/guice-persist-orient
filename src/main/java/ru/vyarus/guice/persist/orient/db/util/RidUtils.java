@@ -1,6 +1,7 @@
 package ru.vyarus.guice.persist.orient.db.util;
 
 import com.google.common.base.Preconditions;
+import com.orientechnologies.orient.core.db.ODatabaseRecordThreadLocal;
 import com.orientechnologies.orient.core.db.record.OIdentifiable;
 import com.orientechnologies.orient.core.id.ORID;
 import com.orientechnologies.orient.core.id.ORecordId;
@@ -11,6 +12,8 @@ import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.object.enhancement.OObjectEntitySerializer;
 import com.orientechnologies.orient.object.serialization.OObjectSerializerHelper;
 import javassist.util.proxy.Proxy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.vyarus.guice.persist.orient.db.PersistException;
 
 import java.lang.reflect.Field;
@@ -22,6 +25,8 @@ import java.lang.reflect.Field;
  * @since 03.06.2015
  */
 public final class RidUtils {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(RidUtils.class);
 
     private RidUtils() {
     }
@@ -35,7 +40,7 @@ public final class RidUtils {
      * @param value value may be a mapped object (proxy or raw), document, vertex, ORID or simple string
      * @return correct rid string
      * @throws ru.vyarus.guice.persist.orient.db.PersistException if rid couldn't be resolved
-     * @throws NullPointerException if value is null
+     * @throws NullPointerException                               if value is null
      */
     public static String getRid(final Object value) {
         Preconditions.checkNotNull(value, "Not null value required");
@@ -98,7 +103,7 @@ public final class RidUtils {
     }
 
     private static String resolveIdFromObject(final Object value) {
-        final Field idField = OObjectEntitySerializer.getIdField(value.getClass());
+        final Field idField = findIdField(value);
         final String className = value.getClass().getSimpleName();
         if (idField == null) {
             throw new PersistException(String.format("Class %s doesn't contain id field", className));
@@ -123,5 +128,32 @@ public final class RidUtils {
             throw new PersistException(String.format("String '%s' is not rid", val));
         }
         return val;
+    }
+
+    /**
+     * Core orient field resolve method relies on bound connection, but it may be required to resolve
+     * id outside of transaction. So we use orient method under transaction and do manual scan outside
+     * of transaction.
+     *
+     * @param value object instance (non proxy)
+     * @return object id field or null if not found
+     */
+    private static Field findIdField(final Object value) {
+        Field res = null;
+        final Class<?> type = value.getClass();
+        if (ODatabaseRecordThreadLocal.INSTANCE.isDefined()) {
+            res = OObjectEntitySerializer.getIdField(type);
+        } else {
+            final String idField = OObjectSerializerHelper.getObjectIDFieldName(value);
+            if (idField != null) {
+                try {
+                    res = type.getDeclaredField(idField);
+                } catch (NoSuchFieldException e) {
+                    LOGGER.warn(String
+                            .format("Id field '%s' not found in class '%s'.", idField, type.getSimpleName()), e);
+                }
+            }
+        }
+        return res;
     }
 }

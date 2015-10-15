@@ -46,10 +46,5 @@ class ScriptsExecutionTest extends AbstractTest {
         dao.positional('test')
         then: "ok"
         true
-
-        when: "positional hack"
-        dao.positionalHack('test')
-        then: "ok"
-        true
     }
 }

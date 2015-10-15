@@ -165,6 +165,7 @@ public class PersistentContext<C> {
      *String, ru.vyarus.guice.persist.orient.db.user.SpecificUserAction)}.</p>
      * <p>Use {@link ru.vyarus.guice.persist.orient.db.user.UserManager} directly to change user for
      * multiple transactions.</p>
+     * <p>LIMITATION: current user must have read right on users table.</p>
      *
      * @param user   user login
      * @param action action to execute under user

@@ -1,6 +1,8 @@
 package ru.vyarus.guice.persist.orient.db.pool
 
 import com.google.inject.Inject
+import com.orientechnologies.orient.core.command.OCommandExecutor
+import com.orientechnologies.orient.core.command.OCommandRequestText
 import com.orientechnologies.orient.core.db.ODatabase
 import com.orientechnologies.orient.core.db.ODatabaseListener
 import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx
@@ -62,6 +64,16 @@ class PoolRecoveryTest extends AbstractTest {
 
                 @Override
                 void onClose(ODatabase iDatabase) {
+                }
+
+                @Override
+                void onBeforeCommand(OCommandRequestText iCommand, OCommandExecutor executor) {
+
+                }
+
+                @Override
+                void onAfterCommand(OCommandRequestText iCommand, OCommandExecutor executor, Object result) {
+
                 }
 
                 @Override

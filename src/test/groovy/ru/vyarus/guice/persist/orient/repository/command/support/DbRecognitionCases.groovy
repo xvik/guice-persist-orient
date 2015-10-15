@@ -3,12 +3,12 @@ package ru.vyarus.guice.persist.orient.repository.command.support
 import com.google.inject.ProvidedBy
 import com.google.inject.internal.DynamicSingletonProvider
 import com.google.inject.persist.Transactional
-import com.orientechnologies.orient.core.Orient
 import com.orientechnologies.orient.core.record.impl.ODocument
 import com.tinkerpop.blueprints.Vertex
 import com.tinkerpop.blueprints.impls.orient.OrientVertex
 import ru.vyarus.guice.persist.orient.db.DbType
 import ru.vyarus.guice.persist.orient.repository.command.query.Query
+import ru.vyarus.guice.persist.orient.repository.core.ext.service.result.ext.detach.DetachResult
 import ru.vyarus.guice.persist.orient.support.model.Model
 
 /**
@@ -31,6 +31,7 @@ interface DbRecognitionCases {
 
     // single element select
     @Query("select from Model")
+    @DetachResult
     Model selectUnique()
 
     // document db

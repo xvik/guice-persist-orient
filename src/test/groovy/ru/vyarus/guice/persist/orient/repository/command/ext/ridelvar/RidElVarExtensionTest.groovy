@@ -28,17 +28,16 @@ class RidElVarExtensionTest extends AbstractTest {
     def "Check parameter binding fail in traverse"() {
 
         setup:
-        VertexModel from = helper.findByName("from")
+        VertexModel from = helper.detach(helper.findByName("from"))
         when: "query with parameters"
-        dao.errorDemo(from.id)
-        then: "parameters not assigned"
-        // this is not normal, but parameters are often not supported in query
-        thrown(MethodExecutionException)
+        List<VertexModel> res = dao.paramPositional(from.id)
+        then: "ok"
+        res.size() == 1
     }
 
     def "Check rid var bindings"() {
         setup:
-        VertexModel from = helper.findByName("from")
+        VertexModel from = helper.detach(helper.findByName("from"))
 
         when: "string rid"
         List<VertexModel> res = dao.string(from.id)

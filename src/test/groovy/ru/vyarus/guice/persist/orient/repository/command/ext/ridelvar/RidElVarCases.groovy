@@ -18,9 +18,8 @@ import ru.vyarus.guice.persist.orient.support.model.VertexModel
 @ProvidedBy(DynamicSingletonProvider)
 interface RidElVarCases {
 
-    // travers part doesn't support parameters
     @Query('select from (traverse out from ?)')
-    List<VertexModel> errorDemo(String id)
+    List<VertexModel> paramPositional(String id)
 
     @Query('select from (traverse out from ${id})')
     @DetachResult

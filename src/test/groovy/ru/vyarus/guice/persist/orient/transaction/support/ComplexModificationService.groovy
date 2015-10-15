@@ -6,6 +6,7 @@ import com.google.inject.persist.Transactional
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx
 import com.tinkerpop.blueprints.Vertex
 import com.tinkerpop.blueprints.impls.orient.OrientGraph
+import ru.vyarus.guice.persist.orient.support.model.VertexModel
 
 import javax.inject.Inject
 
@@ -24,6 +25,6 @@ class ComplexModificationService {
     @Transactional
     List<Vertex> selectWithGraph() {
         OrientGraph db = txGraphProvider.get();
-        Lists.newArrayList(db.getVerticesOfClass("Model"))
+        Lists.newArrayList(db.getVerticesOfClass(VertexModel.class.simpleName))
     }
 }

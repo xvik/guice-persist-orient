@@ -8,7 +8,6 @@ import ru.vyarus.guice.persist.orient.support.modules.DefaultModule
 import spock.guice.UseModules
 import spock.lang.Specification
 
-
 /**
  * Checking that we don't try creating remote database
  * @author Vyacheslav Rusakov 

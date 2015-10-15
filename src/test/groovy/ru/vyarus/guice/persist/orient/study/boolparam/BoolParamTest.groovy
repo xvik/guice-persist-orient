@@ -4,6 +4,7 @@ import ru.vyarus.guice.persist.orient.AbstractTest
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.ObjectSchemeInitializer
 import ru.vyarus.guice.persist.orient.db.transaction.template.TxAction
 import ru.vyarus.guice.persist.orient.support.modules.RepositoryTestModule
+import ru.vyarus.guice.persist.orient.util.transactional.TransactionalTest
 import spock.guice.UseModules
 
 import javax.inject.Inject
@@ -40,6 +41,7 @@ class BoolParamTest extends AbstractTest {
         } as TxAction)
     }
 
+    @TransactionalTest
     def "Check boolean params"() {
 
         setup:

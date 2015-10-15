@@ -23,11 +23,6 @@ interface ScriptCases {
     void positional(String name)
 
     @Script("""
-        update model set name = :0
-        """)
-    void positionalHack(String name)
-
-    @Script("""
             begin
             let model = select from Model where name='first'
             commit retry 100

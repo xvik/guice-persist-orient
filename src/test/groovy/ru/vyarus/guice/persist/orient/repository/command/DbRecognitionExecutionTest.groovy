@@ -86,10 +86,7 @@ class DbRecognitionExecutionTest extends AbstractTest {
 
         when: "object updated and selected"
         dao.update();
-        Model model = context.doInTransaction({ db ->
-            Model res = dao.selectUnique()
-            return db.detachAll(res, true)
-        } as SpecificTxAction<Model, OObjectDatabaseTx>)
+        Model model = dao.selectUnique()
         then:
         model != null
         model.name == 'changed'
@@ -103,10 +100,7 @@ class DbRecognitionExecutionTest extends AbstractTest {
 
         when: "object updated and selected"
         int cnt = dao.updateWithCount();
-        Model model = context.doInTransaction({ db ->
-            Model res = dao.selectUnique()
-            return db.detachAll(res, true)
-        } as SpecificTxAction<Model, OObjectDatabaseTx>)
+        Model model = dao.selectUnique()
         then:
         cnt == 1
         model != null
@@ -121,10 +115,7 @@ class DbRecognitionExecutionTest extends AbstractTest {
 
         when: "object updated and selected"
         Integer cnt = dao.updateWithCountObject();
-        Model model = context.doInTransaction({ db ->
-            Model res = dao.selectUnique()
-            return db.detachAll(res, true)
-        } as SpecificTxAction<Model, OObjectDatabaseTx>)
+        Model model = dao.selectUnique()
         then:
         cnt == 1
         model != null
@@ -141,8 +132,7 @@ class DbRecognitionExecutionTest extends AbstractTest {
             // execute both in single transaction to make sure object connection used
             // (if document used for update, select would not see changes)
             dao.updateUsingObjectConnection();
-            Model res = dao.selectUnique()
-            return db.detachAll(res, true)
+            dao.selectUnique()
         } as SpecificTxAction<Model, OObjectDatabaseTx>)
         then:
         model != null

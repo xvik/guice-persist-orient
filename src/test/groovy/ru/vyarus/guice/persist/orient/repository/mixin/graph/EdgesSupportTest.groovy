@@ -1,12 +1,11 @@
 package ru.vyarus.guice.persist.orient.repository.mixin.graph
 
 import com.orientechnologies.orient.core.record.impl.ODocument
-import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery
 import com.tinkerpop.blueprints.impls.orient.OrientEdge
 import ru.vyarus.guice.persist.orient.AbstractTest
+import ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxAction
 import ru.vyarus.guice.persist.orient.repository.mixin.graph.support.EdgesDao
 import ru.vyarus.guice.persist.orient.support.model.EdgeModel
-import ru.vyarus.guice.persist.orient.support.model.Model
 import ru.vyarus.guice.persist.orient.support.model.VertexModel
 import ru.vyarus.guice.persist.orient.support.modules.RepositoryTestModule
 import ru.vyarus.guice.persist.orient.util.transactional.TransactionalTest
@@ -115,8 +114,12 @@ class EdgesSupportTest extends AbstractTest {
 
         when: "saving raw entity"
         EdgeModel model = dao.createEdge(test, test2, new EdgeModel(name: "check id"))
+        // edge instance can't be detached because orient tries to operate on in/out fields
+        String id = context.doInTransaction({db ->
+            model.id
+        } as SpecificTxAction)
         then: "id correct"
-        dao.getEdge(model.getId()) != null
+        dao.getEdge(id) != null
 
     }
 
@@ -128,8 +131,12 @@ class EdgesSupportTest extends AbstractTest {
 
         when: "saving raw entity"
         EdgeModel model = dao.createEdge(EdgeModel.class, test, test2)
+        // edge instance can't be detached because orient tries to operate on in/out fields
+        String id = context.doInTransaction({db ->
+            model.id
+        } as SpecificTxAction)
         then: "id correct"
-        dao.getEdge(model.getId()) != null
+        dao.getEdge(id) != null
 
     }
 
@@ -140,7 +147,11 @@ class EdgesSupportTest extends AbstractTest {
         VertexModel test2 = dao.save(new VertexModel(name: 'test2'))
 
         when: "creating and removing edge pojo"
-        String id = dao.createEdge(EdgeModel.class, test, test2).id
+        EdgeModel model = dao.createEdge(EdgeModel.class, test, test2)
+        // edge instance can't be detached because orient tries to operate on in/out fields
+        String id = context.doInTransaction({db ->
+            model.id
+        } as SpecificTxAction)
         dao.deleteEdge(id)
         dao.deleteEdge(id)
         then: "second delete successful"

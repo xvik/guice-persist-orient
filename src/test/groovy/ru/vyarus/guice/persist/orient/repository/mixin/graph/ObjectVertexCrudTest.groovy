@@ -80,7 +80,7 @@ class ObjectVertexCrudTest extends AbstractTest {
     def "Check object id restore after transaction"() {
 
         when: "saving raw entity"
-        VertexModel model = dao.save(new VertexModel(name: "check id"))
+        VertexModel model = dao.detach(dao.save(new VertexModel(name: "check id")))
         then: "id correct"
         dao.get(model.getId()) != null
 
@@ -89,7 +89,7 @@ class ObjectVertexCrudTest extends AbstractTest {
     def "Check duplicate remove"() {
 
         when: "creating and removing vertex pojo"
-        String id = dao.save(new VertexModel(name: "test")).id
+        String id = dao.detach(dao.save(new VertexModel(name: "test"))).id
         dao.delete(id)
         dao.delete(id)
         then: "second delete successful"
