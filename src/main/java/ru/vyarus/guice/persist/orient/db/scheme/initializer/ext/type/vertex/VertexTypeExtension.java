@@ -35,12 +35,8 @@ public class VertexTypeExtension implements TypeExtension<VertexType> {
                                    final VertexType annotation) {
         final String schemeClass = descriptor.schemeClass;
         Preconditions.checkState(databaseManager.isTypeSupported(DbType.GRAPH),
-                "Entity %s can't be registered as graph type, because no graph support available",
+                "Model class %s can't be registered as graph type, because no graph support available",
                 schemeClass);
-        if (descriptor.registered) {
-            Preconditions.checkState(!db.getMetadata().getSchema().getClass(schemeClass).isSubClassOf("E"),
-                    "Entity %s can't be registered as vertex type, because its already edge type", schemeClass);
-        }
         SchemeUtils.assignSuperclass(db, descriptor.modelClass, "V", logger);
     }
 

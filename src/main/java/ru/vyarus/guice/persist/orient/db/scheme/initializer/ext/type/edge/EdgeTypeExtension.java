@@ -35,12 +35,8 @@ public class EdgeTypeExtension implements TypeExtension<EdgeType> {
                                    final EdgeType annotation) {
         final String schemeClass = descriptor.schemeClass;
         Preconditions.checkState(databaseManager.isTypeSupported(DbType.GRAPH),
-                "Entity %s can't be registered as graph type, because no graph support available",
+                "Model class %s can't be registered as graph type, because no graph support available",
                 schemeClass);
-        if (descriptor.registered) {
-            Preconditions.checkState(!db.getMetadata().getSchema().getClass(schemeClass).isSubClassOf("V"),
-                    "Entity %s can't be registered as edge type, because its already vertex type", schemeClass);
-        }
         SchemeUtils.assignSuperclass(db, descriptor.modelClass, "E", logger);
     }
 
