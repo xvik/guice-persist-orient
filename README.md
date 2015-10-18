@@ -4,7 +4,7 @@
 [![Build Status](http://img.shields.io/travis/xvik/guice-persist-orient.svg?style=flat&branch=master)](https://travis-ci.org/xvik/guice-persist-orient)
 [![Coverage Status](https://img.shields.io/coveralls/xvik/guice-persist-orient.svg?style=flat)](https://coveralls.io/r/xvik/guice-persist-orient?branch=master)
 
-`guice-persist-orient` wins 4th place in [Software Quality Award 2015](http://www.yegor256.com/award.html)
+`guice-persist-orient` wins 4th place in [Software Quality Award 2015](http://www.yegor256.com/2015/04/16/award.html)
 
 ### About
 
