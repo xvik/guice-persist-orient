@@ -1,3 +1,7 @@
+* Avoid deprecated OCommandRequest api usage (deprecated in 2.1): 
+@FetchPlan, @Limit and @Timeout extensions now modifies query instead of using OCommandRequest setters
+* (behavior change) @EdgeType and @VertexType extensions now assign superclass directly to annotated type (or not of hierarchy already contains required type)
+
 ### 3.1.1 (2015-08-16)
 * Improve graph connection recognition on repository methods: recognize all graph types implementing Vertex or Edge (e.g. OrientVertex, OrientEdge)
 

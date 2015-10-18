@@ -18,6 +18,11 @@ import java.util.List;
  */
 public final class SchemeUtils {
 
+    private static final String V = "V";
+    private static final String E = "E";
+    private static final String VERTEX = "vertex";
+    private static final String EDGE = "edge";
+
     private SchemeUtils() {
     }
 
@@ -38,31 +43,33 @@ public final class SchemeUtils {
     }
 
     /**
-     * Assigns base class in scheme for provided root type (for example, to make class vertex type
+     * Assigns base class in scheme for provided model type (for example, to make class vertex type
      * it must extend V).
      *
-     * @param db     database object
-     * @param root   root model class (the lowest class in model hierarchy)
-     * @param target target super class to assign
-     * @param logger caller specific logger
+     * @param db        database object
+     * @param modelType model class
+     * @param target    target super class to assign
+     * @param logger    caller specific logger
      */
-    public static void assignSuperclass(final OObjectDatabaseTx db, final String root, final String target,
+    public static void assignSuperclass(final OObjectDatabaseTx db, final Class<?> modelType, final String target,
                                         final Logger logger) {
-        if (db.getMetadata().getSchema().existsClass(root)) {
-            final OClass schemeRoot = db.getMetadata().getSchema().getClass(root).getSuperClass();
-
-            Preconditions.checkState(schemeRoot == null || target.equals(schemeRoot.getName()),
-                    "Model class %s can't be registered as extending %s, because its "
-                            + "already extends different class %s",
-                    root, target, schemeRoot == null ? null : schemeRoot.getName());
-            if (schemeRoot == null) {
-                logger.debug("Assigning superclass {} to {}", target, root);
-                command(db, "alter class %s superclass %s", root, target);
+        // searching for first existing scheme class to check hierarchy and avoid duplicates
+        final OClass existing = findFirstExisting(db, modelType);
+        final String modelName = modelType.getSimpleName();
+        if (existing != null) {
+            if (existing.isSubClassOf(target)) {
+                return;
             }
-            return;
+            validateGraphTypes(modelName, existing, target);
         }
-        logger.debug("Creating model class scheme {} as extension to {}", root, target);
-        command(db, "create class %s extends %s", root, target);
+        if (existing != null && modelName.equals(existing.getName())) {
+            logger.debug("Assigning superclass {} to {}", target, modelName);
+            // adding superclass, not overriding!
+            command(db, "alter class %s superclass +%s", modelName, target);
+        } else {
+            logger.debug("Creating model class scheme {} as extension to {}", modelName, target);
+            command(db, "create class %s extends %s", modelName, target);
+        }
     }
 
     /**
@@ -87,5 +94,34 @@ public final class SchemeUtils {
     public static void dropIndex(final OObjectDatabaseTx db, final String indexName) {
         // Separated to overcome findbugs false positive "RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT" for dropIndex method.
         db.getMetadata().getIndexManager().dropIndex(indexName);
+    }
+
+    /**
+     * @param db        db connection
+     * @param modelType model type to examine
+     * @return first class in provided model type class hierarchy which is registered in orient
+     */
+    private static OClass findFirstExisting(final OObjectDatabaseTx db, final Class<?> modelType) {
+        Class<?> target = null;
+        if (!db.getMetadata().getSchema().existsClass(modelType.getSimpleName())) {
+            final List<Class<?>> hierarchy = resolveHierarchy(modelType);
+            for (Class<?> type : hierarchy) {
+                if (db.getMetadata().getSchema().existsClass(type.getSimpleName())) {
+                    target = type;
+                }
+            }
+        } else {
+            target = modelType;
+        }
+        return target == null ? null : db.getMetadata().getSchema().getClass(target);
+    }
+
+    private static void validateGraphTypes(final String modelClass, final OClass existing, final String target) {
+        final boolean isVertex = V.equals(target);
+        if (isVertex || E.equals(target)) {
+            Preconditions.checkState(!existing.isSubClassOf(isVertex ? E : V),
+                    "Model class %s can't be registered as %s type, because its already %s type",
+                    modelClass, isVertex ? VERTEX : EDGE, isVertex ? EDGE : VERTEX);
+        }
     }
 }

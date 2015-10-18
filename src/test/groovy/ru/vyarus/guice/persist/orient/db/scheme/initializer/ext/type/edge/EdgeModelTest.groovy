@@ -4,7 +4,6 @@ import ru.vyarus.guice.persist.orient.db.scheme.SchemeInitializationException
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.AbstractSchemeExtensionTest
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.type.vertex.ComplexVertexModel
 import ru.vyarus.guice.persist.orient.support.model.EdgeModel
-import ru.vyarus.guice.persist.orient.support.model.VertexModel
 
 /**
  * @author Vyacheslav Rusakov 
@@ -21,53 +20,43 @@ class EdgeModelTest extends AbstractSchemeExtensionTest {
 
         when: "no scheme in db"
         schemeInitializer.register(EdgeModel)
-        def baseName = db.getMetadata().getSchema().getClass(EdgeModel).getSuperClass().getName()
         then: "edge created correctly"
-        baseName == "E"
+        db.getMetadata().getSchema().getClass(EdgeModel).getSuperClassesNames() == ["E"]
     }
 
     def "Check entity already registered"() {
         when: "db already contains entity"
-        String baseName
         db.getEntityManager().registerEntityClass(EdgeModel)
         schemeInitializer.register(EdgeModel)
-        baseName = db.getMetadata().getSchema().getClass(EdgeModel).getSuperClass()?.getName()
         then: "type altered"
-        baseName == "E"
+        db.getMetadata().getSchema().getClass(EdgeModel).getSuperClassesNames() == ["E"]
     }
 
     def "Check entity already registered with correct type"() {
         when: "db already contains entity"
-        String baseName
         // first time creating entity
         schemeInitializer.register(EdgeModel)
         // here is what we check
         schemeInitializer.register(EdgeModel)
-        baseName = db.getMetadata().getSchema().getClass(EdgeModel).getSuperClass()?.getName()
         then: "initializer updated graph"
-        baseName == "E"
+        db.getMetadata().getSchema().getClass(EdgeModel).getSuperClassesNames() == ["E"]
     }
 
     def "Check base model already registered without graph support"() {
 
         when: "register base entity without support and try to map extending entity"
-        String baseName
         db.getEntityManager().registerEntityClass(EdgeModel)
         schemeInitializer.register(ComplexEdgeModel)
-        baseName = db.getMetadata().getSchema().getClass(EdgeModel).getSuperClass()?.getName()
         then: "entity superclass changed"
-        baseName == "E"
+        db.getMetadata().getSchema().getClass(EdgeModel).getSuperClassesNames() == ["E"]
+        db.getMetadata().getSchema().getClass(ComplexEdgeModel).getSuperClassesNames() == ["EdgeModel"]
     }
 
     def "Check complex mapping with bad hierarchy"() {
         when: "register complex vertex correctly and then try to register edge in wrong hierarchy"
-        String baseName
         schemeInitializer.register(ComplexVertexModel)
         schemeInitializer.register(BadComplexEdgeModel)
-        baseName = db.getMetadata().getSchema().getClass(VertexModel).getSuperClass()?.getName()
-        then: "initializer can't change registered base entity type"
+        then: "initializer detects vertex type in hierarchy"
         thrown(SchemeInitializationException)
-        baseName == null
-
     }
 }

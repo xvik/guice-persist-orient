@@ -12,8 +12,10 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 /**
  * Model scheme type extension to register model as vertex type (extends V). If model scheme is already create
  * in database, alters class to extend V (without data loss).
- * <p>Keeps track of object hierarchy: if annotated entity extend some other entity (e.g. VersionedEntity) then this
- * base class must extend vertex type (V) and initializer will try to do it.</p>
+ * <p>Note: due to orient multiple inheritance support since 2.1, superclass is assigned directly
+ * to annotated class.</p>
+ * <p>If class or its super classes extend E error will be thrown. If class or any class in hierarchy
+ * already extend V, nothing will be done.</p>
  * <p>It's more safe to only annotate topmost classes.</p>
  * <p>Sample sql: alter class Model superclass V, create class Model extends V</p>
  *

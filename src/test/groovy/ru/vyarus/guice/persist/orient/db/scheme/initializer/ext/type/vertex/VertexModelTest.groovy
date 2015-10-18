@@ -17,53 +17,45 @@ class VertexModelTest extends AbstractSchemeExtensionTest {
     def "Check mapping with empty scheme"() {
 
         when: "no scheme in db"
-        String baseName
         schemeInitializer.register(VertexModel)
-        baseName = db.getMetadata().getSchema().getClass(VertexModel).getSuperClass().getName()
         then: "vertex created correctly"
-        baseName == "V"
+        db.getMetadata().getSchema().getClass(VertexModel).getSuperClassesNames() == ["V"]
     }
 
     def "Check entity already registered"() {
         when: "db already contains entity"
-        String baseName
         db.getEntityManager().registerEntityClass(VertexModel)
         schemeInitializer.register(VertexModel)
-        baseName = db.getMetadata().getSchema().getClass(VertexModel).getSuperClass()?.getName()
         then: "type altered"
-        baseName == "V"
+        db.getMetadata().getSchema().getClass(VertexModel).getSuperClassesNames() == ["V"]
     }
 
     def "Check entity already registered with correct type"() {
         when: "db already contains entity"
-        String baseName
         // first time creating entity
         schemeInitializer.register(VertexModel)
         // here is what we check
         schemeInitializer.register(VertexModel)
-        baseName = db.getMetadata().getSchema().getClass(VertexModel).getSuperClass()?.getName()
         then: "initializer updated graph"
-        baseName == "V"
+        db.getMetadata().getSchema().getClass(VertexModel).getSuperClassesNames() == ["V"]
     }
 
     def "Check hierarchical entity registration"() {
 
         when: "empty db"
-        String baseName
         schemeInitializer.register(ComplexVertexModel)
-        baseName = db.getMetadata().getSchema().getClass(VertexModel).getSuperClass()?.getName()
         then: "initializer should create record for base VertexModel extends V"
-        baseName == "V"
+        db.getMetadata().getSchema().getClass(VertexModel).getSuperClassesNames() == ["V"]
+        db.getMetadata().getSchema().getClass(ComplexVertexModel).getSuperClassesNames() == ["VertexModel"]
     }
 
     def "Check base model already registered without graph support"() {
 
         when: "register base entity without support and try to map extending entity"
-        String baseName
         db.getEntityManager().registerEntityClass(VertexModel)
         schemeInitializer.register(ComplexVertexModel)
-        baseName = db.getMetadata().getSchema().getClass(VertexModel).getSuperClass()?.getName()
         then: "entity superclass changed"
-        baseName == "V"
+        db.getMetadata().getSchema().getClass(VertexModel).getSuperClassesNames() == ["V"]
+        db.getMetadata().getSchema().getClass(ComplexVertexModel).getSuperClassesNames() == ["VertexModel"]
     }
 }
