@@ -125,7 +125,7 @@ public class DocumentPool implements PoolManager<ODatabaseDocumentTx> {
             transaction.set(db);
             logger.trace("Pool {} transaction started", getType());
         }
-        return checkOpened(transaction.get());
+        return checkOpened(transaction.get()).activateOnCurrentThread();
     }
 
     /**

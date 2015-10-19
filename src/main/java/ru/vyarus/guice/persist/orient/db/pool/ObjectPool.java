@@ -57,7 +57,9 @@ public class ObjectPool implements PoolManager<OObjectDatabaseTx> {
             final OObjectDatabaseTx value = new OObjectDatabaseTx(documentDb);
             transaction.set(value);
         }
-        return transaction.get();
+        final OObjectDatabaseTx db = transaction.get();
+        db.activateOnCurrentThread();
+        return db;
     }
 
     @Override

@@ -59,7 +59,9 @@ public class GraphPool implements PoolManager<OrientBaseGraph> {
                     ? new OrientGraphNoTx(documentDb) : new OrientGraph(documentDb);
             transaction.set(graph);
         }
-        return transaction.get();
+        final OrientBaseGraph db = transaction.get();
+        db.getRawGraph().activateOnCurrentThread();
+        return db;
     }
 
     @Override
