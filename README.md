@@ -33,7 +33,7 @@ Features:
 Releases are published to [bintray jcenter](https://bintray.com/bintray/jcenter) (package appear immediately after release) 
 and then to maven central (require few days after release to be published). 
 
-[![Download](https://api.bintray.com/packages/vyarus/xvik/guice-persist-orient/images/download.svg?ts=2) ](https://bintray.com/vyarus/xvik/guice-persist-orient/_latestVersion)
+[![JCenter](https://img.shields.io/bintray/v/vyarus/xvik/guice-persist-orient.svg?label=jcenter)](https://bintray.com/vyarus/xvik/guice-persist-orient/_latestVersion)
 [![Maven Central](https://img.shields.io/maven-central/v/ru.vyarus/guice-persist-orient.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/ru.vyarus/guice-persist-orient)
 
 Maven:
