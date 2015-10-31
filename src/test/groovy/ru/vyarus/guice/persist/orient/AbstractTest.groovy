@@ -42,14 +42,7 @@ abstract class AbstractTest extends Specification {
         if (!Config.DB.contains("remote")) {
             def db = new ODatabaseDocumentTx(Config.DB)
             if (db.exists()) {
-                try {
-                    db.open(Config.USER, Config.PASS).drop()
-                } catch (Exception ex) {
-                    // manly resolves problem with lucene indexes
-                    // at this point test already pass so its perfectly ok to forbid some orient errors
-                    System.err.println("Db " + Config.DB + " drop error:");
-                    ex.printStackTrace()
-                }
+                db.open(Config.USER, Config.PASS).drop()
             }
         }
         afterCleanup()

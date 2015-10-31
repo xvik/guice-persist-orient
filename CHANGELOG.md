@@ -1,6 +1,6 @@
 * Avoid deprecated OCommandRequest api usage (deprecated in 2.1): 
 @FetchPlan, @Limit and @Timeout extensions now modifies query instead of using OCommandRequest setters
-* (behavior change) @EdgeType and @VertexType extensions now assign superclass directly to annotated type (or not of hierarchy already contains required type)
+* (behavior change) @EdgeType and @VertexType extensions now assign superclass directly to annotated type (or not if hierarchy already contains required type)
 * Call activateOnCurrentThread() in pools for each connection obtain (e.g. context.getConnection()) to guarantee proper db instance bound to thread
 
 ### 3.1.1 (2015-08-16)
