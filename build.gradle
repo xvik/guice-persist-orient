@@ -111,7 +111,7 @@ afterReleaseBuild {
 
 test {
     testLogging {
-        events "skipped", "failed", "standardError"
+        events "skipped", "failed", "standard_error", "started", "standard_out"
         exceptionFormat "full"
     }
     // restart test vm to reduce system load by vm (to solve travis error 137)
