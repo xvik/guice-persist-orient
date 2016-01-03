@@ -11,9 +11,7 @@ import java.lang.reflect.Method;
  * @author Vyacheslav Rusakov
  * @since 06.02.2015
  */
-@SuppressWarnings({
-        "checkstyle:visibilitymodifier",
-        "PMD.AbstractClassWithoutAnyMethod"})
+@SuppressWarnings("checkstyle:VisibilityModifier")
 public class DescriptorContext {
 
     /**

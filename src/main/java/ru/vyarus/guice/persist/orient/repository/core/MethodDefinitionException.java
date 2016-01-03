@@ -8,7 +8,6 @@ import ru.vyarus.guice.persist.orient.repository.RepositoryException;
  * @author Vyacheslav Rusakov
  * @since 28.08.2014
  */
-@SuppressWarnings("PMD.UseUtilityClass")
 public class MethodDefinitionException extends RepositoryException {
 
     public MethodDefinitionException(final String message) {

@@ -52,7 +52,7 @@ public class DelegateMethodExtension implements RepositoryMethodExtension<Delega
     @Override
     public Object execute(final DelegateMethodDescriptor descriptor, final Object repositoryInstance,
                           final Object... arguments) throws Throwable {
-        Object[] args;
+        final Object[] args;
         try {
             args = prepareArguments(descriptor, arguments);
             amendParameters(args, descriptor, repositoryInstance, arguments);

@@ -6,9 +6,7 @@ package ru.vyarus.guice.persist.orient.repository.core.result;
  * @author Vyacheslav Rusakov
  * @since 26.09.2014
  */
-@SuppressWarnings({
-        "checkstyle:visibilitymodifier",
-        "PMD.DefaultPackage"})
+@SuppressWarnings("checkstyle:VisibilityModifier")
 public class ResultDescriptor {
 
     /**

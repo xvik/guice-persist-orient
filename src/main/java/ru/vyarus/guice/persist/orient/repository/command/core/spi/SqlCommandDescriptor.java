@@ -8,7 +8,7 @@ import java.util.Map;
  * @author Vyacheslav Rusakov
  * @since 31.07.2014
  */
-@SuppressWarnings("checkstyle:visibilitymodifier")
+@SuppressWarnings("checkstyle:VisibilityModifier")
 public class SqlCommandDescriptor {
 
     /**

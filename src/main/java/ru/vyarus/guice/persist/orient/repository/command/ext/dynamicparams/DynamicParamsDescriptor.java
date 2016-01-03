@@ -6,9 +6,7 @@ package ru.vyarus.guice.persist.orient.repository.command.ext.dynamicparams;
  * @author Vyacheslav Rusakov
  * @since 27.02.2015
  */
-@SuppressWarnings({
-        "checkstyle:visibilitymodifier",
-        "PMD.DefaultPackage"})
+@SuppressWarnings("checkstyle:VisibilityModifier")
 public class DynamicParamsDescriptor {
 
     /**

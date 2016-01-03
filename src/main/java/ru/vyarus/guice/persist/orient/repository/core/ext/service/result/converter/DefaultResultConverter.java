@@ -20,7 +20,6 @@ import java.util.*;
  * @since 04.08.2014
  */
 @Singleton
-@SuppressWarnings("PMD.AvoidDuplicateLiterals")
 public class DefaultResultConverter implements ResultConverter {
 
     @Override
@@ -134,7 +133,7 @@ public class DefaultResultConverter implements ResultConverter {
 
     @SuppressWarnings("unchecked")
     private Collection convertToCollection(final Object result, final Class returnClass) {
-        Collection collection;
+        final Collection collection;
         try {
             collection = (Collection) returnClass.newInstance();
         } catch (InstantiationException e) {
@@ -160,7 +159,6 @@ public class DefaultResultConverter implements ResultConverter {
      * @param returnClass expected type
      * @return either object itself or just object field (extracted)
      */
-    @SuppressWarnings("PMD.AvoidLiteralsInIfCondition")
     private Object flattenSimple(final Object object, final Class<?> returnClass) {
         Object res = object;
         if (!ODocument.class.isAssignableFrom(returnClass)) {

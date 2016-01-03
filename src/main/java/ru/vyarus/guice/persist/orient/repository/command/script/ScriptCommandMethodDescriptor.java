@@ -8,9 +8,7 @@ import ru.vyarus.guice.persist.orient.repository.command.core.spi.CommandMethodD
  * @author Vyacheslav Rusakov
  * @since 25.02.2015
  */
-@SuppressWarnings({
-        "checkstyle:visibilitymodifier",
-        "PMD.DefaultPackage"})
+@SuppressWarnings("checkstyle:VisibilityModifier")
 public class ScriptCommandMethodDescriptor extends CommandMethodDescriptor {
 
     /**

@@ -63,8 +63,8 @@ public abstract class AbstractCommandExtension<T extends CommandMethodDescriptor
     @Override
     public Object execute(final T descriptor, final Object repositoryInstance,
                           final Object... arguments) throws Throwable {
-        SqlCommandDescriptor desc;
-        OCommandRequest query;
+        final SqlCommandDescriptor desc;
+        final OCommandRequest query;
         try {
             desc = createQueryDescriptor(descriptor, arguments);
             amendCommandDescriptor(desc, descriptor, repositoryInstance, arguments);

@@ -10,9 +10,7 @@ import javax.inject.Provider;
  * @author Vyacheslav Rusakov
  * @since 02.03.2015
  */
-@SuppressWarnings({
-        "checkstyle:visibilitymodifier",
-        "PMD.DefaultPackage"})
+@SuppressWarnings("checkstyle:VisibilityModifier")
 public class ResultConversionDescriptor {
 
     /**

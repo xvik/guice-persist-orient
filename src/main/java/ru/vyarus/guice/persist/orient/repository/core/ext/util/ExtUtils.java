@@ -28,7 +28,6 @@ import static ru.vyarus.guice.persist.orient.repository.core.MethodDefinitionExc
  * @see ru.vyarus.guice.persist.orient.repository.core.spi.parameter.MethodParam
  * @since 18.02.2015
  */
-@SuppressWarnings("PMD.UseCollectionIsEmpty")
 public final class ExtUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ExtUtils.class);

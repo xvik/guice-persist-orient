@@ -8,9 +8,7 @@ import java.util.List;
  * @author Vyacheslav Rusakov
  * @since 08.02.2015
  */
-@SuppressWarnings({
-        "checkstyle:visibilitymodifier",
-        "PMD.DefaultPackage"})
+@SuppressWarnings("checkstyle:VisibilityModifier")
 public class DelegateParamsDescriptor {
 
     /**

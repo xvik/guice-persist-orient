@@ -48,7 +48,7 @@ public class RepositoryMethodInterceptor implements MethodInterceptor {
     }
 
     private RepositoryMethodDescriptor getMethodDescriptor(final Method method, final Class<?> type) {
-        RepositoryMethodDescriptor descriptor;
+        final RepositoryMethodDescriptor descriptor;
         try {
             descriptor = factory.create(method, type);
         } catch (Throwable th) {

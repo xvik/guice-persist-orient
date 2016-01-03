@@ -8,9 +8,7 @@ import com.orientechnologies.orient.core.command.OCommandContext;
  * @author Vyacheslav Rusakov
  * @since 24.02.2015
  */
-@SuppressWarnings({
-        "checkstyle:visibilitymodifier",
-        "PMD.AbstractClassWithoutAnyMethod"})
+@SuppressWarnings("checkstyle:VisibilityModifier")
 public class TimeoutDescriptor {
 
     /**

@@ -10,9 +10,7 @@ import ru.vyarus.guice.persist.orient.repository.command.core.param.ParamsDescri
  * @author Vyacheslav Rusakov
  * @since 03.02.2015
  */
-@SuppressWarnings({
-        "checkstyle:visibilitymodifier",
-        "PMD.DefaultPackage"})
+@SuppressWarnings("checkstyle:VisibilityModifier")
 public class CommandMethodDescriptor extends RepositoryMethodDescriptor<CommandExtension> {
 
     /**

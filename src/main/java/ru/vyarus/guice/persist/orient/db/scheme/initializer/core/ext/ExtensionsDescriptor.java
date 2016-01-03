@@ -15,9 +15,7 @@ import java.util.List;
  * @author Vyacheslav Rusakov
  * @since 04.03.2015
  */
-@SuppressWarnings({
-        "checkstyle:visibilitymodifier",
-        "PMD.AbstractClassWithoutAnyMethod"})
+@SuppressWarnings("checkstyle:VisibilityModifier")
 public class ExtensionsDescriptor {
 
     /**
@@ -35,9 +33,7 @@ public class ExtensionsDescriptor {
      * @param <E> extension type
      * @param <S> extension source object
      */
-    @SuppressWarnings({
-            "checkstyle:visibilitymodifier",
-            "PMD.AbstractClassWithoutAnyMethod"})
+    @SuppressWarnings("checkstyle:VisibilityModifier")
     public static class Ext<E, S> {
         /**
          * Extension instance.

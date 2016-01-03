@@ -190,7 +190,7 @@ public class UserManager {
     /**
      * Internal credentials holder.
      */
-    @SuppressWarnings("checkstyle:visibilitymodifier")
+    @SuppressWarnings("checkstyle:VisibilityModifier")
     private static final class UserCredentials {
         public final String user;
         public final String password;

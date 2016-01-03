@@ -107,7 +107,6 @@ public class ObjectSchemeInitializer {
         processingCache.add(model);
     }
 
-    @SuppressWarnings("PMD.BooleanInversion")
     private SchemeDescriptor buildDescriptor(final OObjectDatabaseTx db, final Class<?> model) {
         final SchemeDescriptor desc = new SchemeDescriptor();
         desc.modelClass = model;

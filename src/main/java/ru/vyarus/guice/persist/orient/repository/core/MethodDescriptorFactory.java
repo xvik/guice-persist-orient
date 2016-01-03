@@ -122,8 +122,6 @@ public class MethodDescriptorFactory {
         return context;
     }
 
-
-    @SuppressWarnings("PMD.UnusedPrivateMethod")
     private RepositoryExecutor find(final DbType type) {
         RepositoryExecutor res = null;
         for (RepositoryExecutor executor : executors) {

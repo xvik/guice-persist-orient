@@ -9,9 +9,7 @@ import java.lang.annotation.Annotation;
  * @author Vyacheslav Rusakov
  * @since 05.02.2015
  */
-@SuppressWarnings({
-        "checkstyle:visibilitymodifier",
-        "PMD.AbstractClassWithoutAnyMethod"})
+@SuppressWarnings("checkstyle:VisibilityModifier")
 public class ParamInfo<T extends Annotation> {
 
     /**

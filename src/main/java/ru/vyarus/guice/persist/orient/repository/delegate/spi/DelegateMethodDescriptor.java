@@ -12,9 +12,7 @@ import java.lang.reflect.Method;
  * @author Vyacheslav Rusakov
  * @since 21.10.2014
  */
-@SuppressWarnings({
-        "checkstyle:visibilitymodifier",
-        "PMD.DefaultPackage"})
+@SuppressWarnings("checkstyle:VisibilityModifier")
 public class DelegateMethodDescriptor extends RepositoryMethodDescriptor<DelegateExtension> {
 
     /**

@@ -108,7 +108,7 @@ public final class RidUtils {
         if (idField == null) {
             throw new PersistException(String.format("Class %s doesn't contain id field", className));
         }
-        String res;
+        final String res;
         try {
             final Object id = OObjectEntitySerializer.getFieldValue(idField, value);
             if (id == null) {

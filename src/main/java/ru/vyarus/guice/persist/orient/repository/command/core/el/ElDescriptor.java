@@ -12,9 +12,7 @@ import java.util.Map;
  * @author Vyacheslav Rusakov
  * @since 15.02.2015
  */
-@SuppressWarnings({
-        "checkstyle:visibilitymodifier",
-        "PMD.DefaultPackage"})
+@SuppressWarnings("checkstyle:VisibilityModifier")
 public class ElDescriptor {
 
     /**

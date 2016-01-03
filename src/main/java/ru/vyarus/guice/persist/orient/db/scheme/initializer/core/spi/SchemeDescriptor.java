@@ -12,9 +12,7 @@ import java.util.Map;
  * @author Vyacheslav Rusakov
  * @since 04.03.2015
  */
-@SuppressWarnings({
-        "checkstyle:visibilitymodifier",
-        "PMD.AbstractClassWithoutAnyMethod"})
+@SuppressWarnings("checkstyle:VisibilityModifier")
 @SuppressFBWarnings("URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
 public class SchemeDescriptor {
 

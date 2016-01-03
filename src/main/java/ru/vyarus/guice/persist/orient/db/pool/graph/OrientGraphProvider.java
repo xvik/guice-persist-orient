@@ -26,7 +26,6 @@ public class OrientGraphProvider implements Provider<OrientGraph> {
     }
 
     @Override
-    @SuppressWarnings("unckecked")
     public OrientGraph get() {
         final OrientBaseGraph graph = provider.get();
         Preconditions.checkState(graph instanceof OrientGraph,

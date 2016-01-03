@@ -54,7 +54,6 @@ public class ListenParamExtension implements
     }
 
     @Override
-    @SuppressWarnings("PMD.AvoidLiteralsInIfCondition")
     public void amendCommand(final OCommandRequest query, final CommandMethodDescriptor descriptor,
                              final Object instance, final Object... arguments) {
         checkExec(query instanceof OCommandRequestAbstract,

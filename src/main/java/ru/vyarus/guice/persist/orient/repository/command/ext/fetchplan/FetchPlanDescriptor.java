@@ -6,9 +6,7 @@ package ru.vyarus.guice.persist.orient.repository.command.ext.fetchplan;
  * @author Vyacheslav Rusakov
  * @since 24.02.2015
  */
-@SuppressWarnings({
-        "checkstyle:visibilitymodifier",
-        "PMD.AbstractClassWithoutAnyMethod"})
+@SuppressWarnings("checkstyle:VisibilityModifier")
 public class FetchPlanDescriptor {
 
     /**

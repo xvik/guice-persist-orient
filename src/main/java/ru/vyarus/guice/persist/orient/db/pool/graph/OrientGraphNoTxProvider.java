@@ -26,7 +26,6 @@ public class OrientGraphNoTxProvider implements Provider<OrientGraphNoTx> {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public OrientGraphNoTx get() {
         final OrientBaseGraph graph = provider.get();
         Preconditions.checkState(graph instanceof OrientGraphNoTx,

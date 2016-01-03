@@ -9,9 +9,7 @@ import java.util.Map;
  * @see CommandParamsContext
  * @since 26.09.2014
  */
-@SuppressWarnings({
-        "checkstyle:visibilitymodifier",
-        "PMD.DefaultPackage"})
+@SuppressWarnings("checkstyle:VisibilityModifier")
 public class ParamsDescriptor {
 
     /**

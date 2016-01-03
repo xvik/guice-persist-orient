@@ -23,7 +23,7 @@ import java.util.Map;
  * @since 30.07.2014
  */
 @SuppressWarnings({
-        "checkstyle:visibilitymodifier",
+        "checkstyle:VisibilityModifier",
         "PMD.AbstractClassWithoutAnyMethod"})
 public abstract class RepositoryMethodDescriptor<E extends AmendExecutionExtension> {
 

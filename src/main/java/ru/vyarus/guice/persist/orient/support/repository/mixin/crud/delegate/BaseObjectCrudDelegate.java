@@ -73,17 +73,17 @@ public abstract class BaseObjectCrudDelegate<T> implements BaseObjectCrud<T> {
 
     @Override
     public List<T> detachAll(final Iterator<T> entities) {
-        return detachAll(Lists.newArrayList(entities));
+        return detachAllInternal(Lists.newArrayList(entities));
     }
 
     @Override
     public List<T> detachAll(final Iterable<T> entities) {
-        return detachAll(Lists.newArrayList(entities));
+        return detachAllInternal(Lists.newArrayList(entities));
     }
 
     @Override
     public List<T> detachAll(final T... entities) {
-        return detachAll(Lists.newArrayList(entities));
+        return detachAllInternal(Lists.newArrayList(entities));
     }
 
     public T create(@Generic("T") final Class<T> type) {
@@ -111,7 +111,7 @@ public abstract class BaseObjectCrudDelegate<T> implements BaseObjectCrud<T> {
         return (T) objectDb.get().stream2pojo(document, pojo, null, true);
     }
 
-    private List<T> detachAll(final List<T> entities) {
+    private List<T> detachAllInternal(final List<T> entities) {
         final List<T> res = Lists.newArrayList();
         for (T entity : entities) {
             res.add(detach(entity));

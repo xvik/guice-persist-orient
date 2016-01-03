@@ -109,9 +109,7 @@ public class ParamsService {
     /**
      * Internal parameters processing context.
      */
-    @SuppressWarnings({
-            "checkstyle:visibilitymodifier",
-            "PMD.AbstractClassWithoutAnyMethod"})
+    @SuppressWarnings("checkstyle:VisibilityModifier")
     private static class ProcessingContext {
         public Map<Class<? extends MethodParamExtension>, MethodParamExtension> extensionMap =
                 Maps.newLinkedHashMap();

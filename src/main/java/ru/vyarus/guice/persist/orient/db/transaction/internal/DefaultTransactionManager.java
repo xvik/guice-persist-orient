@@ -49,7 +49,6 @@ public class DefaultTransactionManager implements TransactionManager {
     }
 
     @Override
-    @SuppressWarnings("PMD.ExcessiveMethodLength")
     public void end() {
         Preconditions.checkState(isTransactionActive(), "No active transaction found to close");
         logger.trace("Committing transaction");
