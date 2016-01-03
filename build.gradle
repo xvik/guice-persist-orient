@@ -114,6 +114,8 @@ test {
         events "skipped", "failed", "standardError"
         exceptionFormat "full"
     }
+    // restart test vm after 100 tests to reduce memory usage (to solve travis error 137)
+    forkEvery 100
 }
 
 dependencyUpdates.revision = 'release'
