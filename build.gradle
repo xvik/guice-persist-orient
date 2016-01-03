@@ -114,8 +114,9 @@ test {
         events "skipped", "failed", "standard_error", "started", "standard_out"
         exceptionFormat "full"
     }
-    // restart test vm to reduce system load by vm (to solve travis error 137)
-    forkEvery 50
+    minHeapSize = "512m"
+    maxHeapSize = "2048m"
+    jvmArgs '-XX:MaxPermSize=256m'
 }
 
 dependencyUpdates.revision = 'release'
