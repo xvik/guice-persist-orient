@@ -33,7 +33,7 @@ class MultiConnectionConcurrentTest extends AbstractTest {
 
     @Override
     void setup() {
-        executor = Executors.newFixedThreadPool(120)
+        executor = Executors.newFixedThreadPool(20)
     }
 
     @Override
