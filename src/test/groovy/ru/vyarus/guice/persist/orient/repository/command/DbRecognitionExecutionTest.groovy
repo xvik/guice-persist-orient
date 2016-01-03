@@ -58,7 +58,7 @@ class DbRecognitionExecutionTest extends AbstractTest {
         when: "graph select"
         List<OrientVertex> resOVert = dao.selectAllAsOrientVertex();
         then:
-        resVert.size() == 1
+        resOVert.size() == 1
     }
 
     def "Select without type"() {

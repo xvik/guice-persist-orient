@@ -115,7 +115,7 @@ test {
         exceptionFormat "full"
     }
     // restart test vm to reduce system load by vm (to solve travis error 137)
-    forkEvery 70
+    forkEvery 50
 }
 
 dependencyUpdates.revision = 'release'
