@@ -114,9 +114,7 @@ test {
         events "skipped", "failed", "standard_error", "started", "standard_out"
         exceptionFormat "full"
     }
-    minHeapSize = "512m"
-    maxHeapSize = "2048m"
-    jvmArgs '-XX:MaxPermSize=256m'
+    maxHeapSize = "512m"
 }
 
 dependencyUpdates.revision = 'release'
