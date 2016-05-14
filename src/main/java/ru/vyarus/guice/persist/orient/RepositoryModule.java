@@ -9,6 +9,7 @@ import com.google.inject.multibindings.Multibinder;
 import com.google.inject.name.Names;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.vyarus.guice.ext.core.generator.GeneratorClassLoader;
 import ru.vyarus.guice.persist.orient.db.DbType;
 import ru.vyarus.guice.persist.orient.repository.RepositoryMethodInterceptor;
 import ru.vyarus.guice.persist.orient.repository.core.MethodDefinitionException;
@@ -22,6 +23,7 @@ import ru.vyarus.guice.persist.orient.repository.core.ext.service.result.convert
 import ru.vyarus.guice.persist.orient.repository.core.ext.util.ExtUtils;
 import ru.vyarus.guice.persist.orient.repository.core.util.RepositoryUtils;
 import ru.vyarus.guice.persist.orient.repository.delegate.DelegateMethodExtension;
+import ru.vyarus.guice.persist.orient.support.repository.RepositoryGeneratorClassLoader;
 
 import javax.inject.Singleton;
 import java.lang.reflect.Method;
@@ -87,6 +89,7 @@ public class RepositoryModule extends AbstractModule {
         bind(ResultService.class);
         bind(DelegateMethodExtension.class);
         bind(DynamicSingletonProvider.class).in(Singleton.class);
+        bind(GeneratorClassLoader.class).to(RepositoryGeneratorClassLoader.class);
 
         configureAop();
 

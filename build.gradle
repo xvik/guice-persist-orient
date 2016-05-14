@@ -24,7 +24,7 @@ ext {
     guice = '4.0'
 }
 
-repositories { jcenter(); mavenCentral(); mavenLocal() }
+repositories { jcenter(); mavenCentral(); mavenLocal(); maven { url "https://jitpack.io" } }
 dependencies {
     signature 'org.codehaus.mojo.signature:java16-sun:+@signature'
 
@@ -32,7 +32,10 @@ dependencies {
     provided 'com.google.code.findbugs:annotations:3.0.1'
 
     compile 'ru.vyarus:generics-resolver:2.0.1'
-    compile 'ru.vyarus:guice-ext-annotations:1.1.1'
+
+    // FIXME Re-add after PR and version bump: compile 'ru.vyarus:guice-ext-annotations:1.1.1'
+    compile 'com.github.dgilling:guice-ext-annotations:14141cb823'
+
     compile 'org.javassist:javassist:3.16.1-GA'
     compile "com.google.inject:guice:$guice"
     compile "com.google.inject.extensions:guice-persist:$guice"
