@@ -11,6 +11,7 @@ import ru.vyarus.guice.persist.orient.db.transaction.TxConfig;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Provider;
 import javax.inject.Singleton;
 import java.util.Set;
 
@@ -21,13 +22,13 @@ import java.util.Set;
 public class DefaultTransactionManager implements TransactionManager {
     private final Logger logger = LoggerFactory.getLogger(DefaultTransactionManager.class);
 
-    private final Set<PoolManager> pools;
+    private final Provider<Set<PoolManager>> pools;
     private final ThreadLocal<TxConfig> transaction = new ThreadLocal<TxConfig>();
     private final TxConfig defaultConfig;
 
 
     @Inject
-    public DefaultTransactionManager(final Set<PoolManager> pools,
+    public DefaultTransactionManager(final Provider<Set<PoolManager>> pools,
                                      @Named("orient.txconfig") final TxConfig defaultConfig) {
         this.pools = pools;
         this.defaultConfig = defaultConfig;
@@ -59,7 +60,7 @@ public class DefaultTransactionManager implements TransactionManager {
             // (there is no way to synchronize transaction between pools, but usually its not required because only
             // one pool used most of the time, otherwise plan transaction architecture accordingly - make
             // transactions more granular)
-            for (PoolManager<?> pool : pools) {
+            for (PoolManager<?> pool : pools.get()) {
                 try {
                     pool.commit();
                 } catch (RuntimeException th) {
@@ -103,7 +104,7 @@ public class DefaultTransactionManager implements TransactionManager {
         // performing actual rollback
         try {
             // it's very unlikely for rollback to fail because of db, but may happen because of db impl
-            for (PoolManager<?> pool : pools) {
+            for (PoolManager<?> pool : pools.get()) {
                 try {
                     pool.rollback();
                 } catch (Throwable th) {

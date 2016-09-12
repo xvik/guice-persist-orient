@@ -15,5 +15,6 @@ class PackageSchemeModule extends AbstractModule {
     protected void configure() {
         install(new OrientModule(Config.DB, Config.USER, Config.PASS))
         install(new ru.vyarus.guice.persist.orient.support.PackageSchemeModule(Config.MODEL_PKG))
+        install(new RestrictModule())
     }
 }

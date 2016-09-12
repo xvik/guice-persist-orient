@@ -14,5 +14,6 @@ class DefaultModule extends AbstractModule {
     @Override
     protected void configure() {
         install(new OrientModule(Config.DB, Config.USER, Config.PASS))
+        install(new RestrictModule())
     }
 }
