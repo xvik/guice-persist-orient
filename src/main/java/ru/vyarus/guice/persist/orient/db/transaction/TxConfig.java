@@ -1,6 +1,6 @@
 package ru.vyarus.guice.persist.orient.db.transaction;
 
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 import com.orientechnologies.orient.core.tx.OTransaction;
 
 import java.util.Collections;
@@ -50,9 +50,9 @@ public class TxConfig {
     public TxConfig(final List<Class<? extends Exception>> rollbackOn,
                     final List<Class<? extends Exception>> ignore,
                     final OTransaction.TXTYPE txtype) {
-        this.rollbackOn = Objects.firstNonNull(rollbackOn, Collections.<Class<? extends Exception>>emptyList());
-        this.ignore = Objects.firstNonNull(ignore, Collections.<Class<? extends Exception>>emptyList());
-        this.txtype = Objects.firstNonNull(txtype, OTransaction.TXTYPE.OPTIMISTIC);
+        this.rollbackOn = MoreObjects.firstNonNull(rollbackOn, Collections.<Class<? extends Exception>>emptyList());
+        this.ignore = MoreObjects.firstNonNull(ignore, Collections.<Class<? extends Exception>>emptyList());
+        this.txtype = MoreObjects.firstNonNull(txtype, OTransaction.TXTYPE.OPTIMISTIC);
     }
 
     /**

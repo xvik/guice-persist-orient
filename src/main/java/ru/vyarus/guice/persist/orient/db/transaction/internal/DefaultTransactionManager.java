@@ -1,6 +1,6 @@
 package ru.vyarus.guice.persist.orient.db.transaction.internal;
 
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 import com.orientechnologies.orient.core.tx.OTransaction;
 import org.slf4j.Logger;
@@ -44,7 +44,7 @@ public class DefaultTransactionManager implements TransactionManager {
             // transaction already in progress
             return;
         }
-        transaction.set(Objects.firstNonNull(config, defaultConfig));
+        transaction.set(MoreObjects.firstNonNull(config, defaultConfig));
         logger.trace("Transaction opened: {}", transaction.get());
     }
 

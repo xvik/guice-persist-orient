@@ -1,6 +1,6 @@
 package ru.vyarus.guice.persist.orient.db.user;
 
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
 import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx;
@@ -172,7 +172,7 @@ public class UserManager {
     }
 
     private UserCredentials getCurrentUser() {
-        return Objects.firstNonNull(specificUser.get(), defaultUser);
+        return MoreObjects.firstNonNull(specificUser.get(), defaultUser);
     }
 
     private boolean checkSpecificUserConditions(final String login) {

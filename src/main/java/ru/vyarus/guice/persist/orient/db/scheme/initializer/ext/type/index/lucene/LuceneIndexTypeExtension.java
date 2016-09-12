@@ -1,7 +1,7 @@
 package ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.type.index.lucene;
 
 import com.google.common.base.Joiner;
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.orientechnologies.lucene.OLuceneIndexFactory;
@@ -80,6 +80,6 @@ public class LuceneIndexTypeExtension implements TypeExtension<CompositeLuceneIn
         // analyzer is stored only in metadata and there is no way to get default analyzer.. just assume it
         final ODocument metadata = classIndex.getMetadata();
         final String analyzer = metadata != null ? metadata.<String>field(LuceneIndexFieldExtension.ANALYZER) : null;
-        return Objects.firstNonNull(analyzer, StandardAnalyzer.class.getName());
+        return MoreObjects.firstNonNull(analyzer, StandardAnalyzer.class.getName());
     }
 }

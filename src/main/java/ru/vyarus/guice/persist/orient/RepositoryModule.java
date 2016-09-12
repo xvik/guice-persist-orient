@@ -1,6 +1,6 @@
 package ru.vyarus.guice.persist.orient;
 
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 import com.google.inject.AbstractModule;
 import com.google.inject.internal.DynamicSingletonProvider;
 import com.google.inject.matcher.AbstractMatcher;
@@ -68,7 +68,7 @@ public class RepositoryModule extends AbstractModule {
      * @return module itself for chained calls
      */
     public RepositoryModule defaultConnectionType(final DbType connection) {
-        this.defaultConnectionToUse = Objects.firstNonNull(connection, defaultConnectionToUse);
+        this.defaultConnectionToUse = MoreObjects.firstNonNull(connection, defaultConnectionToUse);
         return this;
     }
 

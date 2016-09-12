@@ -1,6 +1,6 @@
 package ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.field.index.fulltext;
 
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -43,7 +43,8 @@ public class FulltextIndexFieldExtension implements FieldExtension<FulltextIndex
                                   final Field field, final FulltextIndex annotation) {
         final String property = field.getName();
         final String model = descriptor.schemeClass;
-        final String name = Objects.firstNonNull(Strings.emptyToNull(annotation.name().trim()), model + '.' + property);
+        final String name = MoreObjects.firstNonNull(
+                Strings.emptyToNull(annotation.name().trim()), model + '.' + property);
         final OClass clazz = db.getMetadata().getSchema().getClass(model);
         final OIndex<?> classIndex = clazz.getClassIndex(name);
         final OClass.INDEX_TYPE type = annotation.useHashIndex()

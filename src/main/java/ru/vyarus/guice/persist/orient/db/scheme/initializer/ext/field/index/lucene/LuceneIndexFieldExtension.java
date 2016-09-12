@@ -1,6 +1,6 @@
 package ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.field.index.lucene;
 
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Strings;
 import com.orientechnologies.lucene.OLuceneIndexFactory;
 import com.orientechnologies.orient.core.index.OIndex;
@@ -43,7 +43,8 @@ public class LuceneIndexFieldExtension implements FieldExtension<LuceneIndex> {
         db.getMetadata().getIndexManager().reload();
         final String property = field.getName();
         final String model = descriptor.schemeClass;
-        final String name = Objects.firstNonNull(Strings.emptyToNull(annotation.name().trim()), model + '.' + property);
+        final String name = MoreObjects.firstNonNull(
+                Strings.emptyToNull(annotation.name().trim()), model + '.' + property);
         final OClass clazz = db.getMetadata().getSchema().getClass(model);
         final OIndex<?> classIndex = clazz.getClassIndex(name);
         final OClass.INDEX_TYPE type = OClass.INDEX_TYPE.FULLTEXT;
@@ -78,6 +79,6 @@ public class LuceneIndexFieldExtension implements FieldExtension<LuceneIndex> {
         // analyzer is stored only in metadata and there is no way to get default analyzer.. just assume it
         final ODocument metadata = classIndex.getMetadata();
         final String analyzer = metadata != null ? metadata.<String>field(ANALYZER) : null;
-        return Objects.firstNonNull(analyzer, StandardAnalyzer.class.getName());
+        return MoreObjects.firstNonNull(analyzer, StandardAnalyzer.class.getName());
     }
 }

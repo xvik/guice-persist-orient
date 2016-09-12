@@ -1,6 +1,6 @@
 package ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.field.index;
 
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Strings;
 import com.orientechnologies.orient.core.index.OIndex;
 import com.orientechnologies.orient.core.metadata.schema.OClass;
@@ -34,7 +34,8 @@ public class IndexFieldExtension implements FieldExtension<Index> {
                                   final Field field, final Index annotation) {
         final String property = field.getName();
         final String model = descriptor.schemeClass;
-        final String name = Objects.firstNonNull(Strings.emptyToNull(annotation.name().trim()), model + '.' + property);
+        final String name = MoreObjects.firstNonNull(
+                Strings.emptyToNull(annotation.name().trim()), model + '.' + property);
         final OClass clazz = db.getMetadata().getSchema().getClass(model);
         final OIndex<?> classIndex = clazz.getClassIndex(name);
         final OClass.INDEX_TYPE type = annotation.value();
