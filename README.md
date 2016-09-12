@@ -6,6 +6,8 @@
 
 `guice-persist-orient` wins 4th place in [Software Quality Award 2015](http://www.yegor256.com/2015/04/16/award.html)
 
+> **[Examples repository](https://github.com/xvik/guice-persist-orient-examples)** 
+
 ### About
 
 [OrientDB](http://www.orientechnologies.com/orientdb/) is document, graph and object database (see [intro](https://www.youtube.com/watch?v=o_7NCiTLVis) and [starter course](http://www.orientechnologies.com/getting-started/)).
