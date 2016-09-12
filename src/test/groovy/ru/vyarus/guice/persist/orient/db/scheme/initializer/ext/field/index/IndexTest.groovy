@@ -28,17 +28,18 @@ class IndexTest extends AbstractSchemeExtensionTest {
         !clazz.getClassIndex("nulls").getDefinition().isNullValuesIgnored()
 
         when: "call for already registered indexes"
-        def id = clazz.getClassIndex("IndexModel.foo").getIdentity().toString()
-        def id2 = clazz.getClassIndex("customName").getIdentity().toString()
-        def id3 = clazz.getClassIndex("nulls").getIdentity().toString()
+        // mark indexes
+        clazz.getClassIndex("IndexModel.foo").getConfiguration().field("old", true)
+        clazz.getClassIndex("customName").getConfiguration().field("old", true)
+        clazz.getClassIndex("nulls").getConfiguration().field("old", true)
         schemeInitializer.clearModelCache()
         schemeInitializer.register(IndexModel)
         clazz = db.getMetadata().getSchema().getClass(IndexModel)
         then: "nothing changed"
         clazz.getClassIndexes().size() == 3
-        id == clazz.getClassIndex("IndexModel.foo").getIdentity().toString()
-        id2 == clazz.getClassIndex("customName").getIdentity().toString()
-        id3 == clazz.getClassIndex("nulls").getIdentity().toString()
+        clazz.getClassIndex("IndexModel.foo").getConfiguration().field("old")
+        clazz.getClassIndex("customName").getConfiguration().field("old")
+        clazz.getClassIndex("nulls").getConfiguration().field("old")
         clazz.getClassIndex("IndexModel.foo").getType() == OClass.INDEX_TYPE.NOTUNIQUE.name()
         clazz.getClassIndex("customName").getType() == OClass.INDEX_TYPE.FULLTEXT.name()
         !clazz.getClassIndex("nulls").getDefinition().isNullValuesIgnored()
@@ -54,15 +55,17 @@ class IndexTest extends AbstractSchemeExtensionTest {
         clazz.createIndex('IndexModel.foo', OClass.INDEX_TYPE.DICTIONARY, "foo")
         clazz.createIndex('customName', OClass.INDEX_TYPE.DICTIONARY, "bar")
         clazz.createIndex('nulls', OClass.INDEX_TYPE.NOTUNIQUE, "nulls")
-        def id = clazz.getClassIndex("IndexModel.foo").getIdentity().toString()
-        def id2 = clazz.getClassIndex("customName").getIdentity().toString()
-        def id3 = clazz.getClassIndex("nulls").getIdentity().toString()
+        // marking old index
+        clazz.getClassIndex("IndexModel.foo").getConfiguration().field("old", true)
+        clazz.getClassIndex("customName").getConfiguration().field("old", true)
+        clazz.getClassIndex("nulls").getConfiguration().field("old", true)
         schemeInitializer.register(IndexModel)
+        clazz = db.getMetadata().getSchema().getClass(IndexModel)
         then: "indexes re-created"
         clazz.getClassIndexes().size() == 3
-        id != clazz.getClassIndex("IndexModel.foo").getIdentity().toString()
-        id2 != clazz.getClassIndex("customName").getIdentity().toString()
-        id3 != clazz.getClassIndex("nulls").getIdentity().toString()
+        clazz.getClassIndex("IndexModel.foo").getConfiguration().field("old") == null
+        clazz.getClassIndex("customName").getConfiguration().field("old") == null
+        clazz.getClassIndex("nulls").getConfiguration().field("old") == null
         clazz.getClassIndex("IndexModel.foo").getType() == OClass.INDEX_TYPE.NOTUNIQUE.name()
         clazz.getClassIndex("customName").getType() == OClass.INDEX_TYPE.FULLTEXT.name()
         !clazz.getClassIndex("nulls").getDefinition().isNullValuesIgnored()

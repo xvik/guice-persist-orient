@@ -29,6 +29,7 @@ abstract class AbstractSchemeExtensionTest extends AbstractTest {
             db.getEntityManager().deregisterEntityClasses(Config.MODEL_PKG)
             db.getEntityManager().deregisterEntityClasses(getModelPackage())
             db.getMetadata().getSchema().synchronizeSchema()
+            db.getMetadata().getIndexManager().reload()
         } as SpecificTxAction<Void, OObjectDatabaseTx>)
         schemeInitializer.clearModelCache()
         context.transactionManager.begin(new TxConfig(OTransaction.TXTYPE.NOTX))

@@ -28,13 +28,13 @@ class CompositeIndexTest extends AbstractSchemeExtensionTest {
         !clazz.getClassIndex("test").getDefinition().isNullValuesIgnored()
 
         when: "call for already registered indexes"
-        def id = clazz.getClassIndex("test").getIdentity().toString()
+        clazz.getClassIndex("test").getConfiguration().field("old", true)
         schemeInitializer.clearModelCache()
         schemeInitializer.register(CompositeIndexModel)
         clazz = db.getMetadata().getSchema().getClass(CompositeIndexModel)
         then: "nothing changed"
         clazz.getClassIndexes().size() == 1
-        id == clazz.getClassIndex("test").getIdentity().toString()
+        clazz.getClassIndex("test").getConfiguration().field("old")
         clazz.getClassIndex("test").getType() == OClass.INDEX_TYPE.NOTUNIQUE.name()
         clazz.getClassIndex("test").getDefinition().getFields() == ["foo", "bar"]
         !clazz.getClassIndex("test").getDefinition().isNullValuesIgnored()
@@ -47,11 +47,12 @@ class CompositeIndexTest extends AbstractSchemeExtensionTest {
         clazz.createProperty("foo", OType.STRING)
         clazz.createProperty("bar", OType.STRING)
         clazz.createIndex('test', OClass.INDEX_TYPE.DICTIONARY, "foo", "bar")
-        def id = clazz.getClassIndex("test").getIdentity().toString()
+        clazz.getClassIndex("test").getConfiguration().field("old", true)
         schemeInitializer.register(CompositeIndexModel)
+        clazz = db.getMetadata().getSchema().getClass(CompositeIndexModel)
         then: "index re-created"
         clazz.getClassIndexes().size() == 1
-        id != clazz.getClassIndex("test").getIdentity().toString()
+        clazz.getClassIndex("test").getConfiguration().field("old") == null
         clazz.getClassIndex("test").getType() == OClass.INDEX_TYPE.NOTUNIQUE.name()
         clazz.getClassIndex("test").getDefinition().getFields() == ["foo", "bar"]
         !clazz.getClassIndex("test").getDefinition().isNullValuesIgnored()
@@ -77,12 +78,12 @@ class CompositeIndexTest extends AbstractSchemeExtensionTest {
         clazz.createProperty("foo", OType.STRING)
         clazz.createProperty("bar", OType.STRING)
         clazz.createIndex('test', OClass.INDEX_TYPE.NOTUNIQUE, "bar", "foo").getDefinition().setNullValuesIgnored(false)
-        def id = clazz.getClassIndex("test").getIdentity().toString()
+        clazz.getClassIndex("test").getConfiguration().field("old", true)
         schemeInitializer.register(CompositeIndexModel)
-        db.getMetadata().reload()
+        clazz = db.getMetadata().getSchema().getClass(CompositeIndexModel)
         then: "index not changed"
         clazz.getClassIndexes().size() == 1
-        id == clazz.getClassIndex("test").getIdentity().toString()
+        clazz.getClassIndex("test").getConfiguration().field("old")
     }
 
     def "Check multiple indexes definition"() {

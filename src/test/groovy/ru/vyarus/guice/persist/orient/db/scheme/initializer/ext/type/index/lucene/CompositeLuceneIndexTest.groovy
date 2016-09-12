@@ -37,13 +37,14 @@ class CompositeLuceneIndexTest extends AbstractSchemeExtensionTest {
         clazz.getClassIndex("test").getType() == OClass.INDEX_TYPE.FULLTEXT.name()
 
         when: "call for already registered indexes"
-        def id = clazz.getClassIndex("test").getIdentity().toString()
+        // no way to check "same lucene index instance"
+//        clazz.getClassIndex("test").getConfiguration().field("old", true)
         schemeInitializer.clearModelCache()
         schemeInitializer.register(CompositeLuceneIndexModel)
         clazz = db.getMetadata().getSchema().getClass(CompositeLuceneIndexModel)
         then: "nothing changed"
         clazz.getClassIndexes().size() == 1
-        id == clazz.getClassIndex("test").getIdentity().toString()
+//        clazz.getClassIndex("test").getConfiguration().field("old")
         clazz.getClassIndex("test").getType() == OClass.INDEX_TYPE.FULLTEXT.name()
     }
 

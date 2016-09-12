@@ -168,13 +168,13 @@ class ObjectCrudTest extends AbstractTest {
         res = objectDao.attach(res)
         res.setName('detach3')
         then: "proxy can't be used outside of transaction"
-        thrown(NullPointerException) // NPE due to orient implementation specifics (might be bug)
+        thrown(ODatabaseException)
 
         when: "trying to use iterator"
         Iterator<Model> iterator = objectDao.getAll()
         iterator.next()
         then: "db iterator is used outside of transaction"
-        thrown(NullPointerException) // NPE due to orient implementation specifics (might be bug)
+        thrown(ODatabaseException)
     }
 
     def "Check object custom mixin"() {
@@ -239,7 +239,7 @@ class ObjectCrudTest extends AbstractTest {
         Model model = objectDao.save(new Model(name: "check id"))
         model.getId()
         then: "proxy cant be used outside of transaction"
-        thrown(NullPointerException)
+        thrown(ODatabaseException)
 
     }
 

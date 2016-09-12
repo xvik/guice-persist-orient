@@ -1,6 +1,7 @@
 package ru.vyarus.guice.persist.orient.repository.core.ext.result.ext.detach
 
 import com.google.inject.Inject
+import com.orientechnologies.orient.core.exception.ODatabaseException
 import ru.vyarus.guice.persist.orient.AbstractTest
 import ru.vyarus.guice.persist.orient.repository.core.MethodExecutionException
 import ru.vyarus.guice.persist.orient.support.model.Model
@@ -29,8 +30,8 @@ class DetachExecutionTest extends AbstractTest {
 
         when: "trying to access property of proxy outside of transaction"
         model.name
-        then: "npe because of internal orient implementation"
-        thrown(NullPointerException) // NPE due to orient implementation specifics (might be bug)
+        then: "illegal access"
+        thrown(ODatabaseException)
 
         when: "detach list of objects"
         res = repository.selectDetach()
