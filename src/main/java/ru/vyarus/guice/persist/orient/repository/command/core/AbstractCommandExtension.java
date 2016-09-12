@@ -142,7 +142,6 @@ public abstract class AbstractCommandExtension<T extends CommandMethodDescriptor
         }
     }
 
-    @SuppressWarnings("PMD.UnusedPrivateMethod")
     private Object executeCommand(final RepositoryMethodDescriptor descriptor,
                                   final SqlCommandDescriptor desc, final OCommandRequest query) {
         try {

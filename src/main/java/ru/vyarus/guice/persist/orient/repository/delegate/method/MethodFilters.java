@@ -58,7 +58,6 @@ public final class MethodFilters {
         return res;
     }
 
-    @SuppressWarnings("PMD.UselessParentheses")
     private static Collection<MatchedMethod> filterByParam(final Collection<MatchedMethod> possibilities,
                                                            final int pos) {
         final List<MatchedMethod> filtered = Lists.newArrayList();

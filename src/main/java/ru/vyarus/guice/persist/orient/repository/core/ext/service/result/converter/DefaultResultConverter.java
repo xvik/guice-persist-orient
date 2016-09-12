@@ -98,7 +98,6 @@ public class DefaultResultConverter implements ResultConverter {
         return converted;
     }
 
-    @SuppressWarnings("PMD.UnusedPrivateMethod")
     private Object handlePlainValue(final Object result, final Class returnClass) {
         Object converted = null;
         if (returnClass.equals(Long.class) && result instanceof Number) {
