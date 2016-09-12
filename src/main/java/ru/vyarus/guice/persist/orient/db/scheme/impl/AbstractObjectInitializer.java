@@ -9,6 +9,7 @@ import com.google.inject.Provider;
 import com.google.inject.matcher.Matcher;
 import com.orientechnologies.common.reflection.OReflectionHelper;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
+import ru.vyarus.guice.persist.orient.db.scheme.ClassLoaderInitializer;
 import ru.vyarus.guice.persist.orient.db.scheme.SchemeInitializer;
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.ObjectSchemeInitializer;
 
@@ -33,14 +34,17 @@ import java.util.List;
 public abstract class AbstractObjectInitializer implements SchemeInitializer {
     private final Provider<OObjectDatabaseTx> dbProvider;
     private final ObjectSchemeInitializer schemeInitializer;
+    private final ClassLoaderInitializer classLoaderInitializer;
     private final Matcher<? super Class<?>> classMatcher;
     private final String[] packages;
 
     protected AbstractObjectInitializer(final Provider<OObjectDatabaseTx> dbProvider,
                                         final ObjectSchemeInitializer schemeInitializer,
+                                        final ClassLoaderInitializer classLoaderInitializer,
                                         final Matcher<? super Class<?>> classMatcher,
                                         final String... packages) {
         this.schemeInitializer = schemeInitializer;
+        this.classLoaderInitializer = classLoaderInitializer;
         this.dbProvider = dbProvider;
         this.classMatcher = classMatcher;
         this.packages = packages.length == 0 ? new String[]{""} : packages;
@@ -72,7 +76,7 @@ public abstract class AbstractObjectInitializer implements SchemeInitializer {
         for (String pkg : packages) {
             try {
                 final List<Class<?>> classes = OReflectionHelper
-                        .getClassesFor(pkg, Thread.currentThread().getContextClassLoader());
+                        .getClassesFor(pkg, classLoaderInitializer.getLoader());
                 modelClasses.addAll(Lists.newArrayList(Iterables.filter(classes, predicate)));
             } catch (ClassNotFoundException e) {
                 throw new IllegalStateException("Failed to resolve model classes from package: " + pkg, e);

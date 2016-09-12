@@ -29,6 +29,7 @@ Features:
 * Support method retry on ONeedRetryException
 * Spring-data like repositories with advanced features (e.g. generics usage in query). Great abilities for creating reusable parts (mixins). Support plugins.
 * Basic crud mixins with ability to use object api for graphs
+* Works with Scala and Play Framework (override ClassLoader)
 
 ### Setup
 
@@ -137,6 +138,19 @@ public void onAppShutdown(){
     orientService.stop()
 }
 ```
+
+#### ClassLoader
+
+For certain applications such as when using Play Framework, the current thread context class loader cannot access the 
+classes defined for the scheme creation.
+You may provide an implementation of ClassLoaderInitializer to use when loading classes.
+Simply override getLoader()
+
+```java
+bind(MyClassLoaderInitializer.class).to(ClassLoaderInitializer.class))
+```
+
+For Play Framework users, see [Play Thread Pools](https://www.playframework.com/documentation/2.5.x/ThreadPools)
 
 #### Unit of work (transaction)
 
