@@ -44,7 +44,7 @@ public final class RidUtils {
      */
     public static String getRid(final Object value) {
         Preconditions.checkNotNull(value, "Not null value required");
-        String res;
+        final String res;
         if (value instanceof ORID) {
             res = value.toString();
         } else if (value instanceof OIdentifiable) {

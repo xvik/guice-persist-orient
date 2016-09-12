@@ -35,7 +35,7 @@ public final class AnnotationTxConfigBuilder {
         TxConfig res = null;
         if (transactional != null) {
             final TxType txType = findAnnotation(type, method, TxType.class, true);
-            res =  new TxConfig(wrapExceptions(transactional.rollbackOn()),
+            res = new TxConfig(wrapExceptions(transactional.rollbackOn()),
                     wrapExceptions(transactional.ignore()), txType.value());
         }
         return res;

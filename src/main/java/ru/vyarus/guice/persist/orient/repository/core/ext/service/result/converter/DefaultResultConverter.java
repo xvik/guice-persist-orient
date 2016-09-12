@@ -39,7 +39,7 @@ public class DefaultResultConverter implements ResultConverter {
 
     private Object convertResult(final ResultType type, final Class returnClass,
                                  final Class entityClass, final Object result) {
-        Object converted;
+        final Object converted;
         switch (type) {
             case COLLECTION:
                 converted = handleCollection(result, returnClass);
@@ -58,7 +58,7 @@ public class DefaultResultConverter implements ResultConverter {
 
     @SuppressWarnings("unchecked")
     private Object handleCollection(final Object result, final Class returnClass) {
-        Object converted;
+        final Object converted;
         if (returnClass.equals(Iterator.class)) {
             converted = toIterator(result);
         } else if (returnClass.isAssignableFrom(List.class)) {
@@ -120,7 +120,7 @@ public class DefaultResultConverter implements ResultConverter {
     }
 
     private Iterator toIterator(final Object result) {
-        Iterator res;
+        final Iterator res;
         if (result instanceof Iterator) {
             res = (Iterator) result;
         } else if (result instanceof Iterable) {

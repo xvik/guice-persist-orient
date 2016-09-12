@@ -147,7 +147,7 @@ public abstract class AbstractCommandExtension<T extends CommandMethodDescriptor
                                   final SqlCommandDescriptor desc, final OCommandRequest query) {
         try {
             final OCommandRequest cmd = descriptor.executor.wrapCommand(query);
-            Object result;
+            final Object result;
             if (desc.useNamedParams) {
                 result = desc.namedParams.size() > 0
                         ? cmd.execute(desc.namedParams) : cmd.execute();

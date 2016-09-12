@@ -79,7 +79,7 @@ public class TxConfig {
     @Override
     public String toString() {
         return "{type " + txtype
-                + (rollbackOn.isEmpty() ?  "" : " rollbackOn " + rollbackOn)
+                + (rollbackOn.isEmpty() ? "" : " rollbackOn " + rollbackOn)
                 + (ignore.isEmpty() ? "" : " ignore " + ignore) + "}";
     }
 }

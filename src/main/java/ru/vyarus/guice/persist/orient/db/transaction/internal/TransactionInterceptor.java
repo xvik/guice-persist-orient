@@ -30,7 +30,7 @@ public class TransactionInterceptor implements MethodInterceptor {
     public Object invoke(final MethodInvocation invocation) throws Throwable {
         // checking directly to avoid redundant objects creation (simplify stacktrace)
         final Method method = invocation.getMethod();
-        Object res;
+        final Object res;
         if (transactionManager.isTransactionActive()) {
             logger.trace("Annotated method {} already in transaction", method.getName());
             res = invocation.proceed();

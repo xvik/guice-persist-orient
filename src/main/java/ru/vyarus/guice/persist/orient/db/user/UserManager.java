@@ -113,7 +113,7 @@ public class UserManager {
     public <T> T executeWithTxUser(final String user, final SpecificUserAction<T> userAction) {
         final boolean userChanged = checkSpecificUserConditions(user);
         final ODatabaseDocumentTx db = connectionProvider.get();
-        T res;
+        final T res;
         if (userChanged) {
             // this may cause security exception if current user has no access rights to users table
             final OUser specificUser = db.getMetadata().getSecurity().getUser(user);

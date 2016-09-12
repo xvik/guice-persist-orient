@@ -74,7 +74,7 @@ public class RidElVarParamExtension implements
 
     private String convert(final Object value) {
         checkExec(value != null, "Not null value required");
-        String res;
+        final String res;
         if (value instanceof ODocument) {
             // ODocument is iterable, so need to check it first
             res = RidUtils.getRid(value);

@@ -44,7 +44,7 @@ public class QueryMethodExtension extends AbstractCommandExtension<CommandMethod
                                                  final SqlCommandDescriptor desc) {
         final String query = desc.command;
         final boolean isQuery = query.toLowerCase().startsWith("select");
-        OCommandRequest command;
+        final OCommandRequest command;
         if (isQuery) {
             command = new OSQLSynchQuery<Object>(query);
         } else {

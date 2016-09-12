@@ -46,8 +46,8 @@ public final class ResultAnalyzer {
         final ResultDescriptor descriptor = new ResultDescriptor();
         descriptor.expectType = resolveExpectedType(returnClass, returnCollectionType);
 
-        ResultType type;
-        Class<?> entityClass;
+        final ResultType type;
+        final Class<?> entityClass;
         if (isCollection(returnClass)) {
             type = COLLECTION;
             entityClass = resolveGenericType(method, generics);
@@ -76,7 +76,7 @@ public final class ResultAnalyzer {
     }
 
     private static Class<?> resolveExpectedType(final Class<?> returnClass, final Class<?> returnCollectionType) {
-        Class<?> expected;
+        final Class<?> expected;
         if (returnCollectionType != null) {
             check(returnClass.isAssignableFrom(returnCollectionType),
                     "Requested collection %s is incompatible with method return type %s",

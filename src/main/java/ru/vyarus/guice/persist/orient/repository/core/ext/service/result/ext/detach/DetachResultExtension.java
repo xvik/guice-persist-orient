@@ -37,7 +37,7 @@ public class DetachResultExtension implements ResultExtension<DetachResult> {
                         + "objects from OBJECT connection, but current connection is %s",
                 descriptor.executor.getType());
         final OObjectDatabaseTx connection = (OObjectDatabaseTx) descriptor.executor.getConnection();
-        Object res;
+        final Object res;
         switch (descriptor.result.returnType) {
             case PLAIN:
                 res = detach(result, connection);
