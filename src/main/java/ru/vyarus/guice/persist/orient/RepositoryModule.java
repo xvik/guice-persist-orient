@@ -2,13 +2,13 @@ package ru.vyarus.guice.persist.orient;
 
 import com.google.common.base.MoreObjects;
 import com.google.inject.AbstractModule;
-import com.google.inject.internal.DynamicSingletonProvider;
 import com.google.inject.matcher.AbstractMatcher;
 import com.google.inject.matcher.Matchers;
 import com.google.inject.multibindings.Multibinder;
 import com.google.inject.name.Names;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.vyarus.guice.ext.core.generator.anchor.GeneratorAnchorModule;
 import ru.vyarus.guice.persist.orient.db.DbType;
 import ru.vyarus.guice.persist.orient.repository.RepositoryMethodInterceptor;
 import ru.vyarus.guice.persist.orient.repository.core.MethodDefinitionException;
@@ -74,6 +74,7 @@ public class RepositoryModule extends AbstractModule {
 
     @Override
     protected void configure() {
+        install(new GeneratorAnchorModule());
         bind(DbType.class).annotatedWith(Names.named("orient.repository.default.connection"))
                 .toInstance(defaultConnectionToUse);
 
@@ -86,7 +87,6 @@ public class RepositoryModule extends AbstractModule {
         bind(ParamsService.class);
         bind(ResultService.class);
         bind(DelegateMethodExtension.class);
-        bind(DynamicSingletonProvider.class).in(Singleton.class);
 
         configureAop();
 
