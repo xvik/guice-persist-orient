@@ -15,7 +15,7 @@ Underlying format is almost the same for all database types, which allows us to 
 may be performed as object database (jpa style) and graph api may be used for creating relations.
 
 Features:
-* For orient 2.x
+* For orient 2.1
 * Integration through [guice-persist](https://github.com/google/guice/wiki/GuicePersist) (UnitOfWork, PersistService, @Transactional)
 * Support for [document](http://www.orientechnologies.com/docs/last/orientdb.wiki/Document-Database.html), [object](http://www.orientechnologies.com/docs/last/orientdb.wiki/Object-Database.html) and
 [graph](http://www.orientechnologies.com/docs/last/orientdb.wiki/Graph-Database-Tinkerpop.html) databases
@@ -29,6 +29,7 @@ Features:
 * Support method retry on ONeedRetryException
 * Spring-data like repositories with advanced features (e.g. generics usage in query). Great abilities for creating reusable parts (mixins). Support plugins.
 * Basic crud mixins with ability to use object api for graphs
+* Compatible with Play framework
 
 ### Setup
 
@@ -44,7 +45,7 @@ Maven:
 <dependency>
 <groupId>ru.vyarus</groupId>
 <artifactId>guice-persist-orient</artifactId>
-<version>3.1.1</version>
+<version>3.2.0</version>
 <exclusions>
   <exclusion>
       <groupId>com.orientechnologies</groupId>
@@ -61,13 +62,14 @@ Maven:
 Gradle:
 
 ```groovy
-compile ('ru.vyarus:guice-persist-orient:3.1.1'){
+compile ('ru.vyarus:guice-persist-orient:3.2.0'){
     exclude module: 'orientdb-graphdb'
     exclude module: 'orientdb-object'       
 }
 ```
 
-For orient 1.x use version 2.1.0 (see [old docs](https://github.com/xvik/guice-persist-orient/tree/orient-1.x))
+* For orient 2.0.x use 3.1.1 (see [old docs](https://github.com/xvik/guice-persist-orient/tree/orient-2.0.x))
+* For orient 1.x use 2.1.0 (see [old docs](https://github.com/xvik/guice-persist-orient/tree/orient-1.x))
 
 By default, only document database support is enabled. 
 
@@ -152,7 +154,7 @@ First two options are better, because they automatically manage rollbacks and av
 Read more about [orient transactions](http://www.orientechnologies.com/docs/last/orientdb.wiki/Transactions.html)
 
 **NOTE**: orient 2 is more strict about transactions: now ODocument could be created only inside transaction and object proxy
-can't be used outside of transaction (but from 2.0.5 proxies work again).
+can't be used outside of transaction.
 
 When you get error:
 
@@ -161,6 +163,9 @@ Database instance is not set in current thread. Assure to set it with: ODatabase
 ```
 
 It almost certainly means that you perform transactional operation outside of transaction. Simply enlarge transaction scope.
+
+When you inside transaction, `activateOnCurrentThread()` is called each time you obtain connection from raw connection provider or PersistentContext
+and you will always have correctly bound connection.
 
 ###### Examples
 
