@@ -1,9 +1,11 @@
+* Update to orient 2.1
+* Update to guice 4.1
 * Avoid deprecated OCommandRequest api usage (deprecated in 2.1): 
 @FetchPlan, @Limit and @Timeout extensions now modifies query instead of using OCommandRequest setters
 * (behavior change) @EdgeType and @VertexType extensions now assign superclass directly to annotated type (or not if hierarchy already contains required type)
 * Call activateOnCurrentThread() in pools for each connection obtain (e.g. context.getConnection()) to guarantee proper db instance bound to thread
 * Fix guice circular proxy (between transaction manager and pools)
-* Fix child injector and private modules support for RepositoryModule (#14)
+* Fix child injector and private modules support for RepositoryModule (#7)
 * Fix playframework compatibility (#10)
 
 ### 3.1.1 (2015-08-16)
