@@ -31,6 +31,10 @@ Features:
 * Basic crud mixins with ability to use object api for graphs
 * Compatible with Play framework
 
+### Thanks to
+
+* [Derric Gilling](https://github.com/dgilling) for help with playframework compatibility
+
 ### Setup
 
 Releases are published to [bintray jcenter](https://bintray.com/bintray/jcenter) (package appear immediately after release) 
