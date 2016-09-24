@@ -1,3 +1,4 @@
+### 3.2.0 (2016-09-25)
 * Update to orient 2.1
 * Update to guice 4.1
 * Avoid deprecated OCommandRequest api usage (deprecated in 2.1): 
