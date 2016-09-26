@@ -29,7 +29,7 @@ Features:
 * Support method retry on ONeedRetryException
 * Spring-data like repositories with advanced features (e.g. generics usage in query). Great abilities for creating reusable parts (mixins). Support plugins.
 * Basic crud mixins with ability to use object api for graphs
-* Compatible with Play framework
+* [Compatible with Play framework](https://github.com/xvik/guice-persist-orient-play-example)
 
 ### Thanks to
 
