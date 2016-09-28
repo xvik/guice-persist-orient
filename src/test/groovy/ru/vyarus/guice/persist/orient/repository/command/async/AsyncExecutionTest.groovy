@@ -23,6 +23,12 @@ class AsyncExecutionTest extends AbstractTest {
         when: "calling async query"
         def res = []
         repository.select(new OCommandResultListener() {
+
+            @Override
+            Object getResult() {
+                return null
+            }
+
             @Override
             boolean result(Object iRecord) {
                 res << iRecord
@@ -40,6 +46,12 @@ class AsyncExecutionTest extends AbstractTest {
 
     def "Check error cases"() {
         OCommandResultListener dummy = new OCommandResultListener() {
+
+            @Override
+            Object getResult() {
+                return null
+            }
+
             @Override
             boolean result(Object iRecord) {
                 return false

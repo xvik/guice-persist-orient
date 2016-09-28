@@ -96,7 +96,7 @@ public final class RidUtils {
                 @Override
                 public void onAfterIdentityChange(final ORecord record) {
                     OObjectSerializerHelper.setObjectID(record.getIdentity(), pojo);
-                    OObjectSerializerHelper.setObjectVersion(record.getRecordVersion().copy(), pojo);
+                    OObjectSerializerHelper.setObjectVersion(record.getVersion(), pojo);
                 }
             });
         }

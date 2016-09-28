@@ -1,6 +1,8 @@
 package ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.type.index.lucene
 
 import com.orientechnologies.orient.core.Orient
+import com.orientechnologies.orient.core.index.OIndex
+import com.orientechnologies.orient.core.index.OIndexAbstractDelegate
 import com.orientechnologies.orient.core.metadata.schema.OClass
 import com.orientechnologies.orient.core.metadata.schema.OType
 import org.apache.lucene.analysis.en.EnglishAnalyzer
@@ -37,14 +39,13 @@ class CompositeLuceneIndexTest extends AbstractSchemeExtensionTest {
         clazz.getClassIndex("test").getType() == OClass.INDEX_TYPE.FULLTEXT.name()
 
         when: "call for already registered indexes"
-        // no way to check "same lucene index instance"
-//        clazz.getClassIndex("test").getConfiguration().field("old", true)
+        def id = idxId(clazz.getClassIndex("test"))
         schemeInitializer.clearModelCache()
         schemeInitializer.register(CompositeLuceneIndexModel)
         clazz = db.getMetadata().getSchema().getClass(CompositeLuceneIndexModel)
         then: "nothing changed"
         clazz.getClassIndexes().size() == 1
-//        clazz.getClassIndex("test").getConfiguration().field("old")
+        idxId(clazz.getClassIndex("test")) == id
         clazz.getClassIndex("test").getType() == OClass.INDEX_TYPE.FULLTEXT.name()
     }
 
@@ -55,7 +56,6 @@ class CompositeLuceneIndexTest extends AbstractSchemeExtensionTest {
         clazz.createProperty("foo", OType.STRING)
         clazz.createProperty("bar", OType.STRING)
         SchemeUtils.command(db, "create index test on CompositeLuceneIndexModel (foo,bar) fulltext engine lucene metadata {\"marker\":\"true\"}")
-//        clazz.createIndex("test", "FULLTEXT", null, null, "LUCENE", ["foo", "bar"] as String[]);
         db.getMetadata().reload()
         // no way to compare indexes by id, because ids not assigned for lucene
         assert clazz.getClassIndex("test").getMetadata().field("marker")
@@ -74,7 +74,6 @@ class CompositeLuceneIndexTest extends AbstractSchemeExtensionTest {
         clazz.createProperty("foo", OType.STRING)
         clazz.createProperty("bar", OType.STRING)
         SchemeUtils.command(db, "create index test on CompositeLuceneIndexModel (bar,foo) fulltext engine lucene metadata {\"analyzer\":\"org.apache.lucene.analysis.en.EnglishAnalyzer\", \"marker\":\"true\"}")
-//        clazz.createIndex("test", "FULLTEXT", null, null, "LUCENE", ["bar", "foo"] as String[]);
         db.getMetadata().reload()
         assert clazz.getClassIndex("test").getMetadata().field("marker")
         schemeInitializer.register(CompositeLuceneIndexModel)
@@ -107,5 +106,9 @@ class CompositeLuceneIndexTest extends AbstractSchemeExtensionTest {
         clazz.getClassIndex("test1").getType() == OClass.INDEX_TYPE.FULLTEXT.name()
         clazz.getClassIndex("test2").getType() == OClass.INDEX_TYPE.FULLTEXT.name()
 
+    }
+
+    private Object idxId(OIndex index) {
+        return index instanceof OIndexAbstractDelegate ? null : index.indexId
     }
 }

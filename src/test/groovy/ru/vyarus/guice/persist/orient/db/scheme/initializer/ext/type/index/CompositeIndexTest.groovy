@@ -1,5 +1,7 @@
 package ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.type.index
 
+import com.orientechnologies.orient.core.index.OIndex
+import com.orientechnologies.orient.core.index.OIndexRemote
 import com.orientechnologies.orient.core.metadata.schema.OClass
 import com.orientechnologies.orient.core.metadata.schema.OType
 import ru.vyarus.guice.persist.orient.db.scheme.SchemeInitializationException
@@ -28,13 +30,13 @@ class CompositeIndexTest extends AbstractSchemeExtensionTest {
         !clazz.getClassIndex("test").getDefinition().isNullValuesIgnored()
 
         when: "call for already registered indexes"
-        clazz.getClassIndex("test").getConfiguration().field("old", true)
+        def id = idxId(clazz.getClassIndex("test"))
         schemeInitializer.clearModelCache()
         schemeInitializer.register(CompositeIndexModel)
         clazz = db.getMetadata().getSchema().getClass(CompositeIndexModel)
         then: "nothing changed"
         clazz.getClassIndexes().size() == 1
-        clazz.getClassIndex("test").getConfiguration().field("old")
+        idxId(clazz.getClassIndex("test")) == id
         clazz.getClassIndex("test").getType() == OClass.INDEX_TYPE.NOTUNIQUE.name()
         clazz.getClassIndex("test").getDefinition().getFields() == ["foo", "bar"]
         !clazz.getClassIndex("test").getDefinition().isNullValuesIgnored()
@@ -47,12 +49,13 @@ class CompositeIndexTest extends AbstractSchemeExtensionTest {
         clazz.createProperty("foo", OType.STRING)
         clazz.createProperty("bar", OType.STRING)
         clazz.createIndex('test', OClass.INDEX_TYPE.DICTIONARY, "foo", "bar")
-        clazz.getClassIndex("test").getConfiguration().field("old", true)
+        def id = idxId(clazz.getClassIndex("test"))
         schemeInitializer.register(CompositeIndexModel)
         clazz = db.getMetadata().getSchema().getClass(CompositeIndexModel)
         then: "index re-created"
         clazz.getClassIndexes().size() == 1
-        clazz.getClassIndex("test").getConfiguration().field("old") == null
+        // skip check for remote test
+        id == null || idxId(clazz.getClassIndex("test")) != id
         clazz.getClassIndex("test").getType() == OClass.INDEX_TYPE.NOTUNIQUE.name()
         clazz.getClassIndex("test").getDefinition().getFields() == ["foo", "bar"]
         !clazz.getClassIndex("test").getDefinition().isNullValuesIgnored()
@@ -78,12 +81,12 @@ class CompositeIndexTest extends AbstractSchemeExtensionTest {
         clazz.createProperty("foo", OType.STRING)
         clazz.createProperty("bar", OType.STRING)
         clazz.createIndex('test', OClass.INDEX_TYPE.NOTUNIQUE, "bar", "foo").getDefinition().setNullValuesIgnored(false)
-        clazz.getClassIndex("test").getConfiguration().field("old", true)
+        def id = idxId(clazz.getClassIndex("test"))
         schemeInitializer.register(CompositeIndexModel)
         clazz = db.getMetadata().getSchema().getClass(CompositeIndexModel)
         then: "index not changed"
         clazz.getClassIndexes().size() == 1
-        clazz.getClassIndex("test").getConfiguration().field("old")
+        idxId(clazz.getClassIndex("test")) == id
     }
 
     def "Check multiple indexes definition"() {
@@ -96,5 +99,9 @@ class CompositeIndexTest extends AbstractSchemeExtensionTest {
         clazz.getClassIndex("test").getType() == OClass.INDEX_TYPE.NOTUNIQUE.name()
         clazz.getClassIndex("test2").getType() == OClass.INDEX_TYPE.DICTIONARY.name()
 
+    }
+
+    private Object idxId(OIndex index) {
+        return index.delegate instanceof OIndexRemote ? null : index.indexId
     }
 }

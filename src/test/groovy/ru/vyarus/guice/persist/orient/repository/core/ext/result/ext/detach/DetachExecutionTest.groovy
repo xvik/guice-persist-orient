@@ -38,18 +38,18 @@ class DetachExecutionTest extends AbstractTest {
         then: "detached"
         res.size() == 10
         res[0].class == Model
-        res[0].name == 'name0'
+        res[0].name.startsWith('name')
 
         when: "detach plain object"
         def res2 = repository.selectPlainDetach()
         then: "detached"
-        res2.name == 'name0'
+        res2.name.startsWith('name')
 
         when: "detach array object"
         res2 = repository.selectArrayDetach()
         then: "detached"
         res2.length == 10
-        res2[0].name == 'name0'
+        res2[0].name.startsWith('name')
 
         when: "detach set object"
         res2 = repository.selectSetDetach()
@@ -60,12 +60,12 @@ class DetachExecutionTest extends AbstractTest {
         when: "detach iterable object"
         res2 = repository.selectIterableDetach()
         then: "detached"
-        res2.iterator().next().name == ('name0')
+        res2.iterator().next().name.startsWith('name')
 
         when: "detach iterator object"
         res2 = repository.selectIteratorDetach()
         then: "detached"
-        res2.iterator().next().name == ('name0')
+        res2.iterator().next().name.startsWith('name')
 
         when: "detach custom collection object"
         res2 = repository.selectCustomCollectionDetach()
@@ -77,7 +77,7 @@ class DetachExecutionTest extends AbstractTest {
         when: "trying to detach pure string"
         res2 = repository.noActualDetach()
         then: "no error, because orient support this case and do nothing"
-        res2 == 'name0'
+        res2.startsWith('name')
 
         when: "using wrong connection"
         repository.detachError()

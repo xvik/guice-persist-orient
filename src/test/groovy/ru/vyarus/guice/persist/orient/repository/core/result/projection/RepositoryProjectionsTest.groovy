@@ -48,12 +48,12 @@ class RepositoryProjectionsTest extends AbstractTest {
         String[] res2 = repository.getNamesArray()
         then: "result list unwrapped from ODocument"
         res2.length == 10
-        res2[0] == 'name0'
+        res2[0].startsWith('name')
 
         when: "need single element from list query"
         String name = repository.getOneName()
         then: "first element taken and projection will work"
-        name == 'name0'
+        name.startsWith('name')
     }
 
     def "Graph connections"() {
@@ -68,7 +68,7 @@ class RepositoryProjectionsTest extends AbstractTest {
         String[] res = repository.getGraphNamesArray()
         then: "returned list of vertexes still recognized and flatten"
         res.size() == 10
-        res[0] == 'name0'
+        res[0].startsWith('name')
 
         when: "calling count under graph connection"
         int cnt = repository.getGraphCount()

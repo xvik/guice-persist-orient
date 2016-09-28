@@ -1,5 +1,7 @@
 package ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.field.index.fulltext
 
+import com.orientechnologies.orient.core.index.OIndex
+import com.orientechnologies.orient.core.index.OIndexRemote
 import com.orientechnologies.orient.core.metadata.schema.OClass
 import com.orientechnologies.orient.core.metadata.schema.OType
 import ru.vyarus.guice.persist.orient.db.scheme.SchemeInitializationException
@@ -49,17 +51,17 @@ class FulltextIndexTest extends AbstractSchemeExtensionTest {
 
         when: "call for already registered indexes"
         // mark indexes
-        clazz.getClassIndex("FulltextIndexModel.defaults").getConfiguration().field("old", true)
-        clazz.getClassIndex("FulltextIndexModel.hash").getConfiguration().field("old", true)
-        clazz.getClassIndex("all_options").getConfiguration().field("old", true)
+        def id1 = id(clazz.getClassIndex("FulltextIndexModel.defaults"))
+        def id2 = id(clazz.getClassIndex("FulltextIndexModel.hash"))
+        def id3 = id(clazz.getClassIndex("all_options"))
         schemeInitializer.clearModelCache()
         schemeInitializer.register(FulltextIndexModel)
         clazz = db.getMetadata().getSchema().getClass(FulltextIndexModel)
         then: "nothing changed"
         clazz.getClassIndexes().size() == 3
-        clazz.getClassIndex("FulltextIndexModel.defaults").getConfiguration().field("old")
-        clazz.getClassIndex("FulltextIndexModel.hash").getConfiguration().field("old")
-        clazz.getClassIndex("all_options").getConfiguration().field("old")
+        id(clazz.getClassIndex("FulltextIndexModel.defaults")) == id1
+        id(clazz.getClassIndex("FulltextIndexModel.hash")) == id2
+        id(clazz.getClassIndex("all_options")) == id3
         clazz.getClassIndex("FulltextIndexModel.defaults").getType() == OClass.INDEX_TYPE.FULLTEXT.name()
         clazz.getClassIndex("FulltextIndexModel.hash").getType() == OClass.INDEX_TYPE.FULLTEXT_HASH_INDEX.name()
     }
@@ -75,16 +77,17 @@ class FulltextIndexTest extends AbstractSchemeExtensionTest {
         clazz.createIndex('FulltextIndexModel.hash', OClass.INDEX_TYPE.FULLTEXT, "hash")
         clazz.createIndex('all_options', OClass.INDEX_TYPE.FULLTEXT, "options")
         // mark indexes
-        clazz.getClassIndex("FulltextIndexModel.defaults").getConfiguration().field("old", true)
-        clazz.getClassIndex("FulltextIndexModel.hash").getConfiguration().field("old", true)
-        clazz.getClassIndex("all_options").getConfiguration().field("old", true)
+        def id1 = id(clazz.getClassIndex("FulltextIndexModel.defaults"))
+        def id2 = id(clazz.getClassIndex("FulltextIndexModel.hash"))
+        def id3 = id(clazz.getClassIndex("all_options"))
         schemeInitializer.register(FulltextIndexModel)
         clazz = db.getMetadata().getSchema().getClass(FulltextIndexModel)
         then: "indexes re-created"
         clazz.getClassIndexes().size() == 3
-        clazz.getClassIndex("FulltextIndexModel.defaults").getMetadata().field("old") == null
-        clazz.getClassIndex("FulltextIndexModel.hash").getMetadata().field("old") == null
-        clazz.getClassIndex("all_options").getMetadata().field("old") == null
+        // ignore check for remote test
+        id1 == null || id(clazz.getClassIndex("FulltextIndexModel.defaults")) != id1
+        id2 == null || id(clazz.getClassIndex("FulltextIndexModel.hash")) != id2
+        id3 == null || id(clazz.getClassIndex("all_options")) != id3
         clazz.getClassIndex("FulltextIndexModel.defaults").getType() == OClass.INDEX_TYPE.FULLTEXT.name()
         clazz.getClassIndex("FulltextIndexModel.hash").getType() == OClass.INDEX_TYPE.FULLTEXT_HASH_INDEX.name()
         def custom = clazz.getClassIndex("all_options")
@@ -117,5 +120,9 @@ class FulltextIndexTest extends AbstractSchemeExtensionTest {
         schemeInitializer.register(FulltextIndexModel)
         then: "error"
         thrown(SchemeInitializationException)
+    }
+
+    private Object id(OIndex index) {
+        return index.delegate instanceof OIndexRemote ? null : index.indexId
     }
 }

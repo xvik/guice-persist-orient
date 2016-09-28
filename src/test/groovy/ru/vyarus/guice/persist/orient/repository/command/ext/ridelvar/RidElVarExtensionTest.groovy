@@ -31,8 +31,8 @@ class RidElVarExtensionTest extends AbstractTest {
         VertexModel from = helper.detach(helper.findByName("from"))
         when: "query with parameters"
         List<VertexModel> res = dao.paramPositional(from.id)
-        then: "ok"
-        res.size() == 1
+        then: "orient can't bind string parameter since 2.2(.10)"
+        thrown(MethodExecutionException)
     }
 
     def "Check rid var bindings"() {

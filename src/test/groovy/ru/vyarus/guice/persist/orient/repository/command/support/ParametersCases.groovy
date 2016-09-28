@@ -18,9 +18,13 @@ interface ParametersCases {
     @Query("select from Model where name=? and nick=?")
     List<Model> parametersPositional(String name, String nick)
 
-    // just check vararg
+    // just check vararg (it will not work)
     @Query("select from Model where name in ?")
     List<Model> findWithVararg(String... names);
+
+    // just check list
+    @Query("select from Model where name in ?")
+    List<Model> findWithList(List<String> names);
 
     // using parameters in update query
     @Query("update Model set name=? where name=?")

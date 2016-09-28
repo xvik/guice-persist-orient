@@ -1,7 +1,10 @@
 package ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.field.index
 
+import com.orientechnologies.orient.core.index.OIndex
+import com.orientechnologies.orient.core.index.OIndexRemote
 import com.orientechnologies.orient.core.metadata.schema.OClass
 import com.orientechnologies.orient.core.metadata.schema.OType
+import com.orientechnologies.orient.core.record.impl.ODocument
 import ru.vyarus.guice.persist.orient.db.scheme.SchemeInitializationException
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.AbstractSchemeExtensionTest
 
@@ -29,17 +32,17 @@ class IndexTest extends AbstractSchemeExtensionTest {
 
         when: "call for already registered indexes"
         // mark indexes
-        clazz.getClassIndex("IndexModel.foo").getConfiguration().field("old", true)
-        clazz.getClassIndex("customName").getConfiguration().field("old", true)
-        clazz.getClassIndex("nulls").getConfiguration().field("old", true)
+        def id1 = id(clazz.getClassIndex("IndexModel.foo"))
+        def id2 = id(clazz.getClassIndex("customName"))
+        def id3 = id(clazz.getClassIndex("nulls"))
         schemeInitializer.clearModelCache()
         schemeInitializer.register(IndexModel)
         clazz = db.getMetadata().getSchema().getClass(IndexModel)
         then: "nothing changed"
         clazz.getClassIndexes().size() == 3
-        clazz.getClassIndex("IndexModel.foo").getConfiguration().field("old")
-        clazz.getClassIndex("customName").getConfiguration().field("old")
-        clazz.getClassIndex("nulls").getConfiguration().field("old")
+        id(clazz.getClassIndex("IndexModel.foo")) == id1
+        id(clazz.getClassIndex("customName")) == id2
+        id(clazz.getClassIndex("nulls")) == id3
         clazz.getClassIndex("IndexModel.foo").getType() == OClass.INDEX_TYPE.NOTUNIQUE.name()
         clazz.getClassIndex("customName").getType() == OClass.INDEX_TYPE.FULLTEXT.name()
         !clazz.getClassIndex("nulls").getDefinition().isNullValuesIgnored()
@@ -54,18 +57,19 @@ class IndexTest extends AbstractSchemeExtensionTest {
         clazz.createProperty("nulls", OType.STRING)
         clazz.createIndex('IndexModel.foo', OClass.INDEX_TYPE.DICTIONARY, "foo")
         clazz.createIndex('customName', OClass.INDEX_TYPE.DICTIONARY, "bar")
-        clazz.createIndex('nulls', OClass.INDEX_TYPE.NOTUNIQUE, "nulls")
+        clazz.createIndex('nulls', OClass.INDEX_TYPE.NOTUNIQUE.name(), null, new ODocument().field("ignoreNullValues", true), ["nulls"] as String[])
         // marking old index
-        clazz.getClassIndex("IndexModel.foo").getConfiguration().field("old", true)
-        clazz.getClassIndex("customName").getConfiguration().field("old", true)
-        clazz.getClassIndex("nulls").getConfiguration().field("old", true)
+        def id1 = id(clazz.getClassIndex("IndexModel.foo"))
+        def id2 = id(clazz.getClassIndex("customName"))
+        def id3 = id(clazz.getClassIndex("nulls"))
         schemeInitializer.register(IndexModel)
         clazz = db.getMetadata().getSchema().getClass(IndexModel)
         then: "indexes re-created"
         clazz.getClassIndexes().size() == 3
-        clazz.getClassIndex("IndexModel.foo").getConfiguration().field("old") == null
-        clazz.getClassIndex("customName").getConfiguration().field("old") == null
-        clazz.getClassIndex("nulls").getConfiguration().field("old") == null
+        // avoid check for remote tests
+        id1 == null || id(clazz.getClassIndex("IndexModel.foo")) != id1
+        id2 == null ||id(clazz.getClassIndex("customName")) != id2
+        id3 == null ||id(clazz.getClassIndex("nulls")) != id3
         clazz.getClassIndex("IndexModel.foo").getType() == OClass.INDEX_TYPE.NOTUNIQUE.name()
         clazz.getClassIndex("customName").getType() == OClass.INDEX_TYPE.FULLTEXT.name()
         !clazz.getClassIndex("nulls").getDefinition().isNullValuesIgnored()
@@ -92,5 +96,9 @@ class IndexTest extends AbstractSchemeExtensionTest {
         clazz.getClassIndexes().size() == 2
         clazz.getClassIndex("test1").getType() == OClass.INDEX_TYPE.NOTUNIQUE.name()
         clazz.getClassIndex("test2").getType() == OClass.INDEX_TYPE.FULLTEXT.name()
+    }
+
+    private Object id(OIndex index) {
+        return index.delegate instanceof OIndexRemote ? null : index.indexId
     }
 }

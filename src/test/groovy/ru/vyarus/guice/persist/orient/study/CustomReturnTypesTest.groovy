@@ -26,7 +26,7 @@ class CustomReturnTypesTest extends AbstractTest {
 
         when: "selecting one field in object connection"
         def res = context.doInTransaction({ db ->
-            db.query(new OSQLSynchQuery<Object>("select name from Model"))
+            db.query(new OSQLSynchQuery<Object>("select name from Model order by name"))
         } as SpecificTxAction)
         then: "receiving list of documents"
         res instanceof List<ODocument>
@@ -34,7 +34,7 @@ class CustomReturnTypesTest extends AbstractTest {
 
         when: "selecting few fields in object connection"
         res = context.doInTransaction({ db ->
-            db.query(new OSQLSynchQuery<Object>("select name, nick from Model"))
+            db.query(new OSQLSynchQuery<Object>("select name, nick from Model order by name"))
         } as SpecificTxAction)
         then: "receiving list of documents"
         res instanceof List<ODocument>
@@ -45,7 +45,7 @@ class CustomReturnTypesTest extends AbstractTest {
 
         when: "selecting one field in graph connection"
         def res = graphTemplate.doInTransaction({ db ->
-            db.command(new OSQLSynchQuery<Object>("select name from Model")).execute()
+            db.command(new OSQLSynchQuery<Object>("select name from Model order by name")).execute()
         } as SpecificTxAction)
         then: "receiving list of vertexes"
         res instanceof Iterable<Vertex>

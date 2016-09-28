@@ -36,6 +36,11 @@ class ParamsExecutionTest extends AbstractTest {
 
         when: "vararg check"
         res = dao.findWithVararg('Sam', 'Dan', 'John');
+        then: "returned empty list as array not supported"
+        res.size() == 0
+
+        when: "list check"
+        res = dao.findWithList(['Sam', 'Dan', 'John']);
         then: "returned list"
         res.size() == 1
 

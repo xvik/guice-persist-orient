@@ -26,6 +26,11 @@ class ListenExecutionTest extends AbstractTest {
             int i = 0;
 
             @Override
+            Object getResult() {
+                return null
+            }
+
+            @Override
             boolean result(Object iRecord) {
                 res << iRecord
                 // manually filter only 5 first results

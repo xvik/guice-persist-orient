@@ -1,6 +1,6 @@
 package ru.vyarus.guice.persist.orient.db.retry.support
 
-import com.orientechnologies.common.concur.OTimeoutException
+import com.orientechnologies.common.concur.ONeedRetryException
 import ru.vyarus.guice.persist.orient.db.retry.Retry
 
 /**
@@ -14,12 +14,18 @@ class ExceptionCases {
     @Retry(10)
     void wrappedRetry() {
         callCount++
-        throw new IllegalStateException(new OTimeoutException())
+        throw new IllegalStateException(new REx())
     }
 
     @Retry(10)
     void otherException() {
         callCount++
         throw new IllegalStateException()
+    }
+
+    static class REx extends ONeedRetryException {
+        REx() {
+            super("retry")
+        }
     }
 }
