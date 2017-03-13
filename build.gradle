@@ -5,17 +5,17 @@ plugins {
     id 'ru.vyarus.java-lib' version '1.0.4'
     id 'ru.vyarus.github-info' version '1.1.0'
     id 'ru.vyarus.animalsniffer' version '1.2.0'
-    id 'ru.vyarus.quality' version '2.0.0'
-    id 'com.github.kt3k.coveralls' version '2.6.3'
-    id 'com.jfrog.bintray' version '1.7.1'
-    id 'net.researchgate.release' version '2.4.1'
+    id 'ru.vyarus.quality' version '2.1.0'
+    id 'com.github.kt3k.coveralls' version '2.7.1'
+    id 'com.jfrog.bintray' version '1.7.3'
+    id 'net.researchgate.release' version '2.5.0'
     id 'com.github.ben-manes.versions' version '0.13.0'
 }
 
 sourceCompatibility = 1.6
 
 wrapper {
-    gradleVersion = 3.0
+    gradleVersion = 3.3
 }
 
 ext {
@@ -38,14 +38,8 @@ dependencies {
     compile "com.google.inject.extensions:guice-multibindings:$guice"
     compile "com.orientechnologies:orientdb-core:$orient"
     compile "com.orientechnologies:orientdb-object:$orient"
-    compile ("com.orientechnologies:orientdb-graphdb:$orient") {
-        // excluded to remove old groovy dependency
-        exclude module: 'gremlin-groovy'
-    }
-    provided ("com.orientechnologies:orientdb-lucene:$orient") {
-        // excluded to remove old groovy dependency
-        exclude module: 'gremlin-groovy'
-    }
+    compile ("com.orientechnologies:orientdb-graphdb:$orient")
+    provided ("com.orientechnologies:orientdb-lucene:$orient")
 
     testCompile 'ch.qos.logback:logback-classic:1.1.7'
     testCompile 'org.slf4j:jul-to-slf4j:1.7.21'
@@ -119,7 +113,10 @@ test {
 dependencyUpdates.revision = 'release'
 jacocoTestReport.reports.xml.enabled = true
 
+
 task showDependenciesTree(dependsOn: 'htmlDependencyReport', group: 'help', description:
-        'Generates dependencies tree report and opens it in browser') << {
-    java.awt.Desktop.getDesktop().open(file('/build/reports/project/dependencies/root.html'))
+        'Generates dependencies tree report and opens it in browser') {
+    doLast {
+        java.awt.Desktop.getDesktop().open(file('build/reports/project/dependencies/root.html'))
+    }
 }
