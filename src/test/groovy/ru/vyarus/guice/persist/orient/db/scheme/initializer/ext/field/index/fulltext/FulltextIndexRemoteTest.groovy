@@ -7,7 +7,7 @@ import spock.lang.Ignore
  * @author Vyacheslav Rusakov 
  * @since 15.06.2015
  */
-@Ignore // ignored until #4837 fixed
+@Ignore // ignored until https://github.com/orientechnologies/orientdb/issues/4837 fixed
 @UseRemote
 class FulltextIndexRemoteTest extends FulltextIndexTest {
 }

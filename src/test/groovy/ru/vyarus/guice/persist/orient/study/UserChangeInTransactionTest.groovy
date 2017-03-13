@@ -24,6 +24,11 @@ class UserChangeInTransactionTest extends AbstractTest {
     @Inject
     PersistentContext<OObjectDatabaseTx> context
 
+    @Override
+    void setupSecurity() {
+        defaultSecurity()
+    }
+
     def "Change user inside transaction"() {
 
         context.doInTransaction({ db ->

@@ -2,7 +2,7 @@ package ru.vyarus.guice.persist.orient.util
 
 import com.orientechnologies.orient.client.remote.OServerAdmin
 import com.orientechnologies.orient.core.Orient
-import com.orientechnologies.orient.server.OServer
+import com.orientechnologies.orient.core.config.OGlobalConfiguration
 import com.orientechnologies.orient.server.OServerMain
 import org.junit.rules.ExternalResource
 import org.junit.rules.TemporaryFolder
@@ -18,7 +18,6 @@ import ru.vyarus.guice.persist.orient.support.Config
 class ServerRule extends ExternalResource {
 
     TemporaryFolder folder = new TemporaryFolder()
-    OServer server
 
     static String remoteUrl = "remote:localhost/test"
     static String memoryUrl = "memory:test"
@@ -32,10 +31,12 @@ class ServerRule extends ExternalResource {
         folder.create()
         System.setProperty("ORIENTDB_HOME", folder.root.getAbsolutePath());
         System.setProperty("orientdb.www.path", "");
-        server = OServerMain
+        OGlobalConfiguration.SERVER_SECURITY_FILE.setValue("src/test/resources/ru/vyarus/guice/persist/orient/security.json")
+        OServerMain
                 .create()
                 .startup(getClass().getResourceAsStream("/ru/vyarus/guice/persist/orient/server-config.xml") as InputStream)
                 .activate();
+        println 'remote server started'
     }
 
     @Override
@@ -49,6 +50,7 @@ class ServerRule extends ExternalResource {
         // re-init engines, without it following in memory tests will fail
         Orient.instance().startup()
         reset()
+        println 'remote server shut down'
     }
 
     public void initRemoteDb() {
@@ -62,9 +64,13 @@ class ServerRule extends ExternalResource {
 
     public static void setRemoteConf() {
         Config.DB = remoteUrl
+        Config.USER = "root"
+        Config.PASS = "root"
     }
 
     public static void reset() {
         Config.DB = memoryUrl
+        Config.USER = "admin"
+        Config.PASS = "admin"
     }
 }

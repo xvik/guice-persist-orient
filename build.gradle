@@ -19,7 +19,7 @@ wrapper {
 }
 
 ext {
-    orient = '2.2.10'
+    orient = '2.2.17'
     guice = '4.1.0'
 }
 

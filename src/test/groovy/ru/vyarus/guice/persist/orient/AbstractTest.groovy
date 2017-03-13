@@ -1,7 +1,12 @@
 package ru.vyarus.guice.persist.orient
 
 import com.google.inject.persist.PersistService
+import com.orientechnologies.orient.core.config.OGlobalConfiguration
 import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx
+import com.orientechnologies.orient.core.metadata.security.OSecurity
+import com.orientechnologies.orient.core.metadata.security.OSecurityNull
+import com.orientechnologies.orient.core.security.OSecurityFactory
+import com.orientechnologies.orient.core.security.OSecurityManager
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx
 import ru.vyarus.guice.persist.orient.db.PersistentContext
 import ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxAction
@@ -26,7 +31,31 @@ abstract class AbstractTest extends Specification {
     PersistentContext<OObjectDatabaseTx> context
 
     void setup() {
+        setupSecurity()
         persist.start()
+        println 'persistence started'
+    }
+
+    // could be overridden for different security config
+    // no security will work for most cases
+    void setupSecurity() {
+        // switch off orient security which is very time consuming since 2.2
+        OGlobalConfiguration.CREATE_DEFAULT_USERS.setValue(false)
+        // don't override security for remote tests
+        OSecurityManager.instance().securityFactory = new OSecurityFactory() {
+            @Override
+            OSecurity newSecurity() {
+                println 'obtain null security'
+                return new OSecurityNull(null, null)
+            }
+        }
+    }
+
+    // intended to be called from overridden setupSecurity
+    protected final void defaultSecurity() {
+        OGlobalConfiguration.CREATE_DEFAULT_USERS.setValue(true)
+        // reset default factory
+        OSecurityManager.instance().securityFactory = null
     }
 
     void cleanup() {
@@ -46,6 +75,7 @@ abstract class AbstractTest extends Specification {
             }
         }
         afterCleanup()
+        println 'persistence cleaned'
     }
 
     void afterCleanup() {
