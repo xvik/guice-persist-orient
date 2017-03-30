@@ -33,7 +33,6 @@ abstract class AbstractTest extends Specification {
     void setup() {
         setupSecurity()
         persist.start()
-        println 'persistence started'
     }
 
     // could be overridden for different security config
@@ -45,7 +44,6 @@ abstract class AbstractTest extends Specification {
         OSecurityManager.instance().securityFactory = new OSecurityFactory() {
             @Override
             OSecurity newSecurity() {
-                println 'obtain null security'
                 return new OSecurityNull(null, null)
             }
         }
@@ -75,7 +73,6 @@ abstract class AbstractTest extends Specification {
             }
         }
         afterCleanup()
-        println 'persistence cleaned'
     }
 
     void afterCleanup() {
