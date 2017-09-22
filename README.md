@@ -1,7 +1,7 @@
 # Guice integration for OrientDB
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/xvik/guice-persist-orient)
-[![License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](http://www.opensource.org/licenses/MIT)
-[![Build Status](http://img.shields.io/travis/xvik/guice-persist-orient.svg?style=flat&branch=master)](https://travis-ci.org/xvik/guice-persist-orient)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](http://www.opensource.org/licenses/MIT)
+[![Build Status](https://img.shields.io/travis/xvik/guice-persist-orient.svg?style=flat&branch=master)](https://travis-ci.org/xvik/guice-persist-orient)
 [![Coverage Status](https://img.shields.io/coveralls/xvik/guice-persist-orient.svg?style=flat)](https://coveralls.io/r/xvik/guice-persist-orient)
 
 `guice-persist-orient` wins 4th place in [Software Quality Award 2015](http://www.yegor256.com/2015/04/16/award.html)
@@ -963,5 +963,5 @@ Contributions are always welcome, but please check before patch submission:
 $ gradlew check
 ```
 
--
+---
 [![java lib generator](http://img.shields.io/badge/Powered%20by-%20Java%20lib%20generator-green.svg?style=flat-square)](https://github.com/xvik/generator-lib-java)
