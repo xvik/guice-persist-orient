@@ -59,7 +59,7 @@ class VarExtensionTest extends AbstractTest {
         expected = ['tst']
         res = dao.list(["name1", "name3"])
         then: "selected"
-        res == ["name1", "name3"]
+        res as Set == ["name1", "name3"] as Set
 
         when: "variable name is empty"
         dao.empty("fgg")
