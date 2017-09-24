@@ -127,8 +127,7 @@ public class UserManager {
 
     /**
      * Changes current connection user. Affects only current transaction and can't be used outside of transaction
-     * ({@link com.orientechnologies.orient.core.db.ODatabase#setUser(
-     *com.orientechnologies.orient.core.metadata.security.OSecurityUser)}).
+     * ({@link ODatabaseDocumentTx#setUser(com.orientechnologies.orient.core.metadata.security.OSecurityUser)}).
      * <p>Recursive user changes are not allowed, so attempt to change user under already changed user will
      * lead to error. The only exception is change to the same user (in this case change is ignored).</p>
      * <p>Action approach is important to explicitly define scope of specific user and
