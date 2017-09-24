@@ -13,7 +13,7 @@
 
     <logger name="com.orientechnologies" level="INFO"/>
 
-    <logger name="ru.vyarus.guice.orient" level="DEBUG"/>
+    <logger name="ru.vyarus.guice.persist.orient" level="DEBUG"/>
     <!-- transaction manager logs -->
     <logger name="ru.vyarus.guice.persist.orient.db.transaction.internal.DefaultTransactionManager" level="DEBUG"/>
     <!-- @Transactional annotation handling -->

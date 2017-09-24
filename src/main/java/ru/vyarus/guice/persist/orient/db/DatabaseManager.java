@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vyarus.guice.persist.orient.db.data.DataInitializer;
 import ru.vyarus.guice.persist.orient.db.pool.PoolManager;
+import ru.vyarus.guice.persist.orient.db.scheme.CustomTypesInstaller;
 import ru.vyarus.guice.persist.orient.db.scheme.SchemeInitializationException;
 import ru.vyarus.guice.persist.orient.db.scheme.SchemeInitializer;
 import ru.vyarus.guice.persist.orient.db.transaction.TxConfig;
@@ -42,6 +43,7 @@ public class DatabaseManager implements PersistService {
     private final boolean autoCreate;
 
     private final List<PoolManager> pools;
+    private final CustomTypesInstaller customTypesInstaller;
     private final SchemeInitializer modelInitializer;
     private final DataInitializer dataInitializer;
     private final TxTemplate txTemplate;
@@ -55,6 +57,7 @@ public class DatabaseManager implements PersistService {
             @Named("orient.uri") final String uri,
             @Named("orient.db.autocreate") final boolean autoCreate,
             final Set<PoolManager> pools,
+            final CustomTypesInstaller customTypesInstaller,
             final SchemeInitializer modelInitializer,
             final DataInitializer dataInitializer,
             final TxTemplate txTemplate) {
@@ -62,6 +65,7 @@ public class DatabaseManager implements PersistService {
         this.uri = Preconditions.checkNotNull(uri, "Database name required");
         this.autoCreate = autoCreate;
         this.pools = Lists.newArrayList(pools);
+        this.customTypesInstaller = customTypesInstaller;
         this.modelInitializer = modelInitializer;
         this.dataInitializer = dataInitializer;
         this.txTemplate = txTemplate;
@@ -86,6 +90,7 @@ public class DatabaseManager implements PersistService {
         startPools();
         logger.debug("Registered types: {}", supportedTypes);
         logger.debug("Initializing database: '{}'", uri);
+        customTypesInstaller.install(uri);
         // no tx (because of schema update - orient requirement)
         try {
             txTemplate.doInTransaction(new TxConfig(OTransaction.TXTYPE.NOTX), new TxAction<Void>() {

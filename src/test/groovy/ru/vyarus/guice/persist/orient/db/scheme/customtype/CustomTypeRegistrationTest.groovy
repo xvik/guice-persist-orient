@@ -5,11 +5,11 @@ import com.orientechnologies.orient.core.metadata.schema.OType
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx
 import ru.vyarus.guice.persist.orient.AbstractTest
 import ru.vyarus.guice.persist.orient.OrientModule
-import ru.vyarus.guice.persist.orient.db.scheme.customtype.support.CustomSchemeModule
 import ru.vyarus.guice.persist.orient.db.scheme.customtype.support.SecurityRoleSerializer
 import ru.vyarus.guice.persist.orient.db.scheme.customtype.support.model.SecurityRole
 import ru.vyarus.guice.persist.orient.db.scheme.customtype.support.model.User
 import ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxAction
+import ru.vyarus.guice.persist.orient.support.AutoScanSchemeModule
 import ru.vyarus.guice.persist.orient.support.Config
 import spock.guice.UseModules
 
@@ -50,8 +50,8 @@ class CustomTypeRegistrationTest extends AbstractTest {
 
         @Override
         protected void configure() {
-            install(new OrientModule(Config.DB, Config.USER, Config.PASS))
-            install(new CustomSchemeModule())
+            install(new OrientModule(Config.DB, Config.USER, Config.PASS).withCustomTypes(SecurityRoleSerializer))
+            install(new AutoScanSchemeModule(User.package.name))
         }
     }
 }

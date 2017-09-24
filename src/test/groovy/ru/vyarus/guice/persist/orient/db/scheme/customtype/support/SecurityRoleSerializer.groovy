@@ -3,15 +3,12 @@ package ru.vyarus.guice.persist.orient.db.scheme.customtype.support
 import com.orientechnologies.orient.core.serialization.serializer.object.OObjectSerializer
 import ru.vyarus.guice.persist.orient.db.scheme.customtype.support.model.SecurityRole
 
-import javax.inject.Singleton
-
 /**
  * Serializer is a guice bean ONLY to access it's state from test.
  *
  * @author Vyacheslav Rusakov
  * @since 30.03.2017
  */
-@Singleton
 class SecurityRoleSerializer implements OObjectSerializer<SecurityRole, String> {
 
     boolean serializeUsed

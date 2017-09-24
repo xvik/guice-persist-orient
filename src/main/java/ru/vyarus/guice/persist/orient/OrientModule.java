@@ -10,6 +10,9 @@ import com.google.inject.persist.PersistModule;
 import com.google.inject.persist.PersistService;
 import com.google.inject.persist.UnitOfWork;
 import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx;
+import com.orientechnologies.orient.core.serialization.serializer.object.OObjectSerializer;
+import com.orientechnologies.orient.object.serialization.OObjectSerializerContext;
+import com.orientechnologies.orient.object.serialization.OObjectSerializerHelper;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,12 +21,16 @@ import ru.vyarus.guice.persist.orient.db.pool.DocumentPool;
 import ru.vyarus.guice.persist.orient.db.pool.PoolManager;
 import ru.vyarus.guice.persist.orient.db.retry.Retry;
 import ru.vyarus.guice.persist.orient.db.retry.RetryMethodInterceptor;
+import ru.vyarus.guice.persist.orient.db.scheme.CustomTypesInstaller;
 import ru.vyarus.guice.persist.orient.db.transaction.TransactionManager;
 import ru.vyarus.guice.persist.orient.db.transaction.TxConfig;
 import ru.vyarus.guice.persist.orient.db.transaction.internal.TransactionInterceptor;
 
 import javax.inject.Singleton;
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  * Module provides integration for orient db with guice through guice-persist.
@@ -87,6 +94,7 @@ import java.lang.reflect.Method;
  *
  * @see ru.vyarus.guice.persist.orient.db.transaction.TransactionManager for details about transactions
  */
+@SuppressWarnings("PMD.ExcessiveImports")
 public class OrientModule extends PersistModule {
     private final Logger logger = LoggerFactory.getLogger(OrientModule.class);
 
@@ -95,6 +103,8 @@ public class OrientModule extends PersistModule {
     private final String password;
     private TxConfig txConfig;
     private boolean autoCreateDb = true;
+    private final Set<Class<? extends OObjectSerializer>> customTypes =
+            new LinkedHashSet<Class<? extends OObjectSerializer>>();
 
     private Multibinder<PoolManager> poolsMultibinder;
     private MethodInterceptor interceptor;
@@ -138,6 +148,44 @@ public class OrientModule extends PersistModule {
         return this;
     }
 
+    /**
+     * Method simplifies binding of custom type serializers (preserving order). Serializers assumed to be guice beans:
+     * all passed classes will be bound as guice beans. Method may be called multiple times: each time it will append
+     * new serializers.
+     * <p>
+     * <b>PAY ATTENTION</b> that custom types are global (affect all databases). But, during types registration,
+     * exact database url is used to check and remove custom types if they are registered as entities
+     * (see {@link OObjectSerializerContext#bind(OObjectSerializer, com.orientechnologies.orient.core.db.ODatabase)}).
+     * <p>
+     * Serializers are registered with default (null) context
+     * ({@code OObjectSerializerHelper.bindSerializerContext(null, serializerContext);}) and so it could be overridden
+     * by manual static call (or it could override previous manual configuration). Make sure that only one method used.
+     * Null context must be used because it's the only way to delegate type resolution to the context containing all
+     * custom serializers and allow you to easily register universal serializers for handling multiple types
+     * (for example how serialization lookup is performed:
+     * {@link OObjectSerializerHelper#serializeFieldValue(java.lang.Class, java.lang.Object)}).
+     * <p>
+     * If you use multiple {@link OrientModule}s and register custom types in both then all custom types will be
+     * registered because guice multibinder is used to collect all serializer beans. Order of serializers
+     * will be preserved inside modules, but the order of modules is not predictable (not restricted by guice)
+     * and so it is impossible to order serializers between different modules.
+     * <p>
+     * All passed serializers are bound to guice context ({@code binder.bind(serializerClass)}). If you need to use
+     * complex binding (default mechanism doesn't fit for your needs) then use multibinder directly:
+     * {@code Multibinder.newSetBinder(binder(), OObjectSerializer.class).addBinding().to(serializerClass)}.
+     * This will not override serializers specified directly in module! (Multibinder.newSetBinder does not mean
+     * multibinder context refresh).
+     *
+     * @param serializers custom type serializers
+     * @return module itself for chained calls
+     * @see CustomTypesInstaller
+     * @see <a href="http://orientdb.com/docs/2.2/Object-2-Record-Java-Binding.html#custom-types">custom types</a>
+     */
+    public OrientModule withCustomTypes(final Class<? extends OObjectSerializer>... serializers) {
+        customTypes.addAll(Arrays.asList(serializers));
+        return this;
+    }
+
     @Override
     protected void configurePersistence() {
         poolsMultibinder = Multibinder.newSetBinder(binder(), PoolManager.class);
@@ -150,6 +198,9 @@ public class OrientModule extends PersistModule {
         bind(TxConfig.class).annotatedWith(Names.named("orient.txconfig"))
                 .toInstance(txConfig == null ? new TxConfig() : txConfig);
 
+        configureCustomTypes();
+        bind(CustomTypesInstaller.class);
+
         // extension points
         bind(TransactionManager.class);
         // SchemeInitializer.class
@@ -161,6 +212,21 @@ public class OrientModule extends PersistModule {
         configurePools();
         configureInterceptor();
         bindRetryInterceptor();
+    }
+
+    /**
+     * Binds registered custom types as guice singletons and register them with multibinder.
+     */
+    private void configureCustomTypes() {
+        // empty binding is required in any case
+        final Multibinder<OObjectSerializer> typesBinder =
+                Multibinder.newSetBinder(binder(), OObjectSerializer.class);
+        if (!customTypes.isEmpty()) {
+            for (Class<? extends OObjectSerializer> type : customTypes) {
+                bind(type).in(Singleton.class);
+                typesBinder.addBinding().to(type);
+            }
+        }
     }
 
     /**
