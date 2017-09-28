@@ -1,6 +1,7 @@
 * Update to orient 2.2
 * Support [custom types installation](http://orientdb.com/docs/2.2/Object-2-Record-Java-Binding.html#custom-types)
   with new method: OrientModule#withCustomTypes(OObjectSerializer...) (#14)
+* Add @LiveQuery repository extension (live queries support)
 
 ### 3.2.0 (2016-09-25)
 * Update to orient 2.1

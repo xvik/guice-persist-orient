@@ -9,17 +9,21 @@ import java.lang.annotation.Target;
 
 /**
  * Sql async query repository method extension. Use only for select queries.
- * Must be used together with {@link ru.vyarus.guice.persist.orient.repository.command.ext.listen.Listen}.
+ * <p>
+ * Listener parameter ({@link com.orientechnologies.orient.core.command.OCommandResultListener}) must be annotated
+ * with {@link ru.vyarus.guice.persist.orient.repository.command.ext.listen.Listen}.
  * Method must be void.
- * <p>Important: query will be asynchronous only for remote connection.</p>
- * <p>Uses {@link com.orientechnologies.orient.core.sql.query.OSQLAsynchQuery}.</p>
- * <p>Query could contain variables in format (${var}). By default, only declared type generic names
+ * <p>
+ * Important: query will be asynchronous only for remote connection.
+ * <p>
+ * Uses {@link com.orientechnologies.orient.core.sql.query.OSQLAsynchQuery}.
+ * <p>
+ * Query could contain variables in format (${var}). By default, only declared type generic names
  * could be used, but extensions could provide other variables (like
  * {@link ru.vyarus.guice.persist.orient.repository.command.ext.elvar.ElVar}).</p>
  *
  * @author Vyacheslav Rusakov
- * @see <a href="http://www.orientechnologies.com/docs/last/orientdb.wiki/Document-Database.html#asynchronous-query">
- *     docs</a>
+ * @see <a href="http://orientdb.com/docs/last/Document-Database.html">docs</a>
  * @since 27.02.2015
  */
 @Target(ElementType.METHOD)
