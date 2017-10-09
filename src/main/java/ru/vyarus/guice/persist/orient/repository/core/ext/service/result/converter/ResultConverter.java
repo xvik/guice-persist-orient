@@ -17,7 +17,7 @@ public interface ResultConverter {
      * @param descriptor result descriptor (from main method descriptor)
      * @param result     raw result value
      * @return converted result
-     * @throws ResultConversionException on conversion error
+     * @throws ResultConversionException on conversion error or if conversion is impossible
      */
     Object convert(ResultDescriptor descriptor, Object result);
 }

@@ -19,6 +19,7 @@ import ru.vyarus.guice.persist.orient.repository.core.ext.service.AmendExtension
 import ru.vyarus.guice.persist.orient.repository.core.ext.service.ParamsService;
 import ru.vyarus.guice.persist.orient.repository.core.ext.service.result.ResultService;
 import ru.vyarus.guice.persist.orient.repository.core.ext.service.result.converter.ResultConverter;
+import ru.vyarus.guice.persist.orient.repository.core.ext.service.result.converter.PlainResultConverter;
 import ru.vyarus.guice.persist.orient.repository.core.ext.util.ExtUtils;
 import ru.vyarus.guice.persist.orient.repository.core.util.RepositoryUtils;
 import ru.vyarus.guice.persist.orient.repository.delegate.DelegateMethodExtension;
@@ -80,6 +81,7 @@ public class RepositoryModule extends AbstractModule {
 
         // extension points
         bind(ResultConverter.class);
+        bind(PlainResultConverter.class);
 
         // required explicit binding to inject correct injector instance (instead of always root injector)
         bind(SpiService.class);

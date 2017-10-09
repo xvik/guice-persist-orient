@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.common.primitives.Primitives;
 import com.orientechnologies.orient.core.db.record.OIdentifiable;
+import com.orientechnologies.orient.core.record.ORecord;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import ru.vyarus.guice.persist.orient.repository.core.result.ResultDescriptor;
 import ru.vyarus.guice.persist.orient.repository.core.result.ResultType;
@@ -33,6 +34,12 @@ public class DefaultResultConverter implements ResultConverter {
         if (result != null && !ResultType.VOID.equals(desc.returnType)) {
             res = returnClass.isAssignableFrom(result.getClass())
                     ? result : convertResult(desc.returnType, returnClass, desc.entityType, result);
+        }
+        if (res != null && !returnClass.isAssignableFrom(res.getClass())) {
+            // note: conversion logic may go wrong (e.g. because converter expect collection input mostly and may
+            // not work correctly for single element, but anyway overall conversion would be considered failed.
+            throw new ResultConversionException(String.format("Failed to convert %s to %s",
+                    toStringType(result), returnClass.getSimpleName()));
         }
         return res;
     }
@@ -105,13 +112,18 @@ public class DefaultResultConverter implements ResultConverter {
         } else if (returnClass.equals(Integer.class) && result instanceof Number) {
             converted = ((Number) result).intValue();
         } else {
-            // if single type required convert from collection
-            // simple single type case will be handled on checking assignment (at the top)
-            final Iterator it = toIterator(result);
-            if (it.hasNext()) {
-                converted = it.next();
-                if (!ODocument.class.equals(returnClass) && !returnClass.isInstance(converted)) {
-                    converted = flattenSimple(converted, returnClass);
+            if (result instanceof ORecord) {
+                // most likely PlainResultConverter call (because queries always return collections)
+                converted = flattenSimple(result, returnClass);
+            } else {
+                // if single type required convert from collection
+                // simple single type case will be handled on checking assignment (at the top)
+                final Iterator it = toIterator(result);
+                if (it.hasNext()) {
+                    converted = it.next();
+                    if (!ODocument.class.equals(returnClass) && !returnClass.isInstance(converted)) {
+                        converted = flattenSimple(converted, returnClass);
+                    }
                 }
             }
         }
@@ -182,4 +194,20 @@ public class DefaultResultConverter implements ResultConverter {
         }
         return res;
     }
+
+    private String toStringType(final Object result) {
+        String sourceType;
+        if (!ORecord.class.isAssignableFrom(result.getClass()) && result instanceof Collection) {
+            final Iterator it = ((Collection) result).iterator();
+            Object first = null;
+            while (first == null || it.hasNext()) {
+                first = it.next();
+            }
+            sourceType = "Collection" + (first == null ? "" : ("<" + first.getClass().getSimpleName() + ">"));
+        } else {
+            sourceType = result.getClass().getSimpleName();
+        }
+        return sourceType;
+    }
+
 }
