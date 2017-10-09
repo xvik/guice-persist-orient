@@ -23,8 +23,9 @@ import java.util.Set;
  * Service may be used directly (by injection).
  * <p>
  * Important difference with method result converter: this converter will also try to convert resulted document
- * into object model class or vertex/edge. Default converter is applied only if object or graph type conversion is
- * not required (then default converter will check if projection to simple value is required).
+ * into object model class or vertex/edge (only if there are underlying transaction in thread(!) to avoid additional
+ * connections opening). Default converter is applied only if object or graph type conversion is not required
+ * (then default converter will check if projection to simple value is required).
  * <p>
  * Performs type conversion only from ODocument! It is not intended to be a universal converter for all types, only
  * for document (raw type). For example, you can't expect it to convert Vertex to ODocument or Model to Vertex.
@@ -51,10 +52,34 @@ public class PlainResultConverter {
         this.injector = injector;
     }
 
+    /**
+     * Could convert document to object or graph (vertex/edge) object if there is an underlying connection
+     * (converted does not open new connections!). Calls default result converter (used for repository methods)
+     * to perform projection.
+     * <p>
+     * Converter tries to mimic the same logic as usual repository method call: in usual synchronous call
+     * orient connection will perform automatic type conversion nad then custom result conversion is applied.
+     * This service emulates the first part and calls result converter (so overall behaviour is near the same).
+     *
+     * @param result     result object (most likely document)
+     * @param targetType target conversion type
+     * @param <T>        target conversion type
+     * @return converted object
+     * @throws ResultConversionException if conversion is impossible
+     */
     public <T> T convert(final Object result, final Class<T> targetType) {
         return convert(result, targetType, defaultConverter);
     }
 
+    /**
+     *
+     * @param result result object (most likely document)
+     * @param targetType target conversion type
+     * @param converter converter object
+     * @param <T> target conversion type
+     * @return converted object
+     * @throws ResultConversionException if conversion is impossible
+     */
     @SuppressWarnings("unchecked")
     public <T> T convert(final Object result, final Class<T> targetType, final ResultConverter converter) {
         // do manual conversion to other types if required (usually this will be done automatically by connection
