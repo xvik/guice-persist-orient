@@ -2,6 +2,7 @@ package ru.vyarus.guice.persist.orient.repository.core.ext.result.ext.off
 
 import com.google.inject.Inject
 import ru.vyarus.guice.persist.orient.AbstractTest
+import ru.vyarus.guice.persist.orient.repository.core.MethodExecutionException
 import ru.vyarus.guice.persist.orient.support.modules.RepositoryTestModule
 import spock.guice.UseModules
 
@@ -25,7 +26,7 @@ class NoConversionTest extends AbstractTest {
         when: "switch off converter"
         repository.selectNoConversion()
         then: "incompatible types"
-        thrown(ClassCastException)
+        thrown(MethodExecutionException)
 
     }
 }

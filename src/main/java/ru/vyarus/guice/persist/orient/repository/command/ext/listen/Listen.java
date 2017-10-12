@@ -18,11 +18,19 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * {@link ru.vyarus.guice.persist.orient.repository.command.async.AsyncQuery} and
  * {@link ru.vyarus.guice.persist.orient.repository.command.live.LiveQuery}.
  * <p>
- * Listener could be applied only for select queries. For sync and async queries method should be void (because listener
+ * Listener could be applied only for select queries.
+ * <p>
+ * For sync and async queries method should be void (because listener
  * intercept all results and empty list always returned) and listener type must be
- * {@link com.orientechnologies.orient.core.command.OCommandResultListener}. For live query annotated method
- * must return int (live subscription token required to unsubscribe query) and listener type must be
- * {@link com.orientechnologies.orient.core.sql.query.OLiveResultListener}.
+ * {@link com.orientechnologies.orient.core.command.OCommandResultListener}.
+ * <p>
+ * For live query, annotated method must return int (live subscription token required to unsubscribe query) and
+ * listener type must be raw {@link com.orientechnologies.orient.core.sql.query.OLiveResultListener} or
+ * {@link ru.vyarus.guice.persist.orient.repository.command.live.mapper.LiveResultListener} if type
+ * conversions required.
+ * <p>
+ * By default listener execution will be wrapped in transaction (see {@link #transactional()}). If you disable
+ * transaction wrapping, listener result conversion (e.g. document to object or vertex) will be impossible.
  *
  * @author Vyacheslav Rusakov
  * @since 27.02.2015
@@ -32,4 +40,19 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Retention(RUNTIME)
 @MethodParam(ListenParamExtension.class)
 public @interface Listen {
+
+    /**
+     * Wrap listener with an implicit transaction. This is important if custom listeners (like
+     * {@link ru.vyarus.guice.persist.orient.repository.command.live.mapper.LiveResultListener}) are used, because
+     * otherwise they will not be able to convert record to other type.
+     * <p>
+     * Note that async listener in local connection will be executed synchronously and so as part of the current
+     * transaction.
+     * <p>
+     * Enabled by default because in most cases listener will need to do something with the database and so will
+     * need transaction in any way.
+     *
+     * @return true if listener must be executed in transaction.
+     */
+    boolean transactional() default true;
 }

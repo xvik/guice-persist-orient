@@ -1,10 +1,12 @@
 package ru.vyarus.guice.persist.orient.repository.core.ext;
 
+import com.google.common.primitives.Primitives;
 import com.google.inject.Injector;
 import ru.vyarus.guice.persist.orient.repository.core.ext.service.AmendExtensionsService;
 import ru.vyarus.guice.persist.orient.repository.core.ext.service.ParamsService;
 import ru.vyarus.guice.persist.orient.repository.core.ext.service.result.ResultService;
 import ru.vyarus.guice.persist.orient.repository.core.ext.util.ExtUtils;
+import ru.vyarus.guice.persist.orient.repository.core.ext.util.ResultUtils;
 import ru.vyarus.guice.persist.orient.repository.core.spi.DescriptorContext;
 import ru.vyarus.guice.persist.orient.repository.core.spi.RepositoryMethodDescriptor;
 import ru.vyarus.guice.persist.orient.repository.core.spi.method.RepositoryMethod;
@@ -77,7 +79,15 @@ public class SpiService {
         resultService.registerExtensions(descriptor, paramsContext.getExtensionsContext());
     }
 
+    /**
+     * @param descriptor repository method descriptor
+     * @param result     result object
+     * @return converted result
+     */
+    @SuppressWarnings("unchecked")
     public Object convert(final RepositoryMethodDescriptor descriptor, final Object result) {
-        return resultService.convert(descriptor, result);
+        final Object res = resultService.convert(descriptor, result);
+        ResultUtils.check(res, Primitives.wrap(descriptor.result.expectType));
+        return res;
     }
 }

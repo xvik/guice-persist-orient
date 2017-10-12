@@ -27,20 +27,15 @@ public class DefaultResultConverter implements ResultConverter {
     @SuppressWarnings("unchecked")
     public Object convert(final ResultDescriptor desc, final Object result) {
         // wrap primitive, because result will always be object
-        final Class<?> expectType = desc.expectType;
-        final Class<?> returnClass = expectType.isPrimitive() ? Primitives.wrap(expectType) : expectType;
+        final Class<?> returnClass = Primitives.wrap(desc.expectType);
 
         Object res = null;
         if (result != null && !ResultType.VOID.equals(desc.returnType)) {
             res = returnClass.isAssignableFrom(result.getClass())
                     ? result : convertResult(desc.returnType, returnClass, desc.entityType, result);
         }
-        if (res != null && !returnClass.isAssignableFrom(res.getClass())) {
-            // note: conversion logic may go wrong (e.g. because converter expect collection input mostly and may
-            // not work correctly for single element, but anyway overall conversion would be considered failed.
-            throw new ResultConversionException(String.format("Failed to convert %s to %s",
-                    toStringType(result), returnClass.getSimpleName()));
-        }
+        // converted result may not match required return type! this is important for cases with custom
+        // result converter extensions which will use default conversion as a source for final conversion
         return res;
     }
 
@@ -194,20 +189,4 @@ public class DefaultResultConverter implements ResultConverter {
         }
         return res;
     }
-
-    private String toStringType(final Object result) {
-        String sourceType;
-        if (!ORecord.class.isAssignableFrom(result.getClass()) && result instanceof Collection) {
-            final Iterator it = ((Collection) result).iterator();
-            Object first = null;
-            while (first == null || it.hasNext()) {
-                first = it.next();
-            }
-            sourceType = "Collection" + (first == null ? "" : ("<" + first.getClass().getSimpleName() + ">"));
-        } else {
-            sourceType = result.getClass().getSimpleName();
-        }
-        return sourceType;
-    }
-
 }

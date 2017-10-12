@@ -8,7 +8,7 @@ import com.tinkerpop.blueprints.Vertex
 import ru.vyarus.guice.persist.orient.AbstractTest
 import ru.vyarus.guice.persist.orient.db.PersistentContext
 import ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxAction
-import ru.vyarus.guice.persist.orient.repository.core.ext.service.result.converter.PlainResultConverter
+import ru.vyarus.guice.persist.orient.repository.core.ext.service.result.converter.RecordConverter
 import ru.vyarus.guice.persist.orient.repository.core.ext.service.result.converter.ResultConversionException
 import ru.vyarus.guice.persist.orient.support.model.EdgeModel
 import ru.vyarus.guice.persist.orient.support.model.Model
@@ -23,10 +23,10 @@ import javax.inject.Inject
  * @since 06.10.2017
  */
 @UseModules(PackageSchemeModule)
-class PlainResultConverterTest extends AbstractTest {
+class RecordConverterTest extends AbstractTest {
 
     @Inject
-    PlainResultConverter converter
+    RecordConverter converter
     @Inject
     PersistentContext<ODatabaseDocumentTx> docContext
 

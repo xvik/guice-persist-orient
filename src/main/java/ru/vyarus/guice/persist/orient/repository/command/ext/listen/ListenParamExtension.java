@@ -1,5 +1,6 @@
 package ru.vyarus.guice.persist.orient.repository.command.ext.listen;
 
+import com.google.inject.Injector;
 import com.orientechnologies.orient.core.command.OCommandRequest;
 import com.orientechnologies.orient.core.command.OCommandRequestAbstract;
 import ru.vyarus.guice.persist.orient.db.util.Order;
@@ -7,11 +8,12 @@ import ru.vyarus.guice.persist.orient.repository.command.core.param.CommandParam
 import ru.vyarus.guice.persist.orient.repository.command.core.spi.CommandExtension;
 import ru.vyarus.guice.persist.orient.repository.command.core.spi.CommandMethodDescriptor;
 import ru.vyarus.guice.persist.orient.repository.command.core.spi.SqlCommandDescriptor;
-import ru.vyarus.guice.persist.orient.repository.command.ext.listen.type.LiveListenerTypeSupport;
-import ru.vyarus.guice.persist.orient.repository.command.ext.listen.type.QueryListenerTypeSupport;
+import ru.vyarus.guice.persist.orient.repository.command.ext.listen.live.LiveListenerTypeSupport;
+import ru.vyarus.guice.persist.orient.repository.command.ext.listen.query.QueryListenerTypeSupport;
 import ru.vyarus.guice.persist.orient.repository.core.spi.parameter.MethodParamExtension;
 import ru.vyarus.guice.persist.orient.repository.core.spi.parameter.ParamInfo;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.List;
 
@@ -33,8 +35,15 @@ public class ListenParamExtension implements
 
     public static final String KEY = ListenParamExtension.class.getName();
 
+    private final Injector injector;
+
     private final ListenerTypeSupport queryHandler = new QueryListenerTypeSupport();
     private final ListenerTypeSupport liveHandler = new LiveListenerTypeSupport();
+
+    @Inject
+    public ListenParamExtension(final Injector injector) {
+        this.injector = injector;
+    }
 
     @Override
     @SuppressWarnings("unchecked")
@@ -44,7 +53,8 @@ public class ListenParamExtension implements
         final ParamInfo<Listen> param = paramsInfo.get(0);
         final Class<?> returnType = context.getDescriptorContext().method.getReturnType();
         final String query = descriptor.command.toLowerCase();
-        final ListenParamDescriptor extDesc = new ListenParamDescriptor(selectHandler(query), param.position);
+        final ListenParamDescriptor extDesc = new ListenParamDescriptor(selectHandler(query),
+                param.position, param.annotation.transactional());
 
         extDesc.handler.checkParameter(query, param, returnType);
 
@@ -67,7 +77,8 @@ public class ListenParamExtension implements
         // null listener makes no sense: method is void and results are not handled anywhere
         checkExec(listener != null, "Listener can't be null");
 
-        ((OCommandRequestAbstract) query).setResultListener(extDesc.handler.processListener(query, listener));
+        ((OCommandRequestAbstract) query).setResultListener(extDesc.handler
+                .processListener(query, listener, injector, extDesc.transactional));
     }
 
     private ListenerTypeSupport selectHandler(final String query) {
@@ -93,9 +104,15 @@ public class ListenParamExtension implements
          */
         public final int position;
 
-        ListenParamDescriptor(final ListenerTypeSupport handler, final int position) {
+        /**
+         * Indicates that listener must be wrapped with transaction.
+         */
+        public final boolean transactional;
+
+        ListenParamDescriptor(final ListenerTypeSupport handler, final int position, final boolean transactional) {
             this.handler = handler;
             this.position = position;
+            this.transactional = transactional;
         }
     }
 }

@@ -1,4 +1,4 @@
-package ru.vyarus.guice.persist.orient.repository.command.ext.listen.type;
+package ru.vyarus.guice.persist.orient.repository.command.ext.listen.live;
 
 import com.orientechnologies.orient.core.sql.query.OLiveResultListener;
 import com.orientechnologies.orient.core.sql.query.OLocalLiveResultListener;

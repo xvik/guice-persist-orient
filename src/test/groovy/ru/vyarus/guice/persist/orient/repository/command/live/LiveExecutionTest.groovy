@@ -8,7 +8,6 @@ import com.orientechnologies.orient.core.sql.query.OLiveResultListener
 import ru.vyarus.guice.persist.orient.AbstractTest
 import ru.vyarus.guice.persist.orient.repository.RepositoryException
 import ru.vyarus.guice.persist.orient.support.model.Model
-import ru.vyarus.guice.persist.orient.support.modules.BootstrapModule
 import ru.vyarus.guice.persist.orient.support.modules.RepositoryTestModule
 import spock.guice.UseModules
 
@@ -18,7 +17,7 @@ import javax.inject.Inject
  * @author Vyacheslav Rusakov
  * @since 29.09.2017
  */
-@UseModules([RepositoryTestModule, BootstrapModule])
+@UseModules(RepositoryTestModule)
 class LiveExecutionTest extends AbstractTest {
 
     @Inject

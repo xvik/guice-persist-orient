@@ -1,8 +1,13 @@
-package ru.vyarus.guice.persist.orient.repository.command.ext.listen.type;
+package ru.vyarus.guice.persist.orient.repository.command.ext.listen.query;
 
+import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.TypeLiteral;
 import com.orientechnologies.orient.core.command.OCommandRequest;
 import com.orientechnologies.orient.core.command.OCommandRequestAbstract;
 import com.orientechnologies.orient.core.command.OCommandResultListener;
+import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx;
+import ru.vyarus.guice.persist.orient.db.PersistentContext;
 import ru.vyarus.guice.persist.orient.repository.command.ext.listen.Listen;
 import ru.vyarus.guice.persist.orient.repository.command.ext.listen.ListenerTypeSupport;
 import ru.vyarus.guice.persist.orient.repository.core.spi.parameter.ParamInfo;
@@ -13,11 +18,17 @@ import static ru.vyarus.guice.persist.orient.repository.core.MethodExecutionExce
 /**
  * Handler for {@link Listen} parameters within {@link ru.vyarus.guice.persist.orient.repository.command.query.Query}
  * or {@link ru.vyarus.guice.persist.orient.repository.command.async.AsyncQuery}.
+ * <p>
+ * If transaction is required (through {@link Listen}) then listener will be wrapped to apply transaction.
  *
  * @author Vyacheslav Rusakov
  * @since 29.09.2017
  */
-public class QueryListenerTypeSupport implements ListenerTypeSupport<OCommandResultListener> {
+public class QueryListenerTypeSupport implements ListenerTypeSupport {
+
+    private static final Key<PersistentContext<ODatabaseDocumentTx>> CONTEXT_KEY =
+            Key.get(new TypeLiteral<PersistentContext<ODatabaseDocumentTx>>() {
+            });
 
     @Override
     public void checkParameter(final String query, final ParamInfo<Listen> param,
@@ -32,10 +43,14 @@ public class QueryListenerTypeSupport implements ListenerTypeSupport<OCommandRes
 
     @Override
     public OCommandResultListener processListener(final OCommandRequest command,
-                                                  final OCommandResultListener listener) {
+                                                  final Object listener,
+                                                  final Injector injector,
+                                                  final boolean transactional) {
         checkExec(command instanceof OCommandRequestAbstract,
                 "@%s can't be applied to query, because command object %s doesn't support it",
                 Listen.class.getSimpleName(), command.getClass().getName());
-        return listener;
+        final OCommandResultListener res = (OCommandResultListener) listener;
+        // wrap listener with transaction if required
+        return transactional ? new TransactionalAsyncListener(injector.getInstance(CONTEXT_KEY), res) : res;
     }
 }
