@@ -67,7 +67,7 @@ public class RecordConverter {
      * @return converted object
      * @throws ResultConversionException if conversion is impossible
      */
-    public <T> T convert(final ORecord result, final Class<T> targetType) {
+    public <T> T convert(final Object result, final Class<T> targetType) {
         return convert(result, targetType, defaultResultConverter);
     }
 
@@ -80,7 +80,7 @@ public class RecordConverter {
      * @throws ResultConversionException if conversion is impossible
      */
     @SuppressWarnings("unchecked")
-    public <T> T convert(final ORecord result, final Class<T> targetType, final ResultConverter converter) {
+    public <T> T convert(final Object result, final Class<T> targetType, final ResultConverter converter) {
         // wrap primitive, because result will always be object
         final Class<T> target = Primitives.wrap(targetType);
         // do manual conversion to other types if required (usually this will be done automatically by connection
@@ -101,14 +101,17 @@ public class RecordConverter {
         return res;
     }
 
-    private <T> T tryConversion(final ORecord result, final Class<T> targetType) {
+    @SuppressWarnings("checkstyle:BooleanExpressionComplexity")
+    private <T> T tryConversion(final Object result, final Class<T> targetType) {
         if (result == null
                 // no need for conversion of raw types (e.g. Document)
                 || ORecord.class.isAssignableFrom(targetType)
                 // without ongoing transaction we will have to open new connections for conversion (waste of resources)
                 || !transactionManager.isTransactionActive()
                 // only document type could be converted
-                || !(result instanceof ODocument)) {
+                || !(result instanceof ODocument)
+                // for wrapper documents (e.g. select t from Model) no class will be set (projection case)
+                || ((ODocument) result).getClassName() == null) {
             return null;
         }
 

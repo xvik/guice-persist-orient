@@ -2,7 +2,7 @@ package ru.vyarus.guice.persist.orient.repository.command.live.advanced
 
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx
 import ru.vyarus.guice.persist.orient.db.PersistentContext
-import ru.vyarus.guice.persist.orient.repository.command.live.mapper.LiveResultListener
+import ru.vyarus.guice.persist.orient.repository.command.live.mapper.LiveQueryListener
 import ru.vyarus.guice.persist.orient.repository.command.live.mapper.RecordOperation
 
 import javax.inject.Inject
@@ -11,7 +11,7 @@ import javax.inject.Inject
  * @author Vyacheslav Rusakov
  * @since 12.10.2017
  */
-abstract class AbstractListener<T> implements LiveResultListener<T> {
+abstract class AbstractListener<T> implements LiveQueryListener<T> {
 
     int lastToken
     RecordOperation lastOp

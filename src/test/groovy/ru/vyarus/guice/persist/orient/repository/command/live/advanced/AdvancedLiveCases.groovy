@@ -5,7 +5,7 @@ import com.google.inject.internal.DynamicSingletonProvider
 import com.google.inject.persist.Transactional
 import ru.vyarus.guice.persist.orient.repository.command.ext.listen.Listen
 import ru.vyarus.guice.persist.orient.repository.command.live.LiveQuery
-import ru.vyarus.guice.persist.orient.repository.command.live.mapper.LiveResultListener
+import ru.vyarus.guice.persist.orient.repository.command.live.mapper.LiveQueryListener
 import ru.vyarus.guice.persist.orient.support.model.Model
 import ru.vyarus.guice.persist.orient.support.repository.mixin.crud.ObjectCrud
 import sun.security.provider.certpath.Vertex
@@ -19,16 +19,16 @@ import sun.security.provider.certpath.Vertex
 interface AdvancedLiveCases extends ObjectCrud<Model> {
 
     @LiveQuery("select from Model")
-    int subscribe(@Listen LiveResultListener<Model> listener)
+    int subscribe(@Listen LiveQueryListener<Model> listener)
 
     @LiveQuery("select from Model where cnt > 1")
-    int subscribeConditional(@Listen LiveResultListener<Model> listener)
+    int subscribeConditional(@Listen LiveQueryListener<Model> listener)
 
     @LiveQuery("select from VertexModel")
-    int subscribeVertex(@Listen LiveResultListener<Vertex> listener)
+    int subscribeVertex(@Listen LiveQueryListener<Vertex> listener)
 
     // error - conversion will not be possible without enabled transaction (even if listener itself will
     // be @Transactional guice bean
     @LiveQuery("select from Model")
-    int subscribeNoTx(@Listen(transactional = false) LiveResultListener<Model> listener)
+    int subscribeNoTx(@Listen(transactional = false) LiveQueryListener<Model> listener)
 }

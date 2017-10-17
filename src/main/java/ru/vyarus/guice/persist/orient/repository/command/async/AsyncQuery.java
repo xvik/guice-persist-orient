@@ -10,7 +10,8 @@ import java.lang.annotation.Target;
 /**
  * Sql async query repository method extension. Use only for select queries.
  * <p>
- * Listener parameter ({@link com.orientechnologies.orient.core.command.OCommandResultListener}) must be annotated
+ * Listener parameter ({@link com.orientechnologies.orient.core.command.OCommandResultListener} or
+ * {@link ru.vyarus.guice.persist.orient.repository.command.async.mapper.QueryListener}) must be annotated
  * with {@link ru.vyarus.guice.persist.orient.repository.command.ext.listen.Listen}.
  * Method must be void.
  * <p>
@@ -24,6 +25,7 @@ import java.lang.annotation.Target;
  *
  * @author Vyacheslav Rusakov
  * @see <a href="http://orientdb.com/docs/last/Document-Database.html">docs</a>
+ * @see ru.vyarus.guice.persist.orient.repository.command.async.mapper.QueryListener
  * @since 27.02.2015
  */
 @Target(ElementType.METHOD)

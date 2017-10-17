@@ -7,11 +7,12 @@ import com.orientechnologies.orient.core.record.ORecord;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.core.sql.query.OLiveResultListener;
 import ru.vyarus.guice.persist.orient.repository.core.ext.service.result.converter.RecordConverter;
-import ru.vyarus.java.generics.resolver.GenericsResolver;
 
 /**
- * Adapter for {@link LiveResultListener} which performs actual result conversion. Adapter must also implement
+ * Adapter for {@link LiveQueryListener} which performs actual result conversion. Adapter must also implement
  * orient command listener interface like {@link com.orientechnologies.orient.core.sql.query.OLocalLiveResultListener}.
+ * <p>
+ * Applied by {@link ru.vyarus.guice.persist.orient.repository.command.ext.listen.Listen} extension.
  *
  * @author Vyacheslav Rusakov
  * @since 09.10.2017
@@ -19,12 +20,15 @@ import ru.vyarus.java.generics.resolver.GenericsResolver;
 public class LiveResultMapper implements OLiveResultListener, OCommandResultListener {
 
     private final RecordConverter converter;
-    private final LiveResultListener listener;
+    private final LiveQueryListener listener;
+    private final Class<?> targetType;
 
     public LiveResultMapper(final RecordConverter converter,
-                            final LiveResultListener listener) {
+                            final LiveQueryListener listener,
+                            final Class<?> targetType) {
         this.converter = converter;
         this.listener = listener;
+        this.targetType = targetType;
     }
 
     @Override
@@ -32,8 +36,6 @@ public class LiveResultMapper implements OLiveResultListener, OCommandResultList
     public void onLiveResult(final int iLiveToken, final ORecordOperation iOp) throws OException {
         final RecordOperation op = RecordOperation.forType(iOp.type);
         final ORecord rec = iOp.getRecord();
-        final Class targetType = GenericsResolver.resolve(listener.getClass())
-                .type(LiveResultListener.class).generic("T");
         try {
             listener.onLiveResult(iLiveToken, op, converter.convert(rec, targetType));
         } catch (Exception th) {

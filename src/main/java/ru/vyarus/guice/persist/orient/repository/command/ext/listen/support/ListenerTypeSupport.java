@@ -1,8 +1,9 @@
-package ru.vyarus.guice.persist.orient.repository.command.ext.listen;
+package ru.vyarus.guice.persist.orient.repository.command.ext.listen.support;
 
 import com.google.inject.Injector;
 import com.orientechnologies.orient.core.command.OCommandRequest;
 import com.orientechnologies.orient.core.command.OCommandResultListener;
+import ru.vyarus.guice.persist.orient.repository.command.ext.listen.Listen;
 import ru.vyarus.guice.persist.orient.repository.core.spi.parameter.ParamInfo;
 
 /**
@@ -29,10 +30,12 @@ public interface ListenerTypeSupport {
      * @param listener      listener instance (passed in annotated parameter)
      * @param injector      injector instance
      * @param transactional true if listener execution must be wrapped with transaction
+     * @param conversionTarget       target conversion type or null if no conversion required
      * @return processed listener to apply to command
      */
     OCommandResultListener processListener(OCommandRequest command,
                                            Object listener,
                                            Injector injector,
-                                           boolean transactional);
+                                           boolean transactional,
+                                           Class<?> conversionTarget);
 }

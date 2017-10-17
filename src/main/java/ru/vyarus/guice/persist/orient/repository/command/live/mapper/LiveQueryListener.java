@@ -1,5 +1,6 @@
 package ru.vyarus.guice.persist.orient.repository.command.live.mapper;
 
+import ru.vyarus.guice.persist.orient.repository.command.ext.listen.support.RequiresRecordConversion;
 import ru.vyarus.guice.persist.orient.repository.core.ext.service.result.converter.RecordConverter;
 
 /**
@@ -9,9 +10,15 @@ import ru.vyarus.guice.persist.orient.repository.core.ext.service.result.convert
  * raw document to object or graph type and apply result converter (mimic usual repository method return
  * type behaviour).
  * <p>
+ * Generic value declares target conversion type. If possible, conversion type would be resolved from actual
+ * listener instance, so base class may be defined in query and exact entity used by listener (e.g.
+ * {@code @Listen LiveQueryListener<VersionedEntity>} and actual listener could be
+ * {@code MyListener implements LiveQueryListener<Model>}. If it is not possible to resolve generic on listener
+ * instance, then parameter generic will be used.
+ * <p>
  * Live query always return object (it is the essence of live query). So even if you select just field
  * (select name from Model) still complete object will be returned (so something like
- * {@code LiveResultListener<String>} will never work - always use complete entities).
+ * {@code LiveQueryListener<String>} will never work - always use complete entities).
  * <p>
  * NOTE: result conversion will not apply custom converter extensions
  * (like {@link ru.vyarus.guice.persist.orient.repository.core.ext.service.result.ext.detach.DetachResult}) because
@@ -23,7 +30,7 @@ import ru.vyarus.guice.persist.orient.repository.core.ext.service.result.convert
  * (see {@link ru.vyarus.guice.persist.orient.repository.command.ext.listen.Listen#transactional()}). If transaction
  * will be switched off, type conversion will not be performed.
  * <p>
- * To use guice injections inside listener, simple use guice to produce your listener. For example,
+ * To use guice injections inside listener, simply use guice to produce your listener. For example,
  * {@code Provider<MyListener> listenerProvider} will always return new listener instance (assuming prototype scope)
  * with filled injections. Any bean (service) may also be used as listener ({@code subscribe(this)}), but it is not
  * always applicable.
@@ -33,7 +40,7 @@ import ru.vyarus.guice.persist.orient.repository.core.ext.service.result.convert
  * @see RecordConverter
  * @since 03.10.2017
  */
-public interface LiveResultListener<T> {
+public interface LiveQueryListener<T> extends RequiresRecordConversion<T> {
 
     /**
      * Notifies about subscribed query results changes.

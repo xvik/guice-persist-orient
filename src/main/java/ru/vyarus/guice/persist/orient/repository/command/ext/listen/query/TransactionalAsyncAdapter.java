@@ -13,13 +13,13 @@ import ru.vyarus.guice.persist.orient.db.transaction.template.TxAction;
  * @author Vyacheslav Rusakov
  * @since 11.10.2017
  */
-public class TransactionalAsyncListener implements OCommandResultListener {
+public class TransactionalAsyncAdapter implements OCommandResultListener {
 
     private final PersistentContext<ODatabaseDocumentTx> context;
     private final OCommandResultListener listener;
 
-    public TransactionalAsyncListener(final PersistentContext<ODatabaseDocumentTx> context,
-                                      final OCommandResultListener listener) {
+    public TransactionalAsyncAdapter(final PersistentContext<ODatabaseDocumentTx> context,
+                                     final OCommandResultListener listener) {
         this.context = context;
         this.listener = listener;
     }

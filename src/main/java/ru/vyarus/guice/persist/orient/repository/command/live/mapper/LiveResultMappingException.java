@@ -3,7 +3,7 @@ package ru.vyarus.guice.persist.orient.repository.command.live.mapper;
 import ru.vyarus.guice.persist.orient.repository.core.MethodExecutionException;
 
 /**
- * Thrown to indicate result mapping problem for {@link LiveResultListener}.
+ * Thrown to indicate result mapping problem for {@link LiveQueryListener}.
  *
  * @author Vyacheslav Rusakov
  * @since 12.10.2017
