@@ -1,4 +1,4 @@
-package ru.vyarus.guice.persist.orient.repository.command.ext.listen.query;
+package ru.vyarus.guice.persist.orient.repository.command.async.listener;
 
 import com.orientechnologies.orient.core.command.OCommandResultListener;
 import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx;
@@ -27,7 +27,7 @@ public class TransactionalAsyncAdapter implements OCommandResultListener {
     @Override
     public boolean result(final Object iRecord) {
         if (context.getTransactionManager().isTransactionActive()) {
-            // avoid additional calls on stack
+            // avoid additional calls on stack (listener will be called in separate thread only for remote connection)
             return listener.result(iRecord);
         } else {
             // wrapping in transaction

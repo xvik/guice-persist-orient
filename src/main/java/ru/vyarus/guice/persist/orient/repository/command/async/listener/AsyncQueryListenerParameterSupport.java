@@ -1,4 +1,4 @@
-package ru.vyarus.guice.persist.orient.repository.command.ext.listen.query;
+package ru.vyarus.guice.persist.orient.repository.command.async.listener;
 
 import com.google.inject.Injector;
 import com.google.inject.Key;
@@ -8,12 +8,15 @@ import com.orientechnologies.orient.core.command.OCommandRequestAbstract;
 import com.orientechnologies.orient.core.command.OCommandResultListener;
 import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx;
 import ru.vyarus.guice.persist.orient.db.PersistentContext;
-import ru.vyarus.guice.persist.orient.repository.command.async.mapper.QueryListener;
-import ru.vyarus.guice.persist.orient.repository.command.async.mapper.QueryResultMapper;
+import ru.vyarus.guice.persist.orient.repository.command.async.AsyncQuery;
+import ru.vyarus.guice.persist.orient.repository.command.async.listener.mapper.AsyncQueryListener;
+import ru.vyarus.guice.persist.orient.repository.command.async.listener.mapper.AsyncResultMapper;
 import ru.vyarus.guice.persist.orient.repository.command.ext.listen.Listen;
-import ru.vyarus.guice.persist.orient.repository.command.ext.listen.support.ListenerTypeSupport;
+import ru.vyarus.guice.persist.orient.repository.command.ext.listen.support.ListenerParameterSupport;
 import ru.vyarus.guice.persist.orient.repository.core.ext.service.result.converter.RecordConverter;
 import ru.vyarus.guice.persist.orient.repository.core.spi.parameter.ParamInfo;
+
+import java.lang.annotation.Annotation;
 
 import static ru.vyarus.guice.persist.orient.repository.core.MethodDefinitionException.check;
 import static ru.vyarus.guice.persist.orient.repository.core.MethodExecutionException.checkExec;
@@ -27,11 +30,16 @@ import static ru.vyarus.guice.persist.orient.repository.core.MethodExecutionExce
  * @author Vyacheslav Rusakov
  * @since 29.09.2017
  */
-public class QueryListenerTypeSupport implements ListenerTypeSupport {
+public class AsyncQueryListenerParameterSupport implements ListenerParameterSupport {
 
     private static final Key<PersistentContext<ODatabaseDocumentTx>> CONTEXT_KEY =
             Key.get(new TypeLiteral<PersistentContext<ODatabaseDocumentTx>>() {
             });
+
+    @Override
+    public boolean accept(final Class<? extends Annotation> extension) {
+        return AsyncQuery.class.equals(extension);
+    }
 
     @Override
     public void checkParameter(final String query, final ParamInfo<Listen> param,
@@ -41,9 +49,9 @@ public class QueryListenerTypeSupport implements ListenerTypeSupport {
                 "Method with listener must be void, because no results returned from query "
                         + "when listener used");
         check(OCommandResultListener.class.isAssignableFrom(param.type)
-                        || QueryListener.class.isAssignableFrom(param.type),
+                        || AsyncQueryListener.class.isAssignableFrom(param.type),
                 "Only %s or %s can be used as result listener",
-                OCommandResultListener.class.getName(), QueryListener.class.getName());
+                OCommandResultListener.class.getName(), AsyncQueryListener.class.getName());
     }
 
     @Override
@@ -62,16 +70,16 @@ public class QueryListenerTypeSupport implements ListenerTypeSupport {
                                         final Injector injector,
                                         final boolean transactional,
                                         final Class<?> targetType) {
-        final OCommandResultListener res = listener instanceof QueryListener
-                ? wrap((QueryListener) listener, injector, targetType) : (OCommandResultListener) listener;
+        final OCommandResultListener res = listener instanceof AsyncQueryListener
+                ? wrap((AsyncQueryListener) listener, injector, targetType) : (OCommandResultListener) listener;
         // wrap listener with transaction if required
         return transactional ? new TransactionalAsyncAdapter(injector.getInstance(CONTEXT_KEY), res) : res;
     }
 
-    private OCommandResultListener wrap(final QueryListener listener, final Injector injector,
+    private OCommandResultListener wrap(final AsyncQueryListener listener, final Injector injector,
                                         final Class<?> targetType) {
         final RecordConverter converter = injector.getInstance(RecordConverter.class);
-        return new QueryResultMapper(converter, listener, targetType);
+        return new AsyncResultMapper(converter, listener, targetType);
     }
 
 }

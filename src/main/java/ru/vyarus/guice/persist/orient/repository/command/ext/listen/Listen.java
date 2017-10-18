@@ -14,21 +14,19 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * {@link com.orientechnologies.orient.core.command.OCommandRequestAbstract#setResultListener(
  *com.orientechnologies.orient.core.command.OCommandResultListener)}.
  * <p>
- *  Listener could be used with {@link ru.vyarus.guice.persist.orient.repository.command.query.Query},
- * {@link ru.vyarus.guice.persist.orient.repository.command.async.AsyncQuery} and
+ *  Listener could be used with {@link ru.vyarus.guice.persist.orient.repository.command.async.AsyncQuery} and
  * {@link ru.vyarus.guice.persist.orient.repository.command.live.LiveQuery}.
  * <p>
  * Listener could be applied only for select queries.
  * <p>
- * For sync and async queries method should be void (because listener
- * intercept all results and empty list always returned) and listener type must be
- * {@link com.orientechnologies.orient.core.command.OCommandResultListener} or
- * {@link ru.vyarus.guice.persist.orient.repository.command.async.mapper.QueryListener} if type
+ * For async queries method should be void (because listener intercept all results and empty list always returned)
+ * and listener type must be {@link com.orientechnologies.orient.core.command.OCommandResultListener} or
+ * {@link ru.vyarus.guice.persist.orient.repository.command.async.listener.mapper.AsyncQueryListener} if type
  * conversions required.
  * <p>
  * For live query, annotated method must return int (live subscription token required to unsubscribe query) and
  * listener type must be raw {@link com.orientechnologies.orient.core.sql.query.OLiveResultListener} or
- * {@link ru.vyarus.guice.persist.orient.repository.command.live.mapper.LiveQueryListener} if type
+ * {@link ru.vyarus.guice.persist.orient.repository.command.live.listener.mapper.LiveQueryListener} if type
  * conversions required.
  * <p>
  * By default listener execution will be wrapped in transaction (see {@link #transactional()}). If you disable
@@ -45,8 +43,8 @@ public @interface Listen {
 
     /**
      * Wrap listener with an implicit transaction. This is important if custom listeners (like
-     * {@link ru.vyarus.guice.persist.orient.repository.command.live.mapper.LiveQueryListener}) are used, because
-     * otherwise they will not be able to convert record to other type.
+     * {@link ru.vyarus.guice.persist.orient.repository.command.live.listener.mapper.LiveQueryListener}) are used,
+     * because otherwise they will not be able to convert record to other type.
      * <p>
      * Note that async listener in local connection will be executed synchronously and so as part of the current
      * transaction.

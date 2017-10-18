@@ -54,6 +54,7 @@ public class SpiService {
      */
     public RepositoryMethodDescriptor createMethodDescriptor(final DescriptorContext context) {
         final Annotation annotation = ExtUtils.findMethodAnnotation(context.method);
+        context.extensionAnnotation = annotation.annotationType();
         context.extensionType = annotation.annotationType().getAnnotation(RepositoryMethod.class).value();
         final Provider<? extends RepositoryMethodExtension> extension = injector.getProvider(context.extensionType);
         @SuppressWarnings("unchecked")

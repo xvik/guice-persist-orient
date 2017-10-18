@@ -1,4 +1,4 @@
-package ru.vyarus.guice.persist.orient.repository.command.ext.listen.live;
+package ru.vyarus.guice.persist.orient.repository.command.live.listener;
 
 import com.google.inject.Injector;
 import com.google.inject.Key;
@@ -10,12 +10,14 @@ import com.orientechnologies.orient.core.sql.query.OLiveQuery;
 import com.orientechnologies.orient.core.sql.query.OLiveResultListener;
 import ru.vyarus.guice.persist.orient.db.PersistentContext;
 import ru.vyarus.guice.persist.orient.repository.command.ext.listen.Listen;
-import ru.vyarus.guice.persist.orient.repository.command.ext.listen.support.ListenerTypeSupport;
+import ru.vyarus.guice.persist.orient.repository.command.ext.listen.support.ListenerParameterSupport;
 import ru.vyarus.guice.persist.orient.repository.command.live.LiveQuery;
-import ru.vyarus.guice.persist.orient.repository.command.live.mapper.LiveQueryListener;
-import ru.vyarus.guice.persist.orient.repository.command.live.mapper.LiveResultMapper;
+import ru.vyarus.guice.persist.orient.repository.command.live.listener.mapper.LiveQueryListener;
+import ru.vyarus.guice.persist.orient.repository.command.live.listener.mapper.LiveResultMapper;
 import ru.vyarus.guice.persist.orient.repository.core.ext.service.result.converter.RecordConverter;
 import ru.vyarus.guice.persist.orient.repository.core.spi.parameter.ParamInfo;
+
+import java.lang.annotation.Annotation;
 
 import static ru.vyarus.guice.persist.orient.repository.core.MethodDefinitionException.check;
 import static ru.vyarus.guice.persist.orient.repository.core.MethodExecutionException.checkExec;
@@ -34,11 +36,16 @@ import static ru.vyarus.guice.persist.orient.repository.core.MethodExecutionExce
  * @author Vyacheslav Rusakov
  * @since 29.09.2017
  */
-public class LiveListenerTypeSupport implements ListenerTypeSupport {
+public class LiveListenerParameterSupport implements ListenerParameterSupport {
 
     private static final Key<PersistentContext<ODatabaseDocumentTx>> CONTEXT_KEY =
             Key.get(new TypeLiteral<PersistentContext<ODatabaseDocumentTx>>() {
             });
+
+    @Override
+    public boolean accept(final Class<? extends Annotation> extension) {
+        return LiveQuery.class.equals(extension);
+    }
 
     @Override
     public void checkParameter(final String query, final ParamInfo<Listen> param, final Class<?> returnType) {

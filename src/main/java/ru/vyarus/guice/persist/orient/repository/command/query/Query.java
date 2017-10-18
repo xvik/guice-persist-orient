@@ -19,13 +19,9 @@ import java.util.Collection;
  * Query could contain variables in format (${var}). By default, only declared type generic names
  * could be used, but extensions could provide other variables (like
  * {@link ru.vyarus.guice.persist.orient.repository.command.ext.elvar.ElVar}).</p>
- * <p>
- * Could use listener instead of direct result
- * (see {@link ru.vyarus.guice.persist.orient.repository.command.ext.listen.Listen})
  *
  * @author Vyacheslav Rusakov
  * @see <a href="http://www.orientechnologies.com/docs/last/orientdb.wiki/SQL.html">docs</a>
- * @see ru.vyarus.guice.persist.orient.repository.command.async.mapper.QueryListener
  * @since 02.02.2015
  */
 @Target(ElementType.METHOD)

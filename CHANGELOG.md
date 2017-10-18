@@ -1,16 +1,18 @@
 * Update to orient 2.2
 * Support [custom types installation](http://orientdb.com/docs/2.2/Object-2-Record-Java-Binding.html#custom-types)
   with new method: OrientModule#withCustomTypes(OObjectSerializer...) (#14)
-* (breaking) @Listen parameter now wraps provided listener with transaction by default (may be disabled: transactional = false)
-* Add @LiveQuery repository extension (live queries support)
-    - Listener parameter recognized by @Listen annotation
-    - custom LiveQueryListener interface may be used to automatically convert record to object or vertex
 * New service RecordConverter may be used directly to:
     - convert ODocument to object or vertex 
     - apply default repository method converter (e.g. apply projection)
-(when document contains just one value it can be converted to value directly).    
-* Add QueryListener interface to use instead of OCommandResultListener for @Query and @AsyncQuery (under @Listen)
-which performs automatic result conversion (with RecordConverter to mimic the same behaviour as for repository return).
+* @Listen parameter extension changes:
+    - (breaking) no longer could be used with @Query (because it does not work properly for remote connection and not guaranteed by the documentation) 
+    - (breaking) wraps provided listener with transaction by default (may be disabled: transactional = false)
+    - new AsyncQueryListener interface can be used instead of OCommandResultListener to apply automatic result conversion 
+      (with RecordConverter to mimic the same behaviour as for usual method result)
+* Add @LiveQuery repository extension (live queries support)
+    - required orient OLiveResultListener parameter must be used with @Listen annotation
+    - custom LiveQueryListener interface can be used instead of OLiveResultListener to apply automatic result conversion 
+      (with RecordConverter to mimic the same behaviour as for usual method result).    
 
 ### 3.2.0 (2016-09-25)
 * Update to orient 2.1

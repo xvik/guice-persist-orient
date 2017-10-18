@@ -1,17 +1,20 @@
 package ru.vyarus.guice.persist.orient.repository.command.ext.listen;
 
+import com.google.common.collect.ImmutableList;
 import com.google.inject.Injector;
 import com.orientechnologies.orient.core.command.OCommandRequest;
 import com.orientechnologies.orient.core.command.OCommandRequestAbstract;
 import ru.vyarus.guice.persist.orient.db.util.Order;
+import ru.vyarus.guice.persist.orient.repository.command.async.listener.AsyncQueryListenerParameterSupport;
 import ru.vyarus.guice.persist.orient.repository.command.core.param.CommandParamsContext;
 import ru.vyarus.guice.persist.orient.repository.command.core.spi.CommandExtension;
 import ru.vyarus.guice.persist.orient.repository.command.core.spi.CommandMethodDescriptor;
 import ru.vyarus.guice.persist.orient.repository.command.core.spi.SqlCommandDescriptor;
-import ru.vyarus.guice.persist.orient.repository.command.ext.listen.live.LiveListenerTypeSupport;
-import ru.vyarus.guice.persist.orient.repository.command.ext.listen.query.QueryListenerTypeSupport;
-import ru.vyarus.guice.persist.orient.repository.command.ext.listen.support.ListenerTypeSupport;
+import ru.vyarus.guice.persist.orient.repository.command.ext.listen.support.ListenerParameterSupport;
 import ru.vyarus.guice.persist.orient.repository.command.ext.listen.support.RequiresRecordConversion;
+import ru.vyarus.guice.persist.orient.repository.command.live.listener.LiveListenerParameterSupport;
+import ru.vyarus.guice.persist.orient.repository.core.MethodDefinitionException;
+import ru.vyarus.guice.persist.orient.repository.core.spi.DescriptorContext;
 import ru.vyarus.guice.persist.orient.repository.core.spi.parameter.MethodParamExtension;
 import ru.vyarus.guice.persist.orient.repository.core.spi.parameter.ParamInfo;
 import ru.vyarus.java.generics.resolver.GenericsResolver;
@@ -19,6 +22,7 @@ import ru.vyarus.java.generics.resolver.context.MethodGenericsContext;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.List;
 
@@ -40,10 +44,13 @@ public class ListenParamExtension implements
 
     public static final String KEY = ListenParamExtension.class.getName();
 
-    private final Injector injector;
+    // registered listener handlers
+    private static final List<ListenerParameterSupport> EXT_TYPES = ImmutableList.of(
+            new AsyncQueryListenerParameterSupport(),
+            new LiveListenerParameterSupport()
+    );
 
-    private final ListenerTypeSupport queryHandler = new QueryListenerTypeSupport();
-    private final ListenerTypeSupport liveHandler = new LiveListenerTypeSupport();
+    private final Injector injector;
 
     @Inject
     public ListenParamExtension(final Injector injector) {
@@ -56,14 +63,15 @@ public class ListenParamExtension implements
                                   final List<ParamInfo<Listen>> paramsInfo) {
         check(paramsInfo.size() == 1, "Duplicate @%s definition", Listen.class.getSimpleName());
         final ParamInfo<Listen> param = paramsInfo.get(0);
-        final Method method = context.getDescriptorContext().method;
+        final DescriptorContext descriptorContext = context.getDescriptorContext();
+        final Method method = descriptorContext.method;
         final Class<?> returnType = method.getReturnType();
 
         final String query = descriptor.command.toLowerCase();
-        final ListenParamDescriptor extDesc = new ListenParamDescriptor(selectHandler(query),
+        final ListenParamDescriptor extDesc = new ListenParamDescriptor(
+                selectHandler(descriptorContext.extensionAnnotation),
                 param.position,
-                resolveListenerGeneric(context.getDescriptorContext().generics.method(method),
-                        param.type, param.position),
+                resolveListenerGeneric(descriptorContext.generics.method(method), param.type, param.position),
                 param.annotation.transactional());
 
         extDesc.handler.checkParameter(query, param, returnType);
@@ -92,8 +100,14 @@ public class ListenParamExtension implements
                         resolveTargetType(listener.getClass(), extDesc.generic)));
     }
 
-    private ListenerTypeSupport selectHandler(final String query) {
-        return query.startsWith("live") ? liveHandler : queryHandler;
+    private ListenerParameterSupport selectHandler(final Class<? extends Annotation> extension) {
+        for (ListenerParameterSupport type : EXT_TYPES) {
+            if (type.accept(extension)) {
+                return type;
+            }
+        }
+        throw new MethodDefinitionException(String.format("@%s parameter is not supported by @%s extension",
+                Listen.class.getSimpleName(), extension.getSimpleName()));
     }
 
     /**
@@ -158,7 +172,7 @@ public class ListenParamExtension implements
         /**
          * Selected listener type handler.
          */
-        public final ListenerTypeSupport handler;
+        public final ListenerParameterSupport handler;
 
         /**
          * Listener parameter position.
@@ -171,14 +185,15 @@ public class ListenParamExtension implements
         public final boolean transactional;
 
         /**
-         * Custom listeners like {@link ru.vyarus.guice.persist.orient.repository.command.async.mapper.QueryListener}
+         * Custom listeners like
+         * {@link ru.vyarus.guice.persist.orient.repository.command.async.listener.mapper.AsyncQueryListener}
          * and {@link com.orientechnologies.orient.core.query.live.OLiveQueryListener} may be generified. This generic
          * could be used in cases when actual (maybe more concrete) generic can't be resolved from the listener
          * instance (last resort).
          */
         public final Class<?> generic;
 
-        ListenParamDescriptor(final ListenerTypeSupport handler,
+        ListenParamDescriptor(final ListenerParameterSupport handler,
                               final int position,
                               final Class<?> generic,
                               final boolean transactional) {

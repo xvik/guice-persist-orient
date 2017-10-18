@@ -2,8 +2,8 @@ package ru.vyarus.guice.persist.orient.repository.command.live.advanced
 
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx
 import ru.vyarus.guice.persist.orient.db.PersistentContext
-import ru.vyarus.guice.persist.orient.repository.command.live.mapper.LiveQueryListener
-import ru.vyarus.guice.persist.orient.repository.command.live.mapper.RecordOperation
+import ru.vyarus.guice.persist.orient.repository.command.live.listener.mapper.LiveQueryListener
+import ru.vyarus.guice.persist.orient.repository.command.live.listener.mapper.RecordOperation
 
 import javax.inject.Inject
 

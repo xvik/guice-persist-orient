@@ -1,4 +1,4 @@
-package ru.vyarus.guice.persist.orient.repository.command.ext.listen.live;
+package ru.vyarus.guice.persist.orient.repository.command.live.listener;
 
 import com.orientechnologies.common.exception.OException;
 import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx;
@@ -27,19 +27,14 @@ public class TransactionalLiveAdapter extends OLiveListenerAdapter {
 
     @Override
     public void onLiveResult(final int iLiveToken, final ORecordOperation iOp) throws OException {
-        if (context.getTransactionManager().isTransactionActive()) {
-            // avoid additional calls on stack
-            underlying.onLiveResult(iLiveToken, iOp);
-        } else {
-            // wrapping in transaction
-            context.doInTransaction(new TxAction<Void>() {
-                @Override
-                public Void execute() throws Throwable {
-                    underlying.onLiveResult(iLiveToken, iOp);
-                    return null;
-                }
-            });
-        }
-
+        // wrapping in transaction (live query is always executed in it's own thread so there couldn't be
+        // already opened transaction)
+        context.doInTransaction(new TxAction<Void>() {
+            @Override
+            public Void execute() throws Throwable {
+                underlying.onLiveResult(iLiveToken, iOp);
+                return null;
+            }
+        });
     }
 }

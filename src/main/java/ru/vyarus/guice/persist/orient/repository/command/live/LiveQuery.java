@@ -15,7 +15,7 @@ import java.lang.annotation.Target;
  * with {@link ru.vyarus.guice.persist.orient.repository.command.ext.listen.Listen}.
  * Method must return int or Integer (subscription token required to unsubscribe).
  * <p>
- * {@link ru.vyarus.guice.persist.orient.repository.command.live.mapper.LiveQueryListener} could be used as
+ * {@link ru.vyarus.guice.persist.orient.repository.command.live.listener.mapper.LiveQueryListener} could be used as
  * listener in order to apply automatic conversions (like in usual repository methods). For example:
  * {@code @LiveQuery("select from Model") int subscribe(@Listen LiveQueryListener<Model> listener)}.
  * <p>
@@ -32,7 +32,7 @@ import java.lang.annotation.Target;
  * @see <a href="http://orientdb.com/docs/last/Live-Query.html">docs</a>
  * @see ru.vyarus.guice.persist.orient.repository.command.ext.listen.Listen
  * @see com.orientechnologies.orient.core.sql.query.OLiveResultListener
- * @see ru.vyarus.guice.persist.orient.repository.command.live.mapper.LiveQueryListener
+ * @see ru.vyarus.guice.persist.orient.repository.command.live.listener.mapper.LiveQueryListener
  * @since 29.09.2017
  */
 @Target(ElementType.METHOD)

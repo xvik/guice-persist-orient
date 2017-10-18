@@ -3,6 +3,7 @@ package ru.vyarus.guice.persist.orient.repository.core.spi;
 import ru.vyarus.guice.persist.orient.repository.core.spi.method.RepositoryMethodExtension;
 import ru.vyarus.java.generics.resolver.context.GenericsContext;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
 /**
@@ -28,6 +29,12 @@ public class DescriptorContext {
      * Computed generics context from repository root, set to declaring class type.
      */
     public GenericsContext generics;
+
+    /**
+     * Method extension annotation type. May be used for simplified context detection
+     * (instead of exact extension type).
+     */
+    public Class<? extends Annotation> extensionAnnotation;
 
     /**
      * Method extension type (may be used by amend/param extensions to guide it's behaviour).

@@ -1,4 +1,4 @@
-package ru.vyarus.guice.persist.orient.repository.command.live.mapper;
+package ru.vyarus.guice.persist.orient.repository.command.live.listener.mapper;
 
 import com.orientechnologies.common.exception.OException;
 import com.orientechnologies.orient.core.command.OCommandResultListener;

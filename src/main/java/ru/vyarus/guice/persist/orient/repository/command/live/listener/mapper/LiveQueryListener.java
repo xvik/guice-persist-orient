@@ -1,14 +1,14 @@
-package ru.vyarus.guice.persist.orient.repository.command.live.mapper;
+package ru.vyarus.guice.persist.orient.repository.command.live.listener.mapper;
 
 import ru.vyarus.guice.persist.orient.repository.command.ext.listen.support.RequiresRecordConversion;
 import ru.vyarus.guice.persist.orient.repository.core.ext.service.result.converter.RecordConverter;
 
 /**
- * Special live result listener (like {@link com.orientechnologies.orient.core.sql.query.OLiveResultListener}),
- * which could be used in repository method
- * (with {@link ru.vyarus.guice.persist.orient.repository.command.ext.listen.Listen}) to automatically convert
- * raw document to object or graph type and apply result converter (mimic usual repository method return
- * type behaviour).
+ * Special {@link ru.vyarus.guice.persist.orient.repository.command.live.LiveQuery} result listener
+ * intended to be used instead of raw {@link com.orientechnologies.orient.core.sql.query.OLiveResultListener}
+ * (with {@link ru.vyarus.guice.persist.orient.repository.command.ext.listen.Listen}) to automatically
+ * apply the same result conversion as applied to the result of repository method (including conversion of document
+ * to object or vertex).
  * <p>
  * Generic value declares target conversion type. If possible, conversion type would be resolved from actual
  * listener instance, so base class may be defined in query and exact entity used by listener (e.g.

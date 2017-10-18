@@ -1,4 +1,4 @@
-package ru.vyarus.guice.persist.orient.repository.command.live.mapper;
+package ru.vyarus.guice.persist.orient.repository.command.live.listener.mapper;
 
 import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx;
 import com.orientechnologies.orient.core.db.record.ORecordOperation;

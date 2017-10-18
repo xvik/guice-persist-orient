@@ -77,6 +77,7 @@ public class DelegateMethodExtension implements RepositoryMethodExtension<Delega
         targetContext.method = descriptor.method;
         targetContext.generics = GenericsResolver.resolve(targetContext.type)
                 .type(descriptor.method.getDeclaringClass());
+        targetContext.extensionAnnotation = context.extensionAnnotation;
         targetContext.extensionType = context.extensionType;
         final DelegateParamsContext paramContext = new DelegateParamsContext(targetContext, context);
         spiService.process(descriptor, paramContext);
