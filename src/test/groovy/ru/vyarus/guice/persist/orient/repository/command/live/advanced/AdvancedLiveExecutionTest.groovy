@@ -39,7 +39,7 @@ class AdvancedLiveExecutionTest extends AbstractTest {
             def res = repository.save(new Model(name: "justnow"))
             db.detach(res, true)
         } as SpecificTxAction)
-        sleep(50)
+        sleep(70)
         then: "listener called"
         listener.lastToken == token
         listener.lastOp == RecordOperation.CREATED
@@ -55,7 +55,7 @@ class AdvancedLiveExecutionTest extends AbstractTest {
         when: "subscribe without transaction"
         repository.subscribeNoTx(listener)
         repository.save(new Model(name: "justnow"))
-        sleep(50)
+        sleep(70)
         then: "listener execution failed"
         listener.last == null
     }
@@ -71,7 +71,7 @@ class AdvancedLiveExecutionTest extends AbstractTest {
             def res = repository.save(new Model(name: "justnow"))
             db.detach(res, true)
         } as SpecificTxAction)
-        sleep(50)
+        sleep(70)
         then: "listener not called"
         listener.last == null
 
@@ -80,7 +80,7 @@ class AdvancedLiveExecutionTest extends AbstractTest {
             def res = repository.save(new Model(name: "justnow", cnt: 2))
             db.detach(res, true)
         } as SpecificTxAction)
-        sleep(50)
+        sleep(70)
         then: "listener called"
         listener.last != null
         listener.last.name == saved.name
@@ -96,7 +96,7 @@ class AdvancedLiveExecutionTest extends AbstractTest {
             def res = db.save(new VertexModel(name: "justnow"))
             db.detach(res, true)
         } as SpecificTxAction)
-        sleep(50)
+        sleep(70)
         then: "listener called"
         vertexListener.lastToken == token
         vertexListener.lastOp == RecordOperation.CREATED

@@ -36,7 +36,7 @@ class LiveExecutionTest extends AbstractTest {
 
         when: "insert event"
         Model saved = repository.save(new Model(name: "justnow"))
-        sleep(50)
+        sleep(70)
         then: "listener called"
         listener.lastOp != null
         listener.lastOp.type == ORecordOperation.CREATED
@@ -45,7 +45,7 @@ class LiveExecutionTest extends AbstractTest {
 
         when: "remove event"
         repository.delete(saved)
-        sleep(50)
+        sleep(70)
         then: "listener called"
         listener.lastOp.type == ORecordOperation.DELETED
         listener.lastOp.record instanceof ODocument
@@ -54,7 +54,7 @@ class LiveExecutionTest extends AbstractTest {
         when: "unsubscribe"
         listener.lastOp = null
         repository.unsubscribe(token)
-        sleep(50)
+        sleep(70)
         then: "unsubscribed"
         listener.unsubscribed
 
