@@ -2,6 +2,7 @@ package ru.vyarus.guice.persist.orient.db.transaction.internal;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
+import com.orientechnologies.orient.core.db.ODatabaseRecordThreadLocal;
 import com.orientechnologies.orient.core.tx.OTransaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,6 +45,10 @@ public class DefaultTransactionManager implements TransactionManager {
         if (transaction.get() != null) {
             // transaction already in progress
             return;
+        }
+        if (config != null && config.isExternal()) {
+            Preconditions.checkState(!ODatabaseRecordThreadLocal.INSTANCE.get().isClosed(),
+                    "Can't start external unit of work: connection bound to thread is closed");
         }
         transaction.set(MoreObjects.firstNonNull(config, defaultConfig));
         logger.trace("Transaction opened: {}", transaction.get());
@@ -130,6 +135,11 @@ public class DefaultTransactionManager implements TransactionManager {
     public OTransaction.TXTYPE getActiveTransactionType() {
         Preconditions.checkState(isTransactionActive(), "Call for transaction type, when no active transaction");
         return transaction.get().getTxtype();
+    }
+
+    @Override
+    public boolean isExternalTransaction() {
+        return isTransactionActive() && transaction.get().isExternal();
     }
 
     /**

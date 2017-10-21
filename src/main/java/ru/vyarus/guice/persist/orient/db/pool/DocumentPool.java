@@ -3,6 +3,7 @@ package ru.vyarus.guice.persist.orient.db.pool;
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 import com.orientechnologies.orient.core.config.OGlobalConfiguration;
+import com.orientechnologies.orient.core.db.ODatabaseRecordThreadLocal;
 import com.orientechnologies.orient.core.db.OPartitionedDatabasePoolFactory;
 import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx;
 import org.slf4j.Logger;
@@ -70,16 +71,20 @@ public class DocumentPool implements PoolManager<ODatabaseDocumentTx> {
             // pool not participate in current transaction
             return;
         }
-        // connection was closed manually, no need for rollback
+        // this is an error for external transaction too because external unit of work must end
+        // before manual connection close
         if (db.isClosed()) {
+            // connection was closed manually, no need for rollback
             transaction.remove();
             checkOpened(db);
         }
-        // may not cause actual commit/close because force parameter not used
-        // in case of commit exception, transaction manager must perform rollback
-        // (and close will take effect in rollback)
-        db.commit();
-        db.close();
+        if (!transactionManager.isExternalTransaction()) {
+            // may not cause actual commit/close because force parameter not used
+            // in case of commit exception, transaction manager must perform rollback
+            // (and close will take effect in rollback)
+            db.commit();
+            db.close();
+        }
         transaction.remove();
         logger.trace("Pool {} commit successful", getType());
     }
@@ -93,12 +98,17 @@ public class DocumentPool implements PoolManager<ODatabaseDocumentTx> {
             // transactional manager call rollback, which will affect only failed pool and others will simply ignore it)
             return;
         }
+        final boolean externalTransaction = transactionManager.isExternalTransaction();
         try {
-            // may not cause actual rollback immediately because force not used
-            checkOpened(db).rollback();
+            // do nothing fo external transaction
+            if (!externalTransaction) {
+                // may not cause actual rollback immediately because force not used
+                checkOpened(db).rollback();
+            }
             logger.trace("Pool {} rollback successful", getType());
         } finally {
-            if (!db.isClosed()) {
+            // don't touch external tx
+            if (!externalTransaction && !db.isClosed()) {
                 try {
                     // release connection back to pool in any case
                     db.close();
@@ -118,12 +128,18 @@ public class DocumentPool implements PoolManager<ODatabaseDocumentTx> {
         if (transaction.get() == null) {
             Preconditions.checkState(transactionManager.isTransactionActive(), String.format(
                     "Can't obtain connection from pool %s: no transaction defined.", getType()));
+            if (transactionManager.isExternalTransaction()) {
+                // external mode: use already created connection
+                transaction.set((ODatabaseDocumentTx) ODatabaseRecordThreadLocal.INSTANCE.get());
+                logger.trace("Pool {} use bound to thread connection (external mode)", getType());
+            } else {
+                // normal mode: create connection
+                final ODatabaseDocumentTx db = checkAndAcquireConnection();
 
-            final ODatabaseDocumentTx db = checkAndAcquireConnection();
-
-            db.begin(transactionManager.getActiveTransactionType());
-            transaction.set(db);
-            logger.trace("Pool {} transaction started", getType());
+                db.begin(transactionManager.getActiveTransactionType());
+                transaction.set(db);
+                logger.trace("Pool {} transaction started", getType());
+            }
         }
         return checkOpened(transaction.get()).activateOnCurrentThread();
     }

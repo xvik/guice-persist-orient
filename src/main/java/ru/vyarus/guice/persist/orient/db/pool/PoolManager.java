@@ -5,16 +5,23 @@ import ru.vyarus.guice.persist.orient.db.DbType;
 
 /**
  * Manage pool of connections for specific connection type (e.g. object connections).
- * Pool also works as connection provider, but implementation should not allow to obtain connection outside transaction
+ * Pool works as connection provider, but implementation should not allow to obtain connection outside of transaction
  * (unit of work).
- * <p>While transaction manager defines global unit of work scope, each pool manager may define
- * its own thread local transaction.
- * In default pool implementations single document connection is shared between pools.</p>
- * <p>To change pool size use {@code OGlobalConfiguration.DB_POOL_MAX.setValue()}. By default pools it's 100.</p>
- * <p>Do not use global pools in implementations - always create new one to avoid possible
- * collisions with other pools</p>
- * <p>Implementation must rely on {@link ru.vyarus.guice.persist.orient.db.user.UserManager} for actual
- * user credentials.</p>
+ * <p>
+ * While transaction manager ({@link ru.vyarus.guice.persist.orient.db.transaction.TransactionManager}) defines
+ * global unit of work scope, each pool manager may define its own thread local transaction (default pools use
+ * shared connection).
+ * <p>
+ * Pool implementation must support external transaction case
+ * {@link ru.vyarus.guice.persist.orient.db.transaction.TxConfig#external()}.
+ * <p>
+ * To change pool size use {@code OGlobalConfiguration.DB_POOL_MAX.setValue()}. By default it's 100.
+ * <p>
+ * Do not use global pools in implementations - always create new one to avoid possible
+ * collisions with other pools.
+ * <p>
+ * Implementation must rely on {@link ru.vyarus.guice.persist.orient.db.user.UserManager} for actual
+ * user credentials.
  *
  * @author Vyacheslav Rusakov
  * @since 24.07.2014
