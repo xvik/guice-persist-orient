@@ -49,19 +49,24 @@ public class CustomTypesInstaller {
         if (!customTypes.isEmpty()) {
             // only url is required from database object - no need to establish real connection
             final ODatabaseDocumentTx db = new ODatabaseDocumentTx(uri);
-            final OObjectSerializerContext context = new OObjectSerializerContext();
-            for (OObjectSerializer type : customTypes) {
-                // only database url is used to de-register custom type classes if any was registered
-                // it does not matter if database is actually open or closed
-                context.bind(type, db);
-                logger.trace("Custom orient type serializer bound: {}", type.getClass().getName());
-            }
+            try {
+                final OObjectSerializerContext context = new OObjectSerializerContext();
+                for (OObjectSerializer type : customTypes) {
+                    // only database url is used to de-register custom type classes if any was registered
+                    // it does not matter if database is actually open or closed
+                    context.bind(type, db);
+                    logger.trace("Custom orient type serializer bound: {}", type.getClass().getName());
+                }
 
-            // use default (null) context to delegate serializer resolution to context with all custom serializers
-            // there is no (good) way to check if null context is already used (in this case it would be overridden)
-            // also, no way to prevent null context overriding
-            OObjectSerializerHelper.bindSerializerContext(null, context);
-            logger.debug("Custom orient type serializers registered: {}", customTypes.size());
+                // use default (null) context to delegate serializer resolution to context with all custom serializers
+                // there is no (good) way to check if null context is already used (in this case it would be overridden)
+                // also, no way to prevent null context overriding
+                OObjectSerializerHelper.bindSerializerContext(null, context);
+                logger.debug("Custom orient type serializers registered: {}", customTypes.size());
+            } finally {
+                // db wasn't opened but still it was bound to thread (without it next transaction will fail to start)
+                db.close();
+            }
         }
     }
 }
