@@ -4,16 +4,19 @@ import com.orientechnologies.common.exception.OException;
 import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx;
 import com.orientechnologies.orient.core.db.record.ORecordOperation;
 import com.orientechnologies.orient.core.sql.query.OLiveResultListener;
+import com.orientechnologies.orient.core.sql.query.OLocalLiveResultListener;
 import ru.vyarus.guice.persist.orient.db.PersistentContext;
+import ru.vyarus.guice.persist.orient.db.transaction.TxConfig;
 import ru.vyarus.guice.persist.orient.db.transaction.template.TxAction;
 
 /**
- * Wraps live listener ({@link OLiveResultListener}) with a transaction.
+ * Wraps live listener ({@link OLiveResultListener}) with an external transaction (allows using thread bound
+ * connection in guice).
  *
  * @author Vyacheslav Rusakov
  * @since 11.10.2017
  */
-public class TransactionalLiveAdapter extends OLiveListenerAdapter {
+public class TransactionalLiveAdapter extends OLocalLiveResultListener {
 
     private final PersistentContext<ODatabaseDocumentTx> context;
     private final OLiveResultListener underlying;
@@ -27,9 +30,8 @@ public class TransactionalLiveAdapter extends OLiveListenerAdapter {
 
     @Override
     public void onLiveResult(final int iLiveToken, final ORecordOperation iOp) throws OException {
-        // wrapping in transaction (live query is always executed in it's own thread so there couldn't be
-        // already opened transaction)
-        context.doInTransaction(new TxAction<Void>() {
+        // wrapping in external transaction (live query thread will always have thread bound connection)
+        context.doInTransaction(TxConfig.external(), new TxAction<Void>() {
             @Override
             public Void execute() throws Throwable {
                 underlying.onLiveResult(iLiveToken, iOp);

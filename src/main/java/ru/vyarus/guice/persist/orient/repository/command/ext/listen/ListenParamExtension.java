@@ -71,8 +71,7 @@ public class ListenParamExtension implements
         final ListenParamDescriptor extDesc = new ListenParamDescriptor(
                 selectHandler(descriptorContext.extensionAnnotation),
                 param.position,
-                resolveListenerGeneric(descriptorContext.generics.method(method), param.type, param.position),
-                param.annotation.transactional());
+                resolveListenerGeneric(descriptorContext.generics.method(method), param.type, param.position));
 
         extDesc.handler.checkParameter(query, param, returnType);
 
@@ -96,8 +95,7 @@ public class ListenParamExtension implements
         checkExec(listener != null, "Listener can't be null");
 
         ((OCommandRequestAbstract) query).setResultListener(extDesc.handler
-                .processListener(query, listener, injector, extDesc.transactional,
-                        resolveTargetType(listener.getClass(), extDesc.generic)));
+                .processListener(query, listener, injector, resolveTargetType(listener.getClass(), extDesc.generic)));
     }
 
     private ListenerParameterSupport selectHandler(final Class<? extends Annotation> extension) {
@@ -180,11 +178,6 @@ public class ListenParamExtension implements
         public final int position;
 
         /**
-         * Indicates that listener must be wrapped with transaction.
-         */
-        public final boolean transactional;
-
-        /**
          * Custom listeners like
          * {@link ru.vyarus.guice.persist.orient.repository.command.async.listener.mapper.AsyncQueryListener}
          * and {@link com.orientechnologies.orient.core.query.live.OLiveQueryListener} may be generified. This generic
@@ -195,12 +188,10 @@ public class ListenParamExtension implements
 
         ListenParamDescriptor(final ListenerParameterSupport handler,
                               final int position,
-                              final Class<?> generic,
-                              final boolean transactional) {
+                              final Class<?> generic) {
             this.handler = handler;
             this.position = position;
             this.generic = generic;
-            this.transactional = transactional;
         }
     }
 }

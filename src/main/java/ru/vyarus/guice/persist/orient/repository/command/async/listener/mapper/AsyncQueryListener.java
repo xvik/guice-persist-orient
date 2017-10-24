@@ -15,9 +15,9 @@ import ru.vyarus.guice.persist.orient.repository.command.ext.listen.support.Requ
  * {@code MyListener implements AsyncQueryListener<Model>}. If it is not possible to resolve generic on listener
  * instance, then parameter generic will be used.
  * <p>
- * Note that {@link ru.vyarus.guice.persist.orient.repository.command.ext.listen.Listen} wraps listener
- * execution with a transaction by default
- * (see {@link ru.vyarus.guice.persist.orient.repository.command.ext.listen.Listen#transactional()}).
+ * Note that {@link ru.vyarus.guice.persist.orient.repository.command.ext.listen.Listen} starts external transaction
+ * ({@link ru.vyarus.guice.persist.orient.db.transaction.TxConfig#external()}) to make guice aware of listener
+ * connection object (bound to thread). This means that connection could be obtained as usual inside the listener.
  * <p>
  * NOTE: result conversion will not apply custom converter extensions
  * (like {@link ru.vyarus.guice.persist.orient.repository.core.ext.service.result.ext.detach.DetachResult}) because

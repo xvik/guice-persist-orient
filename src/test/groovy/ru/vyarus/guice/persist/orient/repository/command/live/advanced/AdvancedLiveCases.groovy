@@ -30,10 +30,5 @@ interface AdvancedLiveCases extends ObjectCrud<Model> {
 
     // check the simplest listener wrapping correctness
     @LiveQuery("select from Model")
-    int subscribeDoc(@Listen(transactional = false) OLiveResultListener listener)
-
-    // error - conversion will not be possible without enabled transaction (even if listener itself will
-    // be @Transactional guice bean
-    @LiveQuery("select from Model")
-    int subscribeNoTx(@Listen(transactional = false) LiveQueryListener<Model> listener)
+    int subscribeDoc(@Listen OLiveResultListener listener)
 }

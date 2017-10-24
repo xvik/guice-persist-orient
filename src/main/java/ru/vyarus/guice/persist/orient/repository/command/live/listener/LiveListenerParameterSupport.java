@@ -28,7 +28,7 @@ import static ru.vyarus.guice.persist.orient.repository.core.MethodExecutionExce
  * Listener may be {@link OLiveResultListener} (orient) or {@link LiveQueryListener} if special result
  * conversions required.
  * <p>
- * If transaction is required (through {@link Listen}) then listener will be wrapped to apply transaction.
+ * Listener wrapped with an external transaction to be able to use thread bound listener connection through guice.
  * <p>
  * If no transaction is required and  listener implement {@link OCommandResultListener} directly then no wrapping
  * applied.
@@ -61,34 +61,22 @@ public class LiveListenerParameterSupport implements ListenerParameterSupport {
     public OCommandResultListener processListener(final OCommandRequest command,
                                                   final Object listener,
                                                   final Injector injector,
-                                                  final boolean transactional,
                                                   final Class<?> conversionTarget) {
         checkExec(command instanceof OLiveQuery,
                 "Live listener (@%s parameter) can only be used with @%s",
                 Listen.class.getSimpleName(), LiveQuery.class.getSimpleName());
-        return wrap(listener, injector, transactional, conversionTarget);
+        return wrap(listener, injector, conversionTarget);
     }
 
     private OCommandResultListener wrap(final Object listener,
                                         final Injector injector,
-                                        final boolean transactional,
                                         final Class<?> targetType) {
         final OLiveResultListener adaptedListener = listener instanceof LiveQueryListener
                 // special listener with custom mapping
                 ? wrap((LiveQueryListener) listener, injector, targetType) : (OLiveResultListener) listener;
 
-        final OCommandResultListener res;
-        if (transactional) {
-            // wrap with transaction
-            res = new TransactionalLiveAdapter(injector.getInstance(CONTEXT_KEY), adaptedListener);
-        } else if (adaptedListener instanceof OCommandResultListener) {
-            // listener is already correct command object
-            res = (OCommandResultListener) adaptedListener;
-        } else {
-            // simple wrapping
-            res = new OLiveListenerAdapter(adaptedListener);
-        }
-        return res;
+        // apply external transaction
+        return new TransactionalLiveAdapter(injector.getInstance(CONTEXT_KEY), adaptedListener);
     }
 
     private OLiveResultListener wrap(final LiveQueryListener listener,

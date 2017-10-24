@@ -25,7 +25,7 @@ import static ru.vyarus.guice.persist.orient.repository.core.MethodExecutionExce
  * Handler for {@link Listen} parameters within {@link ru.vyarus.guice.persist.orient.repository.command.query.Query}
  * or {@link ru.vyarus.guice.persist.orient.repository.command.async.AsyncQuery}.
  * <p>
- * If transaction is required (through {@link Listen}) then listener will be wrapped to apply transaction.
+ * * Listener wrapped with an external transaction to be able to use thread bound listener connection through guice.
  *
  * @author Vyacheslav Rusakov
  * @since 29.09.2017
@@ -58,22 +58,20 @@ public class AsyncQueryListenerParameterSupport implements ListenerParameterSupp
     public OCommandResultListener processListener(final OCommandRequest command,
                                                   final Object listener,
                                                   final Injector injector,
-                                                  final boolean transactional,
                                                   final Class<?> conversionTarget) {
         checkExec(command instanceof OCommandRequestAbstract,
                 "@%s can't be applied to query, because command object %s doesn't support it",
                 Listen.class.getSimpleName(), command.getClass().getName());
-        return wrap(listener, injector, transactional, conversionTarget);
+        return wrap(listener, injector, conversionTarget);
     }
 
     private OCommandResultListener wrap(final Object listener,
                                         final Injector injector,
-                                        final boolean transactional,
                                         final Class<?> targetType) {
         final OCommandResultListener res = listener instanceof AsyncQueryListener
                 ? wrap((AsyncQueryListener) listener, injector, targetType) : (OCommandResultListener) listener;
-        // wrap listener with transaction if required
-        return transactional ? new TransactionalAsyncAdapter(injector.getInstance(CONTEXT_KEY), res) : res;
+        // wrap listener with external transaction
+        return new TransactionalAsyncAdapter(injector.getInstance(CONTEXT_KEY), res);
     }
 
     private OCommandResultListener wrap(final AsyncQueryListener listener, final Injector injector,

@@ -1,21 +1,21 @@
 * Update to orient 2.2
 * Support [custom types installation](http://orientdb.com/docs/2.2/Object-2-Record-Java-Binding.html#custom-types)
   with new method: OrientModule#withCustomTypes(OObjectSerializer...) (#14)
+* Support external connection (thread bound) re-use: when transaction started with TxConfig.external() thread bound
+  connection used instead of new connection. Commits and rollbacks are not applied automatically: supposed that manual 
+  connection is completely managed externally. Useful in case when already existing connection must be (re)used in guice.
 * New service RecordConverter may be used directly to:
     - convert ODocument to object or vertex 
     - apply default repository method converter (e.g. apply projection)
 * @Listen parameter extension changes:
     - (breaking) no longer could be used with @Query (because it does not work properly for remote connection and not guaranteed by the documentation) 
-    - (breaking) wraps provided listener with transaction by default (may be disabled: transactional = false)
+    - wraps provided listener with an external transaction (thread bound connection (used by orient) could be used in guice)
     - new AsyncQueryListener interface can be used instead of OCommandResultListener to apply automatic result conversion 
       (with RecordConverter to mimic the same behaviour as for usual method result)
 * Add @LiveQuery repository extension (live queries support)
     - required orient OLiveResultListener parameter must be used with @Listen annotation
     - custom LiveQueryListener interface can be used instead of OLiveResultListener to apply automatic result conversion 
       (with RecordConverter to mimic the same behaviour as for usual method result).    
-* Support external connection (thread bound) re-use: when transaction started with TxConfig.external() thread bound
-  connection used instead of new connection. Commits and rollbacks are not applied automatically: supposed that manual 
-  connection is completely managed externally. Useful in case when already existing connection must be (re)used in guice.
 
 ### 3.2.0 (2016-09-25)
 * Update to orient 2.1

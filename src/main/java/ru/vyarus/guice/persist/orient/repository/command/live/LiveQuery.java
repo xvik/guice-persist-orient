@@ -19,8 +19,8 @@ import java.lang.annotation.Target;
  * listener in order to apply automatic conversions (like in usual repository methods). For example:
  * {@code @LiveQuery("select from Model") int subscribe(@Listen LiveQueryListener<Model> listener)}.
  * <p>
- * By default listener is executed within transaction (see
- * {@link ru.vyarus.guice.persist.orient.repository.command.ext.listen.Listen}).
+ * Listener will be wrapped with an external transaction (thread bound listener connection is accessible through
+ * guice).
  * <p>
  * Uses {@link com.orientechnologies.orient.core.sql.query.OLiveQuery} for execution.
  * <p>

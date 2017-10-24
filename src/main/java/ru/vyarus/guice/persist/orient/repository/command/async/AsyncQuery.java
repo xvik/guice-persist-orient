@@ -15,9 +15,12 @@ import java.lang.annotation.Target;
  * annotated with {@link ru.vyarus.guice.persist.orient.repository.command.ext.listen.Listen}.
  * Method must be void.
  * <p>
- * Important: query will be asynchronous only for remote connection.
+ * Important: query will be asynchronous only for non blocking connection.
  * <p>
  * Uses {@link com.orientechnologies.orient.core.sql.query.OSQLAsynchQuery}.
+ * <p>
+ * Listener will be wrapped with an external transaction (thread bound listener connection is accessible through
+ * guice). For blocking (default) execution, listener will be called at the same transaction as query itself.
  * <p>
  * Query could contain variables in format (${var}). By default, only declared type generic names
  * could be used, but extensions could provide other variables (like

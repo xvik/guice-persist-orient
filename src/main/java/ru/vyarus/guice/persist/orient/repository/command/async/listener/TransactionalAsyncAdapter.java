@@ -3,10 +3,12 @@ package ru.vyarus.guice.persist.orient.repository.command.async.listener;
 import com.orientechnologies.orient.core.command.OCommandResultListener;
 import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx;
 import ru.vyarus.guice.persist.orient.db.PersistentContext;
+import ru.vyarus.guice.persist.orient.db.transaction.TxConfig;
 import ru.vyarus.guice.persist.orient.db.transaction.template.TxAction;
 
 /**
- * Wraps {@link OCommandResultListener} with a transaction.
+ * Wraps {@link OCommandResultListener} with an external transaction (allows using thread bound connection
+ * in guice).
  * <p>
  * Do not use for live queries! Live query listener use different method to handle result.
  *
@@ -26,12 +28,13 @@ public class TransactionalAsyncAdapter implements OCommandResultListener {
 
     @Override
     public boolean result(final Object iRecord) {
+        // avoid additional call on stack (blocking case)
         if (context.getTransactionManager().isTransactionActive()) {
-            // avoid additional calls on stack (listener will be called in separate thread only for remote connection)
+            // avoid additional calls on stack (listener will be called in separate thread only for non blocking)
             return listener.result(iRecord);
         } else {
-            // wrapping in transaction
-            return context.doInTransaction(new TxAction<Boolean>() {
+            // wrapping in external transaction
+            return context.doInTransaction(TxConfig.external(), new TxAction<Boolean>() {
                 @Override
                 public Boolean execute() throws Throwable {
                     return listener.result(iRecord);

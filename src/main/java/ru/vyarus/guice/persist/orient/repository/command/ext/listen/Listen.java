@@ -29,8 +29,11 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * {@link ru.vyarus.guice.persist.orient.repository.command.live.listener.mapper.LiveQueryListener} if type
  * conversions required.
  * <p>
- * By default listener execution will be wrapped in transaction (see {@link #transactional()}). If you disable
- * transaction wrapping, listener result conversion (e.g. document to object or vertex) will be impossible.
+ * Orient requires a connection for listeners execution, so there is always a connection object bound to thread.
+ * External transaction ({@link ru.vyarus.guice.persist.orient.db.transaction.TxConfig#external()}) will be
+ * started for listeners to let you use connection inside listener (also connection is required for
+ * object conversions if custom mapper listener is used). For blocking async listener (default) it will always be
+ * executed within query transaction (controlled by guice).
  *
  * @author Vyacheslav Rusakov
  * @since 27.02.2015
@@ -40,19 +43,4 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Retention(RUNTIME)
 @MethodParam(ListenParamExtension.class)
 public @interface Listen {
-
-    /**
-     * Wrap listener with an implicit transaction. This is important if custom listeners (like
-     * {@link ru.vyarus.guice.persist.orient.repository.command.live.listener.mapper.LiveQueryListener}) are used,
-     * because otherwise they will not be able to convert record to other type.
-     * <p>
-     * Note that async listener in local connection will be executed synchronously and so as part of the current
-     * transaction.
-     * <p>
-     * Enabled by default because in most cases listener will need to do something with the database and so will
-     * need transaction in any way.
-     *
-     * @return true if listener must be executed in transaction.
-     */
-    boolean transactional() default true;
 }

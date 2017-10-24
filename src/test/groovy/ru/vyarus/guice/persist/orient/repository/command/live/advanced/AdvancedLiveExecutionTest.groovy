@@ -54,13 +54,6 @@ class AdvancedLiveExecutionTest extends AbstractTest {
 
         setup:
         listener.reset()
-
-        when: "subscribe without transaction"
-        repository.subscribeNoTx(listener)
-        repository.save(new Model(name: "justnow"))
-        sleep(70)
-        then: "listener execution failed"
-        listener.last == null
     }
 
     def "Check selective query"() {

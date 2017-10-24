@@ -26,9 +26,9 @@ import ru.vyarus.guice.persist.orient.repository.core.ext.service.result.convert
  * Only default {@link ru.vyarus.guice.persist.orient.repository.core.ext.service.result.converter.ResultConverter}
  * is applied.
  * <p>
- * Object and vertex conversion requires transaction. By default listener is wrapped with transaction
- * (see {@link ru.vyarus.guice.persist.orient.repository.command.ext.listen.Listen#transactional()}). If transaction
- * will be switched off, type conversion will not be performed.
+ * Note that {@link ru.vyarus.guice.persist.orient.repository.command.ext.listen.Listen} starts external transaction
+ * ({@link ru.vyarus.guice.persist.orient.db.transaction.TxConfig#external()}) to make guice aware of listener
+ * connection object (bound to thread). This means that connection could be obtained as usual inside the listener.
  * <p>
  * To use guice injections inside listener, simply use guice to produce your listener. For example,
  * {@code Provider<MyListener> listenerProvider} will always return new listener instance (assuming prototype scope)

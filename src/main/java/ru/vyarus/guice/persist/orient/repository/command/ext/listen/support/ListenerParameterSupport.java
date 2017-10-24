@@ -37,13 +37,11 @@ public interface ListenerParameterSupport {
      * @param command          command object
      * @param listener         listener instance (passed in annotated parameter)
      * @param injector         injector instance
-     * @param transactional    true if listener execution must be wrapped with transaction
      * @param conversionTarget target conversion type or null if no conversion required
      * @return processed listener to apply to command
      */
     OCommandResultListener processListener(OCommandRequest command,
                                            Object listener,
                                            Injector injector,
-                                           boolean transactional,
                                            Class<?> conversionTarget);
 }
