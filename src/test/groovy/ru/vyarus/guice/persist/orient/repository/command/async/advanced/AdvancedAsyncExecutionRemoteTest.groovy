@@ -8,4 +8,8 @@ import ru.vyarus.guice.persist.orient.util.remoteext.UseRemote
  */
 @UseRemote
 class AdvancedAsyncExecutionRemoteTest extends AdvancedAsyncExecutionTest {
+
+    void setupSpec() {
+        remote = true
+    }
 }

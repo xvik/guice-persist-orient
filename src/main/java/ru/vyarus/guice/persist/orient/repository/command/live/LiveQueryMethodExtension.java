@@ -10,6 +10,7 @@ import ru.vyarus.guice.persist.orient.repository.command.core.spi.CommandMethodD
 import ru.vyarus.guice.persist.orient.repository.command.core.spi.SqlCommandDescriptor;
 import ru.vyarus.guice.persist.orient.repository.command.ext.listen.Listen;
 import ru.vyarus.guice.persist.orient.repository.command.ext.listen.ListenParamExtension;
+import ru.vyarus.guice.persist.orient.repository.command.live.listener.mapper.LiveQueryListener;
 import ru.vyarus.guice.persist.orient.repository.core.ext.SpiService;
 import ru.vyarus.guice.persist.orient.repository.core.spi.DescriptorContext;
 
@@ -48,8 +49,8 @@ public class LiveQueryMethodExtension extends AbstractCommandExtension<CommandMe
 
         // Listen extension will check that method is valid
         check(descriptor.extDescriptors.get(ListenParamExtension.KEY) != null,
-                "Required @%s parameter of type %s not defined", Listen.class.getSimpleName(),
-                OLiveResultListener.class.getSimpleName());
+                "Required @%s parameter of type %s or %s not defined", Listen.class.getSimpleName(),
+                OLiveResultListener.class.getSimpleName(), LiveQueryListener.class.getSimpleName());
         return descriptor;
     }
 

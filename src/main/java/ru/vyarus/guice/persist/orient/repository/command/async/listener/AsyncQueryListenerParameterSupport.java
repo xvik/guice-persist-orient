@@ -7,6 +7,7 @@ import com.orientechnologies.orient.core.command.OCommandRequest;
 import com.orientechnologies.orient.core.command.OCommandRequestAbstract;
 import com.orientechnologies.orient.core.command.OCommandResultListener;
 import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx;
+import com.orientechnologies.orient.core.sql.query.OSQLQuery;
 import ru.vyarus.guice.persist.orient.db.PersistentContext;
 import ru.vyarus.guice.persist.orient.repository.command.async.AsyncQuery;
 import ru.vyarus.guice.persist.orient.repository.command.async.listener.mapper.AsyncQueryListener;
@@ -45,9 +46,6 @@ public class AsyncQueryListenerParameterSupport implements ListenerParameterSupp
     public void checkParameter(final String query, final ParamInfo<Listen> param,
                                final Class<?> returnType) {
         check(query.startsWith("select"), "Listener could be applied only for select queries");
-        check(void.class.equals(returnType) || Void.class.equals(returnType),
-                "Method with listener must be void, because no results returned from query "
-                        + "when listener used");
         check(OCommandResultListener.class.isAssignableFrom(param.type)
                         || AsyncQueryListener.class.isAssignableFrom(param.type),
                 "Only %s or %s can be used as result listener",
@@ -62,16 +60,17 @@ public class AsyncQueryListenerParameterSupport implements ListenerParameterSupp
         checkExec(command instanceof OCommandRequestAbstract,
                 "@%s can't be applied to query, because command object %s doesn't support it",
                 Listen.class.getSimpleName(), command.getClass().getName());
-        return wrap(listener, injector, conversionTarget);
+        return wrap(listener, injector, conversionTarget, ((OSQLQuery) command).getText());
     }
 
     private OCommandResultListener wrap(final Object listener,
                                         final Injector injector,
-                                        final Class<?> targetType) {
+                                        final Class<?> targetType,
+                                        final String queryContext) {
         final OCommandResultListener res = listener instanceof AsyncQueryListener
                 ? wrap((AsyncQueryListener) listener, injector, targetType) : (OCommandResultListener) listener;
         // wrap listener with external transaction
-        return new TransactionalAsyncAdapter(injector.getInstance(CONTEXT_KEY), res);
+        return new TransactionalAsyncAdapter(injector.getInstance(CONTEXT_KEY), res, queryContext);
     }
 
     private OCommandResultListener wrap(final AsyncQueryListener listener, final Injector injector,

@@ -20,6 +20,8 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * Listener could be applied only for select queries.
  * <p>
  * For async queries method should be void (because listener intercept all results and empty list always returned)
+ * or return {@link java.util.concurrent.Future} (for non blocking
+ * {@link ru.vyarus.guice.persist.orient.repository.command.async.AsyncQuery#blocking()})
  * and listener type must be {@link com.orientechnologies.orient.core.command.OCommandResultListener} or
  * {@link ru.vyarus.guice.persist.orient.repository.command.async.listener.mapper.AsyncQueryListener} if type
  * conversions required.

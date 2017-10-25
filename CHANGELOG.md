@@ -4,14 +4,21 @@
 * Support external connection (thread bound) re-use: when transaction started with TxConfig.external() thread bound
   connection used instead of new connection. Commits and rollbacks are not applied automatically: supposed that manual 
   connection is completely managed externally. Useful in case when already existing connection must be (re)used in guice.
+    - (breaking) custom TransactionManager and/or PoolManager implementations must be updated to support external transactions
 * New service RecordConverter may be used directly to:
     - convert ODocument to object or vertex 
     - apply default repository method converter (e.g. apply projection)
 * @Listen parameter extension changes:
     - (breaking) no longer could be used with @Query (because it does not work properly for remote connection and not guaranteed by the documentation) 
-    - wraps provided listener with an external transaction (thread bound connection (used by orient) could be used in guice)
-    - new AsyncQueryListener interface can be used instead of OCommandResultListener to apply automatic result conversion 
+    - wraps provided listener with an external transaction (thread bound connection (used by orient) could be used in guice)    
+* AsyncQuery changes:
+    - custom AsyncQueryListener interface can be used instead of OCommandResultListener to apply automatic result conversion 
       (with RecordConverter to mimic the same behaviour as for usual method result)
+    - new `blocking` attribute to switch execution into non blocking mode (OSQLNonBlockingQuery).
+       Non blocking methods may return Future to monitor async execution (but not able to cancel!).
+    - exception appeared inside async listener is intercepted and logged but not propagated:
+       only false returned to stop query processing. This is required for proper orient connection handling
+       (it does not expect exceptions in some modes)          
 * Add @LiveQuery repository extension (live queries support)
     - required orient OLiveResultListener parameter must be used with @Listen annotation
     - custom LiveQueryListener interface can be used instead of OLiveResultListener to apply automatic result conversion 

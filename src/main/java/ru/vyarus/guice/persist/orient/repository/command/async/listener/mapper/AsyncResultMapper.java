@@ -6,6 +6,9 @@ import com.orientechnologies.orient.core.record.ORecord;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import ru.vyarus.guice.persist.orient.repository.core.ext.service.result.converter.RecordConverter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Adapter for {@link AsyncQueryListener} which performs actual result conversion.
  * <p>
@@ -19,6 +22,8 @@ public class AsyncResultMapper implements OCommandResultListener {
     private final RecordConverter converter;
     private final AsyncQueryListener listener;
     private final Class<?> targetType;
+    // collect results
+    private final List results = new ArrayList();
 
     public AsyncResultMapper(final RecordConverter converter,
                              final AsyncQueryListener listener,
@@ -31,9 +36,14 @@ public class AsyncResultMapper implements OCommandResultListener {
     @Override
     @SuppressWarnings({"unchecked", "PMD.ConsecutiveLiteralAppends"})
     public boolean result(final Object rec) {
-        // most likely (suppose in all cases) rec will be ORecord, but any other type would also be handled properly
+        // in all cases rec will be ORecord, but any other type would also be handled properly (just in case)
         try {
-            return listener.onResult(converter.convert(rec, targetType));
+            final Object converted = converter.convert(rec, targetType);
+            final boolean res = listener.onResult(converted);
+            if (res) {
+                results.add(converted);
+            }
+            return res;
         } catch (Exception th) {
             final StringBuilder id = new StringBuilder(
                     rec instanceof ODocument
@@ -53,7 +63,8 @@ public class AsyncResultMapper implements OCommandResultListener {
 
     @Override
     public Object getResult() {
-        // method is not useful for queries
-        return null;
+        // this is only useful for non blocking queries, when Future is returned, so user can do
+        // result = repository.select(listener).get()
+        return results;
     }
 }

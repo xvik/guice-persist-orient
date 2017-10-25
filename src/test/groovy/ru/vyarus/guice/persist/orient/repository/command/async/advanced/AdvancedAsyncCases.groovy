@@ -11,6 +11,8 @@ import ru.vyarus.guice.persist.orient.repository.command.async.listener.mapper.A
 import ru.vyarus.guice.persist.orient.repository.command.ext.listen.Listen
 import ru.vyarus.guice.persist.orient.support.model.Model
 
+import java.util.concurrent.Future
+
 /**
  * @author Vyacheslav Rusakov
  * @since 15.10.2017
@@ -38,4 +40,8 @@ interface AdvancedAsyncCases {
     // looks like incorrect, but correct type will be resolved from listener (it must be generified with model)
     @AsyncQuery("select from Model")
     void selectPolymorphic(@Listen AsyncQueryListener<VersionedEntity> listener)
+
+    // listener will be called in separate thread and transaction opened for each result
+    @AsyncQuery(value = "select from Model", blocking = false)
+    Future<List<Model>> selectNonBlock(@Listen AsyncQueryListener<Model> listener)
 }

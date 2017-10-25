@@ -55,11 +55,15 @@ class ServerRule extends ExternalResource {
 
     public void initRemoteDb() {
         OServerAdmin admin = new OServerAdmin(remoteUrl).connect('root', 'root')
-        if (admin.existsDatabase()) {
-            admin.dropDatabase("memory")
+        try {
+            if (admin.existsDatabase()) {
+                admin.dropDatabase("memory")
+            }
+            admin.createDatabase('graph', 'memory').close()
+            setRemoteConf()
+        } finally {
+            admin.close()
         }
-        admin.createDatabase('graph', 'memory').close()
-        setRemoteConf()
     }
 
     public static void setRemoteConf() {

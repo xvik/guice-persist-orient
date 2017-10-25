@@ -25,6 +25,10 @@ import ru.vyarus.guice.persist.orient.repository.command.ext.listen.support.Requ
  * Only default {@link ru.vyarus.guice.persist.orient.repository.core.ext.service.result.converter.ResultConverter}
  * is applied.
  * <p>
+ * By default async query is blocking, so listener will be called at the same thread and control released only after
+ * processing (see {@link ru.vyarus.guice.persist.orient.repository.command.async.AsyncQuery#blocking()} to switch
+ * to non blocking).
+ * <p>
  * To use guice injections inside listener, simply use guice to produce your listener. For example,
  * {@code Provider<MyListener> listenerProvider} will always return new listener instance (assuming prototype scope)
  * with filled injections.
