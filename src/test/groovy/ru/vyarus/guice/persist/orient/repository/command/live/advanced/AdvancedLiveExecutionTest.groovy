@@ -10,6 +10,7 @@ import com.tinkerpop.blueprints.impls.orient.OrientVertex
 import ru.vyarus.guice.persist.orient.AbstractTest
 import ru.vyarus.guice.persist.orient.db.PersistentContext
 import ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxAction
+import ru.vyarus.guice.persist.orient.repository.command.live.listener.mapper.LiveQueryListener
 import ru.vyarus.guice.persist.orient.repository.command.live.listener.mapper.RecordOperation
 import ru.vyarus.guice.persist.orient.support.model.Model
 import ru.vyarus.guice.persist.orient.support.model.VertexModel
@@ -108,6 +109,7 @@ class AdvancedLiveExecutionTest extends AbstractTest {
             @Override
             void onLiveResult(int iLiveToken, ORecordOperation iOp) throws OException {
                 res = iOp.getRecord()
+                res.detach()
             }
 
             @Override
@@ -126,6 +128,39 @@ class AdvancedLiveExecutionTest extends AbstractTest {
         then: "listener called"
         res != null
         res.field('name') == saved.name
+    }
+
+    def "Check db modification in listener"() {
+
+        setup: "subscribe listener"
+        def changed
+        repository.subscribe(new LiveQueryListener<Model>() {
+            @Override
+            void onLiveResult(int token, RecordOperation operation, Model result) throws Exception {
+                // store different entity otherwise will be infinite cycle
+                context.connection.save(new VertexModel(name: 'custom'))
+            }
+
+            @Override
+            void onError(int token) {
+            }
+
+            @Override
+            void onUnsubscribe(int token) {
+            }
+        })
+
+        when: "insert value"
+        context.doInTransaction({ db ->
+            def res = repository.save(new Model(name: "justnow"))
+            db.detach(res, true)
+        } as SpecificTxAction)
+        sleep(70)
+        def res = context.doInTransaction({ db ->
+            db.browseClass(VertexModel).first()
+        } as SpecificTxAction)
+        then: "listener called, new entity inserted"
+        res != null
     }
 
     static class Listener extends AbstractListener<Model> {

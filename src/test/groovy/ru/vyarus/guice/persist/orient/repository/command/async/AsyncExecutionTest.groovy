@@ -48,6 +48,14 @@ class AsyncExecutionTest extends AbstractTest {
 
     def "Check non blocking async query"() {
 
+        setup:
+        // need more records for longer execution
+        context.doInTransaction({db ->
+            90.times({
+                db.save(new Model(name: "name${10 + it}", nick: "nick${10 + it}"))
+            })
+        } as SpecificTxAction)
+
         when: "calling non blocking async query"
         def res = []
         def listener = new OCommandResultListener() {
@@ -74,21 +82,15 @@ class AsyncExecutionTest extends AbstractTest {
         }
         repository.selectNonBlocking(listener)
         then: "immediate control"
-        res.size() < 10
+        res.size() < 100
 
         when: "wait for result"
         sleep(100)
         then: "async results"
-        res.size() == 10
+        res.size() == 100
 
 
         when: "non blocking query with future"
-        // need more records for longer execution
-        context.doInTransaction({db ->
-            90.times({
-                db.save(new Model(name: "name${10 + it}", nick: "nick${10 + it}"))
-            })
-        } as SpecificTxAction)
         res.clear()
         def future = repository.selectNonBlockingFuture(listener)
         then: "future returned"
