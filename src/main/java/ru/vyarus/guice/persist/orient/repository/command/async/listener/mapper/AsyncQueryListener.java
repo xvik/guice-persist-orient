@@ -40,12 +40,19 @@ import ru.vyarus.guice.persist.orient.repository.command.ext.listen.support.Requ
 public interface AsyncQueryListener<T> extends RequiresRecordConversion<T> {
 
     /**
-     * Called for each result.
+     * Called for each result. The call is wrapped with an external transaction, so thread bound connection
+     * is available to guice. But avoid any database operations inside the listener, because in most cases
+     * it must be lightweight as much as possible (to quickly process results). Moreover, database operations
+     * will work only in blocking mode (when you will use query transaction): for non blocking mode orient
+     * will throw an exception.
      *
      * @param result result object
      * @return true to continue query, false to stop
+     * @throws Exception thrown exception is interpreted as stop processing results (exception will be logged but
+     *                   not propagated)
+     * @see ru.vyarus.guice.persist.orient.repository.command.async.listener.TransactionalAsyncAdapter
      */
-    boolean onResult(T result);
+    boolean onResult(T result) throws Exception;
 
     /**
      * Called at the end of processing.

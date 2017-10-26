@@ -43,12 +43,11 @@ public class TransactionalAsyncAdapter implements OCommandResultListener {
     public boolean result(final Object iRecord) {
         // avoid additional call on stack (blocking case)
         if (context.getTransactionManager().isTransactionActive()) {
-            // avoid additional calls on stack (listener will be called in separate thread only for non blocking)
             // note that this is blocking case (listener called inside query thread) and throwing exception
             // will not harm connection, but still "eating" exception for unified behaviour
             return safeResult(iRecord);
         } else {
-            // wrapping in external transaction
+            // wrapping in external transaction (non blocking case)
             return context.doInTransaction(TxConfig.external(), new TxAction<Boolean>() {
                 @Override
                 public Boolean execute() throws Throwable {
@@ -69,9 +68,8 @@ public class TransactionalAsyncAdapter implements OCommandResultListener {
     }
 
     private boolean safeResult(final Object iRecord) {
-        // orient behave incorrectly in non blocking mode (with remote connection )after exception in the listener
-        // so "eating" all exceptions; overall this always unifies behaviour with live listener
-        // (but there listener is notified about an error)
+        // orient behave incorrectly in non blocking mode (with remote connection) after exception in the listener
+        // so "eating" all exceptions; overall this almost unifies behaviour with live listener
         try {
             return listener.result(iRecord);
         } catch (Exception ex) {

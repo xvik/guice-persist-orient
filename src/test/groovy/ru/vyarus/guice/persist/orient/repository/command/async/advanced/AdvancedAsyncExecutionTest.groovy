@@ -110,7 +110,7 @@ class AdvancedAsyncExecutionTest extends AbstractTest {
         when: "call non blocking query and modify db in listener"
         def res = repository.selectNonBlock(new AsyncQueryListener<Model>() {
             @Override
-            boolean onResult(Model result) {
+            boolean onResult(Model result) throws Exception {
                 result.name = result.name + '_changed'
                 // db modification
                 context.connection.save(result)
@@ -130,7 +130,7 @@ class AdvancedAsyncExecutionTest extends AbstractTest {
         when: "call non blocking query and use extra query in listener"
         def res = repository.selectNonBlock(new AsyncQueryListener<Model>() {
             @Override
-            boolean onResult(Model result) {
+            boolean onResult(Model result) throws Exception {
                 result.name = result.name + '_changed'
                 // extra db query
                 context.connection.browseClass(Model.class)
@@ -151,7 +151,7 @@ class AdvancedAsyncExecutionTest extends AbstractTest {
         def res = []
         repository.select(new AsyncQueryListener<Model>() {
             @Override
-            boolean onResult(Model result) {
+            boolean onResult(Model result) throws Exception{
                 result.name = result.name + '_changed'
                 // db modification
                 context.connection.save(result)
@@ -176,7 +176,7 @@ class AdvancedAsyncExecutionTest extends AbstractTest {
         String queryThread = Thread.currentThread().name
 
         @Override
-        boolean onResult(T result) {
+        boolean onResult(T result) throws Exception {
             results << result
             return true
         }

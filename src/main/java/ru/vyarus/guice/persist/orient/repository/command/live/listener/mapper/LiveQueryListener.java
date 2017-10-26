@@ -46,13 +46,13 @@ public interface LiveQueryListener<T> extends RequiresRecordConversion<T> {
      * Notifies about subscribed query results changes.
      * Raw orient result (most likely Document) would be converted to target type T.
      * <p>
-     * IMPORTANT: result conversion to object or graph type will be performed only if there is an ongoing
-     * transaction.
+     * Call is performed under external transaction, so thread bound connection is available to guice.
      *
      * @param token     live subscription token
      * @param operation operation type
      * @param result    converted result
      * @throws Exception on result handling errors
+     * @see ru.vyarus.guice.persist.orient.repository.command.live.listener.TransactionalLiveAdapter
      */
     void onLiveResult(int token, RecordOperation operation, T result) throws Exception;
 
