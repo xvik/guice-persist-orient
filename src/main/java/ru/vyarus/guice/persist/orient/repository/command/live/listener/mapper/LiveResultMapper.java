@@ -1,7 +1,6 @@
 package ru.vyarus.guice.persist.orient.repository.command.live.listener.mapper;
 
 import com.orientechnologies.common.exception.OException;
-import com.orientechnologies.orient.core.command.OCommandResultListener;
 import com.orientechnologies.orient.core.db.record.ORecordOperation;
 import com.orientechnologies.orient.core.record.ORecord;
 import com.orientechnologies.orient.core.record.impl.ODocument;
@@ -17,7 +16,7 @@ import ru.vyarus.guice.persist.orient.repository.core.ext.service.result.convert
  * @author Vyacheslav Rusakov
  * @since 09.10.2017
  */
-public class LiveResultMapper implements OLiveResultListener, OCommandResultListener {
+public class LiveResultMapper implements OLiveResultListener {
 
     private final RecordConverter converter;
     private final LiveQueryListener listener;
@@ -55,22 +54,5 @@ public class LiveResultMapper implements OLiveResultListener, OCommandResultList
     @Override
     public void onUnsubscribe(final int iLiveToken) {
         listener.onUnsubscribe(iLiveToken);
-    }
-
-    // not used, but required methods
-
-    @Override
-    public boolean result(final Object iRecord) {
-        return false;
-    }
-
-    @Override
-    public void end() {
-        // not needed
-    }
-
-    @Override
-    public Object getResult() {
-        return null;
     }
 }

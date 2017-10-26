@@ -1,6 +1,7 @@
 package ru.vyarus.guice.persist.orient.repository.command.live.advanced
 
 import com.orientechnologies.common.exception.OException
+import com.orientechnologies.orient.core.command.OCommandResultListener
 import com.orientechnologies.orient.core.db.record.ORecordOperation
 import com.orientechnologies.orient.core.sql.query.OLiveResultListener
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx
@@ -10,7 +11,9 @@ import com.tinkerpop.blueprints.impls.orient.OrientVertex
 import ru.vyarus.guice.persist.orient.AbstractTest
 import ru.vyarus.guice.persist.orient.db.PersistentContext
 import ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxAction
+import ru.vyarus.guice.persist.orient.repository.command.live.listener.TransactionalLiveAdapter
 import ru.vyarus.guice.persist.orient.repository.command.live.listener.mapper.LiveQueryListener
+import ru.vyarus.guice.persist.orient.repository.command.live.listener.mapper.LiveResultMapper
 import ru.vyarus.guice.persist.orient.repository.command.live.listener.mapper.RecordOperation
 import ru.vyarus.guice.persist.orient.support.model.Model
 import ru.vyarus.guice.persist.orient.support.model.VertexModel
@@ -161,6 +164,69 @@ class AdvancedLiveExecutionTest extends AbstractTest {
         } as SpecificTxAction)
         then: "listener called, new entity inserted"
         res != null
+    }
+
+    def "Check listener error handling in mapper"() {
+
+        setup: "registering listener throwing exception"
+        def failed = false
+        def unsubscribed = false
+        def token = repository.subscribe(new LiveQueryListener<Model>() {
+            @Override
+            void onLiveResult(int token, RecordOperation operation, Model result) throws Exception {
+                throw new IllegalStateException("ups")
+            }
+
+            @Override
+            void onError(int token) {
+                failed = true
+            }
+
+            @Override
+            void onUnsubscribe(int token) {
+                unsubscribed = true
+            }
+        })
+
+        when: "insert value"
+        context.doInTransaction({ db ->
+            def res = repository.save(new Model(name: "justnow"))
+            db.detach(res, true)
+        } as SpecificTxAction)
+        sleep(70)
+        then: "listener not failed"
+        !failed // onError not called for listener exceptions
+
+        when: "unsubscribe"
+        repository.unsubscribe(token)
+        sleep(70)
+        then: "unsubscribed"
+        unsubscribed
+    }
+
+    def "Check live listener side effects"() {
+
+        when: "prepare foo listener"
+        OCommandResultListener listener = new TransactionalLiveAdapter(null,
+                new LiveResultMapper(null, new LiveQueryListener() {
+                    @Override
+                    void onLiveResult(int token, RecordOperation operation, Object result) throws Exception {
+                    }
+
+                    @Override
+                    void onError(int token) {
+                    }
+
+                    @Override
+                    void onUnsubscribe(int token) {
+                    }
+                }, Model)
+        )
+        listener.end() // no effect
+
+        then: "calling not used command listener methods"
+        !listener.result(null)
+        listener.getResult() == null
     }
 
     static class Listener extends AbstractListener<Model> {
