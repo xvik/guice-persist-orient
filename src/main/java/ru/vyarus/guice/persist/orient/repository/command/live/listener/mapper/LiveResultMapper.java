@@ -8,8 +8,7 @@ import com.orientechnologies.orient.core.sql.query.OLiveResultListener;
 import ru.vyarus.guice.persist.orient.repository.core.ext.service.result.converter.RecordConverter;
 
 /**
- * Adapter for {@link LiveQueryListener} which performs actual result conversion. Adapter must also implement
- * orient command listener interface like {@link com.orientechnologies.orient.core.sql.query.OLocalLiveResultListener}.
+ * Adapter for {@link LiveQueryListener} which performs actual result conversion.
  * <p>
  * Applied by {@link ru.vyarus.guice.persist.orient.repository.command.ext.listen.Listen} extension.
  *
