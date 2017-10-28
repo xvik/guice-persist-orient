@@ -10,15 +10,15 @@
 
 ### About
 
-[OrientDB](http://www.orientechnologies.com/orientdb/) is document, graph and object database (see [intro](https://www.youtube.com/watch?v=o_7NCiTLVis) and [starter course](http://www.orientechnologies.com/getting-started/)).
+[OrientDB](http://orientdb.com/orientdb/) is document, graph and object database (see [intro](https://www.youtube.com/watch?v=o_7NCiTLVis) and [starter course](http://orientdb.com/getting-started/)).
 Underlying format is almost the same for all database types, which allows us to use single database in any way. For example, schema creation and updates
 may be performed as object database (jpa style) and graph api may be used for creating relations.
 
 Features:
 * For orient 2.1
 * Integration through [guice-persist](https://github.com/google/guice/wiki/GuicePersist) (UnitOfWork, PersistService, @Transactional)
-* Support for [document](http://www.orientechnologies.com/docs/last/orientdb.wiki/Document-Database.html), [object](http://www.orientechnologies.com/docs/last/orientdb.wiki/Object-Database.html) and
-[graph](http://www.orientechnologies.com/docs/last/orientdb.wiki/Graph-Database-Tinkerpop.html) databases
+* Support for [document](http://orientdb.com/docs/last/Document-Database.html), [object](http://orientdb.com/docs/last/Object-Database.html) and
+[graph](http://orientdb.com/docs/last/Graph-Database-Tinkerpop.html) databases
 * Database types support according to classpath (object and graph db support activated by adding jars to classpath)
 * All three database types may be used in single transaction (changes will be visible between different apis)
 * Hooks for schema migration and data initialization extensions
@@ -96,7 +96,7 @@ You can use snapshot versions through [JitPack](https://jitpack.io):
 install(new OrientModule(url, user, password));
 ```
 
-See [orient documentation](http://www.orientechnologies.com/docs/last/orientdb.wiki/Concepts.html#database-url) for supported db types.
+See [orient documentation](http://orientdb.com/docs/last/Concepts.html#database-url) for supported db types.
 In short:
 * `'memory:dbname'` to use in-memory database
 * `'plocal:dbname'` to use embedded database (no server required, local fs folder will be used); db name must be local fs path
@@ -114,7 +114,7 @@ install(new OrientModule(url, user, password)
 
 Default transactions configuration may be specified as additional module parameter.
 By default, OPTIMISTIC transactions used (use optimistic locking based on object version, same way as hibernate optimistic locking). 
-NOTX mode disables transactions. Read more about [transactions in orient](http://www.orientechnologies.com/docs/last/orientdb.wiki/Transactions.html)
+NOTX mode disables transactions. Read more about [transactions in orient](http://orientdb.com/docs/last/Transactions.html)
 
 For example, to switch off transactions use:
 
@@ -155,7 +155,7 @@ Unit of work may be defined by:
 * Using `TransactionManager` begin() and end() methods.
 
 First two options are better, because they automatically manage rollbacks and avoid not closed (forgot to call end) transactions.
-Read more about [orient transactions](http://www.orientechnologies.com/docs/last/orientdb.wiki/Transactions.html)
+Read more about [orient transactions](http://orientdb.com/docs/last/Transactions.html)
 
 **NOTE**: orient 2 is more strict about transactions: now ODocument could be created only inside transaction and object proxy
 can't be used outside of transaction.
@@ -292,8 +292,8 @@ By default, no-op implementation enabled.
 ##### Object scheme mapping
 
 Database scheme may be initialized from classes (jpa like).
-See [orient object mapping documentation](http://www.orientechnologies.com/docs/last/orientdb.wiki/Object-2-Record-Java-Binding.html) for object mapping
- ([and general object database page](http://www.orientechnologies.com/docs/last/orientdb.wiki/Object-Database.html)).
+See [orient object mapping documentation](http://orientdb.com/docs/last/Object-2-Record-Java-Binding.html) for object mapping
+ ([and general object database page](http://orientdb.com/docs/last/Object-Database.html)).
 
 Default orient object scheme mapper is limited in [some cases](https://github.com/xvik/guice-persist-orient/wiki/Object-scheme-initializer#default-object-scheme-mapping).
 Special scheme mapper implementation provided (extension to default orient mapper).
@@ -381,7 +381,7 @@ userManager.executeWithUser('user', 'password', new SpecificUserAction<Void>() {
 `SpecificUserAction` defines scope of user overriding. This will not implicitly start transaction, but simply
 binds different user to current thread.
 
-Overriding may be used in scheme initialization to use more powerful user or to use [orient security model](http://www.orientechnologies.com/docs/last/orientdb.wiki/Security.html)
+Overriding may be used in scheme initialization to use more powerful user or to use [orient security model](http://orientdb.com/docs/last/Security.html)
 (in this case overriding may be done, for example in servlet filter).
 
 Nested user override is not allowed (to avoid confusion). But you can use user overriding inside transaction.
@@ -407,7 +407,7 @@ More about [user override](https://github.com/xvik/guice-persist-orient/wiki/Cor
 
 #### Retry
 
-Due to orient implementation specifics, you may face [OConcurrentModificationException](http://www.orientechnologies.com/docs/last/orientdb.wiki/Troubleshooting-Java.html#oconcurrentmodificationexception-cannot-update-record-xy-in-storage-z-because-the-version-is-not-the-latest-probably-you-are-updating-an-old-record-or-it-has-been-modified-by-another-user-dbva-yourvb)
+Due to orient implementation specifics, you may face [OConcurrentModificationException](http://orientdb.com/docs/last/Troubleshooting-Java.html#oconcurrentmodificationexception-cannot-update-record-xy-in-storage-z-because-the-version-is-not-the-latest-probably-you-are-updating-an-old-record-or-it-has-been-modified-by-another-user-dbva-yourvb)
 When you was trying to save object its expected - optimistic locking (object contains version and if db version is different
 then your object considered stale, and you cant save it).
 
@@ -581,7 +581,7 @@ must be used inside transaction).
 
 #### Usage examples
 
-[Function](http://www.orientechnologies.com/docs/last/orientdb.wiki/Functions.html) call:
+[Function](http://orientdb.com/docs/last/Functions.html) call:
 
 ```java
 @Function("function1")
@@ -602,7 +602,7 @@ Named parameters:
 List<Model> parametersNamed(@Param("name") String name, @Param("nick") String nick)
 ```
 
-[Pagination](http://www.orientechnologies.com/docs/last/orientdb.wiki/Pagination.html):
+[Pagination](http://orientdb.com/docs/last/Pagination.html):
 
 ```java
 @Query("select from Model where name=? and nick=?")
@@ -616,14 +616,14 @@ List<Model> parametersPaged(String name, String nick, @Skip int skip, @Limit int
 List<Model> findBy(@ElVar("prop") String prop, String value)
 ```
 
-[Fetch plan](http://www.orientechnologies.com/docs/last/orientdb.wiki/Fetching-Strategies.html) parameter:
+[Fetch plan](http://orientdb.com/docs/last/Fetching-Strategies.html) parameter:
 
 ```java
 @Query("select from Model")
 List<Model> selectAll(@FetchPlan("*:0") String plan);
 ```
 
-[Sql](http://www.orientechnologies.com/docs/last/orientdb.wiki/SQL-batch.html) script:
+[Sql](http://orientdb.com/docs/last/SQL-batch.html) script:
 
 ```java
 @Script("begin" +
@@ -635,7 +635,7 @@ List<Model> selectAll(@FetchPlan("*:0") String plan);
 Edge linkCity(@Param("name") String name, @Param("city") String city)
 ```
 
-[Js](http://www.orientechnologies.com/docs/last/orientdb.wiki/Javascript-Command.html) script:
+[Js](http://orientdb.com/docs/last/Javascript-Command.html) script:
 
 ```java
 @Script(language = "javascript", value =
@@ -645,7 +645,7 @@ Edge linkCity(@Param("name") String name, @Param("city") String city)
 void jsScript()
 ```
 
-[Async](http://www.orientechnologies.com/docs/last/orientdb.wiki/Document-Database.html#asynchronous-query) query:
+[Async](https://orientdb.com/docs/last/Document-API-Documents.html#asynchronous-queries) query:
 
 ```java
 @AsyncQuery("select from Model")
@@ -944,7 +944,7 @@ Or globally:
 OGlobalConfiguration.MVRBTREE_NODE_PAGE_SIZE.setValue(2048);
 ```
 
-Read about [all configuration options](http://www.orientechnologies.com/docs/last/orientdb.wiki/Configuration.html)
+Read about [all configuration options](http://orientdb.com/docs/last/Configuration.html)
 
 ### Might also like
 
