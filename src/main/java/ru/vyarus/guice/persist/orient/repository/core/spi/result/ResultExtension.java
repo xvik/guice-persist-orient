@@ -7,11 +7,13 @@ import java.lang.annotation.Annotation;
 /**
  * Result conversion extension, enabled by annotation annotated with
  * {@link ru.vyarus.guice.persist.orient.repository.core.spi.result.ResultConverter}.
- * <p>Result conversion is pretty universal and usually don't rely on method execution specifics, that's why
+ * <p>
+ * Result conversion is pretty universal and usually don't rely on method execution specifics, that's why
  * raw descriptor type used (but entire descriptor passed in order to use it as storage for
- * converter specific data).</p>
- * <p>Use {@link ru.vyarus.guice.persist.orient.repository.core.ext.service.result.converter.ResultConversionException}
- * for error cases.</p>
+ * converter specific data).
+ * <p>
+ * Use {@link ru.vyarus.guice.persist.orient.repository.core.ext.service.result.converter.ResultConversionException}
+ * for error cases.
  *
  * @param <A> annotation type
  * @author Vyacheslav Rusakov

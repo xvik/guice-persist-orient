@@ -15,7 +15,8 @@ import ru.vyarus.guice.persist.orient.db.scheme.initializer.ObjectSchemeInitiali
 import java.util.List;
 
 /**
- * <p>Base class for object mapping initializers (jpa-like approach).</p>
+ * <p>
+ * Base class for object mapping initializers (jpa-like approach).
  * Object initialization specific:
  * <ul>
  * <li>Orient ignore package, so class may be moved between packages</li>
@@ -24,8 +25,9 @@ import java.util.List;
  * <li>When class renamed orient will register it as new entity and you will have to manually migrate old table
  * (or use sql commands to rename entity in db scheme)</li>
  * </ul>
- * <p>Internally use {@link ru.vyarus.guice.persist.orient.db.scheme.initializer.ObjectSchemeInitializer},
- * which extends default orient registration. Support custom plugins.</p>
+ * <p>
+ * Internally use {@link ru.vyarus.guice.persist.orient.db.scheme.initializer.ObjectSchemeInitializer},
+ * which extends default orient registration. Support custom plugins.
  *
  * @author Vyacheslav Rusakov
  * @since 24.07.2014

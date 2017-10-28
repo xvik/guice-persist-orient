@@ -6,7 +6,8 @@ import ru.vyarus.guice.persist.orient.db.scheme.SchemeInitializer;
 /**
  * Shortcut module with predefined "classpath scanning" scheme initializer.
  * Suitable for package by feature approach.
- * <p>Use it together with main OrientModule.</p>
+ * <p>
+ * Use it together with main OrientModule.
  *
  * @author Vyacheslav Rusakov
  * @see ru.vyarus.guice.persist.orient.db.scheme.impl.AutoScanSchemeInitializer

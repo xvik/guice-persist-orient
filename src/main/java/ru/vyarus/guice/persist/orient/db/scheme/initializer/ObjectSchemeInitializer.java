@@ -23,18 +23,23 @@ import java.util.Set;
 /**
  * Extends default orient scheme initialization with plugins. Very useful for development to quickly update
  * scheme, but in production its better to use some other tool with incremental patch applying.
- * <p>Looks model class hierarchy and process all child classes before root model class processing (bottom to top).
- * So extension annotations will work even if they are defined in lower layers (and not inherited).</p>
- * <p>Two types of extensions supported:
+ * <p>
+ * Looks model class hierarchy and process all child classes before root model class processing (bottom to top).
+ * So extension annotations will work even if they are defined in lower layers (and not inherited).
+ * <p>
+ * Two types of extensions supported:
  * {@link ru.vyarus.guice.persist.orient.db.scheme.initializer.core.spi.type.TypeExtension} and
  * {@link ru.vyarus.guice.persist.orient.db.scheme.initializer.core.spi.field.FieldExtension}.
  * Type extension annotations are searched on type level. Filed extensions searched on fields.
- * All extensions are executed twice: before orient registration and after that.</p>
- * <p>Extensions are guice beans. If default (prototype) scope is used on extension bean, then
- * new extension instance will be used for each class registration.</p>
- * <p>To avoid processing same types many times (e.g. some base class, extended by may model classes),
- * all classes are processed just once (cached). To clear case use {@link #clearModelCache()}.</p>
- * <p>Class is not intended to be used in concurrent environment (usually model update is synchronous).</p>
+ * All extensions are executed twice: before orient registration and after that.
+ * <p>
+ * Extensions are guice beans. If default (prototype) scope is used on extension bean, then
+ * new extension instance will be used for each class registration.
+ * <p>
+ * To avoid processing same types many times (e.g. some base class, extended by may model classes),
+ * all classes are processed just once (cached). To clear case use {@link #clearModelCache()}.
+ * <p>
+ * Class is not intended to be used in concurrent environment (usually model update is synchronous).
  *
  * @author Vyacheslav Rusakov
  * @since 04.03.2015

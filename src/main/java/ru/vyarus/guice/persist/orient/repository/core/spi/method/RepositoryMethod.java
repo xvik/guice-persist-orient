@@ -10,11 +10,13 @@ import java.lang.annotation.Target;
  * {@link ru.vyarus.guice.persist.orient.repository.command.query.Query},
  * {@link ru.vyarus.guice.persist.orient.repository.command.function.Function},
  * {@link ru.vyarus.guice.persist.orient.repository.delegate.Delegate}.
- * <p>Aop interceptor is applied for all annotations, annotated with this marker. Annotation may be placed on method
+ * <p>
+ * Aop interceptor is applied for all annotations, annotated with this marker. Annotation may be placed on method
  * or on type (to handle all methods in class). Method annotation is prioritized, so if type and method annotations
  * defined, type annotation will be ignored (this allows defining method annotation for all methods and use more
- * specific annotation just on few of them). But different method extension couldn't be allied to the same method.</p>
- * <p>No specific actions required to register extension.</p>
+ * specific annotation just on few of them). But different method extension couldn't be allied to the same method.
+ * <p>
+ * No specific actions required to register extension.
  *
  * @author Vyacheslav Rusakov
  * @since 02.02.2015

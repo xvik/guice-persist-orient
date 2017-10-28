@@ -11,12 +11,15 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 /**
  * Scheme model field extension to rename property. Property is renamed before orient registration, so data will
  * be preserved.
- * <p>If class not registered or old property not exist in db, no action will be performed.</p>
- * <p>If new property already registered, exception will be thrown, because rename is impossible.</p>
- * <p>Sample sql: alter property Model.oldName name newName</p>
+ * <p>
+ * If class not registered or old property not exist in db, no action will be performed.
+ * <p>
+ * If new property already registered, exception will be thrown, because rename is impossible.
+ * <p>
+ * Sample sql: alter property Model.oldName name newName.
  *
  * @author Vyacheslav Rusakov
- * @see <a href="http://www.orientechnologies.com/docs/last/orientdb.wiki/SQL-Alter-Property.html">docs</a>
+ * @see <a href="http://orientdb.com/docs/last/SQL-Alter-Property.html">docs</a>
  * @since 07.03.2015
  */
 @Target(FIELD)

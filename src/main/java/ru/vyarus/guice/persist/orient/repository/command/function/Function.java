@@ -11,16 +11,19 @@ import java.util.Collection;
 
 /**
  * Function call repository method extension.
- * <p>Uses {@link com.orientechnologies.orient.core.command.script.OCommandFunction}.</p>
- * <p>Function name could contain variables in format (${var}). By default, only declared type generic names
+ * <p>
+ * Uses {@link com.orientechnologies.orient.core.command.script.OCommandFunction}.
+ * <p>
+ * Function name could contain variables in format (${var}). By default, only declared type generic names
  * could be used, but extensions could provide other variables (like
- * {@link ru.vyarus.guice.persist.orient.repository.command.ext.elvar.ElVar}).</p>
- * <p>For example, function may be created like this
+ * {@link ru.vyarus.guice.persist.orient.repository.command.ext.elvar.ElVar}).
+ * <p>
+ * For example, function may be created like this
  * <code>CREATE FUNCTION function1 "select from Model" LANGUAGE SQL</code> and called as
- * {@code @Function("function1")}</p>
+ * {@code @Function("function1")}
  *
  * @author Vyacheslav Rusakov
- * @see <a href="http://www.orientechnologies.com/docs/last/orientdb.wiki/Functions.html">docs</a>
+ * @see <a href="http://orientdb.com/docs/last/Functions.html">docs</a>
  * @since 02.02.2015
  */
 @Target(ElementType.METHOD)
@@ -35,7 +38,7 @@ public @interface Function {
 
     /**
      * Use this clause to specify a collection impl to autobox result lists into. The impl must
-     * have a default no-arg constructor and be a subclass of {@code java.util.Collection}.
+     * have a default no-arg constructor and be a subclass of {@link java.util.Collection}.
      * @return configured autoboxing collection class.
      */
     Class<? extends Collection> returnAs() default Collection.class;

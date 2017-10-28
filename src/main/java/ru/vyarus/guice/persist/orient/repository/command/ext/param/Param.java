@@ -12,7 +12,8 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 /**
  * Marks query parameter as named.
  * In query named parameters defined as ":name".
- * <p>Query must contain either positional or named parameters.</p>
+ * <p>
+ * Query must contain either positional or named parameters.
  *
  * @author Vyacheslav Rusakov
  * @see ru.vyarus.guice.persist.orient.repository.command.core.param.CommandParamsContext

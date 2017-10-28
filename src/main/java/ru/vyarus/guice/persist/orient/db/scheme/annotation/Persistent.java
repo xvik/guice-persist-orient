@@ -9,7 +9,8 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * Annotation for persistent entities.
- * Register {@code ru.vyarus.guice.persist.orient.db.scheme.autoscan.AutoscanModelInitializer} in guice context and all
+ * Register {@link ru.vyarus.guice.persist.orient.db.scheme.impl.AutoScanSchemeInitializer} in guice context
+ * or use {@link ru.vyarus.guice.persist.orient.support.AutoScanSchemeModule} and all
  * annotated classes will be registered automatically.
  */
 @Documented

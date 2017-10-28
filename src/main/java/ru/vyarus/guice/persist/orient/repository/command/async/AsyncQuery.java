@@ -32,7 +32,7 @@ import java.lang.annotation.Target;
  * <p>
  * Query could contain variables in format (${var}). By default, only declared type generic names
  * could be used, but extensions could provide other variables (like
- * {@link ru.vyarus.guice.persist.orient.repository.command.ext.elvar.ElVar}).</p>
+ * {@link ru.vyarus.guice.persist.orient.repository.command.ext.elvar.ElVar}).
  *
  * @author Vyacheslav Rusakov
  * @see <a href="https://orientdb.com/docs/last/Document-API-Documents.html#asynchronous-queries">docs</a>

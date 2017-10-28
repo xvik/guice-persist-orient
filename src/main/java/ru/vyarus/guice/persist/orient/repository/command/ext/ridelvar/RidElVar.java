@@ -13,19 +13,24 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * Marks parameter as rid el variable. {@link ru.vyarus.guice.persist.orient.repository.command.ext.elvar.ElVar}
  * is a generic mechanism, whereas {@link RidElVar} exist specifically for binding
  * id's into into query from various possible sources.
- * <p>The main reason why this extension exist is current orient sql parser inconsistencies. For example,
+ * <p>
+ * The main reason why this extension exist is current orient sql parser inconsistencies. For example,
  * sub queries not support parameters {@code "select from (traverse out from ?)"} (neither positional nor named
  * parameters will work). There are other situations when parameters doesn't work. Situation will get better
- * over time, and until then extension will be a "silver bullet" for such cases.</p>
- * <p>The most simple solution is to inject rids directly (as it's shown in documentation) into query string
- * with el var.</p>
- * <p>Parameter could be ODocument, Vertex, object (proxy or raw object), string rid, ORID,
+ * over time, and until then extension will be a "silver bullet" for such cases.
+ * <p>
+ * The most simple solution is to inject rids directly (as it's shown in documentation) into query string
+ * with el var.
+ * <p>
+ * Parameter could be ODocument, Vertex, object (proxy or raw object), string rid, ORID,
  * collection (Iterable, Iterator) or array. In case of single object rid will be resolved and injected (as #N:N).
- * In case of collection, "[rid1, rid2, etc]" will be injected.</p>
- * <p>Null rids are not accepted (exception casted). If string rid used, it's checked before injecting in query
+ * In case of collection, "[rid1, rid2, etc]" will be injected.
+ * <p>
+ * Null rids are not accepted (exception casted). If string rid used, it's checked before injecting in query
  * to shield from sql injection. Not saved object proxy, document, vertex will contain fake id and will be accepted
- * (but query result will obviously be incorrect).</p>
- * <p>Example usage:</p>
+ * (but query result will obviously be incorrect).
+ * <p>
+ * Example usage:
  * <pre>{@code
  *  &copy;Query("select from (traverse out from ${id})")
  *  public List doSmth(@RidElVar("id") String id)

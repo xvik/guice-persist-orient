@@ -46,10 +46,12 @@ public abstract class RepositoryMethodDescriptor<E extends AmendExecutionExtensi
      * List of amend extensions, found on method.
      * Assigned by {@link ru.vyarus.guice.persist.orient.repository.core.ext.service.AmendExtensionsService}
      * after parameters processing.
-     * <p>Extensions must be processed manually in method extension implementation (because these extensions
-     * are totally different for different method extensions).</p>
-     * <p>Extensions in this list are sorted according to
-     * {@link ru.vyarus.guice.persist.orient.db.util.Order} annotations.</p>
+     * <p>
+     * Extensions must be processed manually in method extension implementation (because these extensions
+     * are totally different for different method extensions).
+     * <p>
+     * Extensions in this list are sorted according to {@link ru.vyarus.guice.persist.orient.db.util.Order}
+     * annotations.
      */
     public List<E> amendExtensions;
 

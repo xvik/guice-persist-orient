@@ -10,10 +10,11 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * Scheme model field extension to mark property as mandatory (or remove mandatory marker).
- * <p>Sample sql: alter property Model.name mandatory true</p>
+ * <p>
+ * Sample sql: alter property Model.name mandatory true.
  *
  * @author Vyacheslav Rusakov
- * @see <a href="http://www.orientechnologies.com/docs/last/orientdb.wiki/SQL-Alter-Property.html">docs</a>
+ * @see <a href="http://orientdb.com/docs/last/SQL-Alter-Property.html">docs</a>
  * @since 08.03.2015
  */
 @Target(FIELD)

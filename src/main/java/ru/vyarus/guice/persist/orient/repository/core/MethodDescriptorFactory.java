@@ -24,12 +24,14 @@ import java.util.concurrent.locks.ReentrantLock;
 /**
  * Analyze annotated method and provides descriptor. By default resolved descriptor is cached, to avoid
  * possibly heavy computations.
- * <p>Cache may be disabled (e.g. when JRebel used) by using environment variable or system property e.g.:
+ * <p>
+ * Cache may be disabled (e.g. when JRebel used) by using environment variable or system property e.g.:
  * {@code System.setProperty(MethodDescriptorFactory.CACHE_PROPERTY, 'false')}.
- * Property value checked on cache write. To clear current cache state use static method.</p>
- * <p>Note: there is also separate generics parsing cache (generics-resolver). If you will set system or environment
+ * Property value checked on cache write. To clear current cache state use static method.
+ * <p>
+ * Note: there is also separate generics parsing cache (generics-resolver). If you will set system or environment
  * property before start or use static method to disable cache then generics cache will be also disabled.
- * If you have problems use static methods to know cache state.</p>
+ * If you have problems use static methods to know cache state.
  *
  * @author Vyacheslav Rusakov
  * @see ru.vyarus.java.generics.resolver.context.GenericsInfoFactory for generics resolution cache

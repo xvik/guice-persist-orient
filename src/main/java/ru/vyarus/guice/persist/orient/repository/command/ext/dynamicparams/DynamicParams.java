@@ -12,9 +12,11 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 /**
  * Marks parameter as dynamic parameters. May be used when positional parameters count vary (e.g. el variable
  * used to add sub query) or when its handy to compose named parameters manually.
- * <p>Type of parameters checked from parameter type: if {@link java.util.List}, array or vararg then positional,
- * if {@link java.util.Map} then named params.</p>
- * <p>If map used, it's keys converted to string, so e.g. enum map could be easily used.</p>
+ * <p>
+ * Type of parameters checked from parameter type: if {@link java.util.List}, array or vararg then positional,
+ * if {@link java.util.Map} then named params.
+ * <p>
+ * If map used, it's keys converted to string, so e.g. enum map could be easily used.
  *
  * @author Vyacheslav Rusakov
  * @since 27.02.2015

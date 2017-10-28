@@ -13,9 +13,12 @@ import ru.vyarus.guice.persist.orient.support.repository.mixin.graph.delegate.Ed
 /**
  * Generic object edge support mixin. Used for edge-objects annotated with
  * {@link ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.type.edge.EdgeType} (or extends E in scheme).
- * <p>Supposed to be used as supplement to {@link ObjectVertexCrud}.</p>
- * <p>Mix object api (for comfortable work with properties) and graph api.</p>
- * <p>Also, may be used directly (like repository).</p>
+ * <p>
+ * Supposed to be used as supplement to {@link ObjectVertexCrud}.
+ * <p>
+ * Mix object api (for comfortable work with properties) and graph api.
+ * <p>
+ * Also, may be used directly (like repository).
  *
  * @author Vyacheslav Rusakov
  * @since 12.06.2015

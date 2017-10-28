@@ -12,8 +12,9 @@ import java.lang.annotation.Annotation;
 
 /**
  * Service searches for result extensions and performs result conversion according to extensions.
- * <p>Extension compatibility is checked using descriptor type from generic. Error is thrown if method extension is
- * incompatible. If extension defined on type and its incompatible, its just skipped.</p>
+ * <p>
+ * Extension compatibility is checked using descriptor type from generic. Error is thrown if method extension is
+ * incompatible. If extension defined on type and its incompatible, its just skipped.
  *
  * @author Vyacheslav Rusakov
  * @see ru.vyarus.guice.persist.orient.repository.core.spi.result.ResultConverter

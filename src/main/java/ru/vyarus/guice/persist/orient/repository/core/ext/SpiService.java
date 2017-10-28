@@ -68,7 +68,8 @@ public class SpiService {
      * Parse method parameters. Resolves and applies all found parameter extensions.
      * Resolves execution extensions and store ordered list of all found extensions in descriptor
      * (extension will use them directly). Resolves result conversion extensions.
-     * <p>Called by method extension directly.</p>
+     * <p>
+     * Called by method extension directly.
      *
      * @param descriptor    repository method descriptor
      * @param paramsContext extension specific parameters context

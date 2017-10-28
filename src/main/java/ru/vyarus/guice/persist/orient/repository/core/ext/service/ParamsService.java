@@ -26,10 +26,11 @@ import java.util.Map;
  * Service responsible for parameters processing. Specific
  * {@link ru.vyarus.guice.persist.orient.repository.core.spi.parameter.ParamsContext} implementation is responsible
  * for parameters handling and descriptor update.
- * <p>Service itself simply parse parameters, founds extensions, set ordinal parameters (without extensions) into
- * params context and executing extensions on annotated parameters.</p>
- * <p>All found extensions are stored in context for processing by
- * {@link AmendExtensionsService}</p>
+ * <p>
+ * Service itself simply parse parameters, founds extensions, set ordinal parameters (without extensions) into
+ * params context and executing extensions on annotated parameters.
+ * <p>
+ * All found extensions are stored in context for processing by {@link AmendExtensionsService}.
  *
  * @author Vyacheslav Rusakov
  * @since 03.02.2015

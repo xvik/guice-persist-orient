@@ -29,29 +29,34 @@ import java.lang.reflect.Method;
 
 /**
  * Module provides support for spring-data like repositories. Must be used together with main orient module.
- * <p>It's not limited to repository pattern and may be used to usual daos. Repositories usage is very similar
+ * <p>
+ * It's not limited to repository pattern and may be used to usual daos. Repositories usage is very similar
  * to spring-data (the most popular repository implementation). Annotations intentionally named the same way
- * as in spring-data.</p>
- * <p>In contrast to spring, which use instance proxies, guice aop is tied to class proxies. So aop could be
+ * as in spring-data.
+ * <p>
+ * In contrast to spring, which use instance proxies, guice aop is tied to class proxies. So aop could be
  * applied to bean only if guice creates it's instance. Repositories implementation completely relies on guice aop.
  * To make it work for interfaces and abstract classes, special class proxy must be generated (to let guice properly
  * instantiate normal class). Implementation of this mechanism is in
- * <a href="https://github.com/xvik/guice-ext-annotations#usage">separate project</a>.</p>
- * <p>Repositories based on plugin architecture, so new types could be easily added and existing types extended.
+ * <a href="https://github.com/xvik/guice-ext-annotations#usage">separate project</a>.
+ * <p>
+ * Repositories based on plugin architecture, so new types could be easily added and existing types extended.
  * All extensions are annotation driven (annotation must be marked with special annotation, containing
  * extension class). Repository methods are handled with guice aop, bu simply searching for annotated annotations (
  * {@link ru.vyarus.guice.persist.orient.repository.core.spi.method.RepositoryMethod}). Two more generic types
  * of extensions supported: parameter extensions, when some parameters should get special meaning. And
- * amend extensions, which may be used to amend method call behaviour (e.g. set timeout).</p>
- * <p>Repository method processing starts with method descriptor creation. During descriptor creation, extension
+ * amend extensions, which may be used to amend method call behaviour (e.g. set timeout).
+ * <p>
+ * Repository method processing starts with method descriptor creation. During descriptor creation, extension
  * could analyze method definition correctness and prepare all required information for fast execution. Generated
  * descriptors are cached to reuse on future calls. In order to process method, extension is called with prepared
- * descriptor.</p>
- * <p>After execution result could be automatically converted (e.g. between collections, arrays, get first element
+ * descriptor.
+ * <p>
+ * After execution result could be automatically converted (e.g. between collections, arrays, get first element
  * of result list, etc.).
  * See {@link ru.vyarus.guice.persist.orient.repository.core.ext.service.result.converter.ResultConverter}.
- * </p>
- * <p>Based on guice-persist jpa module {@link com.google.inject.persist.jpa.JpaPersistModule}</p>
+ * <p>
+ * Based on guice-persist jpa module {@link com.google.inject.persist.jpa.JpaPersistModule}
  *
  * @author Vyacheslav Rusakov
  * @since 30.07.2014

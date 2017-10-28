@@ -9,9 +9,10 @@ import ru.vyarus.guice.persist.orient.db.scheme.initializer.core.ext.ExtensionsD
 /**
  * Base class for provided scheme initializers.
  * If no package specified then assuming root package should be used.
- * <p>Initialization performed with
+ * <p>
+ * Initialization performed with
  * {@link ru.vyarus.guice.persist.orient.db.scheme.initializer.ObjectSchemeInitializer}, which extends default orient
- * registration abilities. Custom plugins may be used.</p>
+ * registration abilities. Custom plugins may be used.
  *
  * @author Vyacheslav Rusakov
  * @since 02.03.2015

@@ -6,9 +6,11 @@ import ru.vyarus.guice.persist.orient.repository.core.spi.amend.AmendExecutionEx
 /**
  * Query specific extensions. Query execution process consists of two phases: prepare descriptor and create
  * orient command object and execute.
- * <p>On descriptor creation extensions could modify command string, parse parameters from arguments and
- * supply el variable values.</p>
- * <p>On command creation phase extension could modify orient command object.</p>
+ * <p>
+ * On descriptor creation extensions could modify command string, parse parameters from arguments and
+ * supply el variable values.
+ * <p>
+ * On command creation phase extension could modify orient command object.
  *
  * @param <T> descriptor type
  * @author Vyacheslav Rusakov
@@ -28,9 +30,10 @@ public interface CommandExtension<T extends CommandMethodDescriptor> extends Ame
 
     /**
      * Called after query object creation. Use it to modify request command object.
-     * <p>Note: this is raw command object, not tied to connection. After extension command attached to
+     * <p>
+     * Note: this is raw command object, not tied to connection. After extension command attached to
      * exact connection type, which wraps command object with another command (to apply security,
-     * result conversions etc).</p>
+     * result conversions etc).
      *
      * @param query      query command request
      * @param descriptor repository method descriptor

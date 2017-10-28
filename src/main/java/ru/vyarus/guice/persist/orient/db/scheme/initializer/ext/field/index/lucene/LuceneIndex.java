@@ -13,11 +13,13 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 /**
  * Scheme model field extension to create lucene fulltext index on field. If index name not set, className.fieldName
  * will be used.
- * <p>In order to use this index you will need to add
- * <a href="https://github.com/orientechnologies/orientdb-lucene/wiki">orient-lucene</a> dependency.</p>
- * <p>If index with the same name exists but created on different properties error will be thrown.
+ * <p>
+ * In order to use this index you will need to add
+ * <a href="https://github.com/orientechnologies/orientdb-lucene/wiki">orient-lucene</a> dependency.
+ * <p>
+ * If index with the same name exists but created on different properties error will be thrown.
  * If existing index is not lucene, error will be thrown. Otherwise existing index will be dropped and new
- * one created.</p>
+ * one created.
  *
  * @author Vyacheslav Rusakov
  * @see <a href="http://orientdb.com/docs/last/orientdb-lucene.wiki/Full-Text-Index.html">docs</a>

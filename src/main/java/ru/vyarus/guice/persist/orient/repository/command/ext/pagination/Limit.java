@@ -11,10 +11,10 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * Marks parameter as query limit value. Parameter must be number type.
- * <p>For pagination ise it with {@link Skip} annotation</p>
+ * For pagination ise it with {@link Skip} annotation.
  *
  * @author Vyacheslav Rusakov
- * @see <a href="http://www.orientechnologies.com/docs/last/orientdb.wiki/Pagination.html">docs</a>
+ * @see <a href="http://orientdb.com/docs/last/Pagination.html">docs</a>
  * @since 06.02.2015
  */
 @Documented

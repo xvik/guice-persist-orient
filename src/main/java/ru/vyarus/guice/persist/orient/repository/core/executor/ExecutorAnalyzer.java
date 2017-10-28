@@ -22,10 +22,12 @@ public final class ExecutorAnalyzer {
      * Selects appropriate executor for repository method. Custom converters most likely will cause
      * method return type different from raw object, returned from connection. So in such case
      * detection of connection from return type is impossible.
-     * <p>If custom converter registered: always use connection hint if available. Note that result
-     * converter could also change connection hint.</p>
-     * <p>If no custom converter register then if connection hint contradict with result type
-     * analysis throw an error.</p>
+     * <p>
+     * If custom converter registered: always use connection hint if available. Note that result
+     * converter could also change connection hint.
+     * <p>
+     * If no custom converter register then if connection hint contradict with result type
+     * analysis throw an error.
      *
      * @param descriptor          result definition
      * @param executors           available executors

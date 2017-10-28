@@ -6,8 +6,9 @@ import ru.vyarus.guice.persist.orient.repository.delegate.Delegate;
  * Extended pagination: implementation use
  * {@link Pagination} to get total and
  * page content and aggregates it into single object.
- * <p>Don't use directly, {@link Pagination}
- * already extends it. Additional interface introduced just to simplify navigation.</p>
+ * <p>
+ * Don't use directly, {@link Pagination}
+ * already extends it. Additional interface introduced just to simplify navigation.
  *
  * @param <R> page item type
  * @author Vyacheslav Rusakov

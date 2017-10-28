@@ -26,17 +26,20 @@ import java.util.Set;
  * Resolves and applies amend extensions. Analyze found params extensions (provided in params context)
  * and compose all found extensions in descriptor. Composed extensions must be used directly
  * by method extensions (because contracts are very different for different repository method types).
- * <p>Resolved extensions are sorted using {@link ru.vyarus.guice.persist.orient.db.util.Order}
- * annotations.</p>
- * <p>Extension compatibility is strictly checked for extensions defined on method. Type level extension
+ * <p>
+ * Resolved extensions are sorted using {@link ru.vyarus.guice.persist.orient.db.util.Order}
+ * annotations.
+ * <p>
+ * Extension compatibility is strictly checked for extensions defined on method. Type level extension
  * are simply filtered if they are incompatible with current descriptor (extensions has required descriptor
  * in generic). Finally, resolved list of execution extensions are filtered according to descriptor
- * generic value (supported specific extension).</p>
- * <p>Global extension could be registered to apply to every called method. Don't forget that extension are
+ * generic value (supported specific extension).
+ * <p>
+ * Global extension could be registered to apply to every called method. Don't forget that extension are
  * resolved in time of method descriptor creation (first method call). So if you register extension after
  * descriptor composed, it would not be added to existing descriptor. The same with remove: when
  * extension removed, already created descriptors will keep using it. Cache may be cleared to resolve
- * such situations (but generally this should be quite rare case).</p>
+ * such situations (but generally this should be quite rare case).
  *
  * @author Vyacheslav Rusakov
  * @since 07.02.2015

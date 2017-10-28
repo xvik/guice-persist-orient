@@ -11,8 +11,10 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 /**
  * Annotation used for repository delegate implementation method parameter.
  * Pass caller repository instance as parameter.
- * <p>This could be quite handy if repositories share common interface and you can generify it's handling.</p>
- * <p>For example, you may call some repository methods and aggregate results. </p>
+ * <p>
+ * This could be quite handy if repositories share common interface and you can generify it's handling.
+ * <p>
+ * For example, you may call some repository methods and aggregate results.
  *
  * @author Vyacheslav Rusakov
  * @since 24.10.2014

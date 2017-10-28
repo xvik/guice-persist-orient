@@ -8,9 +8,11 @@ import java.lang.annotation.Annotation;
 /**
  * Scheme model type extension, activated by annotation, annotated with {@link SchemeTypeInit}.
  * Use to extend default orient model registration behaviour.
- * <p>Use {@link ru.vyarus.guice.persist.orient.db.util.Order} to order extensions.</p>
- * <p>Extension is obtained from guice context. If prototype scope used, different instances will be used for each
- * model (but same instance will be used for before/after calls for processing class).</p>
+ * <p>
+ * Use {@link ru.vyarus.guice.persist.orient.db.util.Order} to order extensions.
+ * <p>
+ * Extension is obtained from guice context. If prototype scope used, different instances will be used for each
+ * model (but same instance will be used for before/after calls for processing class).
  *
  * @param <A> annotation type
  * @author Vyacheslav Rusakov

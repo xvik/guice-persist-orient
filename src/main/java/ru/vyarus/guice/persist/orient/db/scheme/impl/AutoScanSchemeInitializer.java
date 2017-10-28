@@ -11,13 +11,16 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 /**
- * <p>Initialize model from classpath entities annotated with
- * {@code ru.vyarus.guice.persist.orient.db.scheme.annotation.Persistent} annotation.</p>
- * <p>Requires "orient.model.package" guice constant (defined in module), for package name where
- * to scan entities (to reduce scanning scope). Constant may contain multiple packages, separated with comma.</p>
- * <p>Useful for package by feature approach when many packages could contain model classes</p>
- * <p>Note: Package is not important for orient, so classes may move between runs.
- * But pay attention to class names to avoid collisions.</p>
+ * Initialize model from classpath entities annotated with
+ * {@link ru.vyarus.guice.persist.orient.db.scheme.annotation.Persistent} annotation.
+ * <p>
+ * Requires "orient.model.package" guice constant (defined in module), for package name where
+ * to scan entities (to reduce scanning scope). Constant may contain multiple packages, separated with comma.
+ * <p>
+ * Useful for package by feature approach when many packages could contain model classes.
+ * <p>
+ * Note: Package is not important for orient, so classes may move between runs.
+ * But pay attention to class names to avoid collisions.
  *
  * @author Vyacheslav Rusakov
  * @since 18.07.2014

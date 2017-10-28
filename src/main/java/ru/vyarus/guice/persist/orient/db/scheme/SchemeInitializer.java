@@ -4,9 +4,10 @@ import com.google.inject.ImplementedBy;
 import ru.vyarus.guice.persist.orient.db.scheme.impl.NoOpSchemeInitializer;
 
 /**
- * <p>Initialize or update database schema just after database opening or creation.
+ * Initialize or update database schema just after database opening or creation.
  * To register custom implementation simply register implementation in guice context.
- * By default no-op implementation will be used.</p>
+ * By default no-op implementation will be used.
+ * <p>
  * There are two predefined implementations:
  * <ul>
  *     <li>{@link ru.vyarus.guice.persist.orient.db.scheme.impl.PackageSchemeInitializer} which update scheme from

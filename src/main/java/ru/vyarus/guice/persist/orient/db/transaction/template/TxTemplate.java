@@ -11,7 +11,8 @@ import javax.inject.Singleton;
  * Transaction template defines unit of work and properly inline all units of work during current unit scope.
  * It's the single point for all unit support (annotations support use it and specific tx template use it too).
  * So it's the only place which properly inline (sub)transactions.
- * <p>Specific provider must be used inside transactional action to obtain connection of required type(s)</p>
+ * <p>
+ * Specific provider must be used inside transactional action to obtain connection of required type(s).
  */
 @Singleton
 public class TxTemplate {

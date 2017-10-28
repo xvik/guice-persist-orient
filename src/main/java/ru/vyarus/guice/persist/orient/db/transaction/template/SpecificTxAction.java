@@ -1,7 +1,7 @@
 package ru.vyarus.guice.persist.orient.db.transaction.template;
 
 /**
- * Action to be executed in transaction by {@code ru.vyarus.guice.persist.orient.db.transaction.template.TxTemplate}.
+ * Action to be executed in transaction by {@link ru.vyarus.guice.persist.orient.db.transaction.template.TxTemplate}.
  * Alternative to use of @Transactional annotation.
  *
  * @param <T> action return value type

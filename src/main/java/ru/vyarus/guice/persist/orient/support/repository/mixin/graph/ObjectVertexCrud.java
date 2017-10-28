@@ -13,10 +13,12 @@ import ru.vyarus.guice.persist.orient.support.repository.mixin.graph.delegate.Ob
  * Most likely such objects are annotated with
  * {@link ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.type.vertex.VertexType}
  * (or simply extend V in general).
- * <p>It is important to use this mixin for vertex types, because delete methods use graph api, which
- * grants consistency checks.</p>
- * <p>Use with {@link EdgesSupport} to add edges support methods. Or {@link EdgeTypeSupport} if only
- * one edge type support required.</p>
+ * <p>
+ * It is important to use this mixin for vertex types, because delete methods use graph api, which
+ * grants consistency checks.
+ * <p>
+ * Use with {@link EdgesSupport} to add edges support methods. Or {@link EdgeTypeSupport} if only
+ * one edge type support required.
  *
  * @param <T> entity type
  * @author Vyacheslav Rusakov

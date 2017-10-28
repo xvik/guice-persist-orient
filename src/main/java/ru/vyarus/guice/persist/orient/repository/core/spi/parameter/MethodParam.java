@@ -10,7 +10,8 @@ import java.lang.annotation.Target;
  * {@link ru.vyarus.guice.persist.orient.repository.command.ext.pagination.Skip},
  * {@link ru.vyarus.guice.persist.orient.repository.command.ext.pagination.Limit}.
  * {@link ru.vyarus.guice.persist.orient.repository.delegate.ext.generic.Generic}).
- * <p>Single method parameter could use just one parameter annotation.</p>
+ * <p>
+ * Single method parameter could use just one parameter annotation.
  *
  * @author Vyacheslav Rusakov
  * @since 03.02.2015

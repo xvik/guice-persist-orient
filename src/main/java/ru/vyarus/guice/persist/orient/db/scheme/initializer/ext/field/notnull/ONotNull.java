@@ -11,10 +11,11 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 /**
  * Scheme model field extension to mark property as not null (or remove notnull marker).
  * Name changed to avoid collision with javax validation.
- * <p>Sample sql: alter property Model.name notnull true</p>
+ * <p>
+ * Sample sql: alter property Model.name notnull true.
  *
  * @author Vyacheslav Rusakov
- * @see <a href="http://www.orientechnologies.com/docs/last/orientdb.wiki/SQL-Alter-Property.html">docs</a>
+ * @see <a href="http://orientdb.com/docs/last/SQL-Alter-Property.html">docs</a>
  * @since 09.03.2015
  */
 @Target(FIELD)

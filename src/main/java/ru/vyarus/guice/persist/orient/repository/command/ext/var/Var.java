@@ -14,10 +14,11 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * before passing command to orient
  * (e.g {@link ru.vyarus.guice.persist.orient.repository.command.ext.elvar.ElVar}), these vars are
  * used directly in command execution.
- * <p>Defined variable could be referenced in query as $name.</p>
+ * <p>
+ * Defined variable could be referenced in query as $name.
  *
  * @author Vyacheslav Rusakov
- * @see <a href="http://www.orientechnologies.com/docs/last/orientdb.wiki/SQL-Query.html#let-block">docs</a>
+ * @see <a href="http://orientdb.com/docs/last/SQL-Query.html#let-block">docs</a>
  * @since 25.02.2015
  */
 @Documented

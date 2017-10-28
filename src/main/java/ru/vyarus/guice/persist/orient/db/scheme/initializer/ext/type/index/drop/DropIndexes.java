@@ -10,9 +10,10 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * Scheme model type extension to drop indexes. If index not exist, nothing will happen.
- * <p>May be used to re-create index (together with
+ * <p>
+ * May be used to re-create index (together with
  * {@link ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.field.index.Index} or
- * {@link ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.type.index.CompositeIndex} annotations).</p>
+ * {@link ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.type.index.CompositeIndex} annotations).
  *
  * @author Vyacheslav Rusakov
  * @since 09.03.2015

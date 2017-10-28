@@ -7,11 +7,12 @@ import ru.vyarus.guice.persist.orient.support.repository.mixin.crud.delegate.Obj
 /**
  * Crud mixin for object repositories.
  * Could be used by repository to avoid external dao requirement.
- * <p>Warning: be careful with graph entities (e.g. classes annotated with
+ * <p>
+ * Warning: be careful with graph entities (e.g. classes annotated with
  * {@link ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.type.vertex.VertexType} because when entity is
  * removed with object (or document) api graph consistency is not checked (as a result you will have
  * stale edges in db). Use
- * {@link ru.vyarus.guice.persist.orient.support.repository.mixin.graph.ObjectVertexCrud} for graph nodes.</p>
+ * {@link ru.vyarus.guice.persist.orient.support.repository.mixin.graph.ObjectVertexCrud} for graph nodes.
  *
  * @param <T> entity type
  * @author Vyacheslav Rusakov

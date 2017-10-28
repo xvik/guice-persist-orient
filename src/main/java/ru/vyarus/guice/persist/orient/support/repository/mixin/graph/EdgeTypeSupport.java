@@ -6,9 +6,12 @@ import ru.vyarus.guice.persist.orient.support.repository.mixin.graph.delegate.Ed
 /**
  * Edge type support mixin. Used for edge-object annotated with
  * {@link ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.type.edge.EdgeType} (or extends E in scheme).
- * <p>Supposed to be used as supplement to {@link ObjectVertexCrud}.</p>
- * <p>Mix object api (for comfortable work with properties) and graph api.</p>
- * <p>If more then one edge support required use {@link EdgesSupport}.</p>
+ * <p>
+ * Supposed to be used as supplement to {@link ObjectVertexCrud}.
+ * <p>
+ * Mix object api (for comfortable work with properties) and graph api.
+ * <p>
+ * If more then one edge support required use {@link EdgesSupport}.
  *
  * @param <E> edge type
  * @param <F> from node type (may be exact type, Vertex, ODocument, ORID, string or Object to support all cases)

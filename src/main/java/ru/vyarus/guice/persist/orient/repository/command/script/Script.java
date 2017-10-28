@@ -14,21 +14,27 @@ import java.util.Collection;
  * SQL is the default. Gremlin requires gremlin-groovy dependency, excluded by default.
  * Javascript requires special server configuration (if remote connection used). Other jvm scripting languages
  * could be used.
- * <p>Uses {@link com.orientechnologies.orient.core.command.script.OCommandScript}.</p>
- * <p>Script could contain el variables (${var}). By default, only declared type generic names could be used,
+ * <p>
+ * Uses {@link com.orientechnologies.orient.core.command.script.OCommandScript}.
+ * <p>
+ * Script could contain el variables (${var}). By default, only declared type generic names could be used,
  * but extensions could provide other variables (like
- * {@link ru.vyarus.guice.persist.orient.repository.command.ext.elvar.ElVar}).</p>
- * <p>By default, sql function expected, but if other language required set it explicitly.</p>
- * <p>Scripts are very similar to {@link ru.vyarus.guice.persist.orient.repository.command.function.Function}</p>
- * <p>Note that using script instead of update query, like this "begin update... commit" solves
- * concurrent modification problem, even without retry.</p>
- * <p>See {@link com.orientechnologies.orient.core.command.script.OScriptManager#bind(javax.script.Bindings,
+ * {@link ru.vyarus.guice.persist.orient.repository.command.ext.elvar.ElVar}).
+ * <p>
+ * By default, sql function expected, but if other language required set it explicitly.
+ * <p>
+ * Scripts are very similar to {@link ru.vyarus.guice.persist.orient.repository.command.function.Function}
+ * <p>
+ * Note that using script instead of update query, like this "begin update... commit" solves
+ * concurrent modification problem, even without retry.
+ * <p>
+ * See {@link com.orientechnologies.orient.core.command.script.OScriptManager#bind(javax.script.Bindings,
  * com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx,
  * com.orientechnologies.orient.core.command.OCommandContext, java.util.Map)} to know available javascript api
- * (look wrapper objects api to knwo available methods).</p>
+ * (look wrapper objects api to knwo available methods).
  *
  * @author Vyacheslav Rusakov
- * @see <a href="http://www.orientechnologies.com/docs/last/orientdb.wiki/SQL-batch.html">docs</a>
+ * @see <a href="http://orientdb.com/docs/last/SQL-batch.html">docs</a>
  * @since 25.02.2015
  */
 @Target(ElementType.METHOD)
@@ -48,7 +54,7 @@ public @interface Script {
 
     /**
      * Use this clause to specify a collection impl to autobox result lists into. The impl must
-     * have a default no-arg constructor and be a subclass of {@code java.util.Collection}.
+     * have a default no-arg constructor and be a subclass of {@link java.util.Collection}.
      *
      * @return configured autoboxing collection class.
      */

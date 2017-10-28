@@ -46,8 +46,10 @@ public final class ExtUtils {
     /**
      * Searches for method annotation (annotation annotated with
      * {@link ru.vyarus.guice.persist.orient.repository.core.spi.method.RepositoryMethod}).
-     * <p>Annotation may be set on method directly or on method declaring type.</p>
-     * <p>Throws error if more than one matching annotation found.</p>
+     * <p>
+     * Annotation may be set on method directly or on method declaring type.
+     * <p>
+     * Throws error if more than one matching annotation found.
      *
      * @param method repository method
      * @return found annotation or null
@@ -60,7 +62,8 @@ public final class ExtUtils {
     /**
      * Searches for parameter annotation (annotation annotated with
      * {@link ru.vyarus.guice.persist.orient.repository.core.spi.parameter.MethodParam}).
-     * <p>Throws error if more than one annotation found</p>
+     * <p>
+     * Throws error if more than one annotation found
      *
      * @param annotations method parameter annotations
      * @return found annotation or null
@@ -79,12 +82,14 @@ public final class ExtUtils {
     /**
      * Searches for amend annotations (annotations annotated with
      * {@link ru.vyarus.guice.persist.orient.repository.core.spi.amend.AmendMethod}).
-     * <p>Amend annotation may be defined on method, type and probably globally on root repository type.
+     * <p>
+     * Amend annotation may be defined on method, type and probably globally on root repository type.
      * If annotation is defined in two places then only more prioritized will be used.
-     * Priorities: method, direct method type, repository type (in simple cases the last two will be the same type).</p>
-     * <p>Extensions compatibility is checked against descriptor object. If extension declared directly on method
+     * Priorities: method, direct method type, repository type (in simple cases the last two will be the same type).
+     * <p>
+     * Extensions compatibility is checked against descriptor object. If extension declared directly on method
      * error will be throw (bad usage). For type and root type declared extensions, incompatible extensions simply
-     * skipped (case when extension should apply to all methods except few).</p>
+     * skipped (case when extension should apply to all methods except few).
      *
      * @param method         repository method
      * @param root           root repository type
@@ -109,9 +114,10 @@ public final class ExtUtils {
     /**
      * Searches for result converter annotations (annotations annotated with
      * {@link ru.vyarus.guice.persist.orient.repository.core.spi.result.ResultConverter}).
-     * <p>Annotation may be defined on method, type and probably globally on root repository type.
+     * <p>
+     * Annotation may be defined on method, type and probably globally on root repository type.
      * If annotation is defined in two places then only more prioritized will be used.
-     * Priorities: method, direct method type, repository type (in simple cases the last two will be the same type).</p>
+     * Priorities: method, direct method type, repository type (in simple cases the last two will be the same type).
      *
      * @param method method to search converter
      * @param root   root descriptor type

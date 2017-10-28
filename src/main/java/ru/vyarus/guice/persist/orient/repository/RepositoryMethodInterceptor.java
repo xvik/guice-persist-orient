@@ -20,10 +20,11 @@ import java.util.Arrays;
  * {@link ru.vyarus.guice.persist.orient.repository.core.spi.method.RepositoryMethod}. Actual method calls are
  * handled by specific method extensions
  * ({@link ru.vyarus.guice.persist.orient.repository.core.spi.method.RepositoryMethodExtension}).
- * <p>General workflow: method descriptor is computed or cached instance used, method parameters parsed and
+ * <p>
+ * General workflow: method descriptor is computed or cached instance used, method parameters parsed and
  * extension specific logic called, result is optionally converted using
  * {@link ru.vyarus.guice.persist.orient.repository.core.ext.service.result.converter.ResultConverter} or registered
- * conversion extension {@link ru.vyarus.guice.persist.orient.repository.core.spi.result.ResultConverter}.</p>
+ * conversion extension {@link ru.vyarus.guice.persist.orient.repository.core.spi.result.ResultConverter}.
  *
  * @author Vyacheslav Rusakov
  * @see ru.vyarus.guice.persist.orient.repository.command.query.QueryMethodExtension

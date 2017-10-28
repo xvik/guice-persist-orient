@@ -18,7 +18,8 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * </pre>
  * This is required, because implementation itself is not generified, but generic is available when repository,
  * for example, implements mixin interface.
- * <p>By default, delegate method declared interface used, but if other type's generic required declare it.</p>
+ * <p>
+ * By default, delegate method declared interface used, but if other type's generic required declare it.
  *
  * @author Vyacheslav Rusakov
  * @since 23.10.2014

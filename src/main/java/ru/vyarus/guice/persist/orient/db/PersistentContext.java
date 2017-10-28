@@ -17,9 +17,11 @@ import javax.inject.Singleton;
 
 /**
  * Combines most useful api together for simplified usage.
- * <p>Example usage:
- * {@code @Inject PersistentContext<OObjectDatabaseTx> context;}</p>
- * <p>The following connection types could be used:</p>
+ * <p>
+ * Example usage:
+ * {@code @Inject PersistentContext<OObjectDatabaseTx> context;}
+ * <p>
+ * The following connection types could be used:
  * <ul>
  * <li>{@link com.orientechnologies.orient.object.db.OObjectDatabaseTx} for object db connection</li>
  * <li>{@link com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx} for document db connection</li>
@@ -30,7 +32,8 @@ import javax.inject.Singleton;
  * <li>{@link com.tinkerpop.blueprints.impls.orient.OrientGraphNoTx} for non transactional graph db connection
  * (will provide only for notx transaction type, otherwise fail)</li>
  * </ul>
- * <p>See {@link ru.vyarus.guice.persist.orient.db.pool.PoolManager} implementations for connection details.</p>
+ * <p>
+ * See {@link ru.vyarus.guice.persist.orient.db.pool.PoolManager} implementations for connection details.
  *
  * @param <C> connection type
  * @author Vyacheslav Rusakov
@@ -130,8 +133,9 @@ public class PersistentContext<C> {
 
     /**
      * Execute action without transaction.
-     * <p>NOTE: If normal transaction already started, error will be thrown to prevent confusion
-     * (direct call to template will ignore notx config in case of ongoing transaction, so this call is safer)</p>
+     * <p>
+     * NOTE: If normal transaction already started, error will be thrown to prevent confusion
+     * (direct call to template will ignore notx config in case of ongoing transaction, so this call is safer).
      *
      * @param action action to execute within transaction (new or ongoing)
      * @param <T>    expected return type
@@ -145,8 +149,9 @@ public class PersistentContext<C> {
 
     /**
      * Execute action without transaction.
-     * <p>NOTE: If normal transaction already started, error will be thrown to prevent confusion
-     * (direct call to template will ignore notx config in case of ongoing transaction, so this call is safer)</p>
+     * <p>
+     * NOTE: If normal transaction already started, error will be thrown to prevent confusion
+     * (direct call to template will ignore notx config in case of ongoing transaction, so this call is safer)
      *
      * @param action action to execute within transaction (new or ongoing)
      * @param <T>    expected return type
@@ -161,11 +166,14 @@ public class PersistentContext<C> {
     /**
      * Execute logic with specific user. Changes user only inside transaction.
      * Used, for example, to force security checks.
-     * <p>See {@link ru.vyarus.guice.persist.orient.db.user.UserManager#executeWithTxUser(
-     *String, ru.vyarus.guice.persist.orient.db.user.SpecificUserAction)}.</p>
-     * <p>Use {@link ru.vyarus.guice.persist.orient.db.user.UserManager} directly to change user for
-     * multiple transactions.</p>
-     * <p>LIMITATION: current user must have read right on users table.</p>
+     * <p>
+     * See {@link ru.vyarus.guice.persist.orient.db.user.UserManager#executeWithTxUser(
+     *String, ru.vyarus.guice.persist.orient.db.user.SpecificUserAction)}.
+     * <p>
+     * Use {@link ru.vyarus.guice.persist.orient.db.user.UserManager} directly to change user for
+     * multiple transactions.
+     * <p>
+     * LIMITATION: current user must have read right on users table.
      *
      * @param user   user login
      * @param action action to execute under user

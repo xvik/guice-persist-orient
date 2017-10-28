@@ -8,13 +8,16 @@ import java.lang.annotation.Annotation;
 /**
  * Root extension defines repository method behaviour. Extension must be defined with custom annotation,
  * annotated with {@link RepositoryMethod}.
- * <p>Extensions must manually call {@link ru.vyarus.guice.persist.orient.repository.core.ext.SpiService}
- * to support parameter and amend extensions.</p>
- * <p>Extension implementation is obtained from guice context. Any guice scope may be used, but prefer
- * singletons for performance.</p>
- * <p>Extension must be stateless: in case of singleton, the same instance will be used to handle all
+ * <p>
+ * Extensions must manually call {@link ru.vyarus.guice.persist.orient.repository.core.ext.SpiService}
+ * to support parameter and amend extensions.
+ * <p>
+ * Extension implementation is obtained from guice context. Any guice scope may be used, but prefer
+ * singletons for performance.
+ * <p>
+ * Extension must be stateless: in case of singleton, the same instance will be used to handle all
  * method calls and with other scopes instances will be different for descriptor creation and execution.
- * Use custom descriptor object for extension specific state.</p>
+ * Use custom descriptor object for extension specific state.
  *
  * @param <T> descriptor type
  * @param <A> method annotation type
@@ -27,8 +30,9 @@ public interface RepositoryMethodExtension<T extends RepositoryMethodDescriptor,
      * Called  to compute extension specific method descriptor. Descriptor is cached, so
      * all reflection and other slow logic used to analyze method will be called one time.
      * Descriptor should contain everything for fast execution.
-     * <p>Use {@link ru.vyarus.guice.persist.orient.repository.core.MethodDefinitionException} for usage specific
-     * errors.</p>
+     * <p>
+     * Use {@link ru.vyarus.guice.persist.orient.repository.core.MethodDefinitionException} for usage specific
+     * errors.
      *
      * @param context    repository method context
      * @param annotation method annotation instance (extension annotation)

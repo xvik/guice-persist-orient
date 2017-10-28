@@ -34,17 +34,22 @@ import java.util.Set;
 
 /**
  * Module provides integration for orient db with guice through guice-persist.
- * <p>Orient storage format is unified within database types (object, document, graph), so it's possible to use
- * the same database as object, document or graph.</p>
- * <p>For example, object connection could be used for schema initialization and property updates
- * and graph connection to work with relations</p>
- * <p>Module initialize set of connection pools. By default its object, document and graph
+ * <p>
+ * Orient storage format is unified within database types (object, document, graph), so it's possible to use
+ * the same database as object, document or graph.
+ * <p>
+ * For example, object connection could be used for schema initialization and property updates
+ * and graph connection to work with relations.
+ * <p>
+ * Module initialize set of connection pools. By default its object, document and graph
  * (but depends on available jars in classpath:
  * if graph or object jars are not in classpath these pools will not be loaded). Set of pools may be modified
- * by overriding {@code #configurePools()} method.</p>
- * <p>To initialize (create or update) database schema register
- * {@code ru.vyarus.guice.persist.orient.db.scheme.SchemeInitializer}
- * implementation. By default no-op implementation registered. </p>
+ * by overriding {@code #configurePools()} method.
+ * <p>
+ * To initialize (create or update) database schema register
+ * {@link ru.vyarus.guice.persist.orient.db.scheme.SchemeInitializer}
+ * implementation. By default no-op implementation registered.
+ * <p>
  * Two implementations provided to automatically initialize scheme from domain objects:
  * <ul>
  * <li>{@link ru.vyarus.guice.persist.orient.support.PackageSchemeModule}.
@@ -55,24 +60,30 @@ import java.util.Set;
  * </ul>
  * NOTE: it's better to not perform db updates in schema initializer, because schema updates
  * must be performed in no-tx mode.
- * <p>Both default initializers use extended object mapper
+ * <p>
+ * Both default initializers use extended object mapper
  * {@link ru.vyarus.guice.persist.orient.db.scheme.initializer.ObjectSchemeInitializer}, build around
- * default orient object mapper. It allows defining custom annotations (plugins).</p>
- * <p>To initialize or migrate database data you can define
+ * default orient object mapper. It allows defining custom annotations (plugins).
+ * <p>
+ * To initialize or migrate database data you can define
  * {@link ru.vyarus.guice.persist.orient.db.data.DataInitializer}. By default,
  * no-op implementation registered. Data initializer called without transaction, because different initialization
- * cases are possible.</p>
- * <p>All pools share the same transaction (object and graph connections use document connection internally).
- * All transactions are orchestrated with {@code ru.vyarus.guice.persist.orient.db.transaction.TransactionManager}.
+ * cases are possible.
+ * <p>
+ * All pools share the same transaction (object and graph connections use document connection internally).
+ * All transactions are orchestrated with {@link ru.vyarus.guice.persist.orient.db.transaction.TransactionManager}.
  * Pool maintains lazy transaction, so when transaction
- * manager starts new transaction, pool will not initialize connection, until connection will be requested.</p>
- * <p>It's possible to override default transaction manager implementation: simply register new manager
- * implementation of {@code ru.vyarus.guice.persist.orient.db.transaction.TransactionManager}</p>
- * <p>Transaction could be initialized with @Transactional annotation or using transaction templates (
- * {@code ru.vyarus.guice.persist.orient.db.transaction.template.TxTemplate} or
- * {@code ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxTemplate}. To define transaction type
+ * manager starts new transaction, pool will not initialize connection, until connection will be requested.
+ * <p>
+ * It's possible to override default transaction manager implementation: simply register new manager
+ * implementation of {@link ru.vyarus.guice.persist.orient.db.transaction.TransactionManager}.
+ * <p>
+ * Transaction could be initialized with @Transactional annotation or using transaction templates (
+ * {@link ru.vyarus.guice.persist.orient.db.transaction.template.TxTemplate} or
+ * {@link ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxTemplate}. To define transaction type
  * for specific transaction (or switch off transaction within unit of work) use @TxType annotation.
- * Also this could be done with transaction templates.</p>
+ * Also this could be done with transaction templates.
+ * <p>
  * To work with database objects use {@link ru.vyarus.guice.persist.orient.db.PersistentContext}:
  * <ul>
  * <li>PersistentContext&lt;OObjectDatabaseTx&gt; for object db connection</li>
@@ -85,12 +96,15 @@ import java.util.Set;
  * </ul>
  * It is also possible to obtain connection by using provider directly {@code Provider<OObjectDatabaseTx>}.
  * Provider will fail to provide connection if unit of work is not defined (using annotation or transactional template)
- * <p>{@link ru.vyarus.guice.persist.orient.db.PersistentContext} combines provider,
- * templates and access to transaction manager (single point to access almost all api).</p>
- * <p>Persistent service must be manually started or stopped: obtain PersistService and call .start() and .stop() when
+ * <p>
+ * {@link ru.vyarus.guice.persist.orient.db.PersistentContext} combines provider,
+ * templates and access to transaction manager (single point to access almost all api).
+ * <p>
+ * Persistent service must be manually started or stopped: obtain PersistService and call .start() and .stop() when
  * appropriate. This will start/stop all registered pools. Without initialization any try
- * to obtain connection will fail.</p>
- * <p>Local database auto creation is enabled by default. Disable it if required.</p>
+ * to obtain connection will fail.
+ * <p>
+ * Local database auto creation is enabled by default. Disable it if required.
  *
  * @see ru.vyarus.guice.persist.orient.db.transaction.TransactionManager for details about transactions
  */
@@ -256,7 +270,7 @@ public class OrientModule extends PersistModule {
 
     /**
      * Register pool within pools set and register provider for specified type.
-     * Use to register custom pools in {@code #configurePools()}.
+     * Use to register custom pools in {@link #configurePools()}.
      *
      * @param type connection object type
      * @param pool pool type

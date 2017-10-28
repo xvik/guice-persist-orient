@@ -18,12 +18,14 @@ import javax.inject.Singleton;
 /**
  * User manager holds context user credentials. Using different user may be important
  * for scheme initialization (when user with higher rights may be required) or to
- * rely on <a href="http://www.orientechnologies.com/docs/last/orientdb.wiki/Security.html">orient security model</a>.
- * <p>By default, configured user and password returned. To use specific user use
+ * rely on <a href="http://orientdb.com/docs/last/Security.html">orient security model</a>.
+ * <p>
+ * By default, configured user and password returned. To use specific user use
  * {@code executeWithUser} method. Specific user binds to current thread. Most likely,
- * user changing logic will be implemented as filter to handle request processing as specific user.</p>
- * <p>User could be changed for ongoing transaction too in order to force security checks. This change will not
- * affect connection user credentials.</p>
+ * user changing logic will be implemented as filter to handle request processing as specific user.
+ * <p>
+ * User could be changed for ongoing transaction too in order to force security checks. This change will not
+ * affect connection user credentials.
  *
  * @author Vyacheslav Rusakov
  * @since 04.11.2014
@@ -68,10 +70,13 @@ public class UserManager {
 
     /**
      * Changes connection credentials user outside of transaction. Used to affect multiple transactions.
-     * <p>Recursive user changes are not allowed, but user change inside transaction is allowed.</p>
-     * <p>Action approach is important to explicitly define scope of specific user and
-     * properly cleanup state (which may be not done in case of direct override).</p>
-     * <p>Propagates runtime exceptions (orient exceptions).</p>
+     * <p>
+     * Recursive user changes are not allowed, but user change inside transaction is allowed.
+     * <p>
+     * Action approach is important to explicitly define scope of specific user and
+     * properly cleanup state (which may be not done in case of direct override).
+     * <p>
+     * Propagates runtime exceptions (orient exceptions).
      *
      * @param user       specific user name
      * @param password   specific user password
@@ -103,7 +108,8 @@ public class UserManager {
     /**
      * Changes current connection user. See {@link #executeWithTxUser(
      *com.orientechnologies.orient.core.metadata.security.OSecurityUser, SpecificUserAction)}.
-     * <p>LIMITATION: current user must have read right on users table.</p>
+     * <p>
+     * LIMITATION: current user must have read right on users table.
      *
      * @param user       user login
      * @param userAction logic to execute with specific user
@@ -128,11 +134,14 @@ public class UserManager {
     /**
      * Changes current connection user. Affects only current transaction and can't be used outside of transaction
      * ({@link ODatabaseDocumentTx#setUser(com.orientechnologies.orient.core.metadata.security.OSecurityUser)}).
-     * <p>Recursive user changes are not allowed, so attempt to change user under already changed user will
-     * lead to error. The only exception is change to the same user (in this case change is ignored).</p>
-     * <p>Action approach is important to explicitly define scope of specific user and
-     * properly cleanup state (which may be not done in case of direct override).</p>
-     * <p>Propagates runtime exceptions (orient exceptions).</p>
+     * <p>
+     * Recursive user changes are not allowed, so attempt to change user under already changed user will
+     * lead to error. The only exception is change to the same user (in this case change is ignored).
+     * <p>
+     * Action approach is important to explicitly define scope of specific user and
+     * properly cleanup state (which may be not done in case of direct override).
+     * <p>
+     * Propagates runtime exceptions (orient exceptions).
      *
      * @param user       specific user
      * @param userAction logic to execute with specific user

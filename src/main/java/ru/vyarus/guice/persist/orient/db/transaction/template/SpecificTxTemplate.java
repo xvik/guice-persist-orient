@@ -8,7 +8,7 @@ import javax.inject.Singleton;
 
 /**
  * Transaction template to be used with specific (single) connection type (reduce boilerplate, comparing to generic
- * {@code ru.vyarus.guice.persist.orient.db.transaction.template.TxTemplate}).
+ * {@link ru.vyarus.guice.persist.orient.db.transaction.template.TxTemplate}).
  * Internally use generic transaction template.
  *
  * @param <C> required connection type

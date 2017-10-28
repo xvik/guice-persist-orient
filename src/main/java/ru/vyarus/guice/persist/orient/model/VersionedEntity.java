@@ -6,12 +6,16 @@ import javax.persistence.Version;
 /**
  * All object entities must declare version property for optimistic transactions support.
  * Entities may subclass this class or simply declare property the same way.
- * <p>If you use entity just for scheme mapping, then version property is not required. It's required only to retrieve
- * entity with object connection within OPTIMISTIC transaction.</p>
- * <p>Don't use for entities annotated with @EdgeType or @VertexType, because each class can have only one
- * superclass in scheme, so if bae class will extend V, edge entities can't extend from it and the opposite.
- * Moreover, there is a big chance that some simple class will be registered before annotated one and logic will not
- * be able to modify it.</p>
+ * <p>
+ * If you use entity just for scheme mapping, then version property is not required. It's required only to retrieve
+ * entity with object connection within OPTIMISTIC transaction.
+ * <p>
+ * Don't use for entities annotated with
+ * {@link ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.type.edge.EdgeType} or
+ * {@link ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.type.vertex.VertexType}, because each class can
+ * have only one superclass in scheme, so if bae class will extend V, edge entities can't extend from it and
+ * the opposite. Moreover, there is a big chance that some simple class will be registered before annotated one and
+ * logic will not be able to modify it.
  *
  * @author Vyacheslav Rusakov
  * @since 19.07.2014

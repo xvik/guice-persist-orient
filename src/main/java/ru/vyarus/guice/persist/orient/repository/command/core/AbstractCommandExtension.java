@@ -21,9 +21,11 @@ import java.util.Map;
 /**
  * Base class for query extensions.
  * Query execution is two phase: prepare execution descriptor and then prepare orient command and execute.
- * <p>Query natively supports el variables. By default, generic names could be used. If other variables required,
- * special amend extensions should be written to populate context.</p>
- * <p>Extensions must implement {@link ru.vyarus.guice.persist.orient.repository.command.core.spi.CommandExtension}.</p>
+ * <p>
+ * Query natively supports el variables. By default, generic names could be used. If other variables required,
+ * special amend extensions should be written to populate context.
+ * <p>
+ * Extensions must implement {@link ru.vyarus.guice.persist.orient.repository.command.core.spi.CommandExtension}.
  *
  * @param <T> descriptor type
  * @param <A> method annotation type

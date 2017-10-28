@@ -20,11 +20,12 @@ import static ru.vyarus.guice.persist.orient.repository.core.MethodDefinitionExc
  * Support ordinal and named parameters. All parameters not handled with extensions are treated ordinal
  * (positional). Named parameters parsed with extensions (default is
  * {@link ru.vyarus.guice.persist.orient.repository.command.ext.param.Param}, but any custom could be used).
- * <p>Query string could contain el variables (${name}). By default declaring type generic names recognized.
+ * <p>
+ * Query string could contain el variables (${name}). By default declaring type generic names recognized.
  * Other variables could be provided by extensions (e.g.
  * {@link ru.vyarus.guice.persist.orient.repository.command.ext.elvar.ElVar}). Extension must declare
  * that placeholder recognized and owned by extension. There are two types of variables: static, which are resolved
- * during method descriptor creation and dynamic, which require parameter values to compute value.</p>
+ * during method descriptor creation and dynamic, which require parameter values to compute value.
  *
  * @author Vyacheslav Rusakov
  * @since 04.02.2015

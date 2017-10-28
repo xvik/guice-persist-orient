@@ -12,16 +12,20 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 /**
  * Model scheme type extension to register model as vertex type (extends V). If model scheme is already create
  * in database, alters class to extend V (without data loss).
- * <p>Note: due to orient multiple inheritance support since 2.1, superclass is assigned directly
- * to annotated class.</p>
- * <p>If class or its super classes extend E error will be thrown. If class or any class in hierarchy
- * already extend V, nothing will be done.</p>
- * <p>It's more safe to only annotate topmost classes.</p>
- * <p>Sample sql: alter class Model superclass V, create class Model extends V</p>
+ * <p>
+ * Note: due to orient multiple inheritance support since 2.1, superclass is assigned directly
+ * to annotated class.
+ * <p>
+ * If class or its super classes extend E error will be thrown. If class or any class in hierarchy
+ * already extend V, nothing will be done.
+ * <p>
+ * It's more safe to only annotate topmost classes.
+ * <p>
+ * Sample sql: alter class Model superclass V, create class Model extends V.
  *
  * @author Vyacheslav Rusakov
- * @see <a href="http://www.orientechnologies.com/docs/last/orientdb.wiki/SQL-Alter-Class.html">alter docs</a>
- * @see <a href="http://www.orientechnologies.com/docs/last/orientdb.wiki/SQL-Create-Class.html">create docs</a>
+ * @see <a href="http://orientdb.com/docs/last/SQL-Alter-Class.html">alter docs</a>
+ * @see <a href="http://orientdb.com/docs/last/SQL-Create-Class.html">create docs</a>
  * @since 03.08.2014
  */
 @Documented

@@ -34,8 +34,9 @@ public final class RidUtils {
     /**
      * Resolve rid from almost all possible objects.
      * Even if simple string provided, value will be checked for correctness.
-     * <p>Note: not saved object proxy, document or vertex will contain fake id and will be accepted
-     * (but query result against such id will be empty).</p>
+     * <p>
+     * Note: not saved object proxy, document or vertex will contain fake id and will be accepted
+     * (but query result against such id will be empty).
      *
      * @param value value may be a mapped object (proxy or raw), document, vertex, ORID or simple string
      * @return correct rid string

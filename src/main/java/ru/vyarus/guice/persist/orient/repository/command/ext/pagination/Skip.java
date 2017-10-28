@@ -12,13 +12,15 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 /**
  * Marks parameter as query SKIP parameter. Parameter must be number type.
  * Throws error if applied not to select query.
- * <p>NOTE: SKIP part is added at the end of the string, because it's the only way to set it. In most
+ * <p>
+ * NOTE: SKIP part is added at the end of the string, because it's the only way to set it. In most
  * cases this will be ok, but for some queries it may lead to bad query. In this case write SKIP directly
- * in query.</p>
- * <p>For pagination ise it with {@link Limit} annotation</p>
+ * in query.
+ * <p>
+ * For pagination ise it with {@link Limit} annotation
  *
  * @author Vyacheslav Rusakov
- * @see <a href="http://www.orientechnologies.com/docs/last/orientdb.wiki/Pagination.html">docs</a>
+ * @see <a href="http://orientdb.com/docs/last/Pagination.html">docs</a>
  * @since 06.02.2015
  */
 @Documented
