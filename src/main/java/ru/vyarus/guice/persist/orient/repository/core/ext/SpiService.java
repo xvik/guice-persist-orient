@@ -1,6 +1,5 @@
 package ru.vyarus.guice.persist.orient.repository.core.ext;
 
-import com.google.common.primitives.Primitives;
 import com.google.inject.Injector;
 import ru.vyarus.guice.persist.orient.repository.core.ext.service.AmendExtensionsService;
 import ru.vyarus.guice.persist.orient.repository.core.ext.service.ParamsService;
@@ -89,7 +88,7 @@ public class SpiService {
     @SuppressWarnings("unchecked")
     public Object convert(final RepositoryMethodDescriptor descriptor, final Object result) {
         final Object res = resultService.convert(descriptor, result);
-        ResultUtils.check(res, Primitives.wrap(descriptor.result.expectType));
+        ResultUtils.check(res, descriptor.result.expectType);
         return res;
     }
 }

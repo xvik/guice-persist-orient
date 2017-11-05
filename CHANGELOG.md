@@ -22,7 +22,8 @@
 * Add @LiveQuery repository extension (live queries support)
     - required orient OLiveResultListener parameter must be used with @Listen annotation
     - custom LiveQueryListener interface can be used instead of OLiveResultListener to apply automatic result conversion 
-      (with RecordConverter to mimic the same behaviour as for usual method result).    
+      (with RecordConverter to mimic the same behaviour as for usual method result).
+* Support repository result projection on collections (e.g. @Query("select name from Model") List<String> select()).           
 
 ### 3.2.0 (2016-09-25)
 * Update to orient 2.1

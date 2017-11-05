@@ -96,6 +96,7 @@ public class RecordConverter {
         desc.returnType = target.equals(Void.class) ? ResultType.VOID : ResultType.PLAIN;
         desc.entityType = target;
         desc.expectType = target;
+        desc.entityDbType = ORecord.class.isAssignableFrom(target) ? DbType.DOCUMENT : DbType.UNKNOWN;
         res = (T) converter.convert(desc, result);
         ResultUtils.check(res, target);
         return res;

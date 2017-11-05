@@ -1,16 +1,14 @@
 package ru.vyarus.guice.persist.orient.repository.core.executor.impl;
 
-import com.google.common.collect.ImmutableList;
 import com.google.inject.Provider;
 import com.orientechnologies.orient.core.command.OCommandRequest;
 import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx;
-import com.orientechnologies.orient.core.record.impl.ODocument;
+import com.orientechnologies.orient.core.record.ORecord;
 import ru.vyarus.guice.persist.orient.db.DbType;
 import ru.vyarus.guice.persist.orient.repository.core.executor.RepositoryExecutor;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.util.List;
 
 /**
  * Document connection repository executor.
@@ -20,7 +18,6 @@ import java.util.List;
  */
 @Singleton
 public class DocumentRepositoryExecutor implements RepositoryExecutor {
-    private static final List<Class> ACCEPT_TYPES = ImmutableList.<Class>of(ODocument.class);
 
     private final Provider<ODatabaseDocumentTx> provider;
 
@@ -32,7 +29,7 @@ public class DocumentRepositoryExecutor implements RepositoryExecutor {
 
     @Override
     public boolean accept(final Class<?> returnType) {
-        return ACCEPT_TYPES.contains(returnType);
+        return ORecord.class.isAssignableFrom(returnType);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package ru.vyarus.guice.persist.orient.repository.core.result;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.primitives.Primitives;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -85,7 +86,8 @@ public final class ResultAnalyzer {
         } else {
             expected = returnClass;
         }
-        return expected;
+        // wrap primitive, because result will always be object
+        return Primitives.wrap(expected);
     }
 
     private static Class<?> resolveGenericType(final Method method, final MethodGenericsContext generics) {

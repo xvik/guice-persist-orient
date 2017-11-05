@@ -42,7 +42,7 @@ class RepositoryProjectionsTest extends AbstractTest {
         List<String> res = repository.getNames()
         then: "list of ODocument's returned without flattening"
         res.size() == 10
-        res[0] instanceof ODocument
+        res[0] instanceof String
 
         when: "calling single field query"
         String[] res2 = repository.getNamesArray()
@@ -79,7 +79,7 @@ class RepositoryProjectionsTest extends AbstractTest {
         List<String> res2 = repository.getGraphNames()
         then: "list of Vertex's returned without flattening"
         res2.size() == 10
-        res2[0] instanceof Vertex
+        res2[0] instanceof String
 
         when: "requesting vertex with single element"
         Vertex res3 = repository.getSingleValueVertex()

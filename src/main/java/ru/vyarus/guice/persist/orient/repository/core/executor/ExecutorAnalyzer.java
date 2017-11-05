@@ -43,21 +43,21 @@ public final class ExecutorAnalyzer {
             final DbType connectionHint,
             final boolean customConverterUsed) {
 
-        RepositoryExecutor executor;
+        final RepositoryExecutor executorByType = selectByType(descriptor.entityType, executors);
+        // storing recognized entity type relation to connection specific object (very helpful hint)
+        descriptor.entityDbType = executorByType == null ? DbType.UNKNOWN : executorByType.getType();
+        final RepositoryExecutor executor;
         if (connectionHint != null) {
             // connection hint in priority
             executor = find(connectionHint, executors);
             check(executor != null, "Executor not found for type set in annotation %s", connectionHint);
             if (!customConverterUsed) {
                 // catch silly errors
-                validateHint(selectByType(descriptor.entityType, executors), connectionHint);
+                validateHint(executorByType, connectionHint);
             }
         } else {
             // automatic detection
-            executor = selectByType(descriptor.entityType, executors);
-            if (executor == null) {
-                executor = defaultExecutor;
-            }
+            executor = executorByType == null ? defaultExecutor : executorByType;
         }
         return executor;
     }

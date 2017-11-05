@@ -5,6 +5,7 @@ import com.google.common.collect.Maps
 import com.google.common.collect.Sets
 import com.google.inject.Inject
 import ru.vyarus.guice.persist.orient.AbstractTest
+import ru.vyarus.guice.persist.orient.db.DbType
 import ru.vyarus.guice.persist.orient.repository.core.ext.service.result.converter.DefaultResultConverter
 import ru.vyarus.guice.persist.orient.repository.core.ext.service.result.converter.ResultConversionException
 import ru.vyarus.guice.persist.orient.support.modules.DefaultModule
@@ -26,7 +27,8 @@ class ResultConverterTest extends AbstractTest {
         Object res = converter.convert(new ResultDescriptor(
                 returnType: ResultType.COLLECTION,
                 expectType: List,
-                entityType: Integer),
+                entityType: Integer,
+                entityDbType: DbType.UNKNOWN),
                 Lists.newArrayList(1, 2, 3))
         then: "no conversion"
         res instanceof ArrayList
@@ -35,7 +37,8 @@ class ResultConverterTest extends AbstractTest {
         res = converter.convert(new ResultDescriptor(
                 returnType: ResultType.COLLECTION,
                 expectType: Collection,
-                entityType: Integer),
+                entityType: Integer,
+                entityDbType: DbType.UNKNOWN),
                 Lists.newArrayList(1, 2, 3))
         then: "no conversion"
         res instanceof ArrayList
@@ -44,7 +47,8 @@ class ResultConverterTest extends AbstractTest {
         res = converter.convert(new ResultDescriptor(
                 returnType: ResultType.COLLECTION,
                 expectType: Iterable,
-                entityType: Integer),
+                entityType: Integer,
+                entityDbType: DbType.UNKNOWN),
                 Lists.newArrayList(1, 2, 3))
         then: "no conversion"
         res instanceof ArrayList
@@ -53,7 +57,8 @@ class ResultConverterTest extends AbstractTest {
         res = converter.convert(new ResultDescriptor(
                 returnType: ResultType.COLLECTION,
                 expectType: Iterator,
-                entityType: Integer),
+                entityType: Integer,
+                entityDbType: DbType.UNKNOWN),
                 Lists.newArrayList(1, 2, 3))
         then: "list iterator returned"
         res instanceof Iterator
@@ -62,7 +67,8 @@ class ResultConverterTest extends AbstractTest {
         res = converter.convert(new ResultDescriptor(
                 returnType: ResultType.COLLECTION,
                 expectType: Set,
-                entityType: Integer),
+                entityType: Integer,
+                entityDbType: DbType.UNKNOWN),
                 Lists.newArrayList(1, 2, 3))
         then: "converted to hash set"
         res instanceof HashSet
@@ -74,7 +80,8 @@ class ResultConverterTest extends AbstractTest {
         Object res = converter.convert(new ResultDescriptor(
                 returnType: ResultType.COLLECTION,
                 expectType: List,
-                entityType: Integer),
+                entityType: Integer,
+                entityDbType: DbType.UNKNOWN),
                 Sets.newHashSet(1, 2, 3))
         then: "converted to ArrayList"
         res instanceof ArrayList
@@ -83,16 +90,28 @@ class ResultConverterTest extends AbstractTest {
         res = converter.convert(new ResultDescriptor(
                 returnType: ResultType.COLLECTION,
                 expectType: Collection,
-                entityType: Integer),
+                entityType: Object,
+                entityDbType: DbType.UNKNOWN),
                 Sets.newHashSet(1, 2, 3))
         then: "no conversion"
         res instanceof HashSet
+
+        when: "result is HashSet and Collection expected with projection check"
+        res = converter.convert(new ResultDescriptor(
+                returnType: ResultType.COLLECTION,
+                expectType: Collection,
+                entityType: Integer,
+                entityDbType: DbType.UNKNOWN),
+                Sets.newHashSet(1, 2, 3))
+        then: "no conversion"
+        res instanceof List
 
         when: "result is HashSet and Iterable expected"
         res = converter.convert(new ResultDescriptor(
                 returnType: ResultType.COLLECTION,
                 expectType: Iterable,
-                entityType: Integer),
+                entityType: Object,
+                entityDbType: DbType.UNKNOWN),
                 Sets.newHashSet(1, 2, 3))
         then: "no conversion"
         res instanceof HashSet
@@ -101,7 +120,8 @@ class ResultConverterTest extends AbstractTest {
         res = converter.convert(new ResultDescriptor(
                 returnType: ResultType.COLLECTION,
                 expectType: Iterator,
-                entityType: Integer),
+                entityType: Integer,
+                entityDbType: DbType.UNKNOWN),
                 Sets.newHashSet(1, 2, 3))
         then: "set iterator returned"
         res instanceof Iterator
@@ -110,7 +130,8 @@ class ResultConverterTest extends AbstractTest {
         res = converter.convert(new ResultDescriptor(
                 returnType: ResultType.COLLECTION,
                 expectType: Set,
-                entityType: Integer),
+                entityType: Integer,
+                entityDbType: DbType.UNKNOWN),
                 Sets.newHashSet(1, 2, 3))
         then: "no conversion"
         res instanceof Set
@@ -122,7 +143,8 @@ class ResultConverterTest extends AbstractTest {
         Object res = converter.convert(new ResultDescriptor(
                 returnType: ResultType.COLLECTION,
                 expectType: List,
-                entityType: Integer),
+                entityType: Integer,
+                entityDbType: DbType.UNKNOWN),
                 Sets.newHashSet(1, 2, 3).iterator())
         then: "converted to ArrayList"
         res instanceof ArrayList
@@ -131,7 +153,8 @@ class ResultConverterTest extends AbstractTest {
         res = converter.convert(new ResultDescriptor(
                 returnType: ResultType.COLLECTION,
                 expectType: Collection,
-                entityType: Integer),
+                entityType: Integer,
+                entityDbType: DbType.UNKNOWN),
                 Sets.newHashSet(1, 2, 3).iterator())
         then: "converted to ArrayList"
         res instanceof ArrayList
@@ -140,7 +163,8 @@ class ResultConverterTest extends AbstractTest {
         res = converter.convert(new ResultDescriptor(
                 returnType: ResultType.COLLECTION,
                 expectType: Iterable,
-                entityType: Integer),
+                entityType: Integer,
+                entityDbType: DbType.UNKNOWN),
                 Sets.newHashSet(1, 2, 3).iterator())
         then: "converted to ArrayList"
         res instanceof ArrayList
@@ -149,7 +173,8 @@ class ResultConverterTest extends AbstractTest {
         res = converter.convert(new ResultDescriptor(
                 returnType: ResultType.COLLECTION,
                 expectType: Iterator,
-                entityType: Integer),
+                entityType: Integer,
+                entityDbType: DbType.UNKNOWN),
                 Sets.newHashSet(1, 2, 3).iterator())
         then: "no conversion"
         res instanceof Iterator
@@ -158,7 +183,8 @@ class ResultConverterTest extends AbstractTest {
         res = converter.convert(new ResultDescriptor(
                 returnType: ResultType.COLLECTION,
                 expectType: Set,
-                entityType: Integer),
+                entityType: Integer,
+                entityDbType: DbType.UNKNOWN),
                 Sets.newHashSet(1, 2, 3).iterator())
         then: "converted to HashSet"
         res instanceof HashSet
@@ -170,7 +196,8 @@ class ResultConverterTest extends AbstractTest {
         Object res = converter.convert(new ResultDescriptor(
                 returnType: ResultType.ARRAY,
                 expectType: Integer[],
-                entityType: Integer),
+                entityType: Integer,
+                entityDbType: DbType.UNKNOWN),
                 Lists.newArrayList(1, 2, 3))
         then: "converted to array"
         res instanceof Integer[]
@@ -179,7 +206,8 @@ class ResultConverterTest extends AbstractTest {
         res = converter.convert(new ResultDescriptor(
                 returnType: ResultType.ARRAY,
                 expectType: Integer[],
-                entityType: Integer),
+                entityType: Integer,
+                entityDbType: DbType.UNKNOWN),
                 Sets.newHashSet(1, 2, 3))
         then: "converted to array"
         res instanceof Integer[]
@@ -188,7 +216,8 @@ class ResultConverterTest extends AbstractTest {
         res = converter.convert(new ResultDescriptor(
                 returnType: ResultType.ARRAY,
                 expectType: Integer[],
-                entityType: Integer),
+                entityType: Integer,
+                entityDbType: DbType.UNKNOWN),
                 Sets.newHashSet(1, 2, 3).iterator())
         then: "converted to array"
         res instanceof Integer[]
@@ -197,7 +226,8 @@ class ResultConverterTest extends AbstractTest {
         res = converter.convert(new ResultDescriptor(
                 returnType: ResultType.ARRAY,
                 expectType: Integer[],
-                entityType: Integer),
+                entityType: Integer,
+                entityDbType: DbType.UNKNOWN),
                 [1, 2, 3])
         then: "no conversion"
         res instanceof Integer[]
@@ -209,7 +239,8 @@ class ResultConverterTest extends AbstractTest {
         Object res = converter.convert(new ResultDescriptor(
                 returnType: ResultType.PLAIN,
                 expectType: Integer,
-                entityType: Integer),
+                entityType: Integer,
+                entityDbType: DbType.UNKNOWN),
                 Lists.newArrayList(1, 2, 3))
         then: "first element taken"
         res instanceof Integer
@@ -219,7 +250,8 @@ class ResultConverterTest extends AbstractTest {
         res = converter.convert(new ResultDescriptor(
                 returnType: ResultType.PLAIN,
                 expectType: Integer,
-                entityType: Integer),
+                entityType: Integer,
+                entityDbType: DbType.UNKNOWN),
                 Sets.newHashSet(1, 2, 3))
         then: "first element taken"
         res instanceof Integer
@@ -229,7 +261,8 @@ class ResultConverterTest extends AbstractTest {
         res = converter.convert(new ResultDescriptor(
                 returnType: ResultType.PLAIN,
                 expectType: Integer,
-                entityType: Integer),
+                entityType: Integer,
+                entityDbType: DbType.UNKNOWN),
                 Sets.newHashSet(1, 2, 3).iterator())
         then: "first element taken"
         res instanceof Integer
@@ -239,7 +272,8 @@ class ResultConverterTest extends AbstractTest {
         res = converter.convert(new ResultDescriptor(
                 returnType: ResultType.PLAIN,
                 expectType: Integer,
-                entityType: Integer),
+                entityType: Integer,
+                entityDbType: DbType.UNKNOWN),
                 1)
         then: "no conversion"
         res instanceof Integer
@@ -252,7 +286,8 @@ class ResultConverterTest extends AbstractTest {
         def res = converter.convert(new ResultDescriptor(
                 returnType: ResultType.PLAIN,
                 expectType: com.google.common.base.Optional,
-                entityType: Integer),
+                entityType: Integer,
+                entityDbType: DbType.UNKNOWN),
                 1)
         then: "no conversion"
         res instanceof com.google.common.base.Optional
@@ -265,7 +300,8 @@ class ResultConverterTest extends AbstractTest {
         Object res = converter.convert(new ResultDescriptor(
                 returnType: ResultType.COLLECTION,
                 expectType: LinkedList,
-                entityType: Integer),
+                entityType: Integer,
+                entityDbType: DbType.UNKNOWN),
                 Lists.newArrayList(1, 2, 3))
         then: "converted to LinkedList"
         res instanceof LinkedList
@@ -275,7 +311,8 @@ class ResultConverterTest extends AbstractTest {
         res = converter.convert(new ResultDescriptor(
                 returnType: ResultType.COLLECTION,
                 expectType: LinkedList,
-                entityType: Integer),
+                entityType: Integer,
+                entityDbType: DbType.UNKNOWN),
                 Sets.newHashSet(1, 2, 3))
         then: "converted to LinkedList"
         res instanceof LinkedList
@@ -285,7 +322,8 @@ class ResultConverterTest extends AbstractTest {
         res = converter.convert(new ResultDescriptor(
                 returnType: ResultType.COLLECTION,
                 expectType: LinkedList,
-                entityType: Integer),
+                entityType: Integer,
+                entityDbType: DbType.UNKNOWN),
                 Sets.newHashSet(1, 2, 3))
         then: "converted to LinkedList"
         res instanceof LinkedList
@@ -297,8 +335,9 @@ class ResultConverterTest extends AbstractTest {
         when: "result is Integer and int expected"
         Object res = converter.convert(new ResultDescriptor(
                 returnType: ResultType.PLAIN,
-                expectType: int,
-                entityType: Integer),
+                expectType: Integer,
+                entityType: Integer,
+                entityDbType: DbType.UNKNOWN),
                 1)
         then: "no conversion"
         res instanceof Integer
@@ -308,7 +347,8 @@ class ResultConverterTest extends AbstractTest {
         res = converter.convert(new ResultDescriptor(
                 returnType: ResultType.VOID,
                 expectType: void,
-                entityType: Integer),
+                entityType: Integer,
+                entityDbType: DbType.UNKNOWN),
                 1)
         then: "null returned, even if actual result passed"
         res == null
@@ -317,7 +357,8 @@ class ResultConverterTest extends AbstractTest {
         res = converter.convert(new ResultDescriptor(
                 returnType: ResultType.PLAIN,
                 expectType: Long,
-                entityType: Long),
+                entityType: Long,
+                entityDbType: DbType.UNKNOWN),
                 1 as int)
         then: "int converted to long"
         res == 1
@@ -326,7 +367,8 @@ class ResultConverterTest extends AbstractTest {
         res = converter.convert(new ResultDescriptor(
                 returnType: ResultType.PLAIN,
                 expectType: Integer,
-                entityType: Integer),
+                entityType: Integer,
+                entityDbType: DbType.UNKNOWN),
                 1 as long)
         then: "int converted to integer"
         res == 1
@@ -338,7 +380,8 @@ class ResultConverterTest extends AbstractTest {
         converter.convert(new ResultDescriptor(
                 returnType: ResultType.PLAIN,
                 expectType: Integer,
-                entityType: Integer),
+                entityType: Integer,
+                entityDbType: DbType.UNKNOWN),
                 'string')
         then: "fail"
         thrown(ResultConversionException)
@@ -347,7 +390,8 @@ class ResultConverterTest extends AbstractTest {
         converter.convert(new ResultDescriptor(
                 returnType: ResultType.COLLECTION,
                 expectType: Integer,
-                entityType: Integer),
+                entityType: Integer,
+                entityDbType: DbType.UNKNOWN),
                 Maps.newHashMap())
         then: "fail"
         thrown(ResultConversionException)
