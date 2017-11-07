@@ -1,3 +1,4 @@
+### 3.3.0 (2017-11-07)
 * Update to orient 2.2
 * Support [custom types installation](http://orientdb.com/docs/2.2/Object-2-Record-Java-Binding.html#custom-types)
   with new method: OrientModule#withCustomTypes(OObjectSerializer...) (#14)
@@ -23,7 +24,7 @@
     - required orient OLiveResultListener parameter must be used with @Listen annotation
     - custom LiveQueryListener interface can be used instead of OLiveResultListener to apply automatic result conversion 
       (with RecordConverter to mimic the same behaviour as for usual method result).
-* Support repository result projection on collections (e.g. @Query("select name from Model") List<String> select()).           
+* Support repository result projection on collections (e.g. @Query("select name from Model") List\<String> select()).           
 
 ### 3.2.0 (2016-09-25)
 * Update to orient 2.1

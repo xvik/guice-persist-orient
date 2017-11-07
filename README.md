@@ -15,7 +15,7 @@ Underlying format is almost the same for all database types, which allows us to 
 may be performed as object database (jpa style) and graph api may be used for creating relations.
 
 Features:
-* For orient 2.1
+* For orient 2.2
 * Integration through [guice-persist](https://github.com/google/guice/wiki/GuicePersist) (UnitOfWork, PersistService, @Transactional)
 * Support for [document](http://orientdb.com/docs/last/Document-Database.html), [object](http://orientdb.com/docs/last/Object-Database.html) and
 [graph](http://orientdb.com/docs/last/Graph-Database-Tinkerpop.html) databases
@@ -49,7 +49,7 @@ Maven:
 <dependency>
 <groupId>ru.vyarus</groupId>
 <artifactId>guice-persist-orient</artifactId>
-<version>3.2.0</version>
+<version>3.3.0</version>
 <exclusions>
   <exclusion>
       <groupId>com.orientechnologies</groupId>
@@ -66,12 +66,13 @@ Maven:
 Gradle:
 
 ```groovy
-compile ('ru.vyarus:guice-persist-orient:3.2.0'){
+compile ('ru.vyarus:guice-persist-orient:3.3.0'){
     exclude module: 'orientdb-graphdb'
     exclude module: 'orientdb-object'       
 }
 ```
 
+* For orient 2.1.x use 3.2.0 (see [old docs](https://github.com/xvik/guice-persist-orient/tree/orient-2.1.x))
 * For orient 2.0.x use 3.1.1 (see [old docs](https://github.com/xvik/guice-persist-orient/tree/orient-2.0.x))
 * For orient 1.x use 2.1.0 (see [old docs](https://github.com/xvik/guice-persist-orient/tree/orient-1.x))
 
@@ -122,6 +123,30 @@ For example, to switch off transactions use:
 install(new OrientModule(url, user, password)
                 .defaultTransactionConfig(new TxConfig(OTransaction.TXTYPE.NOTX));
 ```
+
+##### Custom types support
+
+If you need to use orient [custom types](http://orientdb.com/docs/2.2/Object-2-Record-Java-Binding.html#custom-types)
+(custom converter to/from object, used only in object connection)
+
+To register custom type:
+
+```java
+install(new OrientModule(url, user, password)
+                .withCustomTypes(MyTypeSerializer.class));
+```
+
+where `MySerializer implements OObjectSerializer`
+
+Serializers are assumed to be guice beans: declare it in guice module if required, otherwise guice JIT will be used to 
+obtain converter instance.
+
+Custom converters are collected using guice multibinder feature, so you can also install custom converter by using
+multibinder directly:
+
+```java
+Multibinder.newSetBinder(binder(), OObjectSerializer.class).addBinding().to(serializerClass);
+``` 
 
 ### Usage
 
@@ -238,6 +263,33 @@ void doTx1() {..}
 @Transactional
 void doTx2() {..}
 ```
+
+###### Manual transaction
+
+In some rear cases it is required to use already created database object (use thread-bound connection inside guice).
+This is possible by using special `TxConfig.external()` config.
+
+```java
+// transaction opened manually
+ODatabaseDocumentTx db = new ODatabaseDocumentTx();
+// database object must be bound on current thread (orient did this automatically 
+// in most cases, so direct call is not required)
+db.activateOnCurrentThread();
+
+// context is PersistentContext, but TxTemplate may be called directly
+context.doInTransaction(TxConfig.external(), () -> {
+    // here we can use external transaction          
+})
+
+// connection closed manually
+db.close();
+```
+
+Important difference with normal transaction is that guice will not manage commits and rollbacks:
+it is assumed that connection lifecycle is correctly managed manually.
+
+There are intentionally no shortcuts for starting external unit of work because its not supposed
+to be used often and must be applied only in cases where other behaviour is impossible,
 
 #### Connections
 
@@ -515,6 +567,7 @@ Method annotations:
 * [@Script](https://github.com/xvik/guice-persist-orient/wiki/Repository-command-methods#script) - script call (sql, js etc)
 * [@AsyncQuery](https://github.com/xvik/guice-persist-orient/wiki/Repository-command-methods#asyncquery) - async query call
 * [@Delegate](https://github.com/xvik/guice-persist-orient/wiki/Repository-delegate-methods#delegate-method) - delegate call to other bean method
+* [@LiveQuery](https://github.com/xvik/guice-persist-orient/wiki/Repository-command-methods#livequery) - live query subscription call
 
 All except delegate are command methods (build around orient command objects).
 
@@ -652,11 +705,32 @@ void jsScript()
 void select(@Listen OCommandResultListener listener)
 ```
 
+Type safe listener (with conversion):
+
+```java
+@AsyncQuery("select from Model")
+void select(@Listen AsyncQueryListener<Model> listener)
+```
+
+Or with projection:
+
+```java
+@AsyncQuery("select name from Model")
+void select(@Listen AsyncQueryListener<String> listener)
+```
+
 Dynamic parameters:
 
 ```java
 @Query('select from Model where ${cond}')
 List<ODocument> findWhere(@ElVar("cond") String cond, @DynamicParams Object... params);
+```
+
+Non blocking (listener execute in different thread):
+
+```java
+@AsyncQuery(value = "select from Model", blocking = false)
+Future<List<Model>> select(@Listen AsyncQueryListener<Model> listener)
 ```
 
 [Delegate](https://github.com/xvik/guice-persist-orient/wiki/Repository-delegate-methods) example:
@@ -670,6 +744,34 @@ public class SomeBean {
 
 @Delegate(SomeBean.class)
 List getAll();
+```
+
+[Live](http://orientdb.com/docs/last/Live-Query.html) query:
+
+```java
+@LiveQuery("select from Model")
+int subscribe(@Listen OLiveResultListener listener)
+```
+
+Type safe listener (with conversion): 
+
+```java
+@LiveQuery("select from Model")
+int subscribe(@Listen QueryResultListener<Model> listener)
+```
+
+Or vertex conversion:
+
+```java
+@LiveQuery("select from Model")
+int subscribe(@Listen QueryResultListener<Vertex> listener)
+```
+
+Unsubscription (usual command call):
+
+```java
+@Query("live unsubscribe ${token}")
+void unsubscribe(@ElVar("token") int token)
 ```
 
 Read more about method usage in wiki:
