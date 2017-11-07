@@ -778,6 +778,8 @@ Read more about method usage in wiki:
 * [Command methods](https://github.com/xvik/guice-persist-orient/wiki/Repository-command-methods)
 * [Delegate methods](https://github.com/xvik/guice-persist-orient/wiki/Repository-delegate-methods)
 
+For more examples see [repository definition examples](https://github.com/xvik/guice-persist-orient-examples/tree/master/repository-examples)
+
 Writing extensions:
 * [Extending commands](https://github.com/xvik/guice-persist-orient/wiki/Repository-command-methods-internals)
 * [Extending delegates](https://github.com/xvik/guice-persist-orient/wiki/Repository-delegate-methods-internals)
