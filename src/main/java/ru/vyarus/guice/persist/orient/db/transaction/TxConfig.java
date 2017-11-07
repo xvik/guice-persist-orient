@@ -99,14 +99,17 @@ public class TxConfig {
     }
 
     /**
-     * External transaction is re-use of database instance already bound to thread. For example,
+     * External transaction is a re-use of database instance already bound to thread. For example,
      * <pre>{@code
      *      // transaction opened manually
      *      ODatabaseDocumentTx db = new ODatabaseDocumentTx();
      *      // only after that it could be detected
      *      db.activateOnCurrentThread();
      *
-     *      // here we can use external transaction
+     *      // context is PersistentContext, but TxTemplate may be called directly
+     *      context.doInTransaction(TxConfig.external(), () -> {
+     *          // here we can use external transaction
+     *      })
      *
      *      // connection closed manually
      *      db.close();
