@@ -44,7 +44,24 @@ class IndexFieldsOrderTest extends AbstractTest {
 
         when: "execute query with one field"
         doc = repository.foo()
-        then: "index used"
-        doc.field("involvedIndexes").contains("test")
+        then: "composite index NOT USED when searching by single field"
+        doc.field("involvedIndexes") == null
+    }
+
+    def "Check composite index used for single field"() {
+
+        setup:
+        context.doWithoutTransaction({
+            def db = context.getConnection()
+            initializer.register(FOTest2)
+            db.getMetadata().getSchema().synchronizeSchema()
+            db.getMetadata().reload()
+        } as TxAction)
+        repository.save(new FOTest2(foo: 'foo', bar: 'bar'))
+
+        when: "execute query with one field"
+        def doc = repository.foo2()
+        then: "index USED (why???)"
+        doc.field("involvedIndexes").contains("test2")
     }
 }

@@ -4,6 +4,7 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.Strings;
 import com.orientechnologies.orient.core.index.OIndex;
 import com.orientechnologies.orient.core.metadata.schema.OClass;
+import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,8 +55,9 @@ public class IndexFieldExtension implements FieldExtension<Index> {
                 return;
             }
         }
-        clazz.createIndex(name, type, property)
-                .getDefinition().setNullValuesIgnored(annotation.ignoreNullValues());
+        final ODocument metadata = new ODocument()
+                .field("ignoreNullValues", annotation.ignoreNullValues());
+        clazz.createIndex(name, type.name(), null, metadata, new String[]{property});
         logger.info("Index '{}' ({} [{}]) {} created", name, model, property, type);
     }
 }

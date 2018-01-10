@@ -1,3 +1,9 @@
+* Fix ignoreNullValues flag support for @Index and @CompositeIndex scheme extensions (#16)
+(breaking) since orient 2.2 ignoreNullValues is false by default, but @Index and @CompositeIndex annotations
+use ignoreNullValues = true by default and it was not applied properly before. Now flag will apply properly, 
+which may change existing indexes. One consequence I know is composite index with ignoreNullValues = true is not
+used for single field searches (don't know why). 
+
 ### 3.3.0 (2017-11-07)
 * Update to orient 2.2
 * Support [custom types installation](http://orientdb.com/docs/2.2/Object-2-Record-Java-Binding.html#custom-types)

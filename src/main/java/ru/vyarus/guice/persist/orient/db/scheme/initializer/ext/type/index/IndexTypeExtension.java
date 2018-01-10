@@ -5,6 +5,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.orientechnologies.orient.core.index.OIndex;
 import com.orientechnologies.orient.core.metadata.schema.OClass;
+import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,8 +57,9 @@ public class IndexTypeExtension implements TypeExtension<CompositeIndex> {
                 return;
             }
         }
-        clazz.createIndex(name, type, fields)
-                .getDefinition().setNullValuesIgnored(annotation.ignoreNullValues());
+        final ODocument metadata = new ODocument()
+                .field("ignoreNullValues", annotation.ignoreNullValues());
+        clazz.createIndex(name, type.name(), null, metadata, fields);
         logger.info("Index '{}' ({} [{}]) {} created", name, model, Joiner.on(',').join(fields), type);
     }
 }
