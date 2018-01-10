@@ -3,18 +3,14 @@ package ru.vyarus.guice.persist.orient.util.transactional
 import com.google.inject.Injector
 import com.orientechnologies.orient.core.tx.OTransaction
 import org.spockframework.guice.GuiceInterceptor
-import org.spockframework.runtime.IRunListener
 import org.spockframework.runtime.extension.AbstractAnnotationDrivenExtension
 import org.spockframework.runtime.extension.IMethodInterceptor
 import org.spockframework.runtime.extension.IMethodInvocation
-import org.spockframework.runtime.model.ErrorInfo
 import org.spockframework.runtime.model.FeatureInfo
-import org.spockframework.runtime.model.IterationInfo
-import org.spockframework.runtime.model.SpecInfo
-import ru.vyarus.guice.persist.orient.db.transaction.TransactionManager
 import ru.vyarus.guice.persist.orient.db.transaction.TxConfig
 import ru.vyarus.guice.persist.orient.db.transaction.template.TxAction
 import ru.vyarus.guice.persist.orient.db.transaction.template.TxTemplate
+import spock.lang.Specification
 
 /**
  * @author Vyacheslav Rusakov 
@@ -34,7 +30,9 @@ class TransactionalExtension extends AbstractAnnotationDrivenExtension<Transacti
             @Override
             void intercept(IMethodInvocation invocation) throws Throwable {
                 if (injector == null) {
-                    GuiceInterceptor guiceInterceptor = feature.getSpec().sharedInitializerInterceptors.find {
+                    // complex way to support TransactionalTest under UseRemote extension
+                    GuiceInterceptor guiceInterceptor = ((Specification) invocation.sharedInstance)
+                            .specificationContext.currentSpec.sharedInitializerInterceptors.find {
                         if (it instanceof GuiceInterceptor) {
                             return it
                         }
