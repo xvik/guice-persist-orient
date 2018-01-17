@@ -1,3 +1,4 @@
+### 3.3.1 (2018-01-17)
 * Fix ignoreNullValues flag support for @Index and @CompositeIndex scheme extensions (#16)
 (breaking) since orient 2.2 ignoreNullValues is false by default, but @Index and @CompositeIndex annotations
 use ignoreNullValues = true by default and it was not applied properly before. Now flag will apply properly, 
