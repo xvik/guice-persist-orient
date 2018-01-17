@@ -2,7 +2,7 @@ package ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.field.index.ful
 
 import com.orientechnologies.orient.core.metadata.schema.OType
 import com.orientechnologies.orient.core.sql.OCommandSQL
-import com.orientechnologies.orient.core.sql.parser.TokenMgrError
+import com.orientechnologies.orient.core.sql.OCommandSQLParsingException
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.AbstractSchemeExtensionTest
 
 /**
@@ -25,6 +25,6 @@ class RecoveryDetector extends AbstractSchemeExtensionTest {
         clazz.createProperty("name", OType.STRING)
         db.getUnderlying().command(new OCommandSQL("insert into Sample set name = \"\rbla\"")).execute()
         then:
-        thrown(TokenMgrError)
+        thrown(OCommandSQLParsingException)
     }
 }

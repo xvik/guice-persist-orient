@@ -30,7 +30,7 @@ class ExternalTxTest extends AbstractTest {
             assert extDb == db.underlying // same underlining instance
         } as SpecificTxAction)
         then: "connection remain after unit of work"
-        ODatabaseRecordThreadLocal.INSTANCE.isDefined()
+        ODatabaseRecordThreadLocal.instance().isDefined()
         !extDb.isClosed()
 
         cleanup:
@@ -58,7 +58,7 @@ class ExternalTxTest extends AbstractTest {
     def "Check external unit did not start without thread bound connection"() {
 
         when: "Creating external config without bound connection"
-        assert !ODatabaseRecordThreadLocal.INSTANCE.isDefined()
+        assert !ODatabaseRecordThreadLocal.instance().isDefined()
         TxConfig.external()
         then: "error"
         thrown(ODatabaseException)
@@ -76,7 +76,7 @@ class ExternalTxTest extends AbstractTest {
             assert context.transactionManager.activeTransactionType == OTransaction.TXTYPE.OPTIMISTIC
         } as SpecificTxAction)
         then: "connection remain after unit of work"
-        ODatabaseRecordThreadLocal.INSTANCE.isDefined()
+        ODatabaseRecordThreadLocal.instance().isDefined()
 
         cleanup:
         extDb.close()

@@ -132,7 +132,7 @@ public class TxConfig {
         final TxConfig cfg = new TxConfig();
         cfg.external = true;
         // currently only only notx and optimistic transactions supported
-        cfg.txtype = ODatabaseRecordThreadLocal.INSTANCE.get()
+        cfg.txtype = ODatabaseRecordThreadLocal.instance().get()
                 .getTransaction() instanceof OTransactionNoTx
                 ? OTransaction.TXTYPE.NOTX : OTransaction.TXTYPE.OPTIMISTIC;
         cfg.rollbackOn.clear();

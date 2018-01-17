@@ -130,7 +130,7 @@ public class DocumentPool implements PoolManager<ODatabaseDocumentTx> {
                     "Can't obtain connection from pool %s: no transaction defined.", getType()));
             if (transactionManager.isExternalTransaction()) {
                 // external mode: use already created connection
-                transaction.set((ODatabaseDocumentTx) ODatabaseRecordThreadLocal.INSTANCE.get());
+                transaction.set((ODatabaseDocumentTx) ODatabaseRecordThreadLocal.instance().get());
                 logger.trace("Pool {} use bound to thread connection (external mode)", getType());
             } else {
                 // normal mode: create connection

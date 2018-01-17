@@ -142,7 +142,7 @@ public final class RidUtils {
     private static Field findIdField(final Object value) {
         Field res = null;
         final Class<?> type = value.getClass();
-        if (ODatabaseRecordThreadLocal.INSTANCE.isDefined()) {
+        if (ODatabaseRecordThreadLocal.instance().isDefined()) {
             res = OObjectEntitySerializer.getIdField(type);
         } else {
             final String idField = OObjectSerializerHelper.getObjectIDFieldName(value);

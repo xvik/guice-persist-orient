@@ -30,10 +30,11 @@ class ServerRule extends ExternalResource {
     public void startServer() {
         folder.create()
         System.setProperty("ORIENTDB_HOME", folder.root.getAbsolutePath());
-        System.setProperty("orientdb.www.path", "");
+        System.setProperty("orientdb.www.path", "")
         OGlobalConfiguration.SERVER_SECURITY_FILE.setValue("src/test/resources/ru/vyarus/guice/persist/orient/security.json")
         OServerMain
-                .create()
+                // have to use shutdownEngineOnExit=false and manually shutdown engine to prevent log manager shutdown (which is impossible to recover)
+                .create(false)
                 .startup(getClass().getResourceAsStream("/ru/vyarus/guice/persist/orient/server-config.xml") as InputStream)
                 .activate();
         println 'remote server started'
@@ -46,6 +47,9 @@ class ServerRule extends ExternalResource {
 
     public void stopServer() {
         OServerMain.server().shutdown()
+        // do manual engine shutdown because server started with shutdownEngineOnExit=false
+        // otherwise there will be a lot of error messages from closed log manager
+        Orient.instance().shutdown();
         folder.delete()
         // re-init engines, without it following in memory tests will fail
         Orient.instance().startup()

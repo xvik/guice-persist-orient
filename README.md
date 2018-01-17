@@ -188,7 +188,7 @@ can't be used outside of transaction.
 When you get error:
 
 ```
-Database instance is not set in current thread. Assure to set it with: ODatabaseRecordThreadLocal.INSTANCE.set(db)
+Database instance is not set in current thread. Assure to set it with: ODatabaseRecordThreadLocal.instance().set(db)
 ```
 
 It almost certainly means that you perform transactional operation outside of transaction. Simply enlarge transaction scope.

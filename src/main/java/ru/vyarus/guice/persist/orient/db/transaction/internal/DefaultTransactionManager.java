@@ -47,7 +47,7 @@ public class DefaultTransactionManager implements TransactionManager {
             return;
         }
         if (config != null && config.isExternal()) {
-            Preconditions.checkState(!ODatabaseRecordThreadLocal.INSTANCE.get().isClosed(),
+            Preconditions.checkState(!ODatabaseRecordThreadLocal.instance().get().isClosed(),
                     "Can't start external unit of work: connection bound to thread is closed");
         }
         transaction.set(MoreObjects.firstNonNull(config, defaultConfig));
