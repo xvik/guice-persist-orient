@@ -73,7 +73,7 @@ public class TxTemplate {
     }
 
     private void throwRuntime(final Throwable th) {
-        Throwables.propagateIfPossible(th);
+        Throwables.throwIfUnchecked(th);
         throw new TemplateTransactionException("Transaction template execution failed", th);
     }
 

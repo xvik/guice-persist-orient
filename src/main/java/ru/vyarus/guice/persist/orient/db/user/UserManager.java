@@ -97,7 +97,7 @@ public class UserManager {
         try {
             result = userAction.execute();
         } catch (Throwable th) {
-            Throwables.propagateIfPossible(th);
+            Throwables.throwIfUnchecked(th);
             throw new UserActionException(String.format("Failed to perform operation under user '%s'", user), th);
         } finally {
             specificUser.remove();
@@ -161,7 +161,7 @@ public class UserManager {
         try {
             result = userAction.execute();
         } catch (Throwable th) {
-            Throwables.propagateIfPossible(th);
+            Throwables.throwIfUnchecked(th);
             throw new UserActionException(String.format("Failed to perform tx action with user '%s'",
                     user.getName()), th);
         } finally {
