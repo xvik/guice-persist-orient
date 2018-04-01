@@ -56,7 +56,7 @@ public class IndexValidationSupport {
                 new Function<OClass.INDEX_TYPE, String>() {
                     @Nonnull
                     @Override
-                    public String apply(final OClass.INDEX_TYPE input) {
+                    public String apply(@Nonnull final OClass.INDEX_TYPE input) {
                         return input.name();
                     }
                 }));

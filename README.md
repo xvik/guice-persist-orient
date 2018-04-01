@@ -1,12 +1,14 @@
 # Guice integration for OrientDB
-[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/xvik/guice-persist-orient)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](http://www.opensource.org/licenses/MIT)
 [![Build Status](https://img.shields.io/travis/xvik/guice-persist-orient.svg?style=flat&branch=master)](https://travis-ci.org/xvik/guice-persist-orient)
-[![Coverage Status](https://img.shields.io/coveralls/xvik/guice-persist-orient.svg?style=flat)](https://coveralls.io/r/xvik/guice-persist-orient)
+[![Appveyor build status](https://ci.appveyor.com/api/projects/status/github/xvik/guice-persist-orient?svg=true)](https://ci.appveyor.com/project/xvik/guice-persist-orient)
+[![codecov](https://codecov.io/gh/xvik/guice-persist-orient/branch/master/graph/badge.svg)](https://codecov.io/gh/xvik/guice-persist-orient)
 
 `guice-persist-orient` wins 4th place in [Software Quality Award 2015](http://www.yegor256.com/2015/04/16/award.html)
 
 > **[Examples repository](https://github.com/xvik/guice-persist-orient-examples)** 
+
+Support: [Gitter chat](https://gitter.im/xvik/guice-persist-orient)
 
 ### About
 
@@ -40,7 +42,7 @@ Features:
 Releases are published to [bintray jcenter](https://bintray.com/bintray/jcenter) (package appear immediately after release) 
 and then to maven central (require few days after release to be published). 
 
-[![JCenter](https://img.shields.io/bintray/v/vyarus/xvik/guice-persist-orient.svg?label=jcenter)](https://bintray.com/vyarus/xvik/guice-persist-orient/_latestVersion)
+[![JCenter](https://api.bintray.com/packages/vyarus/xvik/guice-persist-orient/images/download.svg)](https://bintray.com/vyarus/xvik/guice-persist-orient/_latestVersion)
 [![Maven Central](https://img.shields.io/maven-central/v/ru.vyarus/guice-persist-orient.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/ru.vyarus/guice-persist-orient)
 
 Maven:
