@@ -51,7 +51,7 @@ Maven:
 <dependency>
 <groupId>ru.vyarus</groupId>
 <artifactId>guice-persist-orient</artifactId>
-<version>3.3.1</version>
+<version>3.3.2</version>
 <exclusions>
   <exclusion>
       <groupId>com.orientechnologies</groupId>
@@ -68,19 +68,19 @@ Maven:
 Gradle:
 
 ```groovy
-compile ('ru.vyarus:guice-persist-orient:3.3.1'){
+compile ('ru.vyarus:guice-persist-orient:3.3.2'){
     exclude module: 'orientdb-graphdb'
     exclude module: 'orientdb-object'       
 }
 ```
 
+Remove exclusions to enable object and graph db support.
+
+3.3.2 and above require guice 4.2.0
+
 * For orient 2.1.x use 3.2.0 (see [old docs](https://github.com/xvik/guice-persist-orient/tree/orient-2.1.x))
 * For orient 2.0.x use 3.1.1 (see [old docs](https://github.com/xvik/guice-persist-orient/tree/orient-2.0.x))
 * For orient 1.x use 2.1.0 (see [old docs](https://github.com/xvik/guice-persist-orient/tree/orient-1.x))
-
-By default, only document database support is enabled. 
-
-Remove exclusions to enable object and graph db support.
 
 NOTE: It's very important for object db to use exact `javassist` version it depends on. If other libraries in 
 your classpath use `javassist`, check that newer or older version not appear in classpath.
