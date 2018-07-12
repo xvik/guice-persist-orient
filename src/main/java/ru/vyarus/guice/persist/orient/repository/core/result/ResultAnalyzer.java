@@ -9,7 +9,6 @@ import ru.vyarus.guice.persist.orient.repository.core.ext.service.result.convert
 import ru.vyarus.guice.persist.orient.repository.core.spi.DescriptorContext;
 import ru.vyarus.guice.persist.orient.repository.core.util.RepositoryUtils;
 import ru.vyarus.java.generics.resolver.context.MethodGenericsContext;
-import ru.vyarus.java.generics.resolver.util.NoGenericException;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
@@ -91,10 +90,8 @@ public final class ResultAnalyzer {
     }
 
     private static Class<?> resolveGenericType(final Method method, final MethodGenericsContext generics) {
-        Class res;
-        try {
-            res = generics.resolveReturnTypeGeneric();
-        } catch (NoGenericException e) {
+        Class res = generics.resolveReturnTypeGeneric();
+        if (res == null) {
             res = Object.class;
             LOGGER.warn(
                     "Can't detect entity: no generic set in repository method return type: {}.",
