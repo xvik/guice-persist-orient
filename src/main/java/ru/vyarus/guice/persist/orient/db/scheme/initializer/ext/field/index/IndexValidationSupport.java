@@ -99,6 +99,7 @@ public class IndexValidationSupport {
      * @param signs original index signs to compare
      * @return matcher object to specify new signature signs (order is important!)
      */
+    @SuppressWarnings("PMD.LinguisticNaming")
     public IndexMatchVerifier isIndexSigns(final Object... signs) {
         final List<Object> idxsigns = Lists.newArrayList();
         idxsigns.add(index.getType());

@@ -2,19 +2,19 @@ plugins {
     id 'groovy'
     id 'jacoco'
     id 'project-report'
-    id 'ru.vyarus.java-lib' version '1.0.5'
+    id 'ru.vyarus.java-lib' version '1.1.2'
     id 'ru.vyarus.github-info' version '1.1.0'
-    id 'ru.vyarus.animalsniffer' version '1.4.3'
-    id 'ru.vyarus.quality' version '3.0.0'
-    id 'com.jfrog.bintray' version '1.8.0'
-    id 'net.researchgate.release' version '2.6.0'
-    id 'com.github.ben-manes.versions' version '0.17.0'
+    id 'ru.vyarus.animalsniffer' version '1.4.6'
+    id 'ru.vyarus.quality' version '3.1.1'
+    id 'com.jfrog.bintray' version '1.8.4'
+    id 'net.researchgate.release' version '2.7.0'
+    id 'com.github.ben-manes.versions' version '0.20.0'
 }
 
 sourceCompatibility = 1.6
 
 wrapper {
-    gradleVersion = '4.6'
+    gradleVersion = '4.8.1'
 }
 
 ext {
@@ -42,7 +42,7 @@ dependencies {
 
     testCompile 'ch.qos.logback:logback-classic:1.2.3'
     testCompile 'org.slf4j:jul-to-slf4j:1.7.25'
-    testCompile 'org.spockframework:spock-guice:1.1-groovy-2.4'
+    testCompile 'org.spockframework:spock-guice:1.2-groovy-2.5'
     testCompile 'ru.vyarus:guice-validator:1.2.0'
     testCompile 'org.hibernate:hibernate-validator:5.2.0.Final'
     testCompile 'org.glassfish.web:javax.el:2.2.6'

@@ -40,6 +40,7 @@ public class RepositoryMethodInterceptor implements MethodInterceptor {
     @Inject
     private SpiService spiService;
 
+    @Override
     public Object invoke(final MethodInvocation methodInvocation) throws Throwable {
         final Class<?> repositoryType = RepositoryUtils.resolveRepositoryClass(methodInvocation.getThis());
         final Method method = methodInvocation.getMethod();
