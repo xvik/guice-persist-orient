@@ -7,7 +7,7 @@ site_url: 'https://xvik.github.io/guice-persist-orient'
 
 # Repository (add link to repository on each page)
 repo_name: guice-persist-orient
-repo_url: http://github.com/you/guice-persist-orient
+repo_url: http://github.com/xvik/guice-persist-orient
 edit_uri: edit/master/src/doc/docs/
 
 #Copyright (shown at the footer)
