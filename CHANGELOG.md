@@ -1,4 +1,4 @@
-* Update to guice 4.2.1
+* Update to guice 4.2.2
 
 ### 3.3.2 (2018-04-02)
 * Guice 4.2.0 compatibility

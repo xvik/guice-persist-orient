@@ -20,7 +20,7 @@ wrapper {
 
 ext {
     orient = '2.2.33'
-    guice = '4.2.1'
+    guice = '4.2.2'
 }
 
 repositories { jcenter(); mavenCentral(); mavenLocal() }
