@@ -48,6 +48,7 @@ markdown_extensions:
 
 pages:
   - Home: index.md
+  - Getting started: getting-started.md
   - User guide:
       - Installation: guide/installation.md
   - About:
