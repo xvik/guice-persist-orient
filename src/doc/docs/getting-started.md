@@ -59,13 +59,8 @@ In short:
 By default use `admin/admin` user.
 
 !!! note
-    Auto database creation for local types (all except 'remote') is enabled by default, but you can switch it off. 
-    Auto creation is nice for playing/developing/testing phase, but most likely will not be useful for production.
-    
-    ```java
-    install(new OrientModule(url, user, password)
-                    .autoCreateLocalDatabase(false));
-    ```
+    Auto database creation for local types (all except 'remote') is enabled by default, but you 
+    [can switch it off](guide/configuration.md#auto-database-creation).     
     
 ### Lifecycle
 
@@ -94,10 +89,15 @@ Assuming start and stop methods are called on application startup/shutdown.
 
 ### Connections
 
-Document is the core connection type. Object and graph apis use document connection internally.
-Connection object mainly defines result of queries: document connection will always return ODocument,
-object connection returns mapped pojos (actually proxies) and ODocument for fields selections and
-graph api returns Vertex and Edge types.
+[Document](http://orientdb.com/docs/2.2.x/Document-Database.html) is the core connection type. 
+[Object](http://orientdb.com/docs/2.2.x/Object-Database.html) and [graph](http://orientdb.com/docs/2.2.x/Graph-Database-Tinkerpop.html) 
+apis use document connection internally.
+Connection object mainly defines the result of queries: 
+
+* document connection will always return ODocument
+* object connection returns mapped pojos (actually proxies) or ODocument for fields selections and
+* graph api returns Vertex and Edge types.
+
 And of course connections provide specific apis for types.
 
 You can use any connections within single transaction and changes made in one connection type will be visible
@@ -148,14 +148,13 @@ But note that it would not work without external transaction.
 
 ### Transactions
 
-There are 3 ways to declare transaction:
+There are 3 ways to declare [transaction](http://orientdb.com/docs/last/Transactions.html):
 
 * `@Transactional` annotation on guice bean or single method (additional `@TxType` annotation allows to define different transaction type for specific unit of work)
 * Inject `PersistentContext` bean into your service and use its methods
 * Using `TransactionManager` begin() and end() methods (low level trasaction control).
 
 First two options are better, because they automatically manage rollbacks and avoid not closed (forgot to call end) transactions.
-Read more about [orient transactions](http://orientdb.com/docs/last/Transactions.html)
 
 For example, to declare transaction using annotation:
 
@@ -176,7 +175,7 @@ public class MyService {
 ```
 
 !!! warning
-    Private methods can't be annotated with `@Transactional`: method musty be at least package-private.
+    Private methods can't be annotated with `@Transactional`: method must be at least package-private.
 
 Transaction scopes could intersect: e.g. if transactional method calls bean, also annotated as transactional,
 then only root transaction scope will work (no sub-transaction or anything like this).  
@@ -190,20 +189,6 @@ then only root transaction scope will work (no sub-transaction or anything like 
     ```
     This is required, for example, for schema updates
 
-Using `TransactionManager`:
-
-```java
-@Inject TransactionManager manager;
-...
-manager.begin();
-try {
-// do something
-    manager.end();
-} catch (Exception ex) {
-    manager.rollback()
-}
-```    
-    
 !!! note
     in contrast to spring default proxies, in guice when you call bean method inside the same bean, annotation interceptor will still work.
     So it's possible to define few units of work withing single bean using annotations:
@@ -235,7 +220,7 @@ try {
 
 ### Schema initialization
 
-In order to work with datbase, you obviously need to initialize it's schema first.
+In order to work with database, you obviously need to initialize it's schema first.
 
 ```java
 public class MySchemeInitializer implements SchemeInitializer {
@@ -300,6 +285,8 @@ public class Account {
 !!! tip
     If you want to use graph api with objects then annotate your class as `@VertexType` or `@EdgeType`
     in order to correct create graph schema from object.
+
+More about [object scheme mapping](mapping/objectscheme.md).
     
 ### Data initialization
 
@@ -395,7 +382,8 @@ public abstract class MyDao {
 !!! note
     Guice aop will work on repositories (in fact it's implemented using aop), so you may
     use any other aop-driven annotations there.    
-    
+
+More about [repositories](repository/overview.md)    
 
 ### Summary
 

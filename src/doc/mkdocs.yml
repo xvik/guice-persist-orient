@@ -35,24 +35,93 @@ extra:
 # Extensions
 markdown_extensions:
   - admonition
-  - codehilite(guess_lang=false)
+  - codehilite:
+      guess_lang: false
   - footnotes
   - meta
-  - toc(permalink=true)
-  - pymdownx.betterem(smart_enable=all)
+  - toc:
+      permalink: true
+  - pymdownx.betterem:
+      smart_enable: all
   - pymdownx.caret
   - pymdownx.inlinehilite
   - pymdownx.magiclink
   - pymdownx.smartsymbols
   - pymdownx.superfences
 
-pages:
-  - Home: index.md
-  - Getting started: getting-started.md
-  - User guide:
-      - Installation: guide/installation.md
-  - About:
-      - Compatibility: about/compatibility.md
-      - Release notes: about/history.md
-      - Support: about/support.md
-      - License: about/license.md
+nav:
+    - Home: index.md
+    - Getting started: getting-started.md
+    - API: api.md
+    - User guide:
+        - Configuration: guide/configuration.md
+        - Connections: guide/connections.md
+        - Transactions: guide/transactions.md
+        - Cache: guide/cache.md
+    - Object scheme mapping:
+        - Overview: mapping/objectscheme.md
+        - Writing custom annotations: mapping/writing.md
+        - Class:
+          - '@CompositeIndex': mapping/class/compositeindex.md
+          - '@CompositeLuceneIndex': mapping/class/compositeluceneindex.md
+          - '@DropIndexes': mapping/class/dropindexes.md
+          - '@EdgeType': mapping/class/edge.md
+          - '@RenameFrom': mapping/class/rename.md
+          - '@Recreate': mapping/class/recreate.md
+          - '@VertexType': mapping/class/vertex.md
+        - Property:
+          - '@CaseInsensitive': mapping/property/caseinsensitive.md
+          - '@FulltextIndex': mapping/property/fulltextindex.md
+          - '@Index': mapping/property/index.md
+          - '@Mandatory': mapping/property/mandatory.md
+          - '@LuceneIndex': mapping/property/luceneindex.md
+          - '@ONotNull': mapping/property/notnull.md
+          - '@Readonly': mapping/property/readonly.md
+          - '@RenameFromProperty': mapping/property/renameproperty.md
+    - Repository:
+        - Overview: repository/overview.md
+        - Command methods: repository/commandmethods.md
+        - Delegate methods: repository/delegatemethods.md
+        - Mixins: repository/mixins.md
+        - Result conversion: repository/result.md
+        - Implementation details: repository/internals.md
+        - Command implementation: repository/commandinternals.md
+        - Delegate implementation: repository/delegateinternals.md
+        - Command:
+          - '@AsyncQuery': repository/command/asyncquery.md
+          - '@Function': repository/command/function.md
+          - '@LiveQuery': repository/command/livequery.md
+          - '@Query': repository/command/query.md
+          - '@Script': repository/command/script.md
+          - Params:
+            - '@DynamicParams': repository/command/param/dynamic.md
+            - '@ElVar': repository/command/param/elvar.md
+            - '@FetchPlan': repository/command/param/fetchplan.md
+            - '@Listen': repository/command/param/listen.md
+            - '@Param': repository/command/param/param.md
+            - '@RidElVar': repository/command/param/ridelvar.md
+            - '@Skip & @Limit': repository/command/param/pagination.md
+            - '@Var': repository/command/param/var.md
+          - Amend:
+              - '@Timeout': repository/command/amend/timeout.md
+        - Delegate:
+            - '@Delegate': repository/delegate/delegate.md
+            - Params:
+                - '@Connection': repository/delegate/param/connection.md
+                - '@Generic': repository/delegate/param/generic.md
+                - '@Repository': repository/delegate/param/repository.md
+        - Result:
+            - '@NoConversion': repository/result/noconvert.md
+            - '@DetachResult': repository/result/detach.md
+        - Mixin:
+            - DocumentCrud: repository/mixin/doccrud.md
+            - ObjectCrud: repository/mixin/objcrud.md
+            - ObjectVertexCrud: repository/mixin/objvcrud.md
+            - EdgesSupport: repository/mixin/edges.md
+            - EdgeTypeSupport: repository/mixin/edgetype.md
+            - Pagination: repository/mixin/pagination.md
+    - About:
+        - Compatibility: about/compatibility.md
+        - Release notes: about/history.md
+        - Support: about/support.md
+        - License: about/license.md

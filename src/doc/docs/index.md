@@ -22,4 +22,14 @@
 * Basic crud mixins with ability to use object api for graphs
 * [Compatible with Play framework](https://github.com/xvik/guice-persist-orient-play-example)
 
+## Documentation structure
 
+Library consists of 3 parts:
+
+* [Core orient integration](guide/configuration.md) (user guide section) 
+* [Object schema mapper](mapping/objectscheme.md) (mapping section) - used for schema creation from pojos during startup
+* [Repositories framework](repository/overview.md) (repository section) - spring-data like approach of query definitions with annotations 
+
+Start reading from [getting started](getting-started.md) guide for introduction.
+
+All core apis are described on [API](api.md) page.
