@@ -1783,7 +1783,7 @@ must be used inside transaction).</p>
 <span class="n">Future</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Model</span><span class="o">&gt;&gt;</span> <span class="nf">select</span><span class="o">(</span><span class="nd">@Listen</span> <span class="n">AsyncQueryListener</span><span class="o">&lt;</span><span class="n">Model</span><span class="o">&gt;</span> <span class="n">listener</span><span class="o">)</span>
 </pre></div>
 
-<p><a href="https://github.com/xvik/guice-persist-orient/wiki/Repository-delegate-methods">Delegate</a> example:</p>
+<p><a href="../delegatemethods/">Delegate</a> example:</p>
 <div class="codehilite"><pre><span></span><span class="kd">public</span> <span class="kd">class</span> <span class="nc">SomeBean</span> <span class="o">{</span>
    <span class="kd">public</span> <span class="n">List</span> <span class="nf">getAll</span><span class="o">()</span> <span class="o">{</span>
       <span class="o">...</span>
@@ -1814,13 +1814,20 @@ must be used inside transaction).</p>
 <span class="kt">void</span> <span class="nf">unsubscribe</span><span class="o">(</span><span class="nd">@ElVar</span><span class="o">(</span><span class="s">&quot;token&quot;</span><span class="o">)</span> <span class="kt">int</span> <span class="n">token</span><span class="o">)</span>
 </pre></div>
 
-<p>Read more about method usage in wiki:
-* <a href="https://github.com/xvik/guice-persist-orient/wiki/Repository-command-methods">Command methods</a>
-* <a href="https://github.com/xvik/guice-persist-orient/wiki/Repository-delegate-methods">Delegate methods</a></p>
+<p>Read more about method usage:</p>
+<ul>
+<li><a href="../commandmethods/">Command methods</a></li>
+<li><a href="../delegatemethods/">Delegate methods</a></li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
 <p>For more examples see <a href="https://github.com/xvik/guice-persist-orient-examples/tree/master/repository-examples">repository definition examples</a></p>
-<p>Writing extensions:
-* <a href="https://github.com/xvik/guice-persist-orient/wiki/Repository-command-methods-internals">Extending commands</a>
-* <a href="https://github.com/xvik/guice-persist-orient/wiki/Repository-delegate-methods-internals">Extending delegates</a></p>
+</div>
+<p>Writing extensions:</p>
+<ul>
+<li><a href="../commandinternals/">Extending commands</a></li>
+<li><a href="../delegateinternals/">Extending delegates</a></li>
+</ul>
 <h2 id="return-types">Return types<a class="headerlink" href="#return-types" title="Permanent link">&para;</a></h2>
 <p>You can use <code>Iterable</code>, <code>Collection</code>, <code>List</code>, <code>Set</code>, any collection implementation, array, single element or <code>Iterator</code> as return type.
 Conversion between types will be applied <a href="../result/">automatically</a>.</p>
