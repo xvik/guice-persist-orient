@@ -150,7 +150,7 @@ List<Model> parametersNamed(@Param("name") String name, @Param("nick") String ni
 List<Model> parametersPaged(String name, String nick, @Skip int skip, @Limit int limit)
 ```
 
-[El variable](https://github.com/xvik/guice-persist-orient/wiki/Repository-command-methods#el-variables):
+[El variable](commandmethods.md#el-variables):
 
 ```java
 @Query("select from Model where ${prop}=?")
@@ -463,7 +463,7 @@ Page page = repository.getPage(1, 20);
 ```
 
 In order to use pagination mixin, crud mixin is not required (used in example just to mention one more time that mixins could be combined).
-Pagination mixin is the most complex one and good place to inspire how to [write more complex reusable logic](https://github.com/xvik/guice-persist-orient/wiki/Repository-mixins#implementation).
+Pagination mixin is the most complex one and good place to inspire how to [write more complex reusable logic](mixin/pagination.md#implementation).
 
 [ObjectVertexCrud](mixin/objvcrud.md), 
 [EdgesSupport](mixin/edges.md) and
