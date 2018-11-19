@@ -6,11 +6,11 @@
 
 **DOCUMENTATION**: http://xvik.github.io/guice-persist-orient/
 
-`guice-persist-orient` wins 4th place in [Software Quality Award 2015](http://www.yegor256.com/2015/04/16/award.html)
-
 > **[Examples repository](https://github.com/xvik/guice-persist-orient-examples)** 
 
 Support: [Gitter chat](https://gitter.im/xvik/guice-persist-orient)
+
+`guice-persist-orient` wins 4th place in [Software Quality Award 2015](http://www.yegor256.com/2015/04/16/award.html)
 
 ### About
 
