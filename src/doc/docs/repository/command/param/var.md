@@ -3,9 +3,9 @@
 !!! summary ""
     Command method param extension
 
-Marks parameter as [command variable](http://www.orientechnologies.com/docs/last/orientdb.wiki/SQL-Query.html#let-block).
+Marks parameter as [command variable](https://orientdb.com/docs/last/SQL-Query.html#let-block).
 
-In contrast to el vars, these variables are used during query execution:
+In contrast to [el vars](elvar.md), these variables are used during query execution:
 
 For example,
 
@@ -14,4 +14,5 @@ For example,
 String[] findByName(@Var("tst") List tst);
 ```
 
-Not the best example (could be easily rewritten with sql parameter), but it just demonstrates usage.
+!!! note
+    This is not the best example (could be easily rewritten with sql parameter), but it just demonstrates usage.

@@ -5,14 +5,14 @@
 
 Marks parameter as dynamic command parameters provider.
 
-For positional parameters, parameter type must be List, array or vararg.
+For positional parameters, parameter type must be `List`, array or vararg.
 
 ```java
 @Query("select from Model where name=? and nick=?")
 List<ODocument> positionalList(@DynamicParams List<String> params)
 ```
 
-For named parameters use Map.
+For named parameters use `Map`.
 
 ```java
 @Query("select from Model where name=:name and nick=:nick")

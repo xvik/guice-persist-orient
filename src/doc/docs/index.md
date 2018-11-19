@@ -22,6 +22,12 @@
 * Basic crud mixins with ability to use object api for graphs
 * [Compatible with Play framework](https://github.com/xvik/guice-persist-orient-play-example)
 
+
+!!! note
+    Orient team tries to move focus from object api (jpa-like) into document and graph apis. 
+    Library allows you to use pure document and graph apis, but also provides advanced tools
+    to [mix object and graph apis](repository/mixins.md). So you can keep model as pojos and connect them with type safe (also pojo) edges.
+
 ## Documentation structure
 
 Library consists of 3 parts:

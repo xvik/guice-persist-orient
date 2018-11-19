@@ -3,7 +3,7 @@
 !!! summary ""
     Command method extension
 
-Function methods execute [function](http://www.orientechnologies.com/docs/last/orientdb.wiki/Functions.html).
+Function methods execute [function](https://orientdb.com/docs/last/Functions.html).
 
 For example, suppose we create a function like this:
 
@@ -18,4 +18,4 @@ Now we can call it like this:
 List<Model> select(String name)
 ```
 
-Internally OCommandFunction used.
+Internally `OCommandFunction` used.

@@ -10,4 +10,4 @@ For example, if you sure that calling repository will contain some mixin (e.g. b
 void doSomething(@Repository ObjectCrud repository){...}
 ```
 
-Good example is `Pagination` mixin (see how `PageSupportDelegate` reference `Pagination` mixin, which defines pagination queries and use them to compose page object).
+Good example is [Pagination](../../mixin/pagination.md) mixin (see how `PageSupportDelegate` reference `Pagination` mixin, which defines pagination queries and use them to compose page object).

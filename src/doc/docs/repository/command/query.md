@@ -26,14 +26,15 @@ Insert query:
 @Query("insert into Model (name) values (?)")
 Model insert(String name)
 ```
-Internally OSQLSynchQuery used for selects and OCommandSQL for updates and inserts.
+Internally `OSQLSynchQuery` used for selects and `OCommandSQL` for updates and inserts.
 
 Documentation links:
-* [SQL](http://www.orientechnologies.com/docs/last/orientdb.wiki/SQL.html)
-* [functions](http://www.orientechnologies.com/docs/last/orientdb.wiki/SQL-Functions.html)
-* [methods](http://www.orientechnologies.com/docs/last/orientdb.wiki/SQL-Methods.html)
-* [fields](http://www.orientechnologies.com/docs/last/orientdb.wiki/Document-Field-Part.html)
-* [attributes](http://www.orientechnologies.com/docs/last/orientdb.wiki/SQL-Where.html#record-attributes)
-* [default variables](http://www.orientechnologies.com/docs/last/orientdb.wiki/SQL-Where.html#variables)
-* [traverse](http://www.orientechnologies.com/docs/last/orientdb.wiki/SQL-Traverse.html)
-* [query indexes](http://www.orientechnologies.com/docs/last/orientdb.wiki/SQL.html#automatic-usage-of-indexes)
+
+* [SQL](https://orientdb.com/docs/last/SQL.html)
+* [functions](https://orientdb.com/docs/last/SQL-Functions.html)
+* [methods](https://orientdb.com/docs/last/SQL-Methods.html)
+* [fields](https://orientdb.com/docs/last/Document-Field-Part.html)
+* [attributes](https://orientdb.com/docs/last/SQL-Where.html#record-attributes)
+* [default variables](https://orientdb.com/docs/last/SQL-Where.html#variables)
+* [traverse](https://orientdb.com/docs/last/SQL-Traverse.html)
+* [query indexes](https://orientdb.com/docs/last/SQL.html#automatic-usage-of-indexes)

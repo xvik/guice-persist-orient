@@ -12,6 +12,7 @@ Page page = repository.getPage(1, 20);
 ```
 
 Pagination provides 3 methods:
+
 * `getPage` - receive composed page object
 * `getAll` - paginated data selection
 * `getCount` - count of all entities
@@ -29,4 +30,4 @@ PageSupportDelegate use reference to repository to call these methods:
 public Page getPage(@Repository final Pagination repository, final int page, final int pageSize)
 ```
 
-Assuming Pagination interface will be always used and so delegate could be sure about repository type (implementing just PageSupport in repository would make no sense).
+Assuming `Pagination` interface will be always used and so delegate could be sure about repository type (implementing just `PageSupport` in repository would make no sense).

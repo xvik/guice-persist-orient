@@ -1,6 +1,7 @@
 # EdgesSupport
 
-Provide basic operations for edge objects: objects annotated with `@EdgeType` or simply extends `E` in scheme. This mixin mixes Object and Graph apis to let you correctly work with graph edges through object api.
+Provide basic operations for edge objects: objects annotated with [@EdgeType](../../mapping/class/edge.md) 
+or simply `extends E` in scheme. This mixin mixes Object and Graph apis to let you correctly work with graph edges through object api.
 
 It is very convenient to use edge objects even if they have no properties: it's more type safe and you can use hierarchy of edge types for polymorphic queries.
 
@@ -8,7 +9,8 @@ For example, if you have `BaseConnection` and `SpecificConnection extends BaseCo
 
 Mixin intended to be used as supplement to [ObjectVertexCrud](objvcrud.md) (to add edge functions for vertex repository).
 
-NOTE: EdgesSupport may be used directly (as bean). This is because its very generic itself.
+!!! note 
+    `EdgesSupport` may be used directly (injected as bean). This is because its very generic itself.
 
 ## Edges creation
 
@@ -60,7 +62,8 @@ MyEdgeType edge = edges.findEdgeBetween(MyEdgeType.class, node1, node2)
 
 As with creation, object, document, vertex or rid may be used as node parameters.
 
-NOTE: api returns only first edge! There may be other edges. For example, create method is not checking existing edge between nodes, so you can create many edges (even of the same class) between same nodes.
+!!! note 
+    Api returns only first edge! There may be other edges. For example, create method is not checking existing edge between nodes, so you can create many edges (even of the same class) between same nodes.
 
 You can always make your own methods with sql (or maybe custom delegate logic) to implement more specific search cases.
 

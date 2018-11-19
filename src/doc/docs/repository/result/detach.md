@@ -12,9 +12,10 @@ This may be important if you use small transaction scopes, e.g. if method above 
 then if we will call it without detach converter, then any attempt to access list object field will fail:
 returned proxies doesn't work without transaction.
 
-Note that used detach method will completely unproxy entire object tree. If for example, you use remote connection
-with fetch plan, then detach will load entire graph during detaching.
+!!! note 
+    Used detach method will completely unproxy entire object tree. If for example, you use remote connection
+    with fetch plan, then detach will load entire graph during detaching.
 
 In most cases detach should be not needed, because most likely entire business logic will be covered with transaction.
 
-You can use this extension as reference for writing your own conversion extension.
+You can use this extension as reference for writing your own [conversion extension](../internals.md#result-converter-extensions).

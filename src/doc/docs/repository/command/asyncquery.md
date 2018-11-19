@@ -13,7 +13,7 @@ Example:
 void select(@Listen OCommandResultListener listener)
 ```
 
-Returned result will be passed to the provided listener (always as ODocument).
+Returned result will be passed to the provided listener (always as `ODocument`).
 
 ## Listener
 
@@ -56,4 +56,4 @@ List<Model> result = selectNonBlock().get()
 
 Listener execution is wrapped with external transacton, so guice can use the same connection instance as orient in current thread. But it is highly recommended to avoid database operations inside listener because listener must execute as fast as possible (orient recommendation).
 
-Internally OSQLAsynchQuery or OSQLNonBlockingQuery used accordingly.
+Internally `OSQLAsynchQuery` or `OSQLNonBlockingQuery` used accordingly.

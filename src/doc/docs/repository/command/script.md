@@ -3,7 +3,7 @@
 !!! summary ""
     Command method extension
 
-Allows you to write small scripts in [sql](http://www.orientechnologies.com/docs/last/orientdb.wiki/SQL-batch.html), [javascript](http://www.orientechnologies.com/docs/last/orientdb.wiki/Javascript-Command.html) or any other scripting language.
+Allows you to write small scripts in [sql](https://orientdb.com/docs/last/SQL-batch.html), [javascript](https://orientdb.com/docs/last/Javascript-Command.html) or any other scripting language.
 
 For example:
 
@@ -29,7 +29,7 @@ Example of javascript command:
 void jsScript()
 ```
 
-Note that in some cases script allows you to avoid OConcurrentModificationException:
+Note that in some cases script allows you to avoid `OConcurrentModificationException`:
 
 ```java
 @Script("begin" +
@@ -38,7 +38,7 @@ Note that in some cases script allows you to avoid OConcurrentModificationExcept
 void update(String name)
 ```
 
-This may be not the best way in all cases, but it works (due to implementation specifics simple query will fail in concurrent cases).
+This may be not the best way in all cases, but it works (due to implementation specifics simple query [may fail in concurrent cases](../../guide/transactions.md#retry)).
 Also, note as positional parameter used as named. Script doesn't work with positional parameters, but it works like this.
 
-Internally OCommandScript used.
+Internally `OCommandScript` used.

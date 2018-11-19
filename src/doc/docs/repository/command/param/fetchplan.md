@@ -3,7 +3,7 @@
 !!! summary ""
     Command method param extension
 
-Annotates parameter as [fetch plan](http://www.orientechnologies.com/docs/last/orientdb.wiki/Fetching-Strategies.html) value. 
+Annotates parameter as [fetch plan](https://orientdb.com/docs/last/Fetching-Strategies.html) value. 
 This is useful for universal queries to use different fetch plans with different calls.
 
 ```java
@@ -11,7 +11,7 @@ This is useful for universal queries to use different fetch plans with different
 List<Model> selectAll(@FetchPlan String plan);
 ```
 
-Only String parameter type may be used. 
+Only `String` parameter type may be used. 
 Default fetch plan may be specified:
 
 ```java

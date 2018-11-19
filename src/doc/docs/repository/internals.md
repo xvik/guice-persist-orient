@@ -197,16 +197,16 @@ but if annotation declared on type and method - method annotation will be used.
 Extension must implement `ResultExtension` interface. As with other extensions, main descriptor could be used
 to store extension specific data (e.g. some annotation parameters).
 
-You may use RepositoryMethodDescriptor.result descriptor in converter logic. Result descriptor contains method result analysis info (it is used by default converter).
+You may use `RepositoryMethodDescriptor.result` descriptor in converter logic. Result descriptor contains method result analysis info (it is used by default converter).
 
 ## Repository executor
 
 `RepositoryExecutor` abstracts connection specific calls from repository method processing.
 Executor is selected by method return type:
 
-* If result is ODocument (or generic) then document connection used
+* If result is `ODocument` (or generic) then document connection used
 * If result is model class then object connection used
-* If result id Vertex or Edge then graph connection used
+* If result id `Vertex` or `Edge` then graph connection used
 
 Connection object defines type of result types (executing the same query with different connections could return different result objects).
 

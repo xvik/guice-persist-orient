@@ -21,4 +21,4 @@ List<Model> all()
 
 Will return empty (or incomplete) result if query executes longer than 200 milliseconds.
 
-Internally timeout set using OCommandRequest.setTimeout() method.
+Internally timeout set using `OCommandRequest.setTimeout()` method.

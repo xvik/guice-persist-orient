@@ -1,7 +1,10 @@
 # @NoConversion
 
-Disables any result conversion. Note that by default special converter applied globaly handles many cases
-like collection reducing to single element, projecions etc.
+Disables any [result conversion](../result.md). 
+
+!!! note 
+    By default special converter applied globaly handles many cases
+    like collection reducing to single element, projections etc.
 
 For example:
 
@@ -11,4 +14,4 @@ For example:
 Model selectAll()
 ```
 
-This query will fail to execute, because of class cast exception: returned List<Model> can't be casted to Model.
+This query will fail to execute, because of class cast exception: returned `List<Model>` can't be casted to `Model`.

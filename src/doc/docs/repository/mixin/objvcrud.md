@@ -1,8 +1,12 @@
 # ObjectVertexCrud
 
-Provide basic crud operations for vertex objects: objects annotated with `@VertexType` or simply extends `V` in scheme. This mixin mixes Object and Graph apis to let you correctly work with graph vertexes through object api.
+Provide basic crud operations for vertex objects: objects annotated with [@VertexType](../../mapping/class/vertex.md) or 
+simply `extends V` in scheme. This mixin mixes Object and Graph apis to let you correctly work with graph vertexes through object api.
 
-It has the same api as [ObjectCrud](objcrud.md) (internally they both extend the same `BaseObjectCrud` mixin). It is important to use this specific version because it uses graph api for remove: if object api directly used, graph consistency is not checked and so edges leading to/from this vertex are not removed.  
+It has the same api as [ObjectCrud](objcrud.md) (internally they both extend the same `BaseObjectCrud` mixin). 
+
+!!! warning
+    It is important to use this specific version because it uses graph api for remove: if object api directly used, graph consistency is not checked and so edges leading to/from this vertex are not removed.  
 
 It also contains special methods for conversion between object and graph api: `vertexToObject` and `objectToVertex`.
 

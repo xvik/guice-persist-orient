@@ -9,4 +9,4 @@ Usage:
 public interface ModelRepository extends DocumentCrud<Model> {}
 ```
 
-It relies on model class to resolve model type, but, as described above, even empty class may be used (just to define scheme class name).
+It relies on model class to resolve model type, but, even [empty class](../mixins.md#when-object-model-not-used) may be used (just to define scheme class name).
