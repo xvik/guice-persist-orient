@@ -1730,7 +1730,7 @@ must be used inside transaction).</p>
 <span class="n">List</span><span class="o">&lt;</span><span class="n">Model</span><span class="o">&gt;</span> <span class="nf">parametersPaged</span><span class="o">(</span><span class="n">String</span> <span class="n">name</span><span class="o">,</span> <span class="n">String</span> <span class="n">nick</span><span class="o">,</span> <span class="nd">@Skip</span> <span class="kt">int</span> <span class="n">skip</span><span class="o">,</span> <span class="nd">@Limit</span> <span class="kt">int</span> <span class="n">limit</span><span class="o">)</span>
 </pre></div>
 
-<p><a href="https://github.com/xvik/guice-persist-orient/wiki/Repository-command-methods#el-variables">El variable</a>:</p>
+<p><a href="../commandmethods/#el-variables">El variable</a>:</p>
 <div class="codehilite"><pre><span></span><span class="nd">@Query</span><span class="o">(</span><span class="s">&quot;select from Model where ${prop}=?&quot;</span><span class="o">)</span>
 <span class="n">List</span><span class="o">&lt;</span><span class="n">Model</span><span class="o">&gt;</span> <span class="nf">findBy</span><span class="o">(</span><span class="nd">@ElVar</span><span class="o">(</span><span class="s">&quot;prop&quot;</span><span class="o">)</span> <span class="n">String</span> <span class="n">prop</span><span class="o">,</span> <span class="n">String</span> <span class="n">value</span><span class="o">)</span>
 </pre></div>
@@ -1967,7 +1967,7 @@ at least to specify schema type name (may be empty class))</p>
 </pre></div>
 
 <p>In order to use pagination mixin, crud mixin is not required (used in example just to mention one more time that mixins could be combined).
-Pagination mixin is the most complex one and good place to inspire how to <a href="https://github.com/xvik/guice-persist-orient/wiki/Repository-mixins#implementation">write more complex reusable logic</a>.</p>
+Pagination mixin is the most complex one and good place to inspire how to <a href="../mixin/pagination/#implementation">write more complex reusable logic</a>.</p>
 <p><a href="../mixin/objvcrud/">ObjectVertexCrud</a>, 
 <a href="../mixin/edges/">EdgesSupport</a> and
 <a href="../mixin/edgetype/">EdgeTypeSupport</a> mixins allows using graph features from object api.</p>
