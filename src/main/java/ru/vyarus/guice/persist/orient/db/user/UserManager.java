@@ -3,7 +3,8 @@ package ru.vyarus.guice.persist.orient.db.user;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
-import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx;
+import com.orientechnologies.orient.core.db.ODatabaseDocumentInternal;
+import com.orientechnologies.orient.core.db.document.ODatabaseDocument;
 import com.orientechnologies.orient.core.metadata.security.OSecurityUser;
 import com.orientechnologies.orient.core.metadata.security.OUser;
 import org.slf4j.Logger;
@@ -35,14 +36,14 @@ public class UserManager {
     private final Logger logger = LoggerFactory.getLogger(UserManager.class);
 
     private final TransactionManager transactionManager;
-    private final Provider<ODatabaseDocumentTx> connectionProvider;
+    private final Provider<ODatabaseDocument> connectionProvider;
     private final UserCredentials defaultUser;
     private final ThreadLocal<UserCredentials> specificUser = new ThreadLocal<UserCredentials>();
     private final ThreadLocal<OSecurityUser> specificTxUser = new ThreadLocal<OSecurityUser>();
 
     @Inject
     public UserManager(final TransactionManager transactionManager,
-                       final Provider<ODatabaseDocumentTx> connectionProvider,
+                       final Provider<ODatabaseDocument> connectionProvider,
                        @Named("orient.user") final String user,
                        @Named("orient.password") final String password) {
         this.transactionManager = transactionManager;
@@ -118,7 +119,7 @@ public class UserManager {
      */
     public <T> T executeWithTxUser(final String user, final SpecificUserAction<T> userAction) {
         final boolean userChanged = checkSpecificUserConditions(user);
-        final ODatabaseDocumentTx db = connectionProvider.get();
+        final ODatabaseDocument db = connectionProvider.get();
         final T res;
         if (userChanged) {
             // this may cause security exception if current user has no access rights to users table
@@ -133,7 +134,7 @@ public class UserManager {
 
     /**
      * Changes current connection user. Affects only current transaction and can't be used outside of transaction
-     * ({@link ODatabaseDocumentTx#setUser(com.orientechnologies.orient.core.metadata.security.OSecurityUser)}).
+     * ({@link ODatabaseDocumentInternal#setUser(com.orientechnologies.orient.core.metadata.security.OSecurityUser)}).
      * <p>
      * Recursive user changes are not allowed, so attempt to change user under already changed user will
      * lead to error. The only exception is change to the same user (in this case change is ignored).
@@ -150,7 +151,7 @@ public class UserManager {
      */
     public <T> T executeWithTxUser(final OSecurityUser user, final SpecificUserAction<T> userAction) {
         final boolean userChanged = checkSpecificUserConditions(user.getName());
-        final ODatabaseDocumentTx db = connectionProvider.get();
+        final ODatabaseDocumentInternal db = (ODatabaseDocumentInternal) connectionProvider.get();
         final OSecurityUser original = db.getUser();
         if (userChanged) {
             // no need to track user change if user not changed
@@ -186,7 +187,7 @@ public class UserManager {
     private boolean checkSpecificUserConditions(final String login) {
         Preconditions.checkState(transactionManager.isTransactionActive(),
                 "Tx user can't be changed outside of transaction");
-        final ODatabaseDocumentTx db = connectionProvider.get();
+        final ODatabaseDocument db = connectionProvider.get();
         final OSecurityUser original = db.getUser();
         final boolean userChanged = !original.getName().equals(login);
         Preconditions.checkState(specificTxUser.get() == null || !userChanged,

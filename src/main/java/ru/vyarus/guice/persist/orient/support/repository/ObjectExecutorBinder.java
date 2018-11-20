@@ -1,6 +1,6 @@
 package ru.vyarus.guice.persist.orient.support.repository;
 
-import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
+import com.orientechnologies.orient.core.db.object.ODatabaseObject;
 import ru.vyarus.guice.persist.orient.RepositoryModule;
 import ru.vyarus.guice.persist.orient.repository.core.executor.impl.ObjectRepositoryExecutor;
 
@@ -16,7 +16,7 @@ public class ObjectExecutorBinder {
     public ObjectExecutorBinder(final RepositoryModule module,
                                 final Method bindExecutor) throws Exception {
         // explicit dependency on class required to fail
-        OObjectDatabaseTx.class.getName();
+        ODatabaseObject.class.getName();
         bindExecutor.invoke(module, ObjectRepositoryExecutor.class);
     }
 }

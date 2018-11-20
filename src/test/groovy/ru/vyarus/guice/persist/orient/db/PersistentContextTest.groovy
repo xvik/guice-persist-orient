@@ -1,7 +1,7 @@
 package ru.vyarus.guice.persist.orient.db
 
+import com.orientechnologies.orient.core.db.object.ODatabaseObject
 import com.orientechnologies.orient.core.tx.OTransaction
-import com.orientechnologies.orient.object.db.OObjectDatabaseTx
 import ru.vyarus.guice.persist.orient.AbstractTest
 import ru.vyarus.guice.persist.orient.db.transaction.TxConfig
 import ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxAction
@@ -20,7 +20,7 @@ class PersistentContextTest extends AbstractTest {
 
     // duplicate declaration, because groovy doesn't see inherited property in closures
     @Inject
-    PersistentContext<OObjectDatabaseTx> context
+    PersistentContext<ODatabaseObject> context
 
     def "Check configured templates"() {
 

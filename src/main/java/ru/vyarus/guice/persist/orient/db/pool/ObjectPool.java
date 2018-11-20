@@ -1,6 +1,7 @@
 package ru.vyarus.guice.persist.orient.db.pool;
 
-import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx;
+import com.orientechnologies.orient.core.db.ODatabaseDocumentInternal;
+import com.orientechnologies.orient.core.db.object.ODatabaseObject;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,10 +16,10 @@ import javax.inject.Inject;
  * @author Vyacheslav Rusakov
  * @since 24.07.2014
  */
-public class ObjectPool implements PoolManager<OObjectDatabaseTx> {
+public class ObjectPool implements PoolManager<ODatabaseObject> {
     private final Logger logger = LoggerFactory.getLogger(ObjectPool.class);
 
-    private final ThreadLocal<OObjectDatabaseTx> transaction = new ThreadLocal<OObjectDatabaseTx>();
+    private final ThreadLocal<ODatabaseObject> transaction = new ThreadLocal<ODatabaseObject>();
     private final DocumentPool documentPool;
     private final UserManager userManager;
 
@@ -51,13 +52,13 @@ public class ObjectPool implements PoolManager<OObjectDatabaseTx> {
     }
 
     @Override
-    public OObjectDatabaseTx get() {
+    public ODatabaseObject get() {
         if (transaction.get() == null) {
-            final ODatabaseDocumentTx documentDb = documentPool.get();
+            final ODatabaseDocumentInternal documentDb = (ODatabaseDocumentInternal) documentPool.get();
             final OObjectDatabaseTx value = new OObjectDatabaseTx(documentDb);
             transaction.set(value);
         }
-        final OObjectDatabaseTx db = transaction.get();
+        final ODatabaseObject db = transaction.get();
         db.activateOnCurrentThread();
         return db;
     }

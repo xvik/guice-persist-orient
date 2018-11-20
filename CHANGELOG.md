@@ -1,4 +1,9 @@
 * Update to guice 4.2.2
+* (breaking) Update to Orient 3.0.10
+    - Bound connection objects changed:
+        - Provider<OObjectDatabaseTx> -> Provider<ODatabaseObject>
+        - Provider<ODatabaseDocumentTx> -> Provider<ODatabaseDocument>
+    - With new orient api (unified document and graph api), graph pools remains for legacy thinkerpop 2 only    
 
 ### 3.3.2 (2018-04-02)
 * Guice 4.2.0 compatibility

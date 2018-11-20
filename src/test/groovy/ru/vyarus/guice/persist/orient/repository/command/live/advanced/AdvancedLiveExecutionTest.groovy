@@ -2,9 +2,9 @@ package ru.vyarus.guice.persist.orient.repository.command.live.advanced
 
 import com.orientechnologies.common.exception.OException
 import com.orientechnologies.orient.core.command.OCommandResultListener
+import com.orientechnologies.orient.core.db.object.ODatabaseObject
 import com.orientechnologies.orient.core.db.record.ORecordOperation
 import com.orientechnologies.orient.core.sql.query.OLiveResultListener
-import com.orientechnologies.orient.object.db.OObjectDatabaseTx
 import com.tinkerpop.blueprints.Vertex
 import com.tinkerpop.blueprints.impls.orient.OrientBaseGraph
 import com.tinkerpop.blueprints.impls.orient.OrientVertex
@@ -232,7 +232,7 @@ class AdvancedLiveExecutionTest extends AbstractTest {
     static class Listener extends AbstractListener<Model> {
 
         @Inject
-        PersistentContext<OObjectDatabaseTx> context;
+        PersistentContext<ODatabaseObject> context;
 
         @Override
         protected Model postProcess(Model result) {

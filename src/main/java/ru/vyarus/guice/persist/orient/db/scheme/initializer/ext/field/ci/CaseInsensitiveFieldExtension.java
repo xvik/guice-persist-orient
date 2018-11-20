@@ -2,8 +2,8 @@ package ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.field.ci;
 
 import com.orientechnologies.orient.core.collate.OCaseInsensitiveCollate;
 import com.orientechnologies.orient.core.collate.ODefaultCollate;
+import com.orientechnologies.orient.core.db.object.ODatabaseObject;
 import com.orientechnologies.orient.core.metadata.schema.OProperty;
-import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.core.spi.SchemeDescriptor;
@@ -23,13 +23,13 @@ public class CaseInsensitiveFieldExtension implements FieldExtension<CaseInsensi
     private final Logger logger = LoggerFactory.getLogger(CaseInsensitiveFieldExtension.class);
 
     @Override
-    public void beforeRegistration(final OObjectDatabaseTx db, final SchemeDescriptor descriptor,
+    public void beforeRegistration(final ODatabaseObject db, final SchemeDescriptor descriptor,
                                    final Field field, final CaseInsensitive annotation) {
         // not needed
     }
 
     @Override
-    public void afterRegistration(final OObjectDatabaseTx db, final SchemeDescriptor descriptor,
+    public void afterRegistration(final ODatabaseObject db, final SchemeDescriptor descriptor,
                                   final Field field, final CaseInsensitive annotation) {
         final String name = field.getName();
         final boolean ci = annotation.value();

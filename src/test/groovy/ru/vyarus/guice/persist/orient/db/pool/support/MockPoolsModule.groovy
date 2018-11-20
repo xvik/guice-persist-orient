@@ -1,7 +1,7 @@
 package ru.vyarus.guice.persist.orient.db.pool.support
 
-import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx
-import com.orientechnologies.orient.object.db.OObjectDatabaseTx
+import com.orientechnologies.orient.core.db.document.ODatabaseDocument
+import com.orientechnologies.orient.core.db.object.ODatabaseObject
 import ru.vyarus.guice.persist.orient.OrientModule
 import ru.vyarus.guice.persist.orient.support.Config
 import ru.vyarus.guice.persist.orient.db.pool.support.pool.MockDocumentPool
@@ -20,7 +20,7 @@ class MockPoolsModule extends OrientModule {
 
     @Override
     protected void configurePools() {
-        bindPool(OObjectDatabaseTx, MockObjectPool);
-        bindPool(ODatabaseDocumentTx, MockDocumentPool);
+        bindPool(ODatabaseObject, MockObjectPool);
+        bindPool(ODatabaseDocument, MockDocumentPool);
     }
 }

@@ -1,7 +1,7 @@
 package ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.type.edge;
 
 import com.google.common.base.Preconditions;
-import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
+import com.orientechnologies.orient.core.db.object.ODatabaseObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vyarus.guice.persist.orient.db.DatabaseManager;
@@ -31,7 +31,7 @@ public class EdgeTypeExtension implements TypeExtension<EdgeType> {
     }
 
     @Override
-    public void beforeRegistration(final OObjectDatabaseTx db, final SchemeDescriptor descriptor,
+    public void beforeRegistration(final ODatabaseObject db, final SchemeDescriptor descriptor,
                                    final EdgeType annotation) {
         final String schemeClass = descriptor.schemeClass;
         Preconditions.checkState(databaseManager.isTypeSupported(DbType.GRAPH),
@@ -41,7 +41,7 @@ public class EdgeTypeExtension implements TypeExtension<EdgeType> {
     }
 
     @Override
-    public void afterRegistration(final OObjectDatabaseTx db, final SchemeDescriptor descriptor,
+    public void afterRegistration(final ODatabaseObject db, final SchemeDescriptor descriptor,
                                   final EdgeType annotation) {
         // not needed
     }

@@ -1,6 +1,6 @@
 package ru.vyarus.guice.persist.orient.repository.core.result
 
-import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx
+import com.orientechnologies.orient.core.db.document.ODatabaseDocument
 import com.orientechnologies.orient.core.id.ORecordId
 import com.orientechnologies.orient.core.record.impl.ODocument
 import com.tinkerpop.blueprints.Edge
@@ -28,7 +28,7 @@ class RecordConverterTest extends AbstractTest {
     @Inject
     RecordConverter converter
     @Inject
-    PersistentContext<ODatabaseDocumentTx> docContext
+    PersistentContext<ODatabaseDocument> docContext
 
     def "check simple conversions"() {
 
@@ -58,7 +58,7 @@ class RecordConverterTest extends AbstractTest {
 
             assert res instanceof Model
             assert res.name == model.name
-        } as SpecificTxAction)
+        } as SpecificTxAction<Void, ODatabaseDocument>)
         then: "converted to object"
         true
 

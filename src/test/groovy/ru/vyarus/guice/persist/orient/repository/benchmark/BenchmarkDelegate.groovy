@@ -2,8 +2,8 @@ package ru.vyarus.guice.persist.orient.repository.benchmark
 
 import com.google.inject.Provider
 import com.google.inject.persist.Transactional
+import com.orientechnologies.orient.core.db.object.ODatabaseObject
 import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery
-import com.orientechnologies.orient.object.db.OObjectDatabaseTx
 import ru.vyarus.guice.persist.orient.support.model.Model
 
 import javax.inject.Inject
@@ -16,7 +16,7 @@ import javax.inject.Inject
 @Transactional
 class BenchmarkDelegate {
     @Inject
-    private Provider<OObjectDatabaseTx> provider;
+    private Provider<ODatabaseObject> provider;
 
     public List<Model> findAll() {
         return provider.get().query(new OSQLSynchQuery<Object>("select from Model"));

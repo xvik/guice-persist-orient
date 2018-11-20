@@ -2,7 +2,7 @@ package ru.vyarus.guice.persist.orient.repository.core.executor.impl;
 
 import com.google.inject.Provider;
 import com.orientechnologies.orient.core.command.OCommandRequest;
-import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
+import com.orientechnologies.orient.core.db.object.ODatabaseObject;
 import ru.vyarus.guice.persist.orient.db.DbType;
 import ru.vyarus.guice.persist.orient.repository.core.executor.RepositoryExecutor;
 
@@ -18,10 +18,10 @@ import javax.inject.Singleton;
 @Singleton
 public class ObjectRepositoryExecutor implements RepositoryExecutor {
 
-    private final Provider<OObjectDatabaseTx> provider;
+    private final Provider<ODatabaseObject> provider;
 
     @Inject
-    public ObjectRepositoryExecutor(final Provider<OObjectDatabaseTx> provider) {
+    public ObjectRepositoryExecutor(final Provider<ODatabaseObject> provider) {
         this.provider = provider;
     }
 

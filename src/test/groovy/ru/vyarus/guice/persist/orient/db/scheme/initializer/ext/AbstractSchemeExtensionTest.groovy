@@ -1,7 +1,7 @@
 package ru.vyarus.guice.persist.orient.db.scheme.initializer.ext
 
+import com.orientechnologies.orient.core.db.object.ODatabaseObject
 import com.orientechnologies.orient.core.tx.OTransaction
-import com.orientechnologies.orient.object.db.OObjectDatabaseTx
 import ru.vyarus.guice.persist.orient.AbstractTest
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.ObjectSchemeInitializer
 import ru.vyarus.guice.persist.orient.db.transaction.TxConfig
@@ -21,7 +21,7 @@ abstract class AbstractSchemeExtensionTest extends AbstractTest {
 
     @Inject
     ObjectSchemeInitializer schemeInitializer
-    OObjectDatabaseTx db
+    ODatabaseObject db
 
     @Override
     void setup() {
@@ -30,7 +30,7 @@ abstract class AbstractSchemeExtensionTest extends AbstractTest {
             db.getEntityManager().deregisterEntityClasses(getModelPackage())
             db.getMetadata().getSchema().synchronizeSchema()
             db.getMetadata().getIndexManager().reload()
-        } as SpecificTxAction<Void, OObjectDatabaseTx>)
+        } as SpecificTxAction<Void, ODatabaseObject>)
         schemeInitializer.clearModelCache()
         context.transactionManager.begin(new TxConfig(OTransaction.TXTYPE.NOTX))
         db = context.getConnection()

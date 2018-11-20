@@ -2,7 +2,7 @@ package ru.vyarus.guice.persist.orient.repository.core.executor.impl;
 
 import com.google.inject.Provider;
 import com.orientechnologies.orient.core.command.OCommandRequest;
-import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx;
+import com.orientechnologies.orient.core.db.document.ODatabaseDocument;
 import com.orientechnologies.orient.core.record.ORecord;
 import ru.vyarus.guice.persist.orient.db.DbType;
 import ru.vyarus.guice.persist.orient.repository.core.executor.RepositoryExecutor;
@@ -19,10 +19,10 @@ import javax.inject.Singleton;
 @Singleton
 public class DocumentRepositoryExecutor implements RepositoryExecutor {
 
-    private final Provider<ODatabaseDocumentTx> provider;
+    private final Provider<ODatabaseDocument> provider;
 
     @Inject
-    public DocumentRepositoryExecutor(final Provider<ODatabaseDocumentTx> provider) {
+    public DocumentRepositoryExecutor(final Provider<ODatabaseDocument> provider) {
         this.provider = provider;
     }
 

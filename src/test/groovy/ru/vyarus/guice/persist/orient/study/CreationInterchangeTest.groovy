@@ -2,10 +2,10 @@ package ru.vyarus.guice.persist.orient.study
 
 import com.google.common.collect.Lists
 import com.google.inject.Inject
-import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx
+import com.orientechnologies.orient.core.db.document.ODatabaseDocument
+import com.orientechnologies.orient.core.db.object.ODatabaseObject
 import com.orientechnologies.orient.core.record.impl.ODocument
 import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery
-import com.orientechnologies.orient.object.db.OObjectDatabaseTx
 import com.tinkerpop.blueprints.impls.orient.OrientBaseGraph
 import ru.vyarus.guice.persist.orient.AbstractTest
 import ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxAction
@@ -22,7 +22,7 @@ import spock.guice.UseModules
 class CreationInterchangeTest extends AbstractTest {
 
     @Inject
-    SpecificTxTemplate<ODatabaseDocumentTx> documentTemplate;
+    SpecificTxTemplate<ODatabaseDocument> documentTemplate;
     @Inject
     SpecificTxTemplate<OrientBaseGraph> graphTemplate;
 
@@ -33,10 +33,10 @@ class CreationInterchangeTest extends AbstractTest {
         } as SpecificTxAction)
         List objects = context.doInTransaction({ db ->
             db.query(new OSQLSynchQuery<Object>("select from VertexModel"))
-        } as SpecificTxAction<List, OObjectDatabaseTx>)
+        } as SpecificTxAction<List, ODatabaseObject>)
         List documents = documentTemplate.doInTransaction({ db ->
             db.query(new OSQLSynchQuery<Object>("select from VertexModel"))
-        } as SpecificTxAction<List, ODatabaseDocumentTx>)
+        } as SpecificTxAction<List, ODatabaseDocument>)
         List graphs = graphTemplate.doInTransaction({ db ->
             // graph returns iterable
             Lists.newArrayList(db.getVerticesOfClass(VertexModel.simpleName))
@@ -61,10 +61,10 @@ class CreationInterchangeTest extends AbstractTest {
         } as SpecificTxAction)
         List objects = context.doInTransaction({ db ->
             db.query(new OSQLSynchQuery<Object>("select from VertexModel"))
-        } as SpecificTxAction<List, OObjectDatabaseTx>)
+        } as SpecificTxAction<List, ODatabaseObject>)
         List documents = documentTemplate.doInTransaction({ db ->
             db.query(new OSQLSynchQuery<Object>("select from VertexModel"))
-        } as SpecificTxAction<List, ODatabaseDocumentTx>)
+        } as SpecificTxAction<List, ODatabaseDocument>)
         List graphs = graphTemplate.doInTransaction({ db ->
             // graph returns iterable
             Lists.newArrayList(db.getVerticesOfClass(VertexModel.simpleName))
@@ -86,10 +86,10 @@ class CreationInterchangeTest extends AbstractTest {
         } as SpecificTxAction)
         List objects = context.doInTransaction({ db ->
             db.query(new OSQLSynchQuery<Object>("select from VertexModel"))
-        } as SpecificTxAction<List, OObjectDatabaseTx>)
+        } as SpecificTxAction<List, ODatabaseObject>)
         List documents = documentTemplate.doInTransaction({ db ->
             db.query(new OSQLSynchQuery<Object>("select from VertexModel"))
-        } as SpecificTxAction<List, ODatabaseDocumentTx>)
+        } as SpecificTxAction<List, ODatabaseDocument>)
         List graphs = graphTemplate.doInTransaction({ db ->
             // graph returns iterable
             Lists.newArrayList(db.getVerticesOfClass(VertexModel.simpleName))

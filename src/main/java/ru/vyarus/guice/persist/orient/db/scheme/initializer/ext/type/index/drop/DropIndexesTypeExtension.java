@@ -1,7 +1,7 @@
 package ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.type.index.drop;
 
-import com.orientechnologies.orient.core.index.OIndexManagerProxy;
-import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
+import com.orientechnologies.orient.core.db.object.ODatabaseObject;
+import com.orientechnologies.orient.core.index.OIndexManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.core.spi.SchemeDescriptor;
@@ -19,10 +19,10 @@ public class DropIndexesTypeExtension implements TypeExtension<DropIndexes> {
     private final Logger logger = LoggerFactory.getLogger(DropIndexesTypeExtension.class);
 
     @Override
-    public void beforeRegistration(final OObjectDatabaseTx db, final SchemeDescriptor descriptor,
+    public void beforeRegistration(final ODatabaseObject db, final SchemeDescriptor descriptor,
                                    final DropIndexes annotation) {
         for (String index : annotation.value()) {
-            final OIndexManagerProxy indexManager = db.getMetadata().getIndexManager();
+            final OIndexManager indexManager = db.getMetadata().getIndexManager();
             if (indexManager.existsIndex(index)) {
                 SchemeUtils.dropIndex(db, index);
                 logger.info("Index '{}' dropped for type {}", index, descriptor.schemeClass);
@@ -31,7 +31,7 @@ public class DropIndexesTypeExtension implements TypeExtension<DropIndexes> {
     }
 
     @Override
-    public void afterRegistration(final OObjectDatabaseTx db, final SchemeDescriptor descriptor,
+    public void afterRegistration(final ODatabaseObject db, final SchemeDescriptor descriptor,
                                   final DropIndexes annotation) {
         // not needed
     }

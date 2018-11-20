@@ -6,7 +6,7 @@ import com.google.inject.TypeLiteral;
 import com.orientechnologies.orient.core.command.OCommandRequest;
 import com.orientechnologies.orient.core.command.OCommandRequestAbstract;
 import com.orientechnologies.orient.core.command.OCommandResultListener;
-import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx;
+import com.orientechnologies.orient.core.db.document.ODatabaseDocument;
 import com.orientechnologies.orient.core.sql.query.OSQLQuery;
 import ru.vyarus.guice.persist.orient.db.PersistentContext;
 import ru.vyarus.guice.persist.orient.repository.command.async.AsyncQuery;
@@ -33,8 +33,8 @@ import static ru.vyarus.guice.persist.orient.repository.core.MethodExecutionExce
  */
 public class AsyncQueryListenerParameterSupport implements ListenerParameterSupport {
 
-    private static final Key<PersistentContext<ODatabaseDocumentTx>> CONTEXT_KEY =
-            Key.get(new TypeLiteral<PersistentContext<ODatabaseDocumentTx>>() {
+    private static final Key<PersistentContext<ODatabaseDocument>> CONTEXT_KEY =
+            Key.get(new TypeLiteral<PersistentContext<ODatabaseDocument>>() {
             });
 
     @Override

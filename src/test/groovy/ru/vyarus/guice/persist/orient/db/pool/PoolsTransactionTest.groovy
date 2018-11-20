@@ -2,7 +2,7 @@ package ru.vyarus.guice.persist.orient.db.pool
 
 import com.google.inject.Inject
 import com.google.inject.persist.PersistService
-import com.orientechnologies.orient.object.db.OObjectDatabaseTx
+import com.orientechnologies.orient.core.db.object.ODatabaseObject
 import ru.vyarus.guice.persist.orient.db.transaction.TransactionManager
 import ru.vyarus.guice.persist.orient.db.transaction.TxConfig
 import ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxAction
@@ -30,7 +30,7 @@ class PoolsTransactionTest extends Specification {
     @javax.inject.Inject
     TransactionManager transactionManager;
     @javax.inject.Inject
-    SpecificTxTemplate<OObjectDatabaseTx> template
+    SpecificTxTemplate<ODatabaseObject> template
 
     @Inject
     MockDocumentPool documentPool

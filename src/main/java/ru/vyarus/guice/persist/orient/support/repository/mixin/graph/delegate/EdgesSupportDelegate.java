@@ -4,9 +4,9 @@ import com.google.common.base.Preconditions;
 import com.google.inject.ProvidedBy;
 import com.google.inject.Provider;
 import com.google.inject.internal.DynamicSingletonProvider;
+import com.orientechnologies.orient.core.db.object.ODatabaseObject;
 import com.orientechnologies.orient.core.id.ORecordId;
 import com.orientechnologies.orient.core.record.impl.ODocument;
-import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.impls.orient.OrientBaseGraph;
@@ -27,11 +27,11 @@ import java.util.Iterator;
 @ProvidedBy(DynamicSingletonProvider.class)
 public abstract class EdgesSupportDelegate implements EdgesSupport {
 
-    private final Provider<OObjectDatabaseTx> objectDb;
+    private final Provider<ODatabaseObject> objectDb;
     private final Provider<OrientBaseGraph> graphDb;
 
     @Inject
-    public EdgesSupportDelegate(final Provider<OObjectDatabaseTx> objectDb, final Provider<OrientBaseGraph> graphDb) {
+    public EdgesSupportDelegate(final Provider<ODatabaseObject> objectDb, final Provider<OrientBaseGraph> graphDb) {
         this.objectDb = objectDb;
         this.graphDb = graphDb;
     }
@@ -99,7 +99,7 @@ public abstract class EdgesSupportDelegate implements EdgesSupport {
     public <T> T edgeToObject(final Edge edge) {
         final OrientEdge orientEdge = (OrientEdge) edge;
         final T pojo = objectDb.get().newInstance(orientEdge.getType().getName());
-        return (T) objectDb.get().stream2pojo(orientEdge.getRecord(), pojo, null, true);
+        return (T) objectDb.get().stream2pojo(orientEdge.getRecord(), pojo, null);
     }
 
     @Override

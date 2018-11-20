@@ -3,7 +3,7 @@ package ru.vyarus.guice.persist.orient.transaction.support
 import com.google.inject.Inject
 import com.google.inject.Provider
 import com.google.inject.persist.Transactional
-import com.orientechnologies.orient.object.db.OObjectDatabaseTx
+import com.orientechnologies.orient.core.db.object.ODatabaseObject
 
 /**
  * Case impossible in spring: methods called inside bean still affected by transaction interceptor,
@@ -16,7 +16,7 @@ import com.orientechnologies.orient.object.db.OObjectDatabaseTx
 class InlineTxDefinitionService {
 
     @Inject
-    Provider<OObjectDatabaseTx> provider;
+    Provider<ODatabaseObject> provider;
 
     def noTxMethod() {
         txMethod1()

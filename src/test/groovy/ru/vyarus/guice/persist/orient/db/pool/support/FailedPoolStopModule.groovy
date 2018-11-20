@@ -1,6 +1,6 @@
 package ru.vyarus.guice.persist.orient.db.pool.support
 
-import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx
+import com.orientechnologies.orient.core.db.document.ODatabaseDocument
 import ru.vyarus.guice.persist.orient.OrientModule
 import ru.vyarus.guice.persist.orient.db.pool.support.pool.FailStopPool
 import ru.vyarus.guice.persist.orient.support.Config
@@ -17,6 +17,6 @@ class FailedPoolStopModule extends OrientModule {
 
     @Override
     protected void configurePools() {
-        bindPool(ODatabaseDocumentTx, FailStopPool);
+        bindPool(ODatabaseDocument, FailStopPool);
     }
 }

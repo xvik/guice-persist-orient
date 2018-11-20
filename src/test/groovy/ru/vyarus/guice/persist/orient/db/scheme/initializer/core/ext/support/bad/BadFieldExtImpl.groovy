@@ -1,10 +1,9 @@
 package ru.vyarus.guice.persist.orient.db.scheme.initializer.core.ext.support.bad
 
-import com.orientechnologies.orient.object.db.OObjectDatabaseTx
+import com.orientechnologies.orient.core.db.object.ODatabaseObject
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.core.spi.SchemeDescriptor
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.core.spi.field.FieldExtension
 
-import java.lang.annotation.Annotation
 import java.lang.reflect.Field
 
 /**
@@ -18,12 +17,12 @@ class BadFieldExtImpl implements FieldExtension<BadFieldExt> {
     }
 
     @Override
-    void beforeRegistration(OObjectDatabaseTx db, SchemeDescriptor descriptor, Field field, BadFieldExt annotation) {
+    void beforeRegistration(ODatabaseObject db, SchemeDescriptor descriptor, Field field, BadFieldExt annotation) {
 
     }
 
     @Override
-    void afterRegistration(OObjectDatabaseTx db, SchemeDescriptor descriptor, Field field, BadFieldExt annotation) {
+    void afterRegistration(ODatabaseObject db, SchemeDescriptor descriptor, Field field, BadFieldExt annotation) {
 
     }
 }

@@ -3,10 +3,10 @@ package ru.vyarus.guice.persist.orient.support.repository.mixin.crud.delegate;
 import com.google.common.collect.Lists;
 import com.google.inject.ProvidedBy;
 import com.google.inject.internal.DynamicSingletonProvider;
+import com.orientechnologies.orient.core.db.object.ODatabaseObject;
 import com.orientechnologies.orient.core.id.ORID;
 import com.orientechnologies.orient.core.id.ORecordId;
 import com.orientechnologies.orient.core.record.impl.ODocument;
-import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import com.orientechnologies.orient.object.enhancement.OObjectEntitySerializer;
 import javassist.util.proxy.Proxy;
 import ru.vyarus.guice.persist.orient.db.util.RidUtils;
@@ -28,10 +28,10 @@ import java.util.List;
 @ProvidedBy(DynamicSingletonProvider.class)
 public abstract class BaseObjectCrudDelegate<T> implements BaseObjectCrud<T> {
 
-    private final Provider<OObjectDatabaseTx> objectDb;
+    private final Provider<ODatabaseObject> objectDb;
 
     @Inject
-    public BaseObjectCrudDelegate(final Provider<OObjectDatabaseTx> objectDb) {
+    public BaseObjectCrudDelegate(final Provider<ODatabaseObject> objectDb) {
         this.objectDb = objectDb;
     }
 
@@ -108,7 +108,7 @@ public abstract class BaseObjectCrudDelegate<T> implements BaseObjectCrud<T> {
     @SuppressWarnings("unchecked")
     public T documentToObject(final ODocument document) {
         final T pojo = objectDb.get().newInstance(document.getClassName());
-        return (T) objectDb.get().stream2pojo(document, pojo, null, true);
+        return (T) objectDb.get().stream2pojo(document, pojo, null);
     }
 
     private List<T> detachAllInternal(final List<T> entities) {

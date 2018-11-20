@@ -9,7 +9,7 @@ import com.google.inject.name.Names;
 import com.google.inject.persist.PersistModule;
 import com.google.inject.persist.PersistService;
 import com.google.inject.persist.UnitOfWork;
-import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx;
+import com.orientechnologies.orient.core.db.document.ODatabaseDocument;
 import com.orientechnologies.orient.core.serialization.serializer.object.OObjectSerializer;
 import com.orientechnologies.orient.object.serialization.OObjectSerializerContext;
 import com.orientechnologies.orient.object.serialization.OObjectSerializerHelper;
@@ -251,7 +251,7 @@ public class OrientModule extends PersistModule {
      * transactional (OrientGraph) and not transactional (OrientGraphNoTx) connections.
      */
     protected void configurePools() {
-        bindPool(ODatabaseDocumentTx.class, DocumentPool.class);
+        bindPool(ODatabaseDocument.class, DocumentPool.class);
 
         // pools availability should depend on available jars in classpath
         // this way object and graph dependencies are optional

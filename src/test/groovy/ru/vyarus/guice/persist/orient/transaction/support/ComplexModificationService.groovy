@@ -3,7 +3,7 @@ package ru.vyarus.guice.persist.orient.transaction.support
 import com.google.common.collect.Lists
 import com.google.inject.Provider
 import com.google.inject.persist.Transactional
-import com.orientechnologies.orient.object.db.OObjectDatabaseTx
+import com.orientechnologies.orient.core.db.object.ODatabaseObject
 import com.tinkerpop.blueprints.Vertex
 import com.tinkerpop.blueprints.impls.orient.OrientGraph
 import ru.vyarus.guice.persist.orient.support.model.VertexModel
@@ -18,8 +18,10 @@ import javax.inject.Inject
 class ComplexModificationService {
 
     // @formatter:off
-    @Inject Provider<OObjectDatabaseTx> objectProvider
-    @Inject Provider<OrientGraph> txGraphProvider
+    @Inject
+    Provider<ODatabaseObject> objectProvider
+    @Inject
+    Provider<OrientGraph> txGraphProvider
     // @formatter:on
 
     @Transactional

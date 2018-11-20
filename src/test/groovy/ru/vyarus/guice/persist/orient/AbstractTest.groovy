@@ -3,14 +3,15 @@ package ru.vyarus.guice.persist.orient
 import com.google.inject.persist.PersistService
 import com.orientechnologies.orient.core.config.OGlobalConfiguration
 import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx
+import com.orientechnologies.orient.core.db.object.ODatabaseObject
 import com.orientechnologies.orient.core.metadata.security.OSecurity
-import com.orientechnologies.orient.core.metadata.security.OSecurityNull
 import com.orientechnologies.orient.core.security.OSecurityFactory
 import com.orientechnologies.orient.core.security.OSecurityManager
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx
 import ru.vyarus.guice.persist.orient.db.PersistentContext
 import ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxAction
 import ru.vyarus.guice.persist.orient.support.Config
+import ru.vyarus.guice.persist.orient.util.OSecurityNull
 import ru.vyarus.guice.persist.orient.util.uniquedb.UniqueDb
 import spock.lang.Specification
 
@@ -28,7 +29,7 @@ abstract class AbstractTest extends Specification {
     @Inject
     PersistService persist
     @Inject
-    PersistentContext<OObjectDatabaseTx> context
+    PersistentContext<ODatabaseObject> context
 
     void setup() {
         setupSecurity()
@@ -44,7 +45,7 @@ abstract class AbstractTest extends Specification {
         OSecurityManager.instance().securityFactory = new OSecurityFactory() {
             @Override
             OSecurity newSecurity() {
-                return new OSecurityNull(null, null)
+                return new OSecurityNull()
             }
         }
     }

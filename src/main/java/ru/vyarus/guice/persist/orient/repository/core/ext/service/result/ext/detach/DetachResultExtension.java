@@ -1,7 +1,7 @@
 package ru.vyarus.guice.persist.orient.repository.core.ext.service.result.ext.detach;
 
 import com.google.common.collect.Lists;
-import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
+import com.orientechnologies.orient.core.db.object.ODatabaseObject;
 import javassist.util.proxy.Proxy;
 import ru.vyarus.guice.persist.orient.db.DbType;
 import ru.vyarus.guice.persist.orient.db.util.RidUtils;
@@ -36,7 +36,7 @@ public class DetachResultExtension implements ResultExtension<DetachResult> {
         checkExec(DbType.OBJECT.equals(descriptor.executor.getType()), "Detach may be performed only on "
                         + "objects from OBJECT connection, but current connection is %s",
                 descriptor.executor.getType());
-        final OObjectDatabaseTx connection = (OObjectDatabaseTx) descriptor.executor.getConnection();
+        final ODatabaseObject connection = (ODatabaseObject) descriptor.executor.getConnection();
         final Object res;
         switch (descriptor.result.returnType) {
             case PLAIN:
@@ -54,7 +54,7 @@ public class DetachResultExtension implements ResultExtension<DetachResult> {
         return res;
     }
 
-    private Object handleCollection(final Object result, final OObjectDatabaseTx connection) {
+    private Object handleCollection(final Object result, final ODatabaseObject connection) {
         final boolean isIterator = result instanceof Iterator;
         @SuppressWarnings("unchecked")
         final Collection<Object> col = isIterator ? Lists.newArrayList((Iterator) result)
@@ -64,7 +64,7 @@ public class DetachResultExtension implements ResultExtension<DetachResult> {
     }
 
     @SuppressWarnings("unchecked")
-    private Collection detachCollection(final Collection result, final OObjectDatabaseTx connection) {
+    private Collection detachCollection(final Collection result, final ODatabaseObject connection) {
         final List<Object> tmp = Lists.newArrayList();
         for (Object obj : result) {
             tmp.add(obj == null ? null : detach(obj, connection));
@@ -76,7 +76,7 @@ public class DetachResultExtension implements ResultExtension<DetachResult> {
         return result;
     }
 
-    private Object handleArray(final Object result, final OObjectDatabaseTx connection) {
+    private Object handleArray(final Object result, final ODatabaseObject connection) {
         for (int i = 0; i < Array.getLength(result); i++) {
             final Object elt = Array.get(result, i);
             if (elt != null) {
@@ -86,7 +86,7 @@ public class DetachResultExtension implements ResultExtension<DetachResult> {
         return result;
     }
 
-    private Object detach(final Object pojo, final OObjectDatabaseTx connection) {
+    private Object detach(final Object pojo, final ODatabaseObject connection) {
         final Object res = connection.detachAll(pojo, true);
         if (pojo instanceof Proxy) {
             // when entity detached under transaction it gets temporal id

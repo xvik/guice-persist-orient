@@ -8,7 +8,7 @@ import com.google.common.collect.Lists;
 import com.google.inject.Provider;
 import com.google.inject.matcher.Matcher;
 import com.orientechnologies.common.reflection.OReflectionHelper;
-import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
+import com.orientechnologies.orient.core.db.object.ODatabaseObject;
 import ru.vyarus.guice.persist.orient.db.scheme.SchemeInitializer;
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.ObjectSchemeInitializer;
 
@@ -33,12 +33,12 @@ import java.util.List;
  * @since 24.07.2014
  */
 public abstract class AbstractObjectInitializer implements SchemeInitializer {
-    private final Provider<OObjectDatabaseTx> dbProvider;
+    private final Provider<ODatabaseObject> dbProvider;
     private final ObjectSchemeInitializer schemeInitializer;
     private final Matcher<? super Class<?>> classMatcher;
     private final String[] packages;
 
-    protected AbstractObjectInitializer(final Provider<OObjectDatabaseTx> dbProvider,
+    protected AbstractObjectInitializer(final Provider<ODatabaseObject> dbProvider,
                                         final ObjectSchemeInitializer schemeInitializer,
                                         final Matcher<? super Class<?>> classMatcher,
                                         final String... packages) {
@@ -50,7 +50,7 @@ public abstract class AbstractObjectInitializer implements SchemeInitializer {
 
     @Override
     public void initialize() {
-        final OObjectDatabaseTx db = dbProvider.get();
+        final ODatabaseObject db = dbProvider.get();
         registerClasses(scan());
         // important to guarantee correct state in dynamic environments (like tests or using different databases)
         db.getMetadata().getSchema().synchronizeSchema();

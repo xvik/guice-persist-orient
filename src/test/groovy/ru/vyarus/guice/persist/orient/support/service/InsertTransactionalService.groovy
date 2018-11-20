@@ -2,7 +2,7 @@ package ru.vyarus.guice.persist.orient.support.service
 
 import com.google.inject.Provider
 import com.google.inject.persist.Transactional
-import com.orientechnologies.orient.object.db.OObjectDatabaseTx
+import com.orientechnologies.orient.core.db.object.ODatabaseObject
 import ru.vyarus.guice.persist.orient.support.model.Model
 
 import javax.inject.Inject
@@ -16,7 +16,7 @@ import javax.inject.Inject
 class InsertTransactionalService {
 
     @Inject
-    Provider<OObjectDatabaseTx> provider
+    Provider<ODatabaseObject> provider
 
     @Inject
     SelectTransactionalService selectService
@@ -24,7 +24,7 @@ class InsertTransactionalService {
     @Transactional
     public void insertRecord() {
         // insert record
-        final OObjectDatabaseTx db = provider.get()
+        final ODatabaseObject db = provider.get()
         final Model model = new Model(name: 'John', nick: 'Doe')
         db.save(model)
     }

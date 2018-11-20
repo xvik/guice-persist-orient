@@ -3,10 +3,10 @@ package ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.field.index.luc
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Strings;
 import com.orientechnologies.lucene.OLuceneIndexFactory;
+import com.orientechnologies.orient.core.db.object.ODatabaseObject;
 import com.orientechnologies.orient.core.index.OIndex;
 import com.orientechnologies.orient.core.metadata.schema.OClass;
 import com.orientechnologies.orient.core.record.impl.ODocument;
-import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,13 +32,13 @@ public class LuceneIndexFieldExtension implements FieldExtension<LuceneIndex> {
     private final Logger logger = LoggerFactory.getLogger(LuceneIndexFieldExtension.class);
 
     @Override
-    public void beforeRegistration(final OObjectDatabaseTx db, final SchemeDescriptor descriptor,
+    public void beforeRegistration(final ODatabaseObject db, final SchemeDescriptor descriptor,
                                    final Field field, final LuceneIndex annotation) {
         // not needed
     }
 
     @Override
-    public void afterRegistration(final OObjectDatabaseTx db, final SchemeDescriptor descriptor,
+    public void afterRegistration(final ODatabaseObject db, final SchemeDescriptor descriptor,
                                   final Field field, final LuceneIndex annotation) {
         db.getMetadata().getIndexManager().reload();
         final String property = field.getName();

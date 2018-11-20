@@ -1,7 +1,7 @@
 package ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.type.rename;
 
 import com.google.common.base.Strings;
-import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
+import com.orientechnologies.orient.core.db.object.ODatabaseObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.core.spi.SchemeDescriptor;
@@ -26,7 +26,7 @@ public class RenameFromTypeExtension implements TypeExtension<RenameFrom> {
     private final Logger logger = LoggerFactory.getLogger(RenameFromTypeExtension.class);
 
     @Override
-    public void beforeRegistration(final OObjectDatabaseTx db, final SchemeDescriptor descriptor,
+    public void beforeRegistration(final ODatabaseObject db, final SchemeDescriptor descriptor,
                                    final RenameFrom annotation) {
         final String oldName = Strings.emptyToNull(annotation.value().trim());
         final String name = descriptor.schemeClass;
@@ -43,7 +43,7 @@ public class RenameFromTypeExtension implements TypeExtension<RenameFrom> {
     }
 
     @Override
-    public void afterRegistration(final OObjectDatabaseTx db, final SchemeDescriptor descriptor,
+    public void afterRegistration(final ODatabaseObject db, final SchemeDescriptor descriptor,
                                   final RenameFrom annotation) {
         // not needed
     }

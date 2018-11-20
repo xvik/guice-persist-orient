@@ -1,7 +1,7 @@
 package ru.vyarus.guice.persist.orient.repository.delegate.ext.connection.support
 
+import com.orientechnologies.orient.core.db.ODatabase
 import com.orientechnologies.orient.core.db.object.ODatabaseObject
-import com.orientechnologies.orient.object.db.OObjectDatabaseTx
 import com.tinkerpop.blueprints.impls.orient.OrientGraph
 import ru.vyarus.guice.persist.orient.repository.delegate.ext.connection.Connection
 import ru.vyarus.guice.persist.orient.support.model.Model
@@ -17,11 +17,11 @@ class ConnectionDelegate {
         [new Model(name: 'rawConnection')]
     }
 
-    List<Model> subtypeMatch(@Connection ODatabaseObject db) {
+    List<Model> subtypeMatch(@Connection ODatabase db) {
         [new Model(name: 'subtypeMatch')]
     }
 
-    List<Model> exactConnection(@Connection OObjectDatabaseTx db) {
+    List<Model> exactConnection(@Connection ODatabaseObject db) {
         [new Model(name: 'exactConnection')]
     }
 
@@ -30,6 +30,6 @@ class ConnectionDelegate {
     }
 
     // error: duplicate definition
-    List<Model> duplicate(@Connection OObjectDatabaseTx db, @Connection OObjectDatabaseTx db2) {
+    List<Model> duplicate(@Connection ODatabaseObject db, @Connection ODatabaseObject db2) {
     }
 }

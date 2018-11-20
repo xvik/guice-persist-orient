@@ -1,6 +1,6 @@
 package ru.vyarus.guice.persist.orient.transaction
 
-import com.orientechnologies.orient.object.db.OObjectDatabaseTx
+import com.orientechnologies.orient.core.db.object.ODatabaseObject
 import ru.vyarus.guice.persist.orient.AbstractTest
 import ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxAction
 import ru.vyarus.guice.persist.orient.support.model.VertexModel
@@ -24,7 +24,7 @@ class CompositeTransaction extends AbstractTest {
     void setup() {
         context.doWithoutTransaction({ db ->
             10.times { db.save(new VertexModel(name: 'name' + it)) }
-        } as SpecificTxAction)
+        } as SpecificTxAction<Void, ODatabaseObject>)
     }
 
     def "Check using graph api to access object data"() {
@@ -39,7 +39,7 @@ class CompositeTransaction extends AbstractTest {
         List res = context.doInTransaction({ db ->
             db.save(new VertexModel(name: 'name11'))
             service.selectWithGraph()
-        } as SpecificTxAction<List, OObjectDatabaseTx>)
+        } as SpecificTxAction<List, ODatabaseObject>)
         then: "Graph connection select just inserted element"
         res.size() == 11
     }

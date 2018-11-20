@@ -2,9 +2,9 @@ package ru.vyarus.guice.persist.orient.transaction.support
 
 import com.google.inject.Provider
 import com.google.inject.persist.Transactional
-import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx
+import com.orientechnologies.orient.core.db.document.ODatabaseDocument
+import com.orientechnologies.orient.core.db.object.ODatabaseObject
 import com.orientechnologies.orient.core.tx.OTransaction
-import com.orientechnologies.orient.object.db.OObjectDatabaseTx
 import com.tinkerpop.blueprints.impls.orient.OrientBaseGraph
 import com.tinkerpop.blueprints.impls.orient.OrientGraph
 import com.tinkerpop.blueprints.impls.orient.OrientGraphNoTx
@@ -19,13 +19,13 @@ import javax.inject.Inject
 @javax.inject.Singleton
 class AllConnectionsService {
 
-    // @formatter:off
-    @Inject Provider<ODatabaseDocumentTx> documentProvider
-    @Inject Provider<OObjectDatabaseTx> objectProvider
+    //@formatter:off
+    @Inject Provider<ODatabaseDocument> documentProvider
+    @Inject Provider<ODatabaseObject> objectProvider
     @Inject Provider<OrientGraph> txGraphProvider
     @Inject Provider<OrientGraphNoTx> noTxGraphProvider
     @Inject Provider<OrientBaseGraph> baseGraphProvider
-    // @formatter:on
+    //@formatter:on
 
     def noTxConnectionObtain() {
         // will fail (no unit of work defined)

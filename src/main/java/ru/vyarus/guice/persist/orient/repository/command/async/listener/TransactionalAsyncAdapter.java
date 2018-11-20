@@ -1,7 +1,7 @@
 package ru.vyarus.guice.persist.orient.repository.command.async.listener;
 
 import com.orientechnologies.orient.core.command.OCommandResultListener;
-import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx;
+import com.orientechnologies.orient.core.db.document.ODatabaseDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vyarus.guice.persist.orient.db.PersistentContext;
@@ -26,12 +26,12 @@ public class TransactionalAsyncAdapter implements OCommandResultListener {
 
     private final Logger logger = LoggerFactory.getLogger(TransactionalAsyncAdapter.class);
 
-    private final PersistentContext<ODatabaseDocumentTx> context;
+    private final PersistentContext<ODatabaseDocument> context;
     private final OCommandResultListener listener;
     // on error this is the only way to indicate problem context
     private final String queryContext;
 
-    public TransactionalAsyncAdapter(final PersistentContext<ODatabaseDocumentTx> context,
+    public TransactionalAsyncAdapter(final PersistentContext<ODatabaseDocument> context,
                                      final OCommandResultListener listener,
                                      final String queryContext) {
         this.context = context;

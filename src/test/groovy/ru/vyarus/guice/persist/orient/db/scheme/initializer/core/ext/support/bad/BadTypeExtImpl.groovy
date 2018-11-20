@@ -1,6 +1,6 @@
 package ru.vyarus.guice.persist.orient.db.scheme.initializer.core.ext.support.bad
 
-import com.orientechnologies.orient.object.db.OObjectDatabaseTx
+import com.orientechnologies.orient.core.db.object.ODatabaseObject
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.core.spi.SchemeDescriptor
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.core.spi.type.TypeExtension
 
@@ -17,12 +17,12 @@ class BadTypeExtImpl implements TypeExtension<BadTypeExt> {
     }
 
     @Override
-    void beforeRegistration(OObjectDatabaseTx db, SchemeDescriptor descriptor, BadTypeExt annotation) {
+    void beforeRegistration(ODatabaseObject db, SchemeDescriptor descriptor, BadTypeExt annotation) {
 
     }
 
     @Override
-    void afterRegistration(OObjectDatabaseTx db, SchemeDescriptor descriptor, BadTypeExt annotation) {
+    void afterRegistration(ODatabaseObject db, SchemeDescriptor descriptor, BadTypeExt annotation) {
 
     }
 }

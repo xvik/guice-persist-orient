@@ -1,6 +1,6 @@
 package ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.type.index;
 
-import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
+import com.orientechnologies.orient.core.db.object.ODatabaseObject;
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.core.spi.SchemeDescriptor;
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.core.spi.type.TypeExtension;
 
@@ -24,7 +24,7 @@ public class MultipleIndexesTypeExtension implements TypeExtension<CompositeInde
     }
 
     @Override
-    public void beforeRegistration(final OObjectDatabaseTx db, final SchemeDescriptor descriptor,
+    public void beforeRegistration(final ODatabaseObject db, final SchemeDescriptor descriptor,
                                    final CompositeIndex.List annotation) {
         for (CompositeIndex index : annotation.value()) {
             extension.beforeRegistration(db, descriptor, index);
@@ -32,7 +32,7 @@ public class MultipleIndexesTypeExtension implements TypeExtension<CompositeInde
     }
 
     @Override
-    public void afterRegistration(final OObjectDatabaseTx db, final SchemeDescriptor descriptor,
+    public void afterRegistration(final ODatabaseObject db, final SchemeDescriptor descriptor,
                                   final CompositeIndex.List annotation) {
         for (CompositeIndex index : annotation.value()) {
             extension.afterRegistration(db, descriptor, index);

@@ -2,6 +2,7 @@ package ru.vyarus.guice.persist.orient.db.scheme.initializer;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.orientechnologies.orient.core.db.object.ODatabaseObject;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import com.orientechnologies.orient.object.metadata.schema.OSchemaProxyObject;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -49,11 +50,11 @@ import java.util.Set;
 public class ObjectSchemeInitializer {
     private final Set<Class<?>> processingCache = Sets.newHashSet();
 
-    private final Provider<OObjectDatabaseTx> dbProvider;
+    private final Provider<ODatabaseObject> dbProvider;
     private final ExtensionsDescriptorFactory extFactory;
 
     @Inject
-    public ObjectSchemeInitializer(final Provider<OObjectDatabaseTx> dbProvider,
+    public ObjectSchemeInitializer(final Provider<ODatabaseObject> dbProvider,
                                    final ExtensionsDescriptorFactory extFactory) {
         this.dbProvider = dbProvider;
         this.extFactory = extFactory;
@@ -67,9 +68,9 @@ public class ObjectSchemeInitializer {
      * @param model model class
      */
     public void register(final Class<?> model) {
-        final OObjectDatabaseTx db = dbProvider.get();
+        final ODatabaseObject db = dbProvider.get();
         // auto create schema for new classes
-        db.setAutomaticSchemaGeneration(true);
+        ((OObjectDatabaseTx) db).setAutomaticSchemaGeneration(true);
         // processing lower hierarchy types first
         try {
             for (Class<?> type : Lists.reverse(SchemeUtils.resolveHierarchy(model))) {
@@ -87,7 +88,7 @@ public class ObjectSchemeInitializer {
         processingCache.clear();
     }
 
-    private void processType(final OObjectDatabaseTx db, final Class<?> model) {
+    private void processType(final ODatabaseObject db, final Class<?> model) {
         // avoid processing same types
         if (processingCache.contains(model)) {
             return;
@@ -112,7 +113,7 @@ public class ObjectSchemeInitializer {
         processingCache.add(model);
     }
 
-    private SchemeDescriptor buildDescriptor(final OObjectDatabaseTx db, final Class<?> model) {
+    private SchemeDescriptor buildDescriptor(final ODatabaseObject db, final Class<?> model) {
         final SchemeDescriptor desc = new SchemeDescriptor();
         desc.modelClass = model;
         desc.schemeClass = model.getSimpleName();
@@ -125,7 +126,7 @@ public class ObjectSchemeInitializer {
 
     @SuppressWarnings("unchecked")
     private void executeBefore(final ExtensionsDescriptor extDesc, final SchemeDescriptor desc,
-                               final OObjectDatabaseTx db) {
+                               final ODatabaseObject db) {
         final OSchemaProxyObject schema = db.getMetadata().getSchema();
         for (ExtensionsDescriptor.Ext<TypeExtension, Class> ext : extDesc.type) {
             ext.extension.beforeRegistration(db, desc, ext.annotation);
@@ -141,7 +142,7 @@ public class ObjectSchemeInitializer {
 
     @SuppressWarnings("unchecked")
     private void executeAfter(final ExtensionsDescriptor extDesc, final SchemeDescriptor desc,
-                              final OObjectDatabaseTx db) {
+                              final ODatabaseObject db) {
         final OSchemaProxyObject schema = db.getMetadata().getSchema();
         for (ExtensionsDescriptor.Ext<TypeExtension, Class> ext : extDesc.type) {
             ext.extension.afterRegistration(db, desc, ext.annotation);

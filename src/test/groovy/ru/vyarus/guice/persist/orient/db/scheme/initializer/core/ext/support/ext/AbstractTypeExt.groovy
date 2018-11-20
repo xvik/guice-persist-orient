@@ -1,6 +1,6 @@
 package ru.vyarus.guice.persist.orient.db.scheme.initializer.core.ext.support.ext
 
-import com.orientechnologies.orient.object.db.OObjectDatabaseTx
+import com.orientechnologies.orient.core.db.object.ODatabaseObject
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.core.spi.SchemeDescriptor
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.core.spi.type.TypeExtension
 
@@ -17,12 +17,12 @@ abstract class AbstractTypeExt<A extends Annotation> implements TypeExtension<A>
 
 
     @Override
-    void beforeRegistration(OObjectDatabaseTx db, SchemeDescriptor descriptor, A annotation) {
+    void beforeRegistration(ODatabaseObject db, SchemeDescriptor descriptor, A annotation) {
         before = true
     }
 
     @Override
-    void afterRegistration(OObjectDatabaseTx db, SchemeDescriptor descriptor, A annotation) {
+    void afterRegistration(ODatabaseObject db, SchemeDescriptor descriptor, A annotation) {
         after = true
     }
 }

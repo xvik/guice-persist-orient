@@ -2,9 +2,9 @@ package ru.vyarus.guice.persist.orient.support.repository.mixin.crud.delegate;
 
 import com.google.inject.ProvidedBy;
 import com.google.inject.internal.DynamicSingletonProvider;
+import com.orientechnologies.orient.core.db.object.ODatabaseObject;
 import com.orientechnologies.orient.core.id.ORID;
 import com.orientechnologies.orient.core.id.ORecordId;
-import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import ru.vyarus.guice.persist.orient.support.repository.mixin.crud.ObjectCrud;
 
 import javax.inject.Inject;
@@ -20,10 +20,10 @@ import javax.inject.Provider;
 @ProvidedBy(DynamicSingletonProvider.class)
 public abstract class ObjectCrudDelegate<T> implements ObjectCrud<T> {
 
-    private final Provider<OObjectDatabaseTx> dbProvider;
+    private final Provider<ODatabaseObject> dbProvider;
 
     @Inject
-    public ObjectCrudDelegate(final Provider<OObjectDatabaseTx> dbProvider) {
+    public ObjectCrudDelegate(final Provider<ODatabaseObject> dbProvider) {
         this.dbProvider = dbProvider;
     }
 

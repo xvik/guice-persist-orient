@@ -1,6 +1,6 @@
 package ru.vyarus.guice.persist.orient.db.scheme.initializer.core.ext.support.ext
 
-import com.orientechnologies.orient.object.db.OObjectDatabaseTx
+import com.orientechnologies.orient.core.db.object.ODatabaseObject
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.core.spi.SchemeDescriptor
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.core.spi.field.FieldExtension
 
@@ -17,12 +17,12 @@ abstract class AbstractFieldExt<A extends Annotation> implements FieldExtension<
     boolean after
 
     @Override
-    void beforeRegistration(OObjectDatabaseTx db, SchemeDescriptor descriptor, Field field, A annotation) {
+    void beforeRegistration(ODatabaseObject db, SchemeDescriptor descriptor, Field field, A annotation) {
         before = true
     }
 
     @Override
-    void afterRegistration(OObjectDatabaseTx db, SchemeDescriptor descriptor, Field field, A annotation) {
+    void afterRegistration(ODatabaseObject db, SchemeDescriptor descriptor, Field field, A annotation) {
         after = true
     }
 }

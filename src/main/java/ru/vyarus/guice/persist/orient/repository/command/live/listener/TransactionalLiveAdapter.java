@@ -1,7 +1,7 @@
 package ru.vyarus.guice.persist.orient.repository.command.live.listener;
 
 import com.orientechnologies.common.exception.OException;
-import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx;
+import com.orientechnologies.orient.core.db.document.ODatabaseDocument;
 import com.orientechnologies.orient.core.db.record.ORecordOperation;
 import com.orientechnologies.orient.core.sql.query.OLiveResultListener;
 import com.orientechnologies.orient.core.sql.query.OLocalLiveResultListener;
@@ -18,10 +18,10 @@ import ru.vyarus.guice.persist.orient.db.transaction.template.TxAction;
  */
 public class TransactionalLiveAdapter extends OLocalLiveResultListener {
 
-    private final PersistentContext<ODatabaseDocumentTx> context;
+    private final PersistentContext<ODatabaseDocument> context;
     private final OLiveResultListener underlying;
 
-    public TransactionalLiveAdapter(final PersistentContext<ODatabaseDocumentTx> context,
+    public TransactionalLiveAdapter(final PersistentContext<ODatabaseDocument> context,
                                     final OLiveResultListener underlying) {
         super(underlying);
         this.context = context;

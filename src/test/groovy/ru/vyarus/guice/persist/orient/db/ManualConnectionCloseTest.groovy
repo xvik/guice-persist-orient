@@ -1,7 +1,7 @@
 package ru.vyarus.guice.persist.orient.db
 
 import com.google.inject.Inject
-import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx
+import com.orientechnologies.orient.core.db.document.ODatabaseDocument
 import com.tinkerpop.blueprints.impls.orient.OrientGraph
 import ru.vyarus.guice.persist.orient.AbstractTest
 import ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxAction
@@ -16,7 +16,7 @@ import spock.guice.UseModules
 @UseModules(PackageSchemeModule)
 class ManualConnectionCloseTest extends AbstractTest {
     @Inject
-    SpecificTxTemplate<ODatabaseDocumentTx> documentTemplate;
+    SpecificTxTemplate<ODatabaseDocument> documentTemplate;
     @Inject
     SpecificTxTemplate<OrientGraph> graphTemplate;
 

@@ -2,7 +2,7 @@ package ru.vyarus.guice.persist.orient.db.scheme.impl;
 
 import com.google.inject.Provider;
 import com.google.inject.matcher.Matchers;
-import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
+import com.orientechnologies.orient.core.db.object.ODatabaseObject;
 import ru.vyarus.guice.persist.orient.db.scheme.annotation.Persistent;
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.ObjectSchemeInitializer;
 
@@ -30,7 +30,7 @@ public class AutoScanSchemeInitializer extends AbstractObjectInitializer {
 
     @Inject
     public AutoScanSchemeInitializer(@Named("orient.model.package") final String appPkgs,
-                                     final Provider<OObjectDatabaseTx> dbProvider,
+                                     final Provider<ODatabaseObject> dbProvider,
                                      final ObjectSchemeInitializer schemeInitializer) {
         super(dbProvider, schemeInitializer, Matchers.annotatedWith(Persistent.class), appPkgs.split(","));
     }

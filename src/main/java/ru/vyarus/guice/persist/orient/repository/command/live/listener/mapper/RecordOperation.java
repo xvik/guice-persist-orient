@@ -1,6 +1,5 @@
 package ru.vyarus.guice.persist.orient.repository.command.live.listener.mapper;
 
-import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx;
 import com.orientechnologies.orient.core.db.record.ORecordOperation;
 
 /**
@@ -30,15 +29,7 @@ public enum RecordOperation {
      * Most likely, record is loaded from db (means its state is synchronized with db aka no changes).
      * Should not be called for live query.
      */
-    LOADED(ORecordOperation.LOADED),
-    /**
-     * Meaning is almost like CREATED (most of the orient logic treat both events as the same).
-     * The difference in meaning is: the place of old record taken by some new record.
-     * Should not be called for live query.
-     *
-     * @see ODatabaseDocumentTx#recycle(com.orientechnologies.orient.core.record.ORecord)
-     */
-    RECYCLED(ORecordOperation.RECYCLED);
+    LOADED(ORecordOperation.LOADED);
 
     private byte otype;
 

@@ -1,7 +1,7 @@
 package ru.vyarus.guice.persist.orient.concurrent
 
 import com.google.inject.Inject
-import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx
+import com.orientechnologies.orient.core.db.document.ODatabaseDocument
 import com.orientechnologies.orient.core.record.impl.ODocument
 import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery
 import com.orientechnologies.orient.core.tx.OTransaction
@@ -26,7 +26,7 @@ import java.util.concurrent.Future
 class MultiConnectionConcurrentTest extends AbstractTest {
 
     @Inject
-    SpecificTxTemplate<ODatabaseDocumentTx> documentTemplate;
+    SpecificTxTemplate<ODatabaseDocument> documentTemplate;
     @Inject
     SpecificTxTemplate<OrientBaseGraph> graphTemplate;
     ExecutorService executor

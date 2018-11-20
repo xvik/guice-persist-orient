@@ -2,9 +2,9 @@ package ru.vyarus.guice.persist.orient.repository.core.ext.service.result.conver
 
 import com.google.common.primitives.Primitives;
 import com.google.inject.Injector;
+import com.orientechnologies.orient.core.db.object.ODatabaseObject;
 import com.orientechnologies.orient.core.record.ORecord;
 import com.orientechnologies.orient.core.record.impl.ODocument;
-import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.impls.orient.OrientBaseGraph;
@@ -135,10 +135,10 @@ public class RecordConverter {
         // Possible case: custom result converter required. For example, targetType may be even mapped object
         // class but returned document does not represent this class (assumed manual conversion)
         if (doc.getClassName().equals(targetType.getSimpleName())) {
-            final OObjectDatabaseTx db = injector.getInstance(OObjectDatabaseTx.class);
+            final ODatabaseObject db = injector.getInstance(ODatabaseObject.class);
             if (db.getEntityManager().getRegisteredEntities().contains(targetType)) {
                 final T pojo = db.newInstance(targetType);
-                return (T) db.stream2pojo(doc, pojo, null, true);
+                return (T) db.stream2pojo(doc, pojo, null);
             }
         }
         return null;

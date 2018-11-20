@@ -1,5 +1,6 @@
 package ru.vyarus.guice.persist.orient.db.pool.graph;
 
+import com.orientechnologies.orient.core.db.ODatabaseDocumentInternal;
 import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx;
 import com.orientechnologies.orient.core.tx.OTransaction;
 import com.tinkerpop.blueprints.impls.orient.OrientBaseGraph;
@@ -54,7 +55,7 @@ public class GraphPool implements PoolManager<OrientBaseGraph> {
     @Override
     public OrientBaseGraph get() {
         if (transaction.get() == null) {
-            final ODatabaseDocumentTx documentDb = documentPool.get();
+            final ODatabaseDocumentInternal documentDb = (ODatabaseDocumentInternal) documentPool.get();
             final OrientBaseGraph graph = transactionManager.getActiveTransactionType() == OTransaction.TXTYPE.NOTX
                     ? new OrientGraphNoTx(documentDb) : new OrientGraph(documentDb);
             transaction.set(graph);

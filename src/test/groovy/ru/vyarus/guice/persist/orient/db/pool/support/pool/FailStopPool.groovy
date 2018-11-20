@@ -1,6 +1,6 @@
 package ru.vyarus.guice.persist.orient.db.pool.support.pool
 
-import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx
+import com.orientechnologies.orient.core.db.document.ODatabaseDocument
 import ru.vyarus.guice.persist.orient.db.DbType
 import ru.vyarus.guice.persist.orient.db.pool.PoolManager
 
@@ -8,7 +8,7 @@ import ru.vyarus.guice.persist.orient.db.pool.PoolManager
  * @author Vyacheslav Rusakov 
  * @since 22.02.2015
  */
-class FailStopPool implements PoolManager<ODatabaseDocumentTx> {
+class FailStopPool implements PoolManager<ODatabaseDocument> {
 
     @Override
     void start(String uri) {
@@ -36,7 +36,7 @@ class FailStopPool implements PoolManager<ODatabaseDocumentTx> {
     }
 
     @Override
-    ODatabaseDocumentTx get() {
+    ODatabaseDocument get() {
         return null
     }
 }

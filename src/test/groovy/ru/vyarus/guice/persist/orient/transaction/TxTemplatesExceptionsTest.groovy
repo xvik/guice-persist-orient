@@ -1,6 +1,6 @@
 package ru.vyarus.guice.persist.orient.transaction
 
-import com.orientechnologies.orient.object.db.OObjectDatabaseTx
+import com.orientechnologies.orient.core.db.object.ODatabaseObject
 import ru.vyarus.guice.persist.orient.AbstractTest
 import ru.vyarus.guice.persist.orient.db.PersistentContext
 import ru.vyarus.guice.persist.orient.db.transaction.template.TemplateTransactionException
@@ -20,7 +20,7 @@ import javax.inject.Inject
 class TxTemplatesExceptionsTest extends AbstractTest {
 
     @Inject
-    PersistentContext<OObjectDatabaseTx> context
+    PersistentContext<ODatabaseObject> context
 
     def "Check runtime exception"() {
 

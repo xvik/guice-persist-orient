@@ -2,8 +2,7 @@ package ru.vyarus.guice.persist.orient.support.service
 
 import com.google.inject.Provider
 import com.google.inject.persist.Transactional
-import com.orientechnologies.orient.object.db.OObjectDatabaseTx
-import org.apache.commons.logging.LogFactory
+import com.orientechnologies.orient.core.db.object.ODatabaseObject
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import ru.vyarus.guice.persist.orient.db.data.DataInitializer
@@ -21,12 +20,12 @@ class TestDataInitializer implements DataInitializer {
     Logger logger = LoggerFactory.getLogger(TestDataInitializer)
 
     @Inject
-    Provider<OObjectDatabaseTx> provider
+    Provider<ODatabaseObject> provider
 
     @Override
     @Transactional
     void initializeData() {
-        final  OObjectDatabaseTx db = provider.get()
+        final  ODatabaseObject db = provider.get()
         10.times({
             db.save(new Model(name: "name$it", nick: "nick$it"))
         })

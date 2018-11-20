@@ -1,8 +1,8 @@
 package ru.vyarus.guice.persist.orient.repository.command
 
 import com.google.inject.Inject
+import com.orientechnologies.orient.core.db.object.ODatabaseObject
 import com.orientechnologies.orient.core.record.impl.ODocument
-import com.orientechnologies.orient.object.db.OObjectDatabaseTx
 import com.tinkerpop.blueprints.Vertex
 import com.tinkerpop.blueprints.impls.orient.OrientVertex
 import ru.vyarus.guice.persist.orient.AbstractTest
@@ -133,7 +133,7 @@ class DbRecognitionExecutionTest extends AbstractTest {
             // (if document used for update, select would not see changes)
             dao.updateUsingObjectConnection();
             dao.selectUnique()
-        } as SpecificTxAction<Model, OObjectDatabaseTx>)
+        } as SpecificTxAction<Model, ODatabaseObject>)
         then:
         model != null
         model.name == 'changed'

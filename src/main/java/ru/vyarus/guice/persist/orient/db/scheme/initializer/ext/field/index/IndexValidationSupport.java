@@ -7,9 +7,9 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.orientechnologies.orient.core.db.object.ODatabaseObject;
 import com.orientechnologies.orient.core.index.OIndex;
 import com.orientechnologies.orient.core.metadata.schema.OClass;
-import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import org.slf4j.Logger;
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.core.util.SchemeUtils;
 
@@ -85,7 +85,7 @@ public class IndexValidationSupport {
      *
      * @param db database object
      */
-    public void dropIndex(final OObjectDatabaseTx db) {
+    public void dropIndex(final ODatabaseObject db) {
         final String name = index.getName();
         logger.info("Dropping existing index '{}' (class '{}'), because of definition mismatch",
                 name, index.getDefinition().getClassName());

@@ -1,6 +1,6 @@
 package ru.vyarus.guice.persist.orient.db.scheme.initializer.core.spi.field;
 
-import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
+import com.orientechnologies.orient.core.db.object.ODatabaseObject;
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.core.spi.SchemeDescriptor;
 
 import java.lang.annotation.Annotation;
@@ -29,7 +29,7 @@ public interface FieldExtension<A extends Annotation> {
      * @param field      source extension field
      * @param annotation extension specific annotation
      */
-    void beforeRegistration(OObjectDatabaseTx db, SchemeDescriptor descriptor, Field field, A annotation);
+    void beforeRegistration(ODatabaseObject db, SchemeDescriptor descriptor, Field field, A annotation);
 
     /**
      * Called after type registration with orient.
@@ -39,5 +39,5 @@ public interface FieldExtension<A extends Annotation> {
      * @param field      source extension field
      * @param annotation extension specific annotation
      */
-    void afterRegistration(OObjectDatabaseTx db, SchemeDescriptor descriptor, Field field, A annotation);
+    void afterRegistration(ODatabaseObject db, SchemeDescriptor descriptor, Field field, A annotation);
 }

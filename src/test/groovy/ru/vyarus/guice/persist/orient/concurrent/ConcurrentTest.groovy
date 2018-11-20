@@ -1,6 +1,6 @@
 package ru.vyarus.guice.persist.orient.concurrent
 
-import com.orientechnologies.orient.object.db.OObjectDatabaseTx
+import com.orientechnologies.orient.core.db.object.ODatabaseObject
 import ru.vyarus.guice.persist.orient.AbstractTest
 import ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxAction
 import ru.vyarus.guice.persist.orient.support.model.Model
@@ -53,7 +53,7 @@ class ConcurrentTest extends AbstractTest {
 
         Long cnt = context.doInTransaction({ db ->
             return db.countClass(Model)
-        } as SpecificTxAction<Long, OObjectDatabaseTx>)
+        } as SpecificTxAction<Long, ODatabaseObject>)
         then: "Db should contain 20 records"
         !context.transactionManager.isTransactionActive()
         cnt == times

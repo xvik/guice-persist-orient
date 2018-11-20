@@ -1,6 +1,6 @@
 package ru.vyarus.guice.persist.orient.repository.command.live.advanced
 
-import com.orientechnologies.orient.object.db.OObjectDatabaseTx
+import com.orientechnologies.orient.core.db.object.ODatabaseObject
 import ru.vyarus.guice.persist.orient.db.PersistentContext
 import ru.vyarus.guice.persist.orient.repository.command.live.listener.mapper.LiveQueryListener
 import ru.vyarus.guice.persist.orient.repository.command.live.listener.mapper.RecordOperation
@@ -20,7 +20,7 @@ abstract class AbstractListener<T> implements LiveQueryListener<T> {
     boolean errored
 
     @Inject
-    PersistentContext<OObjectDatabaseTx> context;
+    PersistentContext<ODatabaseObject> context;
 
     @Override
     void onLiveResult(int token, RecordOperation operation, T result) throws Exception {

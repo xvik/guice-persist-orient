@@ -5,6 +5,7 @@ import com.google.inject.Inject;
 import com.orientechnologies.orient.core.config.OGlobalConfiguration;
 import com.orientechnologies.orient.core.db.ODatabaseRecordThreadLocal;
 import com.orientechnologies.orient.core.db.OPartitionedDatabasePoolFactory;
+import com.orientechnologies.orient.core.db.document.ODatabaseDocument;
 import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,13 +28,13 @@ import java.util.concurrent.locks.ReentrantLock;
  * @author Vyacheslav Rusakov
  * @since 24.07.2014
  */
-public class DocumentPool implements PoolManager<ODatabaseDocumentTx> {
+public class DocumentPool implements PoolManager<ODatabaseDocument> {
     private static final Lock RESTART_LOCK = new ReentrantLock();
     private final Logger logger = LoggerFactory.getLogger(DocumentPool.class);
 
     private final TransactionManager transactionManager;
     private final UserManager userManager;
-    private final ThreadLocal<ODatabaseDocumentTx> transaction = new ThreadLocal<ODatabaseDocumentTx>();
+    private final ThreadLocal<ODatabaseDocument> transaction = new ThreadLocal<ODatabaseDocument>();
     private OPartitionedDatabasePoolFactory poolFactory;
     private String uri;
 
@@ -66,7 +67,7 @@ public class DocumentPool implements PoolManager<ODatabaseDocumentTx> {
 
     @Override
     public void commit() {
-        final ODatabaseDocumentTx db = transaction.get();
+        final ODatabaseDocument db = transaction.get();
         if (db == null) {
             // pool not participate in current transaction
             return;
@@ -91,7 +92,7 @@ public class DocumentPool implements PoolManager<ODatabaseDocumentTx> {
 
     @Override
     public void rollback() {
-        final ODatabaseDocumentTx db = transaction.get();
+        final ODatabaseDocument db = transaction.get();
         if (db == null) {
             // pool not participate in current transaction or already committed (may happen if one other pool's
             // transaction fail: in this case all other transactions will be committed and after that
@@ -121,7 +122,7 @@ public class DocumentPool implements PoolManager<ODatabaseDocumentTx> {
     }
 
     @Override
-    public ODatabaseDocumentTx get() {
+    public ODatabaseDocument get() {
         // lazy get: pool transaction will start not together with TransactionManager one, but as soon as
         // connection requested to avoid using connections of not used pools
         Preconditions.checkNotNull(poolFactory, String.format("Pool %s not initialized", getType()));
@@ -130,18 +131,18 @@ public class DocumentPool implements PoolManager<ODatabaseDocumentTx> {
                     "Can't obtain connection from pool %s: no transaction defined.", getType()));
             if (transactionManager.isExternalTransaction()) {
                 // external mode: use already created connection
-                transaction.set((ODatabaseDocumentTx) ODatabaseRecordThreadLocal.instance().get());
+                transaction.set(ODatabaseRecordThreadLocal.instance().get());
                 logger.trace("Pool {} use bound to thread connection (external mode)", getType());
             } else {
                 // normal mode: create connection
-                final ODatabaseDocumentTx db = checkAndAcquireConnection();
+                final ODatabaseDocument db = checkAndAcquireConnection();
 
                 db.begin(transactionManager.getActiveTransactionType());
                 transaction.set(db);
                 logger.trace("Pool {} transaction started", getType());
             }
         }
-        return checkOpened(transaction.get()).activateOnCurrentThread();
+        return (ODatabaseDocument) checkOpened(transaction.get()).activateOnCurrentThread();
     }
 
     /**
@@ -152,7 +153,7 @@ public class DocumentPool implements PoolManager<ODatabaseDocumentTx> {
      * @param db database connection instance
      * @return connection instance if its opened, otherwise error thrown
      */
-    private ODatabaseDocumentTx checkOpened(final ODatabaseDocumentTx db) {
+    private ODatabaseDocument checkOpened(final ODatabaseDocument db) {
         Preconditions.checkState(!db.isClosed(), String.format(
                 "Inconsistent %s pool state: thread-bound database closed! "
                         + "This may happen if close, commit or rollback was called directly on "
@@ -169,8 +170,8 @@ public class DocumentPool implements PoolManager<ODatabaseDocumentTx> {
      *
      * @return connection itself or new valid connection
      */
-    private ODatabaseDocumentTx checkAndAcquireConnection() {
-        ODatabaseDocumentTx res = acquireConnection();
+    private ODatabaseDocument checkAndAcquireConnection() {
+        ODatabaseDocument res = acquireConnection();
         if (res.isClosed()) {
             RESTART_LOCK.lock();
             try {
@@ -199,7 +200,7 @@ public class DocumentPool implements PoolManager<ODatabaseDocumentTx> {
         return DbType.DOCUMENT;
     }
 
-    private ODatabaseDocumentTx acquireConnection() {
+    private ODatabaseDocument acquireConnection() {
         return poolFactory.get(uri, userManager.getUser(), userManager.getPassword()).acquire();
     }
 

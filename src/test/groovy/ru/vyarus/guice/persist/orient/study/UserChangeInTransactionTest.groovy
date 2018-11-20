@@ -1,13 +1,11 @@
 package ru.vyarus.guice.persist.orient.study
 
-import com.google.common.collect.Lists
+import com.orientechnologies.orient.core.db.object.ODatabaseObject
 import com.orientechnologies.orient.core.exception.OSecurityAccessException
 import com.orientechnologies.orient.core.metadata.security.OUser
-import com.orientechnologies.orient.object.db.OObjectDatabaseTx
 import ru.vyarus.guice.persist.orient.AbstractTest
 import ru.vyarus.guice.persist.orient.db.PersistentContext
 import ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxAction
-import ru.vyarus.guice.persist.orient.db.user.SpecificUserAction
 import ru.vyarus.guice.persist.orient.support.model.Model
 import ru.vyarus.guice.persist.orient.support.modules.PackageSchemeModule
 import spock.guice.UseModules
@@ -22,7 +20,7 @@ import javax.inject.Inject
 class UserChangeInTransactionTest extends AbstractTest {
 
     @Inject
-    PersistentContext<OObjectDatabaseTx> context
+    PersistentContext<ODatabaseObject> context
 
     @Override
     void setupSecurity() {

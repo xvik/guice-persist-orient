@@ -2,9 +2,9 @@ package ru.vyarus.guice.persist.orient.db.scheme.initializer.core.util;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
+import com.orientechnologies.orient.core.db.object.ODatabaseObject;
 import com.orientechnologies.orient.core.metadata.schema.OClass;
 import com.orientechnologies.orient.core.sql.OCommandSQL;
-import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.slf4j.Logger;
 
@@ -51,7 +51,7 @@ public final class SchemeUtils {
      * @param target    target super class to assign
      * @param logger    caller specific logger
      */
-    public static void assignSuperclass(final OObjectDatabaseTx db, final Class<?> modelType, final String target,
+    public static void assignSuperclass(final ODatabaseObject db, final Class<?> modelType, final String target,
                                         final Logger logger) {
         // searching for first existing scheme class to check hierarchy and avoid duplicates
         final OClass existing = findFirstExisting(db, modelType);
@@ -79,7 +79,7 @@ public final class SchemeUtils {
      * @param command command with string format placeholders
      * @param args    string format placeholders args (important: not query args!)
      */
-    public static void command(final OObjectDatabaseTx db, final String command, final Object... args) {
+    public static void command(final ODatabaseObject db, final String command, final Object... args) {
         db.command(new OCommandSQL(String.format(command, args))).execute();
     }
 
@@ -91,7 +91,7 @@ public final class SchemeUtils {
      * @see com.orientechnologies.orient.core.index.OIndexManagerProxy#dropIndex(java.lang.String)
      */
     @SuppressFBWarnings("RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT")
-    public static void dropIndex(final OObjectDatabaseTx db, final String indexName) {
+    public static void dropIndex(final ODatabaseObject db, final String indexName) {
         // Separated to overcome findbugs false positive "RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT" for dropIndex method.
         db.getMetadata().getIndexManager().dropIndex(indexName);
     }
@@ -101,7 +101,7 @@ public final class SchemeUtils {
      * @param modelType model type to examine
      * @return first class in provided model type class hierarchy which is registered in orient
      */
-    private static OClass findFirstExisting(final OObjectDatabaseTx db, final Class<?> modelType) {
+    private static OClass findFirstExisting(final ODatabaseObject db, final Class<?> modelType) {
         Class<?> target = null;
         if (!db.getMetadata().getSchema().existsClass(modelType.getSimpleName())) {
             final List<Class<?>> hierarchy = resolveHierarchy(modelType);

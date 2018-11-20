@@ -5,7 +5,7 @@ import com.orientechnologies.orient.core.command.OCommandExecutor
 import com.orientechnologies.orient.core.command.OCommandRequestText
 import com.orientechnologies.orient.core.db.ODatabase
 import com.orientechnologies.orient.core.db.ODatabaseListener
-import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx
+import com.orientechnologies.orient.core.db.document.ODatabaseDocument
 import ru.vyarus.guice.persist.orient.AbstractTest
 import ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxAction
 import ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxTemplate
@@ -21,7 +21,7 @@ import spock.guice.UseModules
 class PoolRecoveryTest extends AbstractTest {
 
     @Inject
-    SpecificTxTemplate<ODatabaseDocumentTx> documentTemplate
+    SpecificTxTemplate<ODatabaseDocument> documentTemplate
 
     def "Check pool recovery"() {
 
