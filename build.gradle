@@ -33,12 +33,12 @@ dependencies {
 
     compile 'ru.vyarus:generics-resolver:3.0.0'
     compile 'ru.vyarus:guice-ext-annotations:1.3.0'
-    compile 'org.javassist:javassist:3.22.0-GA'
+    compile 'org.javassist:javassist:3.23.1-GA'
     compile "com.google.inject:guice:$guice"
     compile "com.google.inject.extensions:guice-persist:$guice"
     compile "com.orientechnologies:orientdb-core:$orient"
-    compile "com.orientechnologies:orientdb-object:$orient"
-    compile ("com.orientechnologies:orientdb-graphdb:$orient")
+    provided "com.orientechnologies:orientdb-object:$orient"
+    provided ("com.orientechnologies:orientdb-graphdb:$orient")
     provided ("com.orientechnologies:orientdb-lucene:$orient")
 
     testCompile 'ch.qos.logback:logback-classic:1.2.3'
