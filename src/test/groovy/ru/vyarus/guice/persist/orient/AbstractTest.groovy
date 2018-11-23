@@ -2,15 +2,13 @@ package ru.vyarus.guice.persist.orient
 
 import com.google.inject.persist.PersistService
 import com.orientechnologies.orient.core.config.OGlobalConfiguration
-import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx
 import com.orientechnologies.orient.core.db.object.ODatabaseObject
 import com.orientechnologies.orient.core.metadata.security.OSecurity
 import com.orientechnologies.orient.core.security.OSecurityFactory
 import com.orientechnologies.orient.core.security.OSecurityManager
-import com.orientechnologies.orient.object.db.OObjectDatabaseTx
 import ru.vyarus.guice.persist.orient.db.PersistentContext
 import ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxAction
-import ru.vyarus.guice.persist.orient.support.Config
+import ru.vyarus.guice.persist.orient.db.OrientDBFactory
 import ru.vyarus.guice.persist.orient.util.OSecurityNull
 import ru.vyarus.guice.persist.orient.util.uniquedb.UniqueDb
 import spock.lang.Specification
@@ -30,6 +28,8 @@ abstract class AbstractTest extends Specification {
     PersistService persist
     @Inject
     PersistentContext<ODatabaseObject> context
+    @Inject
+    OrientDBFactory info
 
     void setup() {
         setupSecurity()
@@ -65,14 +65,13 @@ abstract class AbstractTest extends Specification {
                     }) {
                 db.getEntityManager().deregisterEntityClass(entity)
             }
-        } as SpecificTxAction<Void, OObjectDatabaseTx>)
+        } as SpecificTxAction<Void, ODatabaseObject>)
         persist.stop()
-        if (!Config.DB.contains("remote")) {
-            def db = new ODatabaseDocumentTx(Config.DB)
-            if (db.exists()) {
-                db.open(Config.USER, Config.PASS).drop()
-            }
+        def db = info.createOrientDB()
+        if (db.exists(info.getDbName())) {
+            db.drop(info.getDbName())
         }
+        db.close()
         afterCleanup()
     }
 

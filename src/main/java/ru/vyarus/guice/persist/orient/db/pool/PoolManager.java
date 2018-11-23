@@ -34,9 +34,9 @@ public interface PoolManager<T> extends Provider<T> {
      * Method is responsible for initialization, specific for connection type (this mean new no tx connection
      * must be created to let orient configure database for specific connection type (required for object and graph)
      *
-     * @param uri  database uri
+     * @param database  database name
      */
-    void start(String uri);
+    void start(String database);
 
     /**
      * Stops pool. Will be called by PersistService implementation.

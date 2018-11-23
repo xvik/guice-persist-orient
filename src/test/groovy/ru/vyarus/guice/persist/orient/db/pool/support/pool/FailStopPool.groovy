@@ -11,7 +11,7 @@ import ru.vyarus.guice.persist.orient.db.pool.PoolManager
 class FailStopPool implements PoolManager<ODatabaseDocument> {
 
     @Override
-    void start(String uri) {
+    void start(String database) {
 
     }
 

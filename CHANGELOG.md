@@ -1,10 +1,27 @@
 * Update to guice 4.2.2
-* (breaking) Update to Orient 3.0.10
+* (breaking) Update to Orient 3.0.11
     - Bound connection objects changed:
         - Provider<OObjectDatabaseTx> -> Provider<ODatabaseObject>
         - Provider<ODatabaseDocumentTx> -> Provider<ODatabaseDocument>
     - With new orient api (unified document and graph api), graph pools remains for legacy thinkerpop 2 only
-    - orientdb-object and orientdb-graph dependencies become optional (no more exclusions, directly specify required libs instead)    
+    - orientdb-object and orientdb-graph dependencies become optional (no more exclusions, directly specify required libs instead)
+    - OrientModule:
+        - As before, single uri passed which includes both system path (plocal) and db name
+            Internally, it splits to create OrientDB object and open db connections with db name (new api)
+        - Provider<OrientDB> may be injected now to manually open connections (OrientDB object is a new api object used for orient connections (or pools) creation)
+        - OrientDBFactory bean may be injected to get access to database configuration (url, user, etc.)
+            Before this information was bound with guice constants
+        - New option autoCreateRemoteDatabase(user, pass, type) is available to automatically create rmote databases (mainly for tests)
+        - New option withConfig(conf) allows specifying custom config for OrientDB object (by default, OrientDBConfig.defaultConfig() used)
+    - Remote database creation indirect configuration support for tests (instead of direct config in module):
+        OrientDBFactory.enableAutoCreationRemoteDatabase(user, pass, type)  
+        OrientDBFactory.disableAutoCreationRemoteDatabase()     
+    - Pools contract changed: PoolManager.start(String) now accepts database name instead of complete url    
+    - DocumentPool:
+        - Now use new ODatabasePool pool implementation (instead of OPartitionedDatabasePoolFactory)        
+        - Removed pool recovery logic (since 1.x: when pool failed to provide correct connection it was re-created).
+            Assuming new pool is more stable.             
+        - Different user credentials (UserManager.executeWithUser) will create separate connection outside the pool.
 
 ### 3.3.2 (2018-04-02)
 * Guice 4.2.0 compatibility

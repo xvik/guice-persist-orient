@@ -1,6 +1,7 @@
 package ru.vyarus.guice.persist.orient.support
 
 import org.slf4j.bridge.SLF4JBridgeHandler
+import ru.vyarus.guice.persist.orient.db.util.DBUriUtils
 
 import java.util.logging.Level
 import java.util.logging.LogManager
@@ -23,4 +24,12 @@ class Config {
     public static String DB = "memory:test"
     public static String USER = "admin"
     public static String PASS = "admin"
+
+    public static String getDbUrl() {
+        DBUriUtils.parseUri(DB)[0]
+    }
+
+    public static String getDbName() {
+        DBUriUtils.parseUri(DB)[1]
+    }
 }

@@ -17,6 +17,6 @@
     <properties>
         <!-- DATABASE POOL: size min/max -->
         <entry name="db.pool.min" value="1"/>
-        <entry name="db.pool.max" value="5"/>
+        <entry name="db.pool.max" value="100"/>
     </properties>
 </orient-server>

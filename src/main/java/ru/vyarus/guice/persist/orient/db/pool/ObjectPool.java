@@ -1,6 +1,7 @@
 package ru.vyarus.guice.persist.orient.db.pool;
 
 import com.orientechnologies.orient.core.db.ODatabaseDocumentInternal;
+import com.orientechnologies.orient.core.db.OrientDB;
 import com.orientechnologies.orient.core.db.object.ODatabaseObject;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import org.slf4j.Logger;
@@ -9,6 +10,7 @@ import ru.vyarus.guice.persist.orient.db.DbType;
 import ru.vyarus.guice.persist.orient.db.user.UserManager;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 
 /**
  * Object pool implementation. Use document pool connection to merge object transaction with document transaction.
@@ -20,20 +22,27 @@ public class ObjectPool implements PoolManager<ODatabaseObject> {
     private final Logger logger = LoggerFactory.getLogger(ObjectPool.class);
 
     private final ThreadLocal<ODatabaseObject> transaction = new ThreadLocal<ODatabaseObject>();
+    private final Provider<OrientDB> orientDB;
     private final DocumentPool documentPool;
     private final UserManager userManager;
 
     @Inject
-    public ObjectPool(final DocumentPool documentPool, final UserManager userManager) {
+    public ObjectPool(final Provider<OrientDB> orientDB,
+                      final DocumentPool documentPool,
+                      final UserManager userManager) {
+        this.orientDB = orientDB;
         this.documentPool = documentPool;
         this.userManager = userManager;
     }
 
     @Override
-    public void start(final String uri) {
+    public void start(final String database) {
         // test connection and let orient configure database
-        new OObjectDatabaseTx(uri).open(userManager.getUser(), userManager.getPassword()).close();
-        logger.debug("Pool {} started for '{}'", getType(), uri);
+        new OObjectDatabaseTx(
+                (ODatabaseDocumentInternal) orientDB.get()
+                        .open(database, userManager.getUser(), userManager.getPassword()))
+                .close();
+        logger.debug("Pool {} started for database '{}'", getType(), database);
     }
 
     @Override

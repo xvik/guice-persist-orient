@@ -10,9 +10,9 @@ import com.orientechnologies.orient.core.metadata.security.OUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vyarus.guice.persist.orient.db.transaction.TransactionManager;
+import ru.vyarus.guice.persist.orient.db.OrientDBFactory;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 
@@ -44,11 +44,10 @@ public class UserManager {
     @Inject
     public UserManager(final TransactionManager transactionManager,
                        final Provider<ODatabaseDocument> connectionProvider,
-                       @Named("orient.user") final String user,
-                       @Named("orient.password") final String password) {
+                       final OrientDBFactory dbInfo) {
         this.transactionManager = transactionManager;
         this.connectionProvider = connectionProvider;
-        this.defaultUser = create(user, password);
+        this.defaultUser = create(dbInfo.getUser(), dbInfo.getPassword());
     }
 
     /**
@@ -70,14 +69,25 @@ public class UserManager {
     }
 
     /**
+     * @return true if specific user (non default) used, false for default user
+     */
+    public boolean isSpecificUser() {
+        return specificUser.get() != null;
+    }
+
+    /**
      * Changes connection credentials user outside of transaction. Used to affect multiple transactions.
      * <p>
-     * Recursive user changes are not allowed, but user change inside transaction is allowed.
+     * Recursive user changes are not allowed, but user change inside transaction is allowed with
+     * {@link #executeWithTxUser(String, SpecificUserAction)}.
      * <p>
      * Action approach is important to explicitly define scope of specific user and
      * properly cleanup state (which may be not done in case of direct override).
      * <p>
      * Propagates runtime exceptions (orient exceptions).
+     * <p>
+     * IMPORTANT: connection pool will not be used for specific user! Instead explicit new connection would
+     * be opened.
      *
      * @param user       specific user name
      * @param password   specific user password

@@ -45,7 +45,7 @@ class AdvancedLiveExecutionTest extends AbstractTest {
         Model saved = context.doInTransaction({ db ->
             def res = repository.save(new Model(name: "justnow"))
             db.detach(res, true)
-        } as SpecificTxAction)
+        } as SpecificTxAction<Model, ODatabaseObject>)
         sleep(70)
         then: "listener called"
         listener.lastToken == token

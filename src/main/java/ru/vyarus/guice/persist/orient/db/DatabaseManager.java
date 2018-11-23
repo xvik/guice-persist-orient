@@ -5,7 +5,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.inject.persist.PersistService;
-import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx;
+import com.orientechnologies.orient.core.db.OrientDB;
 import com.orientechnologies.orient.core.tx.OTransaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +19,7 @@ import ru.vyarus.guice.persist.orient.db.transaction.template.TxAction;
 import ru.vyarus.guice.persist.orient.db.transaction.template.TxTemplate;
 
 import javax.inject.Inject;
-import javax.inject.Named;
+import javax.inject.Provider;
 import javax.inject.Singleton;
 import java.util.Collections;
 import java.util.Comparator;
@@ -36,12 +36,10 @@ import java.util.Set;
  * @since 24.07.2014
  */
 @Singleton
-public class DatabaseManager implements PersistService {
+public class DatabaseManager implements PersistService, Provider<OrientDB> {
     private final Logger logger = LoggerFactory.getLogger(DatabaseManager.class);
 
-    private final String uri;
-    private final boolean autoCreate;
-
+    private final OrientDBFactory dbInfo;
     private final List<PoolManager> pools;
     private final CustomTypesInstaller customTypesInstaller;
     private final SchemeInitializer modelInitializer;
@@ -51,19 +49,18 @@ public class DatabaseManager implements PersistService {
     // used to allow multiple start/stop calls (could be if service managed directly and PersistFilter registered)
     private boolean initialized;
     private Set<DbType> supportedTypes;
+    private OrientDB orientDB;
 
     @Inject
     public DatabaseManager(
-            @Named("orient.uri") final String uri,
-            @Named("orient.db.autocreate") final boolean autoCreate,
+            final OrientDBFactory dbInfo,
             final Set<PoolManager> pools,
             final CustomTypesInstaller customTypesInstaller,
             final SchemeInitializer modelInitializer,
             final DataInitializer dataInitializer,
             final TxTemplate txTemplate) {
 
-        this.uri = Preconditions.checkNotNull(uri, "Database name required");
-        this.autoCreate = autoCreate;
+        this.dbInfo = dbInfo;
         this.pools = Lists.newArrayList(pools);
         this.customTypesInstaller = customTypesInstaller;
         this.modelInitializer = modelInitializer;
@@ -85,12 +82,12 @@ public class DatabaseManager implements PersistService {
                     + "persistent service should not be started two or more times");
             return;
         }
-
+        orientDB = dbInfo.createOrientDB();
         createIfRequired();
         startPools();
         logger.debug("Registered types: {}", supportedTypes);
-        logger.debug("Initializing database: '{}'", uri);
-        customTypesInstaller.install(uri);
+        logger.debug("Initializing database: '{}'", dbInfo.getUri());
+        customTypesInstaller.install(dbInfo.getUri());
         // no tx (because of schema update - orient requirement)
         try {
             txTemplate.doInTransaction(new TxConfig(OTransaction.TXTYPE.NOTX), new TxAction<Void>() {
@@ -118,6 +115,8 @@ public class DatabaseManager implements PersistService {
         }
         initialized = false;
         stopPools();
+        orientDB.close();
+        orientDB = null;
     }
 
     /**
@@ -135,35 +134,23 @@ public class DatabaseManager implements PersistService {
         return supportedTypes.contains(type);
     }
 
-    protected void createIfRequired() {
-        // create if required (without creation work with db is impossible)
-        // memory, local, plocal modes support simplified db creation,
-        // but remote database must be created differently
-        if (autoCreate && isLocalDatabase()) {
-            final ODatabaseDocumentTx database = new ODatabaseDocumentTx(uri);
-            try {
-                if (!database.exists()) {
-                    logger.info("Creating database: '{}'", uri);
-                    database.create();
-                }
-            } finally {
-                database.close();
-            }
-        }
+    @Override
+    public OrientDB get() {
+        return Preconditions.checkNotNull(orientDB, "OrientDB intance is not yet started");
     }
 
-    /**
-     * @return true if database is local, false for remote
-     */
-    private boolean isLocalDatabase() {
-        return !this.uri.startsWith("remote:");
+    protected void createIfRequired() {
+        if (dbInfo.isAutoCreate() && !orientDB.exists(dbInfo.getDbName())) {
+            logger.info("Creating database: {}", dbInfo.getUri());
+            orientDB.create(dbInfo.getDbName(), dbInfo.getDbType());
+        }
     }
 
     protected void startPools() {
         supportedTypes = Sets.newHashSet();
         for (PoolManager<?> pool : pools) {
             // if pool start failed, entire app start should fail (no catch here)
-            pool.start(uri);
+            pool.start(dbInfo.getDbName());
             supportedTypes.add(Preconditions.checkNotNull(pool.getType(),
                     "Pool %s doesn't declare correct pool type", pool.getClass().getSimpleName()));
         }

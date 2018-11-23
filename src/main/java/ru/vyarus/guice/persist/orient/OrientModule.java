@@ -9,6 +9,9 @@ import com.google.inject.name.Names;
 import com.google.inject.persist.PersistModule;
 import com.google.inject.persist.PersistService;
 import com.google.inject.persist.UnitOfWork;
+import com.orientechnologies.orient.core.db.ODatabaseType;
+import com.orientechnologies.orient.core.db.OrientDB;
+import com.orientechnologies.orient.core.db.OrientDBConfig;
 import com.orientechnologies.orient.core.db.document.ODatabaseDocument;
 import com.orientechnologies.orient.core.serialization.serializer.object.OObjectSerializer;
 import com.orientechnologies.orient.object.serialization.OObjectSerializerContext;
@@ -25,6 +28,7 @@ import ru.vyarus.guice.persist.orient.db.scheme.CustomTypesInstaller;
 import ru.vyarus.guice.persist.orient.db.transaction.TransactionManager;
 import ru.vyarus.guice.persist.orient.db.transaction.TxConfig;
 import ru.vyarus.guice.persist.orient.db.transaction.internal.TransactionInterceptor;
+import ru.vyarus.guice.persist.orient.db.OrientDBFactory;
 
 import javax.inject.Singleton;
 import java.lang.reflect.Method;
@@ -40,6 +44,11 @@ import java.util.Set;
  * <p>
  * For example, object connection could be used for schema initialization and property updates
  * and graph connection to work with relations.
+ * <p>
+ * New orient api (3.0) requires two objects for database connection ({@link OrientDB} created first and used
+ * for pool or direct connection creation). {@link OrientDB} instance maybe injected using provider:
+ * {@code Provider<OrientDB>}. It is available just after persistence service startup. To get access
+ * to module configuration values (related to database url) you can inject {@link OrientDBFactory} bean.
  * <p>
  * Module initialize set of connection pools. By default its object, document and graph
  * (but depends on available jars in classpath:
@@ -115,8 +124,12 @@ public class OrientModule extends PersistModule {
     private final String uri;
     private final String user;
     private final String password;
+    private String serverUser;
+    private String serverPassword;
+    private ODatabaseType remoteType;
+    private OrientDBConfig config = OrientDBConfig.defaultConfig();
     private TxConfig txConfig;
-    private boolean autoCreateDb = true;
+    private boolean autoCreateLocalDb = true;
     private final Set<Class<? extends OObjectSerializer>> customTypes =
             new LinkedHashSet<Class<? extends OObjectSerializer>>();
 
@@ -125,6 +138,19 @@ public class OrientModule extends PersistModule {
 
     /**
      * Configures module with database credentials.
+     * Uri consists of full path including database name, for example:
+     * <ul>
+     * <li>memory:test</li>
+     * <li>plocal:./directory/test</li>
+     * <li>remote:localhost/test</li>
+     * <li>embedded:./directory/test (same as plocal)</li>
+     * </ul>
+     * Full uri is parsed into main and dbname parts and used for {@link com.orientechnologies.orient.core.db.OrientDB}
+     * and connection objects respectively. For example, "plocal:./directory/test" will be parsed and used as
+     * <pre>{@code
+     *  OrientDB orientDB = new OrientDB("plocal:./directory/");
+     *  ODatabaseDocument db = orientDB.open("test","user", "pass");
+     * }</pre>
      *
      * @param uri      database uri
      * @param user     database user
@@ -158,7 +184,46 @@ public class OrientModule extends PersistModule {
      * @return module itself for chained calls
      */
     public OrientModule autoCreateLocalDatabase(final boolean autoCreateDb) {
-        this.autoCreateDb = autoCreateDb;
+        this.autoCreateLocalDb = autoCreateDb;
+        return this;
+    }
+
+    /**
+     * Enable automatic creation of remote databases (if not already exists). When specified,
+     * {@link OrientDB} injectable as bean will be created with this credentials: any other bean may inject it and
+     * use for remote server manipulations (be cautious!).
+     * <p>
+     * In tests, remote database creation could be activated indirectly using
+     * {@link OrientDBFactory#enableAutoCreationRemoteDatabase(String, String, ODatabaseType)}.
+     * NOTE: indirect values will never override direct configuration (so if you specify server user with direct
+     * module method, indirect specification will not override it)
+     *
+     * @param serverUser     remote server user name
+     * @param serverPassword remote server user password
+     * @param type           target database type (plocal or memory)
+     * @return module itself for chained calls
+     */
+    public OrientModule autoCreateRemoteDatabase(final String serverUser,
+                                                 final String serverPassword,
+                                                 final ODatabaseType type) {
+        this.serverUser = serverUser;
+        this.serverPassword = serverPassword;
+        this.remoteType = type;
+        return this;
+    }
+
+    /**
+     * Custom orient configuration object, used for {@link OrientDB} instance configuration.
+     * When not specified, default ({@code OrientDBConfig.defaultConfig()}) is used.
+     * <p>
+     * Note that config could override global configuration values (configured directly through
+     * {@link com.orientechnologies.orient.core.config.OGlobalConfiguration}) for created database instance.
+     *
+     * @param config orient configuration instance
+     * @return module itself for chained calls
+     */
+    public OrientModule withConfig(final OrientDBConfig config) {
+        this.config = config;
         return this;
     }
 
@@ -204,11 +269,9 @@ public class OrientModule extends PersistModule {
     protected void configurePersistence() {
         poolsMultibinder = Multibinder.newSetBinder(binder(), PoolManager.class);
 
-        bindConstant().annotatedWith(Names.named("orient.uri")).to(uri);
-        bindConstant().annotatedWith(Names.named("orient.user")).to(user);
-        bindConstant().annotatedWith(Names.named("orient.password")).to(password);
-        bindConstant().annotatedWith(Names.named("orient.db.autocreate")).to(autoCreateDb);
-
+        final OrientDBFactory info = new OrientDBFactory(
+                uri, user, password, autoCreateLocalDb, config, serverUser, serverPassword, remoteType);
+        bind(OrientDBFactory.class).toInstance(info);
         bind(TxConfig.class).annotatedWith(Names.named("orient.txconfig"))
                 .toInstance(txConfig == null ? new TxConfig() : txConfig);
 
@@ -221,6 +284,7 @@ public class OrientModule extends PersistModule {
         // DataInitializer.class
 
         bind(PersistService.class).to(DatabaseManager.class);
+        bind(OrientDB.class).toProvider(DatabaseManager.class);
         bind(UnitOfWork.class).to(TransactionManager.class);
 
         configurePools();

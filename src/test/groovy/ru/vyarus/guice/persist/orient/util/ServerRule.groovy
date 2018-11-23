@@ -1,11 +1,12 @@
 package ru.vyarus.guice.persist.orient.util
 
-import com.orientechnologies.orient.client.remote.OServerAdmin
-import com.orientechnologies.orient.core.Orient
+import com.orientechnologies.common.log.OLogManager
 import com.orientechnologies.orient.core.config.OGlobalConfiguration
+import com.orientechnologies.orient.core.db.ODatabaseType
 import com.orientechnologies.orient.server.OServerMain
 import org.junit.rules.ExternalResource
 import org.junit.rules.TemporaryFolder
+import ru.vyarus.guice.persist.orient.db.OrientDBFactory
 import ru.vyarus.guice.persist.orient.support.Config
 
 /**
@@ -32,8 +33,9 @@ class ServerRule extends ExternalResource {
         System.setProperty("ORIENTDB_HOME", folder.root.getAbsolutePath());
         System.setProperty("orientdb.www.path", "")
         OGlobalConfiguration.SERVER_SECURITY_FILE.setValue("src/test/resources/ru/vyarus/guice/persist/orient/security.json")
+        OGlobalConfiguration.SERVER_BACKWARD_COMPATIBILITY.setValue(false);
         OServerMain
-                // have to use shutdownEngineOnExit=false and manually shutdown engine to prevent log manager shutdown (which is impossible to recover)
+        // have to use shutdownEngineOnExit=false and manually shutdown engine to prevent log manager shutdown (which is impossible to recover)
                 .create(false)
                 .startup(getClass().getResourceAsStream("/ru/vyarus/guice/persist/orient/server-config.xml") as InputStream)
                 .activate();
@@ -47,38 +49,26 @@ class ServerRule extends ExternalResource {
 
     public void stopServer() {
         OServerMain.server().shutdown()
-        // do manual engine shutdown because server started with shutdownEngineOnExit=false
-        // otherwise there will be a lot of error messages from closed log manager
-        Orient.instance().shutdown();
+        // no way to reset shutdown state properly
+        OLogManager.instance.shutdownFlag.set(false)
         folder.delete()
         // re-init engines, without it following in memory tests will fail
-        Orient.instance().startup()
         reset()
         println 'remote server shut down'
-    }
-
-    public void initRemoteDb() {
-        OServerAdmin admin = new OServerAdmin(remoteUrl).connect('root', 'root')
-        try {
-            if (admin.existsDatabase()) {
-                admin.dropDatabase("memory")
-            }
-            admin.createDatabase('graph', 'memory').close()
-            setRemoteConf()
-        } finally {
-            admin.close()
-        }
     }
 
     public static void setRemoteConf() {
         Config.DB = remoteUrl
         Config.USER = "root"
         Config.PASS = "root"
+
+        OrientDBFactory.enableAutoCreationRemoteDatabase('root', 'root', ODatabaseType.MEMORY)
     }
 
     public static void reset() {
         Config.DB = memoryUrl
         Config.USER = "admin"
         Config.PASS = "admin"
+        OrientDBFactory.disableAutoCreationRemoteDatabase()
     }
 }

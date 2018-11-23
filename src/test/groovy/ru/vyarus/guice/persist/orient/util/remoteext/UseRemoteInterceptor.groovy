@@ -34,7 +34,8 @@ class UseRemoteInterceptor extends AbstractMethodInterceptor {
 
     @Override
     void interceptSetupMethod(IMethodInvocation invocation) throws Throwable {
-        serverRule.initRemoteDb()
         invocation.proceed()
     }
+
+
 }

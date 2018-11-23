@@ -2,22 +2,19 @@ package ru.vyarus.guice.persist.orient.db.pool;
 
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
-import com.orientechnologies.orient.core.config.OGlobalConfiguration;
+import com.google.inject.Provider;
+import com.orientechnologies.orient.core.db.ODatabasePool;
 import com.orientechnologies.orient.core.db.ODatabaseRecordThreadLocal;
-import com.orientechnologies.orient.core.db.OPartitionedDatabasePoolFactory;
+import com.orientechnologies.orient.core.db.OrientDB;
 import com.orientechnologies.orient.core.db.document.ODatabaseDocument;
-import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vyarus.guice.persist.orient.db.DbType;
 import ru.vyarus.guice.persist.orient.db.transaction.TransactionManager;
 import ru.vyarus.guice.persist.orient.db.user.UserManager;
 
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-
 /**
- * Document pool implementations.
+ * Document pool implementation.
  * Connection may be obtained (using provider) only inside unit of work (defined transaction).
  * Because of possible multi-transaction paradigm (default pools now use single transaction, but as before
  * pools implementation may be overridden to mimic legacy behaviour) inside single unit of work,
@@ -29,39 +26,41 @@ import java.util.concurrent.locks.ReentrantLock;
  * @since 24.07.2014
  */
 public class DocumentPool implements PoolManager<ODatabaseDocument> {
-    private static final Lock RESTART_LOCK = new ReentrantLock();
     private final Logger logger = LoggerFactory.getLogger(DocumentPool.class);
 
+    private final Provider<OrientDB> orientDB;
     private final TransactionManager transactionManager;
     private final UserManager userManager;
     private final ThreadLocal<ODatabaseDocument> transaction = new ThreadLocal<ODatabaseDocument>();
-    private OPartitionedDatabasePoolFactory poolFactory;
-    private String uri;
+    private ODatabasePool pool;
+    private String database;
 
     @Inject
-    public DocumentPool(final TransactionManager transactionManager, final UserManager userManager) {
+    public DocumentPool(final Provider<OrientDB> orientDB,
+                        final TransactionManager transactionManager,
+                        final UserManager userManager) {
+        this.orientDB = orientDB;
         this.transactionManager = transactionManager;
         this.userManager = userManager;
     }
 
     @Override
-    public void start(final String uri) {
-        this.uri = uri;
-        poolFactory = new OPartitionedDatabasePoolFactory();
-        poolFactory.setMaxPoolSize(OGlobalConfiguration.DB_POOL_MAX.getValueAsInteger());
+    public void start(final String database) {
+        this.database = database;
+        pool = new ODatabasePool(orientDB.get(), database, userManager.getUser(), userManager.getPassword());
         // check database connection
-        new ODatabaseDocumentTx(uri).open(userManager.getUser(), userManager.getPassword()).close();
-        logger.debug("Pool {} started for '{}'", getType(), uri);
+        pool.acquire().close();
+        logger.debug("Pool {} started for database '{}'", getType(), this.database);
     }
 
     @Override
     @SuppressWarnings("PMD.NullAssignment")
     public void stop() {
-        if (poolFactory != null) {
-            poolFactory.close();
-            poolFactory = null;
-            logger.debug("Pool {} closed for '{}'", getType(), uri);
-            uri = null;
+        if (pool != null) {
+            pool.close();
+            pool = null;
+            logger.debug("Pool {} closed for database '{}'", getType(), database);
+            database = null;
         }
     }
 
@@ -125,7 +124,7 @@ public class DocumentPool implements PoolManager<ODatabaseDocument> {
     public ODatabaseDocument get() {
         // lazy get: pool transaction will start not together with TransactionManager one, but as soon as
         // connection requested to avoid using connections of not used pools
-        Preconditions.checkNotNull(poolFactory, String.format("Pool %s not initialized", getType()));
+        Preconditions.checkNotNull(pool, String.format("Pool %s not initialized", getType()));
         if (transaction.get() == null) {
             Preconditions.checkState(transactionManager.isTransactionActive(), String.format(
                     "Can't obtain connection from pool %s: no transaction defined.", getType()));
@@ -154,6 +153,8 @@ public class DocumentPool implements PoolManager<ODatabaseDocument> {
      * @return connection instance if its opened, otherwise error thrown
      */
     private ODatabaseDocument checkOpened(final ODatabaseDocument db) {
+        Preconditions.checkState(orientDB.get().isOpen(), "Global OrientDB object is closed. "
+                + "This must be the result of manual object closing.");
         Preconditions.checkState(!db.isClosed(), String.format(
                 "Inconsistent %s pool state: thread-bound database closed! "
                         + "This may happen if close, commit or rollback was called directly on "
@@ -164,31 +165,21 @@ public class DocumentPool implements PoolManager<ODatabaseDocument> {
 
     /**
      * Its definitely not normal that pool returns closed connections, but possible if used improperly.
-     * If connection closed, trying to recover by restarting entire pool.
-     * <p>
-     * NOTE: This problem did not reproduced with new pool (2.0), but logic remain, just for the case.
      *
      * @return connection itself or new valid connection
      */
     private ODatabaseDocument checkAndAcquireConnection() {
-        ODatabaseDocument res = acquireConnection();
-        if (res.isClosed()) {
-            RESTART_LOCK.lock();
-            try {
-                // shield from concurrent restart
-                res = acquireConnection();
-                if (res.isClosed()) {
-                    restartPool();
-                    res = acquireConnection();
-                }
-            } finally {
-                RESTART_LOCK.unlock();
-            }
+        final ODatabaseDocument res;
+        if (userManager.isSpecificUser()) {
+            // non pool-managed connection for different user
+            res = orientDB.get().open(database, userManager.getUser(), userManager.getPassword());
+        } else {
+            res = pool.acquire();
         }
+
         if (res.isClosed()) {
             final String message = String.format(
-                    "Pool %s return closed connection, even pool restart didn't help.. "
-                            + "something is terribly wrong", getType());
+                    "Pool %s return closed connection something is terribly wrong", getType());
             logger.error(message);
             throw new IllegalStateException(message);
         }
@@ -198,23 +189,5 @@ public class DocumentPool implements PoolManager<ODatabaseDocument> {
     @Override
     public DbType getType() {
         return DbType.DOCUMENT;
-    }
-
-    private ODatabaseDocument acquireConnection() {
-        return poolFactory.get(uri, userManager.getUser(), userManager.getPassword()).acquire();
-    }
-
-    private void restartPool() {
-        logger.warn("ATTENTION: Pool {} return closed connection, restarting pool. "
-                + "This is NOT normal situation: in spite of the fact that your logic will perform "
-                + "correctly, you loose predefined connections which may be very harmful for "
-                + "performance (especially if problem appear often). Most likely reason is "
-                + "closing underlying: e.g. connection.commit().close() or "
-                + "connection.getUnderlying().close(). Check your code: you should not call "
-                + "begin/commit/rollback/close (construct your own connection if you need "
-                + "full control, otherwise trust to transaction manager).", getType());
-        final String localUri = uri;
-        stop();
-        start(localUri);
     }
 }
