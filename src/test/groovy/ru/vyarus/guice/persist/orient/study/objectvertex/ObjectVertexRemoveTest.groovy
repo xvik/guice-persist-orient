@@ -63,10 +63,9 @@ class ObjectVertexRemoveTest extends AbstractTest {
             ObjectVertex first = db.browseClass(ObjectVertex).iterator().next()
             db.delete(new ORecordId(first.id))
 
-            // edge was not removed !!!!!!!!
-            assert Lists.newArrayList(graph.connection.getEdgesOfClass('ObjectEdge')).size() == 1
+            assert Lists.newArrayList(graph.connection.getEdgesOfClass('ObjectEdge')).size() == 0
         } as SpecificTxAction)
-        then: "edge remain in db - inconsistent db"
+        then: "edge removed from db"
         true
     }
 

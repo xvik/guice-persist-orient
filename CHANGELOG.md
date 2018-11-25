@@ -22,6 +22,7 @@
         - Removed pool recovery logic (since 1.x: when pool failed to provide correct connection it was re-created).
             Assuming new pool is more stable.             
         - Different user credentials (UserManager.executeWithUser) will create separate connection outside the pool.
+    - Object api now may be used to properly remove graph nodes with edges (because graph consistency is on document level now)    
 
 ### 3.3.2 (2018-04-02)
 * Guice 4.2.0 compatibility
