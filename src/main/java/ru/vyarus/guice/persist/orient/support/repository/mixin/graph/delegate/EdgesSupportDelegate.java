@@ -6,6 +6,7 @@ import com.google.inject.Provider;
 import com.google.inject.internal.DynamicSingletonProvider;
 import com.orientechnologies.orient.core.db.object.ODatabaseObject;
 import com.orientechnologies.orient.core.id.ORecordId;
+import com.orientechnologies.orient.core.record.ORecord;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
@@ -45,7 +46,7 @@ public abstract class EdgesSupportDelegate implements EdgesSupport {
     @Override
     @SuppressWarnings("unchecked")
     public <T> T createEdge(final Object from, final Object to, final T edge) {
-        final ODocument doc = objectDb.get().pojo2Stream(edge, new ODocument());
+        final ODocument doc = (ODocument) objectDb.get().getRecordByUserObject(edge, true);
         return this.createEdge((Class<T>) edge.getClass(), from, to, doc);
     }
 
@@ -97,15 +98,13 @@ public abstract class EdgesSupportDelegate implements EdgesSupport {
     @Override
     @SuppressWarnings("unchecked")
     public <T> T edgeToObject(final Edge edge) {
-        final OrientEdge orientEdge = (OrientEdge) edge;
-        final T pojo = objectDb.get().newInstance(orientEdge.getType().getName());
-        return (T) objectDb.get().stream2pojo(orientEdge.getRecord(), pojo, null);
+        return (T) objectDb.get().getUserObjectByRecord((OrientEdge) edge, null);
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public <T extends Edge> T objectToEdge(final Object edge) {
-        final ODocument doc = objectDb.get().pojo2Stream(edge, new ODocument());
+        final ORecord doc = objectDb.get().getRecordByUserObject(edge, true);
         return (T) graphDb.get().getEdge(doc);
     }
 

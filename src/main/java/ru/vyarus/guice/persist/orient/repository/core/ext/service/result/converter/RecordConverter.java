@@ -137,8 +137,7 @@ public class RecordConverter {
         if (doc.getClassName().equals(targetType.getSimpleName())) {
             final ODatabaseObject db = injector.getInstance(ODatabaseObject.class);
             if (db.getEntityManager().getRegisteredEntities().contains(targetType)) {
-                final T pojo = db.newInstance(targetType);
-                return (T) db.stream2pojo(doc, pojo, null);
+                return (T) db.getUserObjectByRecord(doc, null);
             }
         }
         return null;

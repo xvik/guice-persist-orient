@@ -101,14 +101,13 @@ public abstract class BaseObjectCrudDelegate<T> implements BaseObjectCrud<T> {
 
     @Override
     public ODocument objectToDocument(final Object object) {
-        return objectDb.get().pojo2Stream(object, new ODocument());
+        return (ODocument) objectDb.get().getRecordByUserObject(object, true);
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public T documentToObject(final ODocument document) {
-        final T pojo = objectDb.get().newInstance(document.getClassName());
-        return (T) objectDb.get().stream2pojo(document, pojo, null);
+        return (T) objectDb.get().getUserObjectByRecord(document, null);
     }
 
     private List<T> detachAllInternal(final List<T> entities) {
