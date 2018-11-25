@@ -53,7 +53,8 @@ class IndexRebuildProblemTest extends AbstractTest {
         def db = context.getConnection()
         def index = db.metadata.indexManager.getIndex('RebuildIndexCaseModel.foo')
         assert index.size == 0
-        index.put('key', new ODocument())
+        // need instance to put into index
+        db.save(new RebuildIndexCaseModel(foo: 'sample'))
 
         then: "index not empty"
         index.size > 0
