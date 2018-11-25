@@ -35,7 +35,9 @@ class UserChangeInTransactionTest extends AbstractTest {
         } as SpecificTxAction)
 
         when: "trying to override user inside transaction"
+        OUser admin;
         context.doInTransaction({ db ->
+            admin = db.getMetadata().getSecurity().getUser('admin')
             OUser test = db.getMetadata().getSecurity().getUser('test')
             db.setUser(test)
 
@@ -47,9 +49,12 @@ class UserChangeInTransactionTest extends AbstractTest {
         thrown(OSecurityAccessException)
 
 
-        when: "starting new transaction, user will be default"
+        when: "starting new transaction, user will be still incorrect"
         context.doInTransaction({ db ->
-            assert db.getUser().name == 'admin'
+            // user is still incorrect (becuase pool connection was returned back to pool with wring user
+            assert db.getUser().name == 'test'
+            //changing user back
+            db.setUser(admin)
 
             Model model = db.browseClass(Model).iterator().next()
             model.name = 'changed'
