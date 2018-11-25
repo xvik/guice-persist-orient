@@ -39,7 +39,7 @@ import java.util.Set;
 public class DatabaseManager implements PersistService, Provider<OrientDB> {
     private final Logger logger = LoggerFactory.getLogger(DatabaseManager.class);
 
-    private final OrientDBFactory dbInfo;
+    private final OrientDBFactory factory;
     private final List<PoolManager> pools;
     private final CustomTypesInstaller customTypesInstaller;
     private final SchemeInitializer modelInitializer;
@@ -53,14 +53,14 @@ public class DatabaseManager implements PersistService, Provider<OrientDB> {
 
     @Inject
     public DatabaseManager(
-            final OrientDBFactory dbInfo,
+            final OrientDBFactory factory,
             final Set<PoolManager> pools,
             final CustomTypesInstaller customTypesInstaller,
             final SchemeInitializer modelInitializer,
             final DataInitializer dataInitializer,
             final TxTemplate txTemplate) {
 
-        this.dbInfo = dbInfo;
+        this.factory = factory;
         this.pools = Lists.newArrayList(pools);
         this.customTypesInstaller = customTypesInstaller;
         this.modelInitializer = modelInitializer;
@@ -82,12 +82,12 @@ public class DatabaseManager implements PersistService, Provider<OrientDB> {
                     + "persistent service should not be started two or more times");
             return;
         }
-        orientDB = dbInfo.createOrientDB();
+        orientDB = factory.createOrientDB();
         createIfRequired();
         startPools();
         logger.debug("Registered types: {}", supportedTypes);
-        logger.debug("Initializing database: '{}'", dbInfo.getUri());
-        customTypesInstaller.install(dbInfo.getUri());
+        logger.debug("Initializing database: '{}'", factory.getUri());
+        customTypesInstaller.install(factory.getUri());
         // no tx (because of schema update - orient requirement)
         try {
             txTemplate.doInTransaction(new TxConfig(OTransaction.TXTYPE.NOTX), new TxAction<Void>() {
@@ -140,9 +140,9 @@ public class DatabaseManager implements PersistService, Provider<OrientDB> {
     }
 
     protected void createIfRequired() {
-        if (dbInfo.isAutoCreate() && !orientDB.exists(dbInfo.getDbName())) {
-            logger.info("Creating database: {}", dbInfo.getUri());
-            orientDB.create(dbInfo.getDbName(), dbInfo.getDbType());
+        if (factory.isAutoCreate() && !orientDB.exists(factory.getDbName())) {
+            logger.info("Creating database: {}", factory.getUri());
+            orientDB.create(factory.getDbName(), factory.getDbType());
         }
     }
 
@@ -150,7 +150,7 @@ public class DatabaseManager implements PersistService, Provider<OrientDB> {
         supportedTypes = Sets.newHashSet();
         for (PoolManager<?> pool : pools) {
             // if pool start failed, entire app start should fail (no catch here)
-            pool.start(dbInfo.getDbName());
+            pool.start(factory.getDbName());
             supportedTypes.add(Preconditions.checkNotNull(pool.getType(),
                     "Pool %s doesn't declare correct pool type", pool.getClass().getSimpleName()));
         }

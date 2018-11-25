@@ -1,7 +1,7 @@
 package ru.vyarus.guice.persist.orient.db.scheme;
 
-import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx;
 import com.orientechnologies.orient.core.serialization.serializer.object.OObjectSerializer;
+import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import com.orientechnologies.orient.object.serialization.OObjectSerializerContext;
 import com.orientechnologies.orient.object.serialization.OObjectSerializerHelper;
 import org.slf4j.Logger;
@@ -48,7 +48,7 @@ public class CustomTypesInstaller {
     public void install(final String uri) {
         if (!customTypes.isEmpty()) {
             // only url is required from database object - no need to establish real connection
-            final ODatabaseDocumentTx db = new ODatabaseDocumentTx(uri);
+            final OObjectDatabaseTx db = new OObjectDatabaseTx(uri);
             try {
                 final OObjectSerializerContext context = new OObjectSerializerContext();
                 for (OObjectSerializer type : customTypes) {
