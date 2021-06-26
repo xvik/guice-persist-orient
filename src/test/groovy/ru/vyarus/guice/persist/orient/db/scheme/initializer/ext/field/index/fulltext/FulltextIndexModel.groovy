@@ -9,9 +9,6 @@ class FulltextIndexModel {
     @FulltextIndex
     String defaults
 
-    @FulltextIndex(useHashIndex = true)
-    String hash
-
     @FulltextIndex(name = "all_options",
             indexRadix = false,
             ignoreChars = "'",

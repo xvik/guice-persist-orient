@@ -67,11 +67,4 @@ public @interface FulltextIndex {
      */
     String[] stopWords() default {"the", "in", "a", "at", "as", "and", "or", "for", "his", "her", "him",
             "this", "that", "what", "which", "while", "up", "with", "be", "was", "were", "is"};
-
-    /**
-     * @return true for hash index, otherwise sb-tree will be used (default)
-     * @see com.orientechnologies.orient.core.metadata.schema.OClass.INDEX_TYPE#FULLTEXT
-     * @see com.orientechnologies.orient.core.metadata.schema.OClass.INDEX_TYPE#FULLTEXT_HASH_INDEX
-     */
-    boolean useHashIndex() default false;
 }

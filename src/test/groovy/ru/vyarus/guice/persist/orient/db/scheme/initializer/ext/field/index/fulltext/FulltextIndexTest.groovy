@@ -4,6 +4,7 @@ import com.orientechnologies.orient.core.index.OIndex
 import com.orientechnologies.orient.core.index.OIndexRemote
 import com.orientechnologies.orient.core.metadata.schema.OClass
 import com.orientechnologies.orient.core.metadata.schema.OType
+import com.orientechnologies.orient.core.record.impl.ODocument
 import ru.vyarus.guice.persist.orient.db.scheme.SchemeInitializationException
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.AbstractSchemeExtensionTest
 
@@ -24,7 +25,7 @@ class FulltextIndexTest extends AbstractSchemeExtensionTest {
         schemeInitializer.register(FulltextIndexModel)
         def clazz = db.getMetadata().getSchema().getClass(FulltextIndexModel)
         then: "indexes created"
-        clazz.getClassIndexes().size() == 3
+        clazz.getClassIndexes().size() == 2
 
         then: "defaults index correct"
         def defaults = clazz.getClassIndex("FulltextIndexModel.defaults")
@@ -35,9 +36,6 @@ class FulltextIndexTest extends AbstractSchemeExtensionTest {
         defaults.getMetadata().field(FulltextIndexFieldExtension.MIN_WORD_LENGTH) == 3
         defaults.getMetadata().field(FulltextIndexFieldExtension.STOP_WORDS) == ["the", "in", "a", "at", "as", "and", "or", "for", "his", "her", "him",
                                                                                  "this", "that", "what", "which", "while", "up", "with", "be", "was", "were", "is"]
-
-        then: "hash index use hash type"
-        clazz.getClassIndex("FulltextIndexModel.hash").getType() == OClass.INDEX_TYPE.FULLTEXT_HASH_INDEX.name()
 
         then: "custom index correct"
         def custom = clazz.getClassIndex("all_options")
@@ -52,18 +50,15 @@ class FulltextIndexTest extends AbstractSchemeExtensionTest {
         when: "call for already registered indexes"
         // mark indexes
         def id1 = id(clazz.getClassIndex("FulltextIndexModel.defaults"))
-        def id2 = id(clazz.getClassIndex("FulltextIndexModel.hash"))
         def id3 = id(clazz.getClassIndex("all_options"))
         schemeInitializer.clearModelCache()
         schemeInitializer.register(FulltextIndexModel)
         clazz = db.getMetadata().getSchema().getClass(FulltextIndexModel)
         then: "nothing changed"
-        clazz.getClassIndexes().size() == 3
+        clazz.getClassIndexes().size() == 2
         id(clazz.getClassIndex("FulltextIndexModel.defaults")) == id1
-        id(clazz.getClassIndex("FulltextIndexModel.hash")) == id2
         id(clazz.getClassIndex("all_options")) == id3
         clazz.getClassIndex("FulltextIndexModel.defaults").getType() == OClass.INDEX_TYPE.FULLTEXT.name()
-        clazz.getClassIndex("FulltextIndexModel.hash").getType() == OClass.INDEX_TYPE.FULLTEXT_HASH_INDEX.name()
     }
 
     def "Check index re-create"() {
@@ -71,25 +66,21 @@ class FulltextIndexTest extends AbstractSchemeExtensionTest {
         when: "index already exist with different type"
         def clazz = db.getMetadata().getSchema().createClass(FulltextIndexModel)
         clazz.createProperty("defaults", OType.STRING)
-        clazz.createProperty("hash", OType.STRING)
         clazz.createProperty("options", OType.STRING)
-        clazz.createIndex('FulltextIndexModel.defaults', OClass.INDEX_TYPE.FULLTEXT_HASH_INDEX, "defaults")
-        clazz.createIndex('FulltextIndexModel.hash', OClass.INDEX_TYPE.FULLTEXT, "hash")
+        clazz.createIndex('FulltextIndexModel.defaults', OClass.INDEX_TYPE.FULLTEXT.name(), null,
+                new ODocument().field(FulltextIndexFieldExtension.IGNORE_CHARS, "'"), null, "defaults")
         clazz.createIndex('all_options', OClass.INDEX_TYPE.FULLTEXT, "options")
         // mark indexes
         def id1 = id(clazz.getClassIndex("FulltextIndexModel.defaults"))
-        def id2 = id(clazz.getClassIndex("FulltextIndexModel.hash"))
         def id3 = id(clazz.getClassIndex("all_options"))
         schemeInitializer.register(FulltextIndexModel)
         clazz = db.getMetadata().getSchema().getClass(FulltextIndexModel)
         then: "indexes re-created"
-        clazz.getClassIndexes().size() == 3
+        clazz.getClassIndexes().size() == 2
         // ignore check for remote test
         id1 == null || id(clazz.getClassIndex("FulltextIndexModel.defaults")) != id1
-        id2 == null || id(clazz.getClassIndex("FulltextIndexModel.hash")) != id2
         id3 == null || id(clazz.getClassIndex("all_options")) != id3
         clazz.getClassIndex("FulltextIndexModel.defaults").getType() == OClass.INDEX_TYPE.FULLTEXT.name()
-        clazz.getClassIndex("FulltextIndexModel.hash").getType() == OClass.INDEX_TYPE.FULLTEXT_HASH_INDEX.name()
         def custom = clazz.getClassIndex("all_options")
         custom.getType() == OClass.INDEX_TYPE.FULLTEXT.name()
         custom.getMetadata().field(FulltextIndexFieldExtension.INDEX_RADIX) == false
@@ -104,8 +95,8 @@ class FulltextIndexTest extends AbstractSchemeExtensionTest {
         when: "index already exist with different fields"
         def clazz = db.getMetadata().getSchema().createClass(FulltextIndexModel)
         clazz.createProperty("defaults", OType.STRING)
-        clazz.createProperty("hash", OType.STRING)
-        clazz.createIndex('FulltextIndexModel.defaults', OClass.INDEX_TYPE.FULLTEXT, "hash")
+        clazz.createProperty("other", OType.STRING)
+        clazz.createIndex('FulltextIndexModel.defaults', OClass.INDEX_TYPE.FULLTEXT, "other")
         schemeInitializer.register(FulltextIndexModel)
         then: "error"
         thrown(SchemeInitializationException)

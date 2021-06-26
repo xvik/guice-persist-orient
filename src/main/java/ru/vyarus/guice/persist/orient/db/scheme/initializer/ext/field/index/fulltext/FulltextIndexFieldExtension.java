@@ -47,12 +47,11 @@ public class FulltextIndexFieldExtension implements FieldExtension<FulltextIndex
                 Strings.emptyToNull(annotation.name().trim()), model + '.' + property);
         final OClass clazz = db.getMetadata().getSchema().getClass(model);
         final OIndex<?> classIndex = clazz.getClassIndex(name);
-        final OClass.INDEX_TYPE type = annotation.useHashIndex()
-                ? OClass.INDEX_TYPE.FULLTEXT_HASH_INDEX : OClass.INDEX_TYPE.FULLTEXT;
+        final OClass.INDEX_TYPE type = OClass.INDEX_TYPE.FULLTEXT;
         if (!descriptor.initialRegistration && classIndex != null) {
             final IndexValidationSupport support = new IndexValidationSupport(classIndex, logger);
 
-            support.checkTypeCompatible(OClass.INDEX_TYPE.FULLTEXT, OClass.INDEX_TYPE.FULLTEXT_HASH_INDEX);
+            support.checkTypeCompatible(OClass.INDEX_TYPE.FULLTEXT);
             support.checkFieldsCompatible(property);
 
             final boolean correct = isIndexCorrect(support, type, annotation);
