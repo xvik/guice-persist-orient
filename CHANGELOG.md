@@ -1,5 +1,6 @@
 * Update to guice 4.2.2
 * (breaking) Update to Orient 3.0.38
+    - Dropped java 1.6 support
     - Bound connection objects changed:
         - Provider<OObjectDatabaseTx> -> Provider<ODatabaseObject>
         - Provider<ODatabaseDocumentTx> -> Provider<ODatabaseDocument>

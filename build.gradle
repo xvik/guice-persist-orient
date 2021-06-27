@@ -4,7 +4,6 @@ plugins {
     id 'project-report'
     id 'ru.vyarus.java-lib' version '1.1.2'
     id 'ru.vyarus.github-info' version '1.1.0'
-    id 'ru.vyarus.animalsniffer' version '1.4.6'
     id 'ru.vyarus.quality' version '3.3.0'
     id 'com.jfrog.bintray' version '1.8.4'
     id 'net.researchgate.release' version '2.7.0'
@@ -12,7 +11,7 @@ plugins {
     id 'ru.vyarus.mkdocs' version '1.1.0'
 }
 
-sourceCompatibility = 1.6
+sourceCompatibility = 1.8
 
 wrapper {
     gradleVersion = '4.8.1'
@@ -23,10 +22,8 @@ ext {
     guice = '4.2.2'
 }
 
-repositories { jcenter(); mavenCentral(); mavenLocal() }
+repositories { mavenLocal(); mavenCentral(); }
 dependencies {
-    signature 'org.codehaus.mojo.signature:java16:1.1@signature'
-
     provided 'com.github.spotbugs:spotbugs-annotations:3.1.2'
 
     compile 'org.slf4j:slf4j-api:1.7.25'
