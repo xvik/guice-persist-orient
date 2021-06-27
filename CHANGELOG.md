@@ -1,4 +1,4 @@
-* Update to guice 4.2.2
+* Update to guice 5.0.1
 * (breaking) Update to Orient 3.0.38
     - Dropped java 1.6 support
     - Bound connection objects changed:
