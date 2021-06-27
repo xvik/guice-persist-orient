@@ -37,7 +37,7 @@ public class OCommandSQLPojoWrapperFixed extends OCommandSQLPojoWrapper {
     }
 
     @Override
-    public <RET> RET execute(Object... iArgs) {
+    public <RET> RET execute(final Object... iArgs) {
         database.convertParameters(iArgs);
 
         Object result = command.execute(iArgs);
@@ -46,7 +46,7 @@ public class OCommandSQLPojoWrapperFixed extends OCommandSQLPojoWrapper {
             final List<Object> resultPojo = new ArrayList<Object>();
 
             Object obj;
-            Collection coll = (Collection) result;
+            final Collection coll = (Collection) result;
             for (Object res : coll) {
                 if (res == null) {
                     // orient bug, but they would not fix it
@@ -57,13 +57,14 @@ public class OCommandSQLPojoWrapperFixed extends OCommandSQLPojoWrapper {
                 }
 
                 if (res instanceof ODocument) {
-                    ODocument doc = (ODocument) res;
+                    final ODocument doc = (ODocument) res;
                     // GET THE ASSOCIATED DOCUMENT
-                    if (doc.getClassName() == null)
+                    if (doc.getClassName() == null) {
                         obj = doc;
-                    else
+                    } else {
                         // CONVERT THE DOCUMENT INSIDE THE LIST
                         obj = database.getUserObjectByRecord(doc, getFetchPlan(), true);
+                    }
                 } else {
                     // OResultInternal case
                     obj = database.getUserObjectByRecord(((OResult) res).getIdentity().get(), getFetchPlan(), true);
@@ -74,9 +75,10 @@ public class OCommandSQLPojoWrapperFixed extends OCommandSQLPojoWrapper {
             result = resultPojo;
 
         } else if (result instanceof ODocument) {
-            if (((ODocument) result).getClassName() != null)
+            if (((ODocument) result).getClassName() != null) {
                 // CONVERT THE SINGLE DOCUMENT
                 result = database.getUserObjectByRecord((ODocument) result, getFetchPlan(), true);
+            }
         } else if (result instanceof OResult) {
             // OResultInternal case
             result = database.getUserObjectByRecord(((OResult) result).getIdentity().get(), getFetchPlan(), true);

@@ -34,6 +34,7 @@ Known issues:
         and ObjectPool would create its instances instead of OObjectDatabaseTx.
     - Remote execution of function through object api might return collection of nulls 
         (special exception will be thrown indicating this case)
+    - Live query listener unsubscription method may not be called with remote connection
 
 ### 3.3.2 (2018-04-02)
 * Guice 4.2.0 compatibility

@@ -79,6 +79,15 @@ public class DocumentPool implements PoolManager<ODatabaseDocument> {
             checkOpened(db);
         }
         if (!transactionManager.isExternalTransaction()) {
+            if (ODatabaseRecordThreadLocal.instance().get() != db) {
+                logger.info("Connection '{}' should be assigned to thread '{}', but '{}' assigned. This indicates "
+                                + "manual db.activateOnCurrentThread() calls. Might not be a problem. "
+                                + "Binding correct connection.", db, Thread.currentThread().getName(),
+                        ODatabaseRecordThreadLocal.instance().get()
+                );
+                // override orient internal connections usages (e.g. with live queries and embedded server)
+                db.activateOnCurrentThread();
+            }
             // may not cause actual commit/close because force parameter not used
             // in case of commit exception, transaction manager must perform rollback
             // (and close will take effect in rollback)
