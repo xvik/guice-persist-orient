@@ -28,6 +28,13 @@
       (OClass.INDEX_TYPE.FULLTEXT_HASH_INDEX removed in orient 3.0.38:
       https://github.com/orientechnologies/orientdb/commit/bfceffa50d3f708f5c1c05dab1f082861df01e12#diff-3371617e7407306ad4397a0835f64175314b828295d5ad88891c051915d2d8aaL226)
 
+Known issues:
+    - Repositories continue using DEPRECATED commands api (have no time now to finish rewriting into new api).
+        Some bugs of object api were fixed with OObjectDatabaseTxFixed (which use fixed commands wrapper: OCommandSQLPojoWrapperFixed)
+        and ObjectPool would create its instances instead of OObjectDatabaseTx.
+    - Remote execution of function through object api might return collection of nulls 
+        (special exception will be thrown indicating this case)
+
 ### 3.3.2 (2018-04-02)
 * Guice 4.2.0 compatibility
 

@@ -6,6 +6,7 @@ import com.orientechnologies.orient.object.serialization.OObjectSerializerContex
 import com.orientechnologies.orient.object.serialization.OObjectSerializerHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.vyarus.guice.persist.orient.db.pool.object.OObjectDatabaseTxFixed;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -48,7 +49,7 @@ public class CustomTypesInstaller {
     public void install(final String uri) {
         if (!customTypes.isEmpty()) {
             // only url is required from database object - no need to establish real connection
-            final OObjectDatabaseTx db = new OObjectDatabaseTx(uri);
+            final OObjectDatabaseTx db = new OObjectDatabaseTxFixed(uri);
             try {
                 final OObjectSerializerContext context = new OObjectSerializerContext();
                 for (OObjectSerializer type : customTypes) {

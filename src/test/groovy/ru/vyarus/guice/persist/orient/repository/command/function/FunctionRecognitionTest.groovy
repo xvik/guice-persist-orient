@@ -5,9 +5,12 @@ import com.orientechnologies.orient.core.sql.OCommandSQL
 import ru.vyarus.guice.persist.orient.AbstractTest
 import ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxAction
 import ru.vyarus.guice.persist.orient.repository.RepositoryException
+import ru.vyarus.guice.persist.orient.repository.core.MethodExecutionException
+import ru.vyarus.guice.persist.orient.support.Config
 import ru.vyarus.guice.persist.orient.support.model.Model
 import ru.vyarus.guice.persist.orient.support.modules.RepositoryTestModule
 import spock.guice.UseModules
+import spock.lang.IgnoreIf
 
 /**
  * @author Vyacheslav Rusakov 
@@ -27,6 +30,8 @@ class FunctionRecognitionTest extends AbstractTest {
         thrown(RepositoryException)
     }
 
+    // see FunctionRemoteTest
+    @IgnoreIf({ Config.DB.startsWith('memory') })
     def "Check function calls"() {
 
         context.doInTransaction({ db ->

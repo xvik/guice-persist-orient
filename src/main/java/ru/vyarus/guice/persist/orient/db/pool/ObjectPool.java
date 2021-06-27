@@ -7,6 +7,7 @@ import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vyarus.guice.persist.orient.db.DbType;
+import ru.vyarus.guice.persist.orient.db.pool.object.OObjectDatabaseTxFixed;
 import ru.vyarus.guice.persist.orient.db.user.UserManager;
 
 import javax.inject.Inject;
@@ -38,7 +39,7 @@ public class ObjectPool implements PoolManager<ODatabaseObject> {
     @Override
     public void start(final String database) {
         // test connection and let orient configure database
-        new OObjectDatabaseTx(
+        new OObjectDatabaseTxFixed(
                 (ODatabaseDocumentInternal) orientDB.get()
                         .open(database, userManager.getUser(), userManager.getPassword()))
                 .close();
@@ -64,7 +65,7 @@ public class ObjectPool implements PoolManager<ODatabaseObject> {
     public ODatabaseObject get() {
         if (transaction.get() == null) {
             final ODatabaseDocumentInternal documentDb = (ODatabaseDocumentInternal) documentPool.get();
-            final OObjectDatabaseTx value = new OObjectDatabaseTx(documentDb);
+            final OObjectDatabaseTx value = new OObjectDatabaseTxFixed(documentDb);
             transaction.set(value);
         }
         final ODatabaseObject db = transaction.get();
