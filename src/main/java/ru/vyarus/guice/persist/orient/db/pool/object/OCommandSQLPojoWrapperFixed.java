@@ -37,6 +37,7 @@ public class OCommandSQLPojoWrapperFixed extends OCommandSQLPojoWrapper {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <RET> RET execute(final Object... iArgs) {
         database.convertParameters(iArgs);
 

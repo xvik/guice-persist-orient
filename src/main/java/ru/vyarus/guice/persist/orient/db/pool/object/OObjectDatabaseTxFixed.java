@@ -4,7 +4,6 @@ import com.orientechnologies.orient.core.command.OCommandRequest;
 import com.orientechnologies.orient.core.db.ODatabaseDocumentInternal;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import edu.umd.cs.findbugs.annotations.SuppressWarnings;
 
 /**
  * Fixed version of {@link OObjectDatabaseTx}: corrects some cases of result conversions (bugs which will not be fixed
@@ -16,6 +15,7 @@ import edu.umd.cs.findbugs.annotations.SuppressWarnings;
  * @since 28.06.2021
  */
 @SuppressFBWarnings("HE_INHERITS_EQUALS_USE_HASHCODE")
+@SuppressWarnings("unchecked")
 public class OObjectDatabaseTxFixed extends OObjectDatabaseTx {
 
     public OObjectDatabaseTxFixed(final String iURL) {
@@ -27,7 +27,6 @@ public class OObjectDatabaseTxFixed extends OObjectDatabaseTx {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public <RET extends OCommandRequest> RET command(final OCommandRequest iCommand) {
         return (RET) new OCommandSQLPojoWrapperFixed(this, underlying.command(iCommand));
     }

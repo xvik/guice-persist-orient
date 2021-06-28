@@ -27,25 +27,25 @@ repositories { mavenLocal(); mavenCentral() }
 dependencies {
     compileOnly 'com.github.spotbugs:spotbugs-annotations:4.2.3'
 
-    compile 'org.slf4j:slf4j-api:1.7.25'
+    implementation 'org.slf4j:slf4j-api:1.7.31'
 
-    compile 'ru.vyarus:generics-resolver:3.0.3'
-    compile 'ru.vyarus:guice-ext-annotations:1.3.0'
-    compile 'org.javassist:javassist:3.23.1-GA'
-    compile "com.google.inject:guice:$guice"
-    compile "com.google.inject.extensions:guice-persist:$guice"
-    compile "com.orientechnologies:orientdb-core:$orient"
+    implementation 'ru.vyarus:generics-resolver:3.0.3'
+    implementation 'ru.vyarus:guice-ext-annotations:1.3.0'
+    implementation 'org.javassist:javassist:3.23.1-GA'
+    implementation "com.google.inject:guice:$guice"
+    implementation "com.google.inject.extensions:guice-persist:$guice"
+    implementation "com.orientechnologies:orientdb-core:$orient"
     provided "com.orientechnologies:orientdb-object:$orient"
-    provided ("com.orientechnologies:orientdb-graphdb:$orient")
-    provided ("com.orientechnologies:orientdb-lucene:$orient")
+    provided "com.orientechnologies:orientdb-graphdb:$orient"
+    provided "com.orientechnologies:orientdb-lucene:$orient"
 
-    testCompile 'ch.qos.logback:logback-classic:1.2.3'
-    testCompile 'org.slf4j:jul-to-slf4j:1.7.25'
-    testCompile 'org.spockframework:spock-guice:1.2-groovy-2.5'
-    testCompile 'ru.vyarus:guice-validator:1.2.0'
-    testCompile 'org.hibernate:hibernate-validator:5.2.0.Final'
-    testCompile 'org.glassfish.web:javax.el:2.2.6'
-    testCompile "com.orientechnologies:orientdb-tools:$orient"
+    testImplementation 'ch.qos.logback:logback-classic:1.2.3'
+    testImplementation 'org.slf4j:jul-to-slf4j:1.7.31'
+    testImplementation 'org.spockframework:spock-guice:1.3-groovy-2.5'
+    testImplementation 'ru.vyarus:guice-validator:2.0.0'
+    testImplementation 'org.hibernate:hibernate-validator:6.2.0.Final'
+    testImplementation 'org.glassfish:javax.el:3.0.1-b12'
+    testImplementation "com.orientechnologies:orientdb-tools:$orient"
 }
 
 group = 'ru.vyarus'
