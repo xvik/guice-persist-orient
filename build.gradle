@@ -107,6 +107,8 @@ test {
         exceptionFormat 'full'
     }
     maxHeapSize = '1g'
+    // appveyor fix
+    systemProperty 'jna.nosys', 'true'
 }
 
 dependencyUpdates.revision = 'release'

@@ -14,7 +14,7 @@ install:
 build_script:
   - ./gradlew assemble --no-daemon
 test_script:
-  - ./gradlew check --no-daemon -Djna.nosys=true
+  - ./gradlew check --no-daemon
 
 on_success:
   - ./gradlew jacocoTestReport --no-daemon
