@@ -106,7 +106,7 @@ test {
         events 'skipped', 'failed'
         exceptionFormat 'full'
     }
-    maxHeapSize = '512m'
+    maxHeapSize = '1g'
 }
 
 dependencyUpdates.revision = 'release'
