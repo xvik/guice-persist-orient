@@ -146,6 +146,7 @@ public final class ResultUtils {
      * @param returnClass expected type
      * @return either object itself or just object field (extracted)
      */
+    @SuppressWarnings("checkstyle:IllegalIdentifierName")
     public static Object applyProjection(final Object object, final Class<?> returnClass) {
         Object res = object;
         if (!ODocument.class.isAssignableFrom(returnClass)) {

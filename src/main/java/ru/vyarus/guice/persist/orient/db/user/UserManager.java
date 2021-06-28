@@ -38,8 +38,8 @@ public class UserManager {
     private final TransactionManager transactionManager;
     private final Provider<ODatabaseDocument> connectionProvider;
     private final UserCredentials defaultUser;
-    private final ThreadLocal<UserCredentials> specificUser = new ThreadLocal<UserCredentials>();
-    private final ThreadLocal<OSecurityUser> specificTxUser = new ThreadLocal<OSecurityUser>();
+    private final ThreadLocal<UserCredentials> specificUser = new ThreadLocal<>();
+    private final ThreadLocal<OSecurityUser> specificTxUser = new ThreadLocal<>();
 
     @Inject
     public UserManager(final TransactionManager transactionManager,
@@ -118,7 +118,7 @@ public class UserManager {
 
     /**
      * Changes current connection user. See {@link #executeWithTxUser(
-     *com.orientechnologies.orient.core.metadata.security.OSecurityUser, SpecificUserAction)}.
+     * com.orientechnologies.orient.core.metadata.security.OSecurityUser, SpecificUserAction)}.
      * <p>
      * LIMITATION: current user must have read right on users table.
      *

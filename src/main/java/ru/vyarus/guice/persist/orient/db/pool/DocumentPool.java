@@ -31,7 +31,7 @@ public class DocumentPool implements PoolManager<ODatabaseDocument> {
     private final Provider<OrientDB> orientDB;
     private final TransactionManager transactionManager;
     private final UserManager userManager;
-    private final ThreadLocal<ODatabaseDocument> transaction = new ThreadLocal<ODatabaseDocument>();
+    private final ThreadLocal<ODatabaseDocument> transaction = new ThreadLocal<>();
     private ODatabasePool pool;
     private String database;
 
@@ -65,6 +65,7 @@ public class DocumentPool implements PoolManager<ODatabaseDocument> {
     }
 
     @Override
+    @SuppressWarnings("PMD.CompareObjectsWithEquals")
     public void commit() {
         final ODatabaseDocument db = transaction.get();
         if (db == null) {
@@ -99,6 +100,7 @@ public class DocumentPool implements PoolManager<ODatabaseDocument> {
     }
 
     @Override
+    @SuppressWarnings("PMD.UseTryWithResources")
     public void rollback() {
         final ODatabaseDocument db = transaction.get();
         if (db == null) {

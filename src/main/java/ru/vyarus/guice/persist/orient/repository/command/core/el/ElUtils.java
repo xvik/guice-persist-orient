@@ -30,8 +30,9 @@ public final class ElUtils {
      * @param str string to analyze
      * @return found variable names
      */
+    @SuppressWarnings("checkstyle:IllegalIdentifierName")
     public static List<String> findVars(final String str) {
-        final List<String> vars = new ArrayList<String>();
+        final List<String> vars = new ArrayList<>();
         final char[] strArray = str.toCharArray();
         int i = 0;
         while (i < strArray.length - 1) {
@@ -60,6 +61,7 @@ public final class ElUtils {
      * @return string with replaced placeholders
      * @throws java.lang.IllegalStateException if string placeholder value is null or not provided
      */
+    @SuppressWarnings("checkstyle:IllegalIdentifierName")
     public static String replace(final String str, final Map<String, String> params) {
         final StringBuilder sb = new StringBuilder(str.length());
         final char[] strArray = str.toCharArray();

@@ -1,6 +1,6 @@
 # Guice integration for OrientDB
 [![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](http://www.opensource.org/licenses/MIT)
-[![Build Status](https://img.shields.io/travis/xvik/guice-persist-orient.svg?style=flat&branch=master)](https://travis-ci.org/xvik/guice-persist-orient)
+[![Build Status](https://travis-ci.com/xvik/guice-persist-orient.svg?branch=master)](https://travis-ci.com/xvik/guice-persist-orient)
 [![Appveyor build status](https://ci.appveyor.com/api/projects/status/github/xvik/guice-persist-orient?svg=true)](https://ci.appveyor.com/project/xvik/guice-persist-orient)
 [![codecov](https://codecov.io/gh/xvik/guice-persist-orient/branch/master/graph/badge.svg)](https://codecov.io/gh/xvik/guice-persist-orient)
 

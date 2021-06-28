@@ -39,7 +39,7 @@ public class LiveResultMapper implements OLiveResultListener {
         } catch (Exception th) {
             final StringBuilder id = new StringBuilder(
                     rec instanceof ODocument ? ((ODocument) rec).getClassName() : rec.getClass().getSimpleName()
-            ).append("(").append(rec.getIdentity()).append(")");
+            ).append('(').append(rec.getIdentity()).append(')');
             throw new LiveResultMappingException(
                     "Error calling live result listener " + iLiveToken + " for " + op + " record " + id, th);
         }

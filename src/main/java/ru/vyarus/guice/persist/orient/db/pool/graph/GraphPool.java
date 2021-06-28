@@ -27,7 +27,7 @@ import javax.inject.Provider;
 public class GraphPool implements PoolManager<OrientBaseGraph> {
     private final Logger logger = LoggerFactory.getLogger(GraphPool.class);
 
-    private final ThreadLocal<OrientBaseGraph> transaction = new ThreadLocal<OrientBaseGraph>();
+    private final ThreadLocal<OrientBaseGraph> transaction = new ThreadLocal<>();
     private final Provider<OrientDB> orientDB;
     private final TransactionManager transactionManager;
     private final DocumentPool documentPool;

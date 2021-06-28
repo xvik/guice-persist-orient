@@ -37,8 +37,7 @@ public class ElVarParamExtension implements
 
     public static final String KEY = ElVarParamExtension.class.getName();
     private static final Logger LOGGER = LoggerFactory.getLogger(ElVarParamExtension.class);
-    private static final Class<?>[] SAFE_TYPES =
-            new Class<?>[]{Enum.class, Number.class, Character.class, Class.class};
+    private static final Class<?>[] SAFE_TYPES = {Enum.class, Number.class, Character.class, Class.class};
 
     @Override
     public void processParameters(final CommandMethodDescriptor descriptor,

@@ -168,7 +168,7 @@ public class PersistentContext<C> {
      * Used, for example, to force security checks.
      * <p>
      * See {@link ru.vyarus.guice.persist.orient.db.user.UserManager#executeWithTxUser(
-     *String, ru.vyarus.guice.persist.orient.db.user.SpecificUserAction)}.
+     * String, ru.vyarus.guice.persist.orient.db.user.SpecificUserAction)}.
      * <p>
      * Use {@link ru.vyarus.guice.persist.orient.db.user.UserManager} directly to change user for
      * multiple transactions.

@@ -24,7 +24,7 @@ public class DefaultTransactionManager implements TransactionManager {
     private final Logger logger = LoggerFactory.getLogger(DefaultTransactionManager.class);
 
     private final Provider<Set<PoolManager>> pools;
-    private final ThreadLocal<TxConfig> transaction = new ThreadLocal<TxConfig>();
+    private final ThreadLocal<TxConfig> transaction = new ThreadLocal<>();
     private final TxConfig defaultConfig;
 
 

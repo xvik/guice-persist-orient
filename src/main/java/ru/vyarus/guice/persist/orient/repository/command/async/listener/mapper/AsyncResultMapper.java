@@ -50,7 +50,7 @@ public class AsyncResultMapper implements OCommandResultListener {
                             // ODocument may not have class if its a wrapper around simple value (select t from Model)
                             ? MoreObjects.firstNonNull(((ODocument) rec).getClassName(), "ODocument")
                             : rec.getClass().getSimpleName()
-            ).append("(").append(rec instanceof ORecord ? ((ORecord) rec).getIdentity() : rec.toString()).append(")");
+            ).append('(').append(rec instanceof ORecord ? ((ORecord) rec).getIdentity() : rec.toString()).append(')');
             throw new AsyncResultMappingException(
                     "Error calling query result listener for record " + id, th);
         }

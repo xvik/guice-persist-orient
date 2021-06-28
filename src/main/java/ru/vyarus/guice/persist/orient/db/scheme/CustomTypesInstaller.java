@@ -46,6 +46,7 @@ public class CustomTypesInstaller {
      *
      * @param uri database uri
      */
+    @SuppressWarnings("PMD.UseTryWithResources")
     public void install(final String uri) {
         if (!customTypes.isEmpty()) {
             // only url is required from database object - no need to establish real connection

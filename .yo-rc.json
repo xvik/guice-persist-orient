@@ -8,13 +8,10 @@
     "libPackage": "ru.vyarus.guice.persist.orient",
     "libVersion": "0.1.0",
     "libDesc": "Guice integration for OrientDB",
-    "targetJava": "1.6",
-    "libTags": "guice, guice-persist, orientdb",
-    "bintrayUser": "vyarus",
-    "bintrayRepo": "xvik",
-    "bintraySignFiles": true,
-    "mavenCentralSync": true,
     "enableQualityChecks": true,
-    "usedGeneratorVersion": "2.6.0"
+    "usedGeneratorVersion": "3.0.0",
+    "multiModule": false,
+    "modulePrefix": "-",
+    "moduleName": "-"
   }
 }

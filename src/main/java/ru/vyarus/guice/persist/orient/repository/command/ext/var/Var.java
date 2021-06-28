@@ -25,6 +25,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target(PARAMETER)
 @Retention(RUNTIME)
 @MethodParam(VarParamExtension.class)
+@SuppressWarnings("checkstyle:IllegalIdentifierName")
 public @interface Var {
 
     /**

@@ -50,7 +50,7 @@ public class MethodDescriptorFactory {
 
     // cache is not cleared automatically, but it's hard to imagine how many descriptors should be cached
     // to cause problems
-    private final Map<String, RepositoryMethodDescriptor> cache = new HashMap<String, RepositoryMethodDescriptor>();
+    private final Map<String, RepositoryMethodDescriptor> cache = new HashMap<>();
 
     private final Set<RepositoryExecutor> executors;
     private final RepositoryExecutor defaultExecutor;

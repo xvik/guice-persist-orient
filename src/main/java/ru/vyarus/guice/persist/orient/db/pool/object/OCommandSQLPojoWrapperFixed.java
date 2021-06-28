@@ -43,7 +43,7 @@ public class OCommandSQLPojoWrapperFixed extends OCommandSQLPojoWrapper {
         Object result = command.execute(iArgs);
 
         if (result instanceof Collection<?>) {
-            final List<Object> resultPojo = new ArrayList<Object>();
+            final List<Object> resultPojo = new ArrayList<>();
 
             Object obj;
             final Collection coll = (Collection) result;

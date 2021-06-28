@@ -22,7 +22,7 @@ import javax.inject.Provider;
 public class ObjectPool implements PoolManager<ODatabaseObject> {
     private final Logger logger = LoggerFactory.getLogger(ObjectPool.class);
 
-    private final ThreadLocal<ODatabaseObject> transaction = new ThreadLocal<ODatabaseObject>();
+    private final ThreadLocal<ODatabaseObject> transaction = new ThreadLocal<>();
     private final Provider<OrientDB> orientDB;
     private final DocumentPool documentPool;
     private final UserManager userManager;

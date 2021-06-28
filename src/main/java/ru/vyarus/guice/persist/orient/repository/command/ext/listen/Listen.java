@@ -12,7 +12,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 /**
  * Parameter extension to pass custom result listener for command (see
  * {@link com.orientechnologies.orient.core.command.OCommandRequestAbstract#setResultListener(
- *com.orientechnologies.orient.core.command.OCommandResultListener)}.
+ * com.orientechnologies.orient.core.command.OCommandResultListener)}.
  * <p>
  *  Listener could be used with {@link ru.vyarus.guice.persist.orient.repository.command.async.AsyncQuery} and
  * {@link ru.vyarus.guice.persist.orient.repository.command.live.LiveQuery}.

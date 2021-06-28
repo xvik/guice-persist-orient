@@ -86,6 +86,7 @@ public final class RidUtils {
      * @param document original document
      * @param pojo     pojo
      */
+    @SuppressWarnings("checkstyle:IllegalIdentifierName")
     public static void trackIdChange(final ODocument document, final Object pojo) {
         if (document.getIdentity().isNew()) {
             ORecordInternal.addIdentityChangeListener(document, new OIdentityChangeListener() {

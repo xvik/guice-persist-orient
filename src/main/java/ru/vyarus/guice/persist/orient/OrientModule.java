@@ -130,8 +130,7 @@ public class OrientModule extends PersistModule {
     private OrientDBConfig config = OrientDBConfig.defaultConfig();
     private TxConfig txConfig;
     private boolean autoCreateLocalDb = true;
-    private final Set<Class<? extends OObjectSerializer>> customTypes =
-            new LinkedHashSet<Class<? extends OObjectSerializer>>();
+    private final Set<Class<? extends OObjectSerializer>> customTypes = new LinkedHashSet<>();
 
     private Multibinder<PoolManager> poolsMultibinder;
     private MethodInterceptor interceptor;
