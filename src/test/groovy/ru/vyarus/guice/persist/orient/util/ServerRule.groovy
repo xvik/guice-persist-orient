@@ -57,8 +57,8 @@ class ServerRule extends ExternalResource {
         println 'remote server shut down'
     }
 
-    public static void setRemoteConf() {
-        Config.DB = remoteUrl
+    public static void setRemoteConf(String id) {
+        Config.DB = remoteUrl + id
         Config.USER = "root"
         Config.PASS = "root"
 
