@@ -1,6 +1,5 @@
 package ru.vyarus.guice.persist.orient.repository.command.live.advanced
 
-import ru.vyarus.guice.persist.orient.repository.command.async.advanced.AdvancedAsyncExecutionTest
 import ru.vyarus.guice.persist.orient.util.remoteext.UseRemote
 
 /**

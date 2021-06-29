@@ -3,7 +3,9 @@ package ru.vyarus.guice.persist.orient
 import com.google.inject.persist.PersistService
 import com.orientechnologies.orient.core.config.OGlobalConfiguration
 import com.orientechnologies.orient.core.db.object.ODatabaseObject
+import com.orientechnologies.orient.core.metadata.security.ORole
 import com.orientechnologies.orient.core.metadata.security.OSecurity
+import com.orientechnologies.orient.core.metadata.security.OUser
 import com.orientechnologies.orient.core.security.OSecurityFactory
 import com.orientechnologies.orient.core.security.OSecurityManager
 import ru.vyarus.guice.persist.orient.db.PersistentContext
@@ -59,12 +61,14 @@ abstract class AbstractTest extends Specification {
 
     void cleanup() {
         context.doWithoutTransaction({ db ->
-            for (Class<?> entity :
-                    db.getEntityManager().getRegisteredEntities().findAll {
-                        it.package.name.startsWith("ru.vyarus.guice")
-                    }) {
-                db.getEntityManager().deregisterEntityClass(entity)
+            db.getEntityManager().getRegisteredEntities().findAll {
+                it.package.name.startsWith("ru.vyarus.guice")
+            }.each {
+                db.getEntityManager().deregisterEntityClass(it)
             }
+            db.getEntityManager().deregisterEntityClass(ORole)
+            db.getEntityManager().deregisterEntityClass(OUser)
+            db.getMetadata().getSchema().reload()
         } as SpecificTxAction<Void, ODatabaseObject>)
         persist.stop()
         def db = info.createOrientDB()
