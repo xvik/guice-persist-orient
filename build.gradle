@@ -103,7 +103,7 @@ afterReleaseBuild {
 test {
     //useJUnitPlatform()
     testLogging {
-        events 'skipped', 'failed'
+        events 'skipped', 'failed', 'passed', 'started', 'STANDARD_OUT'
         exceptionFormat 'full'
     }
     maxHeapSize = '1g'

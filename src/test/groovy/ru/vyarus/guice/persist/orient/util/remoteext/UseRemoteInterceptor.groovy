@@ -30,6 +30,7 @@ class UseRemoteInterceptor extends AbstractMethodInterceptor {
     void interceptCleanupSpecMethod(IMethodInvocation invocation) throws Throwable {
         invocation.proceed()
         serverRule.stopServer()
+        sleep(100)
     }
 
     @Override
