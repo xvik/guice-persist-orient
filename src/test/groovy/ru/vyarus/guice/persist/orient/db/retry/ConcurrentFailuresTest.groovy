@@ -23,7 +23,7 @@ class ConcurrentFailuresTest extends AbstractTest {
     DangerUpdatesBean dao
     ExecutorService executor
 
-    int threads = 4
+    int threads = 6
     int operationsInThread = 20
 
     @Override
