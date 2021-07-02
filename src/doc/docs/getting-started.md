@@ -2,39 +2,37 @@
 
 ## Installation
 
-Available from [maven central](https://maven-badges.herokuapp.com/maven-central/ru.vyarus/guice-persist-orient) and [bintray jcenter](https://bintray.com/vyarus/xvik/guice-persist-orient/_latestVersion)
-
 Maven:
 
 ```xml
 <dependency>
-<groupId>ru.vyarus</groupId>
-<artifactId>guice-persist-orient</artifactId>
-<version>{{ gradle.version }}</version>
-<exclusions>
-  <exclusion>
-      <groupId>com.orientechnologies</groupId>
-      <artifactId>orientdb-graphdb</artifactId>
-  </exclusion>
-  <exclusion>
-      <groupId>com.orientechnologies</groupId>
-      <artifactId>orientdb-object</artifactId>
-  </exclusion>
-</exclusions>
+    <groupId>ru.vyarus</groupId>
+    <artifactId>guice-persist-orient</artifactId>
+    <version>{{ gradle.version }}</version>
 </dependency>
+<!--
+<dependency>
+    <groupId>com.orientechnologies</groupId>
+    <artifactId>orientdb-object</artifactId>
+    <version>3.0.38</version>
+</dependency>
+<dependency>
+    <groupId>com.orientechnologies</groupId>
+    <artifactId>orientdb-graphdb</artifactId>
+    <version>3.0.38</version>
+</dependency>-->
 ```
 
 Gradle:
 
 ```groovy
-compile ('ru.vyarus:guice-persist-orient:{{ gradle.version }}'){
-    exclude module: 'orientdb-graphdb'
-    exclude module: 'orientdb-object'       
-}
+implementation 'ru.vyarus:guice-persist-orient:{{ gradle.version }}'
+//implementation "com.orientechnologies:orientdb-object:3.0.38"
+//implementation "com.orientechnologies:orientdb-graphdb:3.0.38"
 ```
 
 !!! tip
-    Remove exclusions to enable object and graph db support.
+    Add object and graph dependencies if support required.
     
 
 !!! important
@@ -53,14 +51,16 @@ See [orient documentation](http://orientdb.com/docs/last/Concepts.html#database-
 In short:
 
 * `memory:dbname` to use in-memory database
-* `plocal:dbname` to use embedded database (no server required, local fs folder will be used); db name must be local fs path
+* `embedded:dbname` (also `plocal:`) to use embedded database (no server required, local fs folder will be used); db name must be local fs path
 * `remote:dbname` to use remote db (you need to start server to use it)
 
-By default use `admin/admin` user.
+By default, use `admin/admin` user.
 
 !!! note
-    Auto database creation for local types (all except 'remote') is enabled by default, but you 
-    [can switch it off](guide/configuration.md#auto-database-creation).     
+    Auto database creation for local types is enabled by default, but you 
+    [can switch it off](guide/configuration.md#auto-database-creation).  
+
+    Remote db creation might be enabled manually with `OrientModule#autoCreateRemoteDatabase(user, pass, type)
     
 ### Lifecycle
 
@@ -89,8 +89,8 @@ Assuming start and stop methods are called on application startup/shutdown.
 
 ### Connections
 
-[Document](http://orientdb.com/docs/2.2.x/Document-Database.html) is the core connection type. 
-[Object](http://orientdb.com/docs/2.2.x/Object-Database.html) and [graph](http://orientdb.com/docs/2.2.x/Graph-Database-Tinkerpop.html) 
+[Document](http://orientdb.com/docs/3.0.x/java/Document-Database.html) (actually [multi-model](http://orientdb.com/docs/3.0.x/java/Java-MultiModel-API.html)) 
+is the core connection type. [Object](http://orientdb.com/docs/3.0.x/java/Object-Database.html) and [graph](http://orientdb.com/docs/3.0.x/java/Graph-Database-Tinkerpop.html) 
 apis use document connection internally.
 Connection object mainly defines the result of queries: 
 
@@ -105,8 +105,8 @@ in other connections. This allows you, for example to update data using object a
 
 To access connection object inside transaction use `PersistentContext` generified with the type of required connection.
 
-* `PersistentContext<OObjectDatabaseTx>` for object database connection
-* `PersistentContext<ODatabaseDocumentTx>` for document database connection
+* `PersistentContext<ODatabaseObject>` for object database connection
+* `PersistentContext<ODatabaseDocument>` for document database connection
 * `PersistentContext<OrientBaseGraph>` for graph database connection (transactional or not)
 * `PersistentContext<OrientGraph>` for transactional graph database connection (will fail if notx transaction type)
 * `PersistentContext<OrientGraphNoTx>` for non transactional graph database connection (will provide only for notx transaction type, otherwise fail)
@@ -125,7 +125,7 @@ For example
 public class MyService {
     
     @Inject    
-    private PersistenceContext<OObjectDatabaseTx> context;
+    private PersistenceContext<ODatabaseObject> context;
     
     public List<Model> findByName(final String name) {
         // manual transaction declaration
@@ -141,7 +141,7 @@ Alternatively, you can directly inject connections:
 
 ```java
 @Inject
-private Provider<OObjectDatabaseTx> db;
+private Provider<ODatabaseObject> db;
 ```
 
 But note that it would not work without external transaction.
@@ -226,10 +226,10 @@ In order to work with database, you obviously need to initialize it's schema fir
 public class MySchemeInitializer implements SchemeInitializer {
 
     @Inject
-    private Provider<OObjectDatabaseTx> provider;
+    private Provider<ODatabaseObject> provider;
     
     public void initialize() {
-        final  OObjectDatabaseTx db = provider.get();
+        final  ODatabaseObject db = provider.get();
         if (db.getMetadata().getSchema().existsClass("Account")) {
             // schema already created - do nothing
             return;            
@@ -296,12 +296,12 @@ data updates. Implement `ru.vyarus.guice.persist.orient.db.data.DataInitializer`
 ```java
 public class MyDataInitializer implements DataInitializer {
     @Inject
-    private Provider<OObjectDatabaseTx> provider;
+    private Provider<ODatabaseObject> provider;
     
     @Override
     @Transactional
     void initializeData() {
-        final  OObjectDatabaseTx db = provider.get();
+        final  ODatabaseObject db = provider.get();
         // init only if database is empty
         if (db.getMetadata().getSchema().getClass(Account.class).count() == 0) {
             db.save(new Account("something 1"));

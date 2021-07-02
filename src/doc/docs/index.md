@@ -3,13 +3,13 @@
 !!! summary ""
     [Guice](https://github.com/google/guice) integration for [OrientDB](https://orientdb.com/).
 
-[Release notes](about/history.md) - [Support](about/support.md) - [License](about/license.md)
+**[Release notes](about/release-notes.md)** - [Support](about/support.md) - [License](about/license.md)
 
 ## Main features
 
 * Integration through [guice-persist](https://github.com/google/guice/wiki/GuicePersist) (UnitOfWork, PersistService, @Transactional)
-* Support for [document](http://orientdb.com/docs/last/Document-Database.html), [object](http://orientdb.com/docs/last/Object-Database.html) and
-[graph](http://orientdb.com/docs/last/Graph-Database-Tinkerpop.html) databases
+* Support for [document](http://orientdb.com/docs/3.0.x/java/Document-Database.html), [object](http://orientdb.com/docs/3.0.x/java/Object-Database.html) and
+[graph](http://orientdb.com/docs/3.0.x/java/Graph-Database-Tinkerpop.html) databases
 * Database types support according to classpath (object and graph db support activated by adding jars to classpath)
 * All three database types may be used in single transaction (changes will be visible between different apis)
 * Hooks for schema migration and data initialization extensions

@@ -48,13 +48,13 @@ public class NotNullFieldExtension implements FieldExtension<ONotNull> {
     private final Logger logger = LoggerFactory.getLogger(NotNullFieldExtension.class);
 
     @Override
-    public void beforeRegistration(final OObjectDatabaseTx db, final SchemeDescriptor descriptor,
+    public void beforeRegistration(final ODatabaseObject db, final SchemeDescriptor descriptor,
                                    final Field field, final ONotNull annotation) {
         // not needed
     }
 
     @Override
-    public void afterRegistration(final OObjectDatabaseTx db, final SchemeDescriptor descriptor,
+    public void afterRegistration(final ODatabaseObject db, final SchemeDescriptor descriptor,
                                   final Field field, final ONotNull annotation) {
         final String name = field.getName();
         final boolean notnull = annotation.value();

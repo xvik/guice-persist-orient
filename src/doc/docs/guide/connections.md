@@ -1,7 +1,7 @@
 # Connections
 
-[Document](http://orientdb.com/docs/2.2.x/Document-Database.html) is the core connection type. 
-[Object](http://orientdb.com/docs/2.2.x/Object-Database.html) and [graph](http://orientdb.com/docs/2.2.x/Graph-Database-Tinkerpop.html) 
+[Document](http://orientdb.com/docs/3.0.x/java/Document-Database.html) (actually [multi-model](http://orientdb.com/docs/3.0.x/java/Java-MultiModel-API.html))  is the core connection type. 
+[Object](http://orientdb.com/docs/3.0.x/java/Object-Database.html) and [graph](http://orientdb.com/docs/3.0.x/java/Graph-Database-Tinkerpop.html) 
 apis use document connection internally.
 Connection object mainly defines the result of queries: 
 
@@ -16,8 +16,8 @@ in other connections. This allows you, for example to update data using object a
 
 To access connection object inside transaction use `PersistentContext` generified with the type of required connection.
 
-* `PersistentContext<OObjectDatabaseTx>` for object database connection
-* `PersistentContext<ODatabaseDocumentTx>` for document database connection
+* `PersistentContext<ODatabaseObject>` for object database connection
+* `PersistentContext<ODatabaseDocument>` for document database connection
 * `PersistentContext<OrientBaseGraph>` for graph database connection (transactional or not)
 * `PersistentContext<OrientGraph>` for transactional graph database connection (will fail if notx transaction type)
 * `PersistentContext<OrientGraphNoTx>` for non transactional graph database connection (will provide only for notx transaction type, otherwise fail)
@@ -36,7 +36,7 @@ For example
 public class MyService {
     
     @Inject    
-    private PersistenceContext<OObjectDatabaseTx> context;
+    private PersistenceContext<ODatabaseObject> context;
     
     public List<Model> findByName(final String name) {
         // manual transaction declaration
@@ -52,7 +52,7 @@ Alternatively, you can directly inject connections:
 
 ```java
 @Inject
-private Provider<OObjectDatabaseTx> db;
+private Provider<ODatabaseObject> db;
 ```
 
 But note that it would not work without external transaction.
@@ -76,8 +76,8 @@ public class MyOrientModule extends OrientModule {
 
     @Override
     protected void configurePools() {
-        bindPool(ODatabaseDocumentTx.class, DocumentPool.class);
-        bindPool(OObjectDatabaseTx.class, ObjectPool.class);
+        bindPool(ODatabaseDocument.class, DocumentPool.class);
+        bindPool(ODatabaseObject.class, ObjectPool.class);
         bindPool(OrientGraph.class, MyCustomGraphPool.class);
         // note that for graph few entities could be provided: OrientGraph, OrientGraphNoTx, OrientBaseGraph.
         // default implementation registers additional providers to handle all cases

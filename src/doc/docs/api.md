@@ -47,15 +47,15 @@ Connection could be acquired only inside transaction (unit of work).
 
 Possible connection objects:
 
-* `Provider<OObjectDatabaseTx>` for object database connection
-* `Provider<ODatabaseDocumentTx>` for document database connection
+* `Provider<ODatabaseObject>` for object database connection
+* `Provider<ODatabaseDocument>` for document database connection
 * `Provider<OrientBaseGraph>` for graph database connection (transactional or not)
 * `Provider<OrientGraph>` for transactional graph database connection (will fail if notx transaction type)
 * `Provider<OrientGraphNoTx>` for non transactional graph database connection (will provide only for notx transaction type, otherwise fail)
 
 !!! note
     You can't use both `OrientGraph` and `OrientGraphNoTx` in the same transaction (type must be used according to transaction type).
-    `OrientBaseGraph` may be used in places where both types are possible (its the base class for both).
+    `OrientBaseGraph` may be used in places where both types are possible (it's the base class for both).
 
 Connection provider logic is implemented in [pools](guide/connections.md#pools) (`PoolManager`). Pool is registered for each connection type (document, object, graph).
 
@@ -70,7 +70,7 @@ Transaction template abstract work with transaction manager (begin/commit/rollba
 Sample usage:
 
 ```java
-@Inject TxTemplate<OObjectDatabaseTx> template;
+@Inject TxTemplate<ODatabaseObject> template;
 
 ...
 template.doInTransaction(new TxAction<Void>() {
@@ -101,11 +101,11 @@ If template is used inside transaction, it's config is ignored.
 For example:
 
 ```java
-@Inject SpecificTxTemplate<OObjectDatabaseTx> specificTxTemplate;
+@Inject SpecificTxTemplate<ODatabaseObject> specificTxTemplate;
 ...
-specificTxTemplate.doInTransaction(new SpecificTxAction<Object, OObjectDatabaseTx>() {
+specificTxTemplate.doInTransaction(new SpecificTxAction<Object, ODatabaseObject>() {
         @Override
-        public Object execute(OObjectDatabaseTx db) throws Throwable {
+        public Object execute(ODatabaseObject db) throws Throwable {
             // something
             return null;
         }

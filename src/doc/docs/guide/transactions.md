@@ -2,7 +2,7 @@
 
 ## Unit of work (transaction)
 
-Unit of work defines transaction scope. Actual [orient transaction](http://orientdb.com/docs/last/Transactions.html) will start only on first connection acquire (so basically, unit of work
+Unit of work defines transaction scope. Actual [orient transaction](http://orientdb.com/docs/3.0.x/internals/Transactions.html) will start only on first connection acquire (so basically, unit of work
 may not contain actual orient transaction, but for simplicity both may be considered equal).
 
 Unit of work may be defined by:
@@ -128,7 +128,7 @@ to be used often and must be applied only in cases where other behaviour is impo
 
 ## Retry
 
-Due to orient implementation specifics, you may face [OConcurrentModificationException](http://orientdb.com/docs/last/Troubleshooting-Java.html#oconcurrentmodificationexception-cannot-update-record-xy-in-storage-z-because-the-version-is-not-the-latest-probably-you-are-updating-an-old-record-or-it-has-been-modified-by-another-user-dbva-yourvb).
+Due to orient implementation specifics, you may face [OConcurrentModificationException](http://orientdb.com/docs/3.0.x/misc/Troubleshooting-Java.html#oconcurrentmodificationexception-cannot-update-record-xy-in-storage-z-because-the-version-is-not-the-latest-probably-you-are-updating-an-old-record-or-it-has-been-modified-by-another-user-dbva-yourvb).
 
 Such exception would be ok for optimistic locking check on object save (object contains version and if db version is different
 then your object considered stale, and you cant save it).

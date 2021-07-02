@@ -7,18 +7,18 @@ Default orient mapping is limited in some cases, and that's why custom mapper im
 
 ## Default object scheme mapping
 
-See [orient object mapping documentation](http://orientdb.com/docs/last/Object-2-Record-Java-Binding.html) for object mapping
- ([and general object database page](http://orientdb.com/docs/last/Object-Database.html)).
+See [orient object mapping documentation](http://orientdb.com/docs/3.0.x/java/Object-2-Record-Java-Binding.html) for object mapping
+ ([and general object database page](http://orientdb.com/docs/3.0.x/java/Object-Database.html)).
 
 * Orient ignore package, so class may be moved between packages
 * If model class extends some other class it will be also registered as separate scheme class.
 * When entity field removed, orient will hold all data already stored in records of that field
 * When entity field type changes, orient WILL NOT migrate automatically (you need to handle it manually, using custom scheme initializer or through
-[orient studio](http://orientdb.com/docs/last/Studio-Home-page.html)).
+[orient studio](http://orientdb.com/docs/3.0.x/studio/)).
 * When class renamed orient will register it as new entity and you will have to manually migrate all data
 (it's possible to use sql commands to rename entity in scheme)
 * To use entity within optimistic transaction, it must have version field (annotated with `@Version`). You should add field manually or extend all entities from provided base class: `VersionedEntity`
-* JPA annotations can be used to [define cascades](http://orientdb.com/docs/last/Object-Database.html)
+* JPA annotations can be used to [define cascades](http://orientdb.com/docs/3.0.x/java/Object-Database.html)
 * JPA `@Id` annotation may be used to bind object id (String or Object to bind as RID)
 
 Most useful are id and version mapping:
@@ -97,9 +97,9 @@ This makes possible to use them as simple migration mechanism (but its better to
 
 See documentation:
 
-* [Classes](http://orientdb.com/docs/last/SQL-Alter-Class.html)
-* [Properties](http://orientdb.com/docs/last/SQL-Alter-Property.html)
-* [Indexes](http://orientdb.com/docs/last/Indexes.html) ([create index](http://orientdb.com/docs/last/SQL-Create-Index.html))
+* [Classes](http://orientdb.com/docs/3.0.x/sql/SQL-Alter-Class.html)
+* [Properties](http://orientdb.com/docs/3.0.x/sql/SQL-Alter-Property.html)
+* [Indexes](http://orientdb.com/docs/3.0.x/indexing/Indexes.html) ([create index](http://orientdb.com/docs/3.0.x/sql/SQL-Create-Index.html))
 
 ### How it works
 

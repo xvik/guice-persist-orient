@@ -6,12 +6,12 @@ Core orient integration is provided by `OrientModule`:
 install(new OrientModule(url, user, password));
 ```
 
-See [orient documentation](http://orientdb.com/docs/last/Concepts.html#database-url) for supported db types.
+See [orient documentation](http://orientdb.com/docs/3.0.x/datamodeling/Concepts.html#database-url) for supported db types.
 In short:
 
-* `'memory:dbname'` to use in-memory database
-* `'plocal:dbname'` to use embedded database (no server required, local fs folder will be used); db name must be local fs path
-* `'remote:dbname'` to use remote db (you need to start server to use it)
+* `memory:dbname` to use in-memory database
+* `embedded:dbname` (`plocal:`) to use embedded database (no server required, local fs folder will be used); db name must be local fs path
+* `remote:dbname` to use remote db (you need to start server to use it)
 
 By default use `admin/admin` user.
 
@@ -27,8 +27,8 @@ install(new OrientModule(url, user, password)
 
 ## Default transaction type
 
-Default [transactions](http://orientdb.com/docs/last/Transactions.html) configuration may be specified as additional module parameter.
-By default, [OPTIMISTIC transactions](http://orientdb.com/docs/last/Transactions.html#optimistic-transaction) used (use optimistic locking based on object version, same way as hibernate optimistic locking). 
+Default [transactions](http://orientdb.com/docs/3.0.x/internals/Transactions.html) configuration may be specified as additional module parameter.
+By default, [OPTIMISTIC transactions](http://orientdb.com/docs/3.0.x/internals/Transactions.html#optimistic-transaction) used (use optimistic locking based on object version, same way as hibernate optimistic locking). 
 NOTX mode disables transactions.
 
 For example, to switch off transactions use:
@@ -40,7 +40,7 @@ install(new OrientModule(url, user, password)
 
 ## Custom orient types
 
-You may need to use orient [custom types](http://orientdb.com/docs/2.2/Object-2-Record-Java-Binding.html#custom-types)
+You may need to use orient [custom types](http://orientdb.com/docs/3.0.x/java/Object-2-Record-Java-Binding.html)
 (custom converter to/from object, used *only in object connection*).
 
 To register custom type:
@@ -150,5 +150,5 @@ Or globally:
 OGlobalConfiguration.MVRBTREE_NODE_PAGE_SIZE.setValue(2048);
 ```
 
-Read about [all configuration options](http://orientdb.com/docs/last/Configuration.html)
+Read about [all configuration options](http://orientdb.com/docs/3.0.x/admin/Configuration.html)
 

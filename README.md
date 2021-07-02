@@ -19,9 +19,9 @@ Underlying format is almost the same for all database types, which allows us to 
 may be performed as object database (jpa style) and graph api may be used for creating relations.
 
 Features:
-* For orient 2.2
+* For orient 3.0
 * Integration through [guice-persist](https://github.com/google/guice/wiki/GuicePersist) (UnitOfWork, PersistService, @Transactional)
-* Support for [document](http://orientdb.com/docs/last/Document-Database.html), [object](http://orientdb.com/docs/last/Object-Database.html) and
+* Support for [document](http://orientdb.com/docs/last/Document-Database.html), [object](http://orientdb.com/docs/3.0.x/java/Object-Database.html) and
 [graph](http://orientdb.com/docs/last/Graph-Database-Tinkerpop.html) databases
 * Database types support according to classpath (object and graph db support activated by adding jars to classpath)
 * All three database types may be used in single transaction (changes will be visible between different apis)
@@ -41,45 +41,42 @@ Features:
 
 ### Setup
 
-Releases are published to [bintray jcenter](https://bintray.com/bintray/jcenter) (package appear immediately after release) 
-and then to maven central (require few days after release to be published). 
-
-[![JCenter](https://api.bintray.com/packages/vyarus/xvik/guice-persist-orient/images/download.svg)](https://bintray.com/vyarus/xvik/guice-persist-orient/_latestVersion)
 [![Maven Central](https://img.shields.io/maven-central/v/ru.vyarus/guice-persist-orient.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/ru.vyarus/guice-persist-orient)
 
 Maven:
 
 ```xml
 <dependency>
-<groupId>ru.vyarus</groupId>
-<artifactId>guice-persist-orient</artifactId>
-<version>3.3.2</version>
-<exclusions>
-  <exclusion>
-      <groupId>com.orientechnologies</groupId>
-      <artifactId>orientdb-graphdb</artifactId>
-  </exclusion>
-  <exclusion>
-      <groupId>com.orientechnologies</groupId>
-      <artifactId>orientdb-object</artifactId>
-  </exclusion>
-</exclusions>
+    <groupId>ru.vyarus</groupId>
+    <artifactId>guice-persist-orient</artifactId>
+    <version>4.0.0</version>
 </dependency>
+<!--
+<dependency>
+    <groupId>com.orientechnologies</groupId>
+    <artifactId>orientdb-object</artifactId>
+    <version>3.0.38</version>
+</dependency>
+<dependency>
+    <groupId>com.orientechnologies</groupId>
+    <artifactId>orientdb-graphdb</artifactId>
+    <version>3.0.38</version>
+</dependency>-->
 ```
 
 Gradle:
 
 ```groovy
-compile ('ru.vyarus:guice-persist-orient:3.3.2'){
-    exclude module: 'orientdb-graphdb'
-    exclude module: 'orientdb-object'       
-}
+implementation 'ru.vyarus:guice-persist-orient:4.0.0'
+//implementation "com.orientechnologies:orientdb-object:3.0.38"
+//implementation "com.orientechnologies:orientdb-graphdb:3.0.38"
 ```
 
-Remove exclusions to enable object and graph db support.
+Commented imports required to enable object and graph db support.
 
 OrientDB | Guice | guice-persist-orient
 ----------|---|------
+3.0 | 5.0.1 | [4.0.0](http://xvik.github.io/guice-persist-orient/4.0.0)
 2.2 | 4.2.0 | [3.3.2](http://xvik.github.io/guice-persist-orient/3.3.2)
 2.1 | 4.1.0 | [3.2.0](https://github.com/xvik/guice-persist-orient/tree/orient-2.1.x)
 2.0 | 4.0.0 | [3.1.1](https://github.com/xvik/guice-persist-orient/tree/orient-2.0.x)
