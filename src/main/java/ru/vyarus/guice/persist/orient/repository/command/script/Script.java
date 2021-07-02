@@ -28,10 +28,10 @@ import java.util.Collection;
  * Note that using script instead of update query, like this "begin update... commit" solves
  * concurrent modification problem, even without retry.
  * <p>
- * See {@link com.orientechnologies.orient.core.command.script.OScriptManager#bind(javax.script.Bindings,
- * com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx,
+ * See {@link com.orientechnologies.orient.core.command.script.OScriptManager#bind(javax.script.ScriptEngine,
+ * javax.script.Bindings, com.orientechnologies.orient.core.db.ODatabaseDocumentInternal,
  * com.orientechnologies.orient.core.command.OCommandContext, java.util.Map)} to know available javascript api
- * (look wrapper objects api to knwo available methods).
+ * (look wrapper objects api to know available methods).
  *
  * @author Vyacheslav Rusakov
  * @see <a href="http://orientdb.com/docs/last/SQL-batch.html">docs</a>
