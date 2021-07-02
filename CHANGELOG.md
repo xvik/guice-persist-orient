@@ -32,6 +32,8 @@ Known issues:
     - Repositories continue using DEPRECATED commands api (have no time now to finish rewriting into new api).
         Some bugs of object api were fixed with OObjectDatabaseTxFixed (which use fixed commands wrapper: OCommandSQLPojoWrapperFixed)
         and ObjectPool would create its instances instead of OObjectDatabaseTx.
+    - Repositories does not support conversion into new types like OVertex, OEdge (only thinkerpop 2 classes, as before) 
+        or new streams.
     - Remote execution of function through object api might return collection of nulls 
         (special exception will be thrown indicating this case)
     - Live query listener unsubscription method may not be called with remote connection
