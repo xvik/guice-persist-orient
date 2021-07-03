@@ -59,7 +59,8 @@ Possible connection objects:
 
 Connection provider logic is implemented in [pools](guide/connections.md#pools) (`PoolManager`). Pool is registered for each connection type (document, object, graph).
 
-Connection instance is thread bound, so you may be sure that every time `provider.get()` returns same connection object instance (within transaction).
+!!! important 
+    Connection instance is thread bound, so you may be sure that every time `provider.get()` returns same connection object instance (within transaction).
 
 ## Transaction templates
 
@@ -176,3 +177,43 @@ dbManager.getSupportedTypes()
 ```
 
 Database types support is driven by classpath (e.g. if orient-graph dependency is not available, no graph db support will be in runtime).
+
+Also, provides access for `OrientDB` object (new orient api) used internally:
+
+```java
+OrientDB orient = dbManager.get()
+```
+
+The same object could be simply injected with
+
+```java
+@Inject Provider<OrientDB>
+```
+
+Object might be used for opening direct orient connections (not managed by guice).
+Quite rare case.
+
+### Database credentials
+
+You can get used database credentials through `OrientDBFactory` object:
+
+```java
+@Inject OrientDBFactory info;
+...
+
+String dbName = info.getDbName();
+```
+
+This might be useful in tests to drop context database like:
+
+```java
+void cleanup() {
+    persistService.stop();
+    // create new connection object after main connection shut down
+    OrientDB db = info.createOrientDB()
+    if (db.exists(info.getDbName())) {
+        db.drop(info.getDbName())
+    }
+    db.close()
+}
+```

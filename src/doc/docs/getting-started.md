@@ -51,7 +51,7 @@ See [orient documentation](https://orientdb.com/docs/3.0.x/datamodeling/Concepts
 In short:
 
 * `memory:dbname` to use in-memory database
-* `embedded:dbname` (also `plocal:`) to use embedded database (no server required, local fs folder will be used); db name must be local fs path
+* `embedded:dbname` or `plocal:` to use embedded database (no server required, local fs folder will be used); db name must be local fs path
 * `remote:dbname` to use remote db (you need to start server to use it)
 
 By default, use `admin/admin` user.
@@ -61,6 +61,14 @@ By default, use `admin/admin` user.
     [can switch it off](guide/configuration.md#auto-database-creation).  
 
     Remote db creation might be enabled manually with `OrientModule#autoCreateRemoteDatabase(user, pass, type)
+
+To change default orient configuration use:
+
+```java
+install(new OrientModule(url, user, password).withConfig(config));
+```
+
+Where `config` is `OrientDBConfig`. By default, `OrientDBConfig.defaultConfig()` is used.
     
 ### Lifecycle
 

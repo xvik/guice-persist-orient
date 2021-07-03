@@ -10,7 +10,7 @@ See [orient documentation](https://orientdb.com/docs/3.0.x/datamodeling/Concepts
 In short:
 
 * `memory:dbname` to use in-memory database
-* `embedded:dbname` (`plocal:`) to use embedded database (no server required, local fs folder will be used); db name must be local fs path
+* `embedded:dbname` or `plocal:` to use embedded database (no server required, local fs folder will be used); db name must be local fs path
 * `remote:dbname` to use remote db (you need to start server to use it)
 
 By default use `admin/admin` user.
@@ -24,6 +24,63 @@ Auto creation is nice for playing/developing/testing phase, but most likely will
 install(new OrientModule(url, user, password)
                 .autoCreateLocalDatabase(false));
 ```
+
+Remote database creation could be enabled with:
+
+```java
+install(new OrientModule(url, user, password)
+        .autoCreateRemoteDatabase(serverUser, pass, dbType));
+```
+
+### Remote auto creation in tests
+
+There is a special shortcut for enabling remote database creation in tests:
+
+```java
+OrientDBFactory.enableAutoCreationRemoteDatabase(serverUser, serverPassword, dbType)
+```
+
+Must be called before persistence service startup.
+The behaviour is the same as with direct module configuration
+
+Static call just sets system properties, used internally for implicit configuration.,
+
+To clean up such properties (if required) use:
+
+```java
+OrientDBFactory.disableAutoCreationRemoteDatabase()
+```
+
+## Orient configuration
+
+In order to modify new `OrientDBConfig` values use:
+
+```java
+OrientDBConfig config = OrientDBConfig.builder()...build()
+install(new OrientModule(url, user, password)
+                .withConfig(config));
+```
+
+By default, config is `OrientDBConfig.defaultConfig()`
+
+### Runtime configuration changes
+
+At runtime configuration could be done changed on instance:
+
+```java
+@Inject Provider<ODatabaseDocument> db;
+
+db.get().getStorage().getConfiguration()
+```
+
+Or globally (even before startup):
+
+```java
+OGlobalConfiguration.MVRBTREE_NODE_PAGE_SIZE.setValue(2048);
+```
+
+Read about [all configuration options](https://orientdb.com/docs/3.0.x/admin/Configuration.html)
+
 
 ## Default transaction type
 
@@ -135,20 +192,3 @@ public void onAppShutdown(){
     orientService.stop()
 }
 ```
-
-## Orient configuration
-
-Configuration could be done on instance: 
-
-```java
-db.getStorage().getConfiguration()
-```
-
-Or globally: 
-
-```java
-OGlobalConfiguration.MVRBTREE_NODE_PAGE_SIZE.setValue(2048);
-```
-
-Read about [all configuration options](https://orientdb.com/docs/3.0.x/admin/Configuration.html)
-

@@ -22,15 +22,16 @@ Updated to guice 5.0 (but should work with guice 4 too).
 !!! warning ""
     orientdb-object and orientdb-graphdb are optional dependencies now!
 
-Orient introduced [new unified api](https://orientdb.com/docs/3.0.x/java/Document-API-Database.html) (OrientDB: document + graph) so document connection now provides graph abilities
+Orient introduced [new unified api](https://orientdb.com/docs/3.0.x/java/Document-API-Database.html) (document + graph) so document connection now provides graph abilities
 (for old graph apis import orientdb-graphdb dependency, as before).
 
-Document pool switched into new `ODatabasePool` (new orient pool implementation). As before, 
+Document pool switched into new orient pool implementation (`ODatabasePool`). As before, 
 object and graph apis wrapped around document api (to utilize single connection). 
 
 ### Configuration changes
 
-You should now apply `embedded:` prefix instead of `plocal:` (but plocal is still works)
+There is a new `embedded:` db prefix, used in [api examples](https://orientdb.com/docs/3.0.x/java/Document-API-Database.html) 
+which is the same as `plocal:`: both could be used.
 
 New option allows automatic creation of remote databases:
 
@@ -43,7 +44,7 @@ To apply custom `OrientDBConfig` (different from `OrientDBConfig.defaultConfig()
 
 ```java
 new OrientModule(,,)
-    .ithConfig(conf)
+    .withConfig(conf)
 ```
 
 ### API changes
@@ -67,11 +68,12 @@ Repositories implementation not changed since the last version: it is still uses
 (automatic result conversion would not work for new types).
 
 Known repositories issues:
-    - Conversion for new OVertex and OEdge objects not supported
-    - [Streaming api](Streams not supported) not supported
-    - Live queries unsubscription method might not be called on remote connection in some cases (looks like a bug)
-    - Functions executed through object api might produce incorrect results (with nulls).
-      Marker exception would be thrown in this case.
+
+- Conversion for new OVertex and OEdge objects not supported
+- [Streaming api](https://orientdb.com/docs/3.0.x/java/Java-Query-API.html#streamin-api) not supported
+- Live queries unsubscription method might not be called on remote connection in some cases (looks like a bug)
+- Functions, executed through object api, might produce incorrect results (with nulls).
+  Marker exception would be thrown to indicate this case.
 
 
 ## Migration guide
@@ -118,6 +120,8 @@ new db factory instead:
 OrientDBFactory info
 
 void cleanup() {
+    persistService.stop();
+    // create new connection object after main connection shut down
     OrientDB db = info.createOrientDB()
     if (db.exists(info.getDbName())) {
         db.drop(info.getDbName())

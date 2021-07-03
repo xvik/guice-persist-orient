@@ -57,6 +57,20 @@ private Provider<ODatabaseObject> db;
 
 But note that it would not work without external transaction.
 
+## Manual connections
+
+In special cases you can inject internal [`OrientDB` object](https://orientdb.com/docs/3.0.x/java/ref/OrientDB.html), 
+used for connections management directly:
+
+```java
+@Inject Provider<OrientDB> orient;
+```
+
+With it, you can create or drop databases and create manual connections, not managed with guice.
+
+!!! note
+    Database credentials are accessible (if required) with injectable `OrientDBFactory` bean.
+
 ## Pools
 
 Each connection type is managed with its own `PoolManager`.
@@ -86,11 +100,9 @@ public class MyOrientModule extends OrientModule {
 }
 ```
 
-Default pool implementation maintains only pool for documents (using `OPartitionedDatabasePoolFactory`).
+Default pool implementation maintains only pool for documents (using `ODatabasePool`).
 Other pools use document connection to construct object and graph connection objects.
 This merges different connections transactions (change in one connection type will be visible in all others).
-
-`OGlobalConfiguration.DB_POOL_MAX` used as max pools size (for OPartitionedDatabasePoolFactory).
 
 !!! important
     Connection may be acquired from pool only inside unit of work. Connection object is bound to thread local inside pool, returning always the same instance during transaction.
