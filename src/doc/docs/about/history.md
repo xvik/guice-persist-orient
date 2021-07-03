@@ -1,4 +1,4 @@
-### [4.0.0](https://xvik.github.io/guice-persist-orien/4.0.0) (2021-07-03)
+### [4.0.0](https://xvik.github.io/guice-persist-orien/4.0.0) (2021-07-04)
 * Update to guice 5.0.1
 * (breaking) Update to Orient 3.0.38
     - Dropped java 1.6 support
