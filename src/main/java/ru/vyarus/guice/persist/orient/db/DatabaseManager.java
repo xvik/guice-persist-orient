@@ -136,7 +136,7 @@ public class DatabaseManager implements PersistService, Provider<OrientDB> {
 
     @Override
     public OrientDB get() {
-        return Preconditions.checkNotNull(orientDB, "OrientDB intance is not yet started");
+        return Preconditions.checkNotNull(orientDB, "OrientDB instance is not yet started");
     }
 
     protected void createIfRequired() {

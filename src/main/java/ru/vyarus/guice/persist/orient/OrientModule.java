@@ -95,8 +95,8 @@ import java.util.Set;
  * <p>
  * To work with database objects use {@link ru.vyarus.guice.persist.orient.db.PersistentContext}:
  * <ul>
- * <li>PersistentContext&lt;OObjectDatabaseTx&gt; for object db connection</li>
- * <li>PersistentContext&lt;ODatabaseDocumentTx&gt; for document db connection</li>
+ * <li>PersistentContext&lt;ODatabaseObject&gt; for object db connection</li>
+ * <li>PersistentContext&lt;ODatabaseDocument&gt; for document db connection</li>
  * <li>PersistentContext&lt;OrientBaseGraph&gt; for graph db connection (transactional or not)</li>
  * <li>PersistentContext&lt;OrientGraph&gt; for transactional graph db connection
  * (will fail if notx transaction type)</li>
