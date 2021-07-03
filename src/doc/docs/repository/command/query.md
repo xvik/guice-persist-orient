@@ -30,11 +30,11 @@ Internally `OSQLSynchQuery` used for selects and `OCommandSQL` for updates and i
 
 Documentation links:
 
-* [SQL](https://orientdb.com/docs/last/SQL.html)
-* [functions](https://orientdb.com/docs/last/SQL-Functions.html)
-* [methods](https://orientdb.com/docs/last/SQL-Methods.html)
-* [fields](https://orientdb.com/docs/last/Document-Field-Part.html)
-* [attributes](https://orientdb.com/docs/last/SQL-Where.html#record-attributes)
-* [default variables](https://orientdb.com/docs/last/SQL-Where.html#variables)
-* [traverse](https://orientdb.com/docs/last/SQL-Traverse.html)
-* [query indexes](https://orientdb.com/docs/last/SQL.html#automatic-usage-of-indexes)
+* [SQL](https://orientdb.com/docs/3.0.x/sql/)
+* [functions](https://orientdb.com/docs/3.0.x/sql/SQL-Functions.html)
+* [methods](https://orientdb.com/docs/3.0.x/sql/SQL-Methods.html)
+* [document api](https://orientdb.com/docs/3.0.x/java/Document-Database.html)
+* [attributes](https://orientdb.com/docs/3.0.x/sql/SQL-Where.html#record-attributes)
+* [default variables](https://orientdb.com/docs/3.0.x/sql/SQL-Where.html#variables)
+* [traverse](https://orientdb.com/docs/3.0.x/sql/SQL-Traverse.html)
+* [query indexes](https://orientdb.com/docs/3.0.x/sql/SQL-Introduction.html#automatic-usage-of-indexes)

@@ -8,8 +8,8 @@
 ## Main features
 
 * Integration through [guice-persist](https://github.com/google/guice/wiki/GuicePersist) (UnitOfWork, PersistService, @Transactional)
-* Support for [document](http://orientdb.com/docs/3.0.x/java/Document-Database.html), [object](http://orientdb.com/docs/3.0.x/java/Object-Database.html) and
-[graph](http://orientdb.com/docs/3.0.x/java/Graph-Database-Tinkerpop.html) databases
+* Support for [document](https://orientdb.com/docs/3.0.x/java/Document-Database.html), [object](https://orientdb.com/docs/3.0.x/java/Object-Database.html) and
+[graph](https://orientdb.com/docs/3.0.x/java/Graph-Database-Tinkerpop.html) databases
 * Database types support according to classpath (object and graph db support activated by adding jars to classpath)
 * All three database types may be used in single transaction (changes will be visible between different apis)
 * Hooks for schema migration and data initialization extensions

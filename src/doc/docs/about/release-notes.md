@@ -10,7 +10,7 @@
 
 Release target orient 3.0 compatibility.
 
-[Orient 3.0 release notes](http://orientdb.com/docs/3.0.x/release/3.0/What-is-new-in-OrientDB-3.0.html)
+[Orient 3.0 release notes](https://orientdb.com/docs/3.0.x/release/3.0/What-is-new-in-OrientDB-3.0.html)
 
 Updated to guice 5.0 (but should work with guice 4 too). 
 
@@ -22,7 +22,7 @@ Updated to guice 5.0 (but should work with guice 4 too).
 !!! warning ""
     orientdb-object and orientdb-graphdb are optional dependencies now!
 
-Orient introduced [new unified api](http://orientdb.com/docs/3.0.x/java/Document-API-Database.html) (OrientDB: document + graph) so document connection now provides graph abilities
+Orient introduced [new unified api](https://orientdb.com/docs/3.0.x/java/Document-API-Database.html) (OrientDB: document + graph) so document connection now provides graph abilities
 (for old graph apis import orientdb-graphdb dependency, as before).
 
 Document pool switched into new `ODatabasePool` (new orient pool implementation). As before, 

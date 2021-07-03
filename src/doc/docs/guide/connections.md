@@ -1,7 +1,7 @@
 # Connections
 
-[Document](http://orientdb.com/docs/3.0.x/java/Document-Database.html) (actually [multi-model](http://orientdb.com/docs/3.0.x/java/Java-MultiModel-API.html))  is the core connection type. 
-[Object](http://orientdb.com/docs/3.0.x/java/Object-Database.html) and [graph](http://orientdb.com/docs/3.0.x/java/Graph-Database-Tinkerpop.html) 
+[Document](https://orientdb.com/docs/3.0.x/java/Document-Database.html) (actually [multi-model](https://orientdb.com/docs/3.0.x/java/Java-MultiModel-API.html))  is the core connection type. 
+[Object](https://orientdb.com/docs/3.0.x/java/Object-Database.html) and [graph](https://orientdb.com/docs/3.0.x/java/Graph-Database-Tinkerpop.html) 
 apis use document connection internally.
 Connection object mainly defines the result of queries: 
 

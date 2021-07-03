@@ -19,7 +19,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * Sample sql: alter class OldModel name Model.
  *
  * @author Vyacheslav Rusakov
- * @see <a href="http://orientdb.com/docs/last/SQL-Alter-Class.html">alter docs</a>
+ * @see <a href="https://orientdb.com/docs/3.0.x/sql/SQL-Alter-Class.html">alter docs</a>
  * @since 07.03.2015
  */
 @Target(TYPE)

@@ -14,7 +14,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * Sample sql: alter property Model.name readonly true.
  *
  * @author Vyacheslav Rusakov
- * @see <a href="http://orientdb.com/docs/last/SQL-Alter-Property.html">docs</a>
+ * @see <a href="https://orientdb.com/docs/3.0.x/sql/SQL-Alter-Property.html">docs</a>
  * @since 09.03.2015
  */
 @Target(FIELD)

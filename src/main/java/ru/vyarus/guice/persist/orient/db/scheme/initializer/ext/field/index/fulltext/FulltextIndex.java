@@ -20,7 +20,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * one created.
  * <p>
  * To make index
- * <a href="http://orientdb.com/docs/last/orientdb.wiki/Indexes.html#case-insensitive-match">case insensitive</a>
+ * <a href="https://orientdb.com/docs/3.0.x/indexing/Indexes.html#case-insensitive-matching-with-indexes">case insensitive</a>
  * use {@link ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.field.ci.CaseInsensitive} annotation
  * on field (in orient index ci and property ci flags are the same).
  * <p>
@@ -29,7 +29,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * create composite fulltext index.
  *
  * @author Vyacheslav Rusakov
- * @see <a href="http://orientdb.com/docs/last/orientdb.wiki/FullTextIndex.html">docs</a>
+ * @see <a href="https://orientdb.com/docs/3.0.x/indexing/FullTextIndex.html">docs</a>
  * @since 09.06.2015
  */
 @Target(FIELD)

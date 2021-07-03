@@ -3,7 +3,7 @@
 !!! summary ""
     Scope: class
 
-Drops existing [indexes](http://orientdb.com/docs/last/Indexes.html).
+Drops existing [indexes](https://orientdb.com/docs/3.0.x/indexing/Indexes.html).
 
 ```java
 @DropIndexes({"test1", "test2"})

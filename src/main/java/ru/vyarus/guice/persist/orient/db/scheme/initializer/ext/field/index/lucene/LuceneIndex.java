@@ -22,7 +22,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * one created.
  *
  * @author Vyacheslav Rusakov
- * @see <a href="http://orientdb.com/docs/last/orientdb-lucene.wiki/Full-Text-Index.html">docs</a>
+ * @see <a href="https://orientdb.com/docs/3.0.x/indexing/Full-Text-Index.html">docs</a>
  * @since 09.06.2015
  */
 @Target(FIELD)

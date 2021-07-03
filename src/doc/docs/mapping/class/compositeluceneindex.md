@@ -3,7 +3,7 @@
 !!! summary ""
     Scope: class
 
-Creates composite [lucene fulltext index](http://orientdb.com/docs/last/Full-Text-Index.html) (index span multiple properties).
+Creates composite [lucene fulltext index](https://orientdb.com/docs/3.0.x/indexing/FullTextIndex.html) (index span multiple properties).
 
 `com.orientechnologies:orientdb-lucene:2.2.33` dependency must be installed to use lucene index.
 

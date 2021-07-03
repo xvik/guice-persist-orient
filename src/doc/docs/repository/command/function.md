@@ -3,7 +3,7 @@
 !!! summary ""
     Command method extension
 
-Function methods execute [function](https://orientdb.com/docs/last/Functions.html).
+Function methods execute [function](https://orientdb.com/docs/3.0.x/admin/Functions.html).
 
 For example, suppose we create a function like this:
 

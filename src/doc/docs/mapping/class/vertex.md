@@ -3,7 +3,7 @@
 !!! summary ""
     Scope: class
 
-Register class as [vertex type](http://orientdb.com/docs/last/Graph-VE.html#vertices). On scheme level it means root class must extend V
+Register class as [vertex type](https://orientdb.com/docs/3.0.x/java/Graph-VE.html#vertices). On scheme level it means root class must extend V
 
 So in simple case `YourModel extends V`, in hierarchy case `YourModel extends YourBaseModel extends V`
 

@@ -20,7 +20,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * For pagination ise it with {@link Limit} annotation
  *
  * @author Vyacheslav Rusakov
- * @see <a href="http://orientdb.com/docs/last/Pagination.html">docs</a>
+ * @see <a href="https://orientdb.com/docs/3.0.x/sql/Pagination.html">docs</a>
  * @since 06.02.2015
  */
 @Documented

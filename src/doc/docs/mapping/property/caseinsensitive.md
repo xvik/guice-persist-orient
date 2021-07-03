@@ -3,7 +3,7 @@
 !!! summary ""
     Scope: property
 
-Marks property as case insensitive. Case insensitive properties ([collate ci](http://orientdb.com/docs/last/SQL-Alter-Property.html)) 
+Marks property as case insensitive. Case insensitive properties ([collate ci](https://orientdb.com/docs/3.0.x/sql/SQL-Alter-Property.html)) 
 are matched in case insensitive way:
 
 ```sql
