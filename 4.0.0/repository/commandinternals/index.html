@@ -1,0 +1,1750 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Guice integration for OrientDB">
+      
+      
+      
+        <meta name="author" content="Vyacheslav Rusakov">
+      
+      
+        <link rel="canonical" href="https://xvik.github.io/guice-persist-orient/4.0.0/repository/commandinternals/">
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-7.0.6">
+    
+    
+      
+        <title>Command implementation - Guice-persist-orient</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.2c0c5eaf.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.7fa14f5b.min.css">
+        
+      
+    
+    
+    
+      
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>:root{--md-text-font-family:"Roboto";--md-code-font-family:"Roboto Mono"}</style>
+      
+    
+    
+    
+    
+      
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
+      
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#command-methods-implementation-details" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Guice-persist-orient" class="md-header__button md-logo" aria-label="Guice-persist-orient" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Guice-persist-orient
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Command implementation
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    <div class="md-header__options">
+      
+    </div>
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        
+<a href="http://github.com/xvik/guice-persist-orient/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    guice-persist-orient
+  </div>
+</a>
+      </div>
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Guice-persist-orient" class="md-nav__button md-logo" aria-label="Guice-persist-orient" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    Guice-persist-orient
+  </label>
+  
+    <div class="md-nav__source">
+      
+<a href="http://github.com/xvik/guice-persist-orient/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    guice-persist-orient
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        Home
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/" class="md-nav__link">
+        Getting started
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/" class="md-nav__link">
+        API
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" >
+      
+      <label class="md-nav__link" for="__nav_4">
+        User guide
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="User guide" data-md-level="1">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          User guide
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guide/configuration/" class="md-nav__link">
+        Configuration
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guide/connections/" class="md-nav__link">
+        Connections
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guide/transactions/" class="md-nav__link">
+        Transactions
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guide/cache/" class="md-nav__link">
+        Cache
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" type="checkbox" id="__nav_5" >
+      
+      <label class="md-nav__link" for="__nav_5">
+        Object scheme mapping
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Object scheme mapping" data-md-level="1">
+        <label class="md-nav__title" for="__nav_5">
+          <span class="md-nav__icon md-icon"></span>
+          Object scheme mapping
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../mapping/objectscheme/" class="md-nav__link">
+        Overview
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../mapping/writing/" class="md-nav__link">
+        Writing custom annotations
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5_3" type="checkbox" id="__nav_5_3" >
+      
+      <label class="md-nav__link" for="__nav_5_3">
+        Class
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Class" data-md-level="2">
+        <label class="md-nav__title" for="__nav_5_3">
+          <span class="md-nav__icon md-icon"></span>
+          Class
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../mapping/class/compositeindex/" class="md-nav__link">
+        @CompositeIndex
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../mapping/class/compositeluceneindex/" class="md-nav__link">
+        @CompositeLuceneIndex
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../mapping/class/dropindexes/" class="md-nav__link">
+        @DropIndexes
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../mapping/class/edge/" class="md-nav__link">
+        @EdgeType
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../mapping/class/rename/" class="md-nav__link">
+        @RenameFrom
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../mapping/class/recreate/" class="md-nav__link">
+        @Recreate
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../mapping/class/vertex/" class="md-nav__link">
+        @VertexType
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5_4" type="checkbox" id="__nav_5_4" >
+      
+      <label class="md-nav__link" for="__nav_5_4">
+        Property
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Property" data-md-level="2">
+        <label class="md-nav__title" for="__nav_5_4">
+          <span class="md-nav__icon md-icon"></span>
+          Property
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../mapping/property/caseinsensitive/" class="md-nav__link">
+        @CaseInsensitive
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../mapping/property/fulltextindex/" class="md-nav__link">
+        @FulltextIndex
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../mapping/property/" class="md-nav__link">
+        @Index
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../mapping/property/mandatory/" class="md-nav__link">
+        @Mandatory
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../mapping/property/luceneindex/" class="md-nav__link">
+        @LuceneIndex
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../mapping/property/notnull/" class="md-nav__link">
+        @ONotNull
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../mapping/property/readonly/" class="md-nav__link">
+        @Readonly
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../mapping/property/renameproperty/" class="md-nav__link">
+        @RenameFromProperty
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_6" type="checkbox" id="__nav_6" checked>
+      
+      <label class="md-nav__link" for="__nav_6">
+        Repository
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Repository" data-md-level="1">
+        <label class="md-nav__title" for="__nav_6">
+          <span class="md-nav__icon md-icon"></span>
+          Repository
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../overview/" class="md-nav__link">
+        Overview
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../commandmethods/" class="md-nav__link">
+        Command methods
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../delegatemethods/" class="md-nav__link">
+        Delegate methods
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mixins/" class="md-nav__link">
+        Mixins
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../result/" class="md-nav__link">
+        Result conversion
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../internals/" class="md-nav__link">
+        Implementation details
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Command implementation
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Command implementation
+      </a>
+      
+        
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#common-command-features" class="md-nav__link">
+    Common command features
+  </a>
+  
+    <nav class="md-nav" aria-label="Common command features">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sqlcommanddescriptor-phase" class="md-nav__link">
+    SqlCommandDescriptor phase
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ocommandrequest-phase" class="md-nav__link">
+    OCommandRequest phase
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#extensions-lifecycle" class="md-nav__link">
+    Extensions lifecycle
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#command-parameters-context" class="md-nav__link">
+    Command parameters context
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#implementing-command-parameter-extension" class="md-nav__link">
+    Implementing command parameter extension
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#implementing-command-method-amend-extension" class="md-nav__link">
+    Implementing command method amend extension
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../delegateinternals/" class="md-nav__link">
+        Delegate implementation
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_6_9" type="checkbox" id="__nav_6_9" >
+      
+      <label class="md-nav__link" for="__nav_6_9">
+        Command
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Command" data-md-level="2">
+        <label class="md-nav__title" for="__nav_6_9">
+          <span class="md-nav__icon md-icon"></span>
+          Command
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../command/asyncquery/" class="md-nav__link">
+        @AsyncQuery
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../command/function/" class="md-nav__link">
+        @Function
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../command/livequery/" class="md-nav__link">
+        @LiveQuery
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../command/query/" class="md-nav__link">
+        @Query
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../command/script/" class="md-nav__link">
+        @Script
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_6_9_6" type="checkbox" id="__nav_6_9_6" >
+      
+      <label class="md-nav__link" for="__nav_6_9_6">
+        Params
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Params" data-md-level="3">
+        <label class="md-nav__title" for="__nav_6_9_6">
+          <span class="md-nav__icon md-icon"></span>
+          Params
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../command/param/dynamic/" class="md-nav__link">
+        @DynamicParams
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../command/param/elvar/" class="md-nav__link">
+        @ElVar
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../command/param/fetchplan/" class="md-nav__link">
+        @FetchPlan
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../command/param/listen/" class="md-nav__link">
+        @Listen
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../command/param/param/" class="md-nav__link">
+        @Param
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../command/param/ridelvar/" class="md-nav__link">
+        @RidElVar
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../command/param/pagination/" class="md-nav__link">
+        @Skip & @Limit
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../command/param/var/" class="md-nav__link">
+        @Var
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_6_9_7" type="checkbox" id="__nav_6_9_7" >
+      
+      <label class="md-nav__link" for="__nav_6_9_7">
+        Amend
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Amend" data-md-level="3">
+        <label class="md-nav__title" for="__nav_6_9_7">
+          <span class="md-nav__icon md-icon"></span>
+          Amend
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../command/amend/timeout/" class="md-nav__link">
+        @Timeout
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_6_10" type="checkbox" id="__nav_6_10" >
+      
+      <label class="md-nav__link" for="__nav_6_10">
+        Delegate
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Delegate" data-md-level="2">
+        <label class="md-nav__title" for="__nav_6_10">
+          <span class="md-nav__icon md-icon"></span>
+          Delegate
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../delegate/delegate/" class="md-nav__link">
+        @Delegate
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_6_10_2" type="checkbox" id="__nav_6_10_2" >
+      
+      <label class="md-nav__link" for="__nav_6_10_2">
+        Params
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Params" data-md-level="3">
+        <label class="md-nav__title" for="__nav_6_10_2">
+          <span class="md-nav__icon md-icon"></span>
+          Params
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../delegate/param/connection/" class="md-nav__link">
+        @Connection
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../delegate/param/generic/" class="md-nav__link">
+        @Generic
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../delegate/param/repository/" class="md-nav__link">
+        @Repository
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_6_11" type="checkbox" id="__nav_6_11" >
+      
+      <label class="md-nav__link" for="__nav_6_11">
+        Result
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Result" data-md-level="2">
+        <label class="md-nav__title" for="__nav_6_11">
+          <span class="md-nav__icon md-icon"></span>
+          Result
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../result/noconvert/" class="md-nav__link">
+        @NoConversion
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../result/detach/" class="md-nav__link">
+        @DetachResult
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_6_12" type="checkbox" id="__nav_6_12" >
+      
+      <label class="md-nav__link" for="__nav_6_12">
+        Mixin
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Mixin" data-md-level="2">
+        <label class="md-nav__title" for="__nav_6_12">
+          <span class="md-nav__icon md-icon"></span>
+          Mixin
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mixin/doccrud/" class="md-nav__link">
+        DocumentCrud
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mixin/objcrud/" class="md-nav__link">
+        ObjectCrud
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mixin/objvcrud/" class="md-nav__link">
+        ObjectVertexCrud
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mixin/edges/" class="md-nav__link">
+        EdgesSupport
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mixin/edgetype/" class="md-nav__link">
+        EdgeTypeSupport
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mixin/pagination/" class="md-nav__link">
+        Pagination
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_7" type="checkbox" id="__nav_7" >
+      
+      <label class="md-nav__link" for="__nav_7">
+        About
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="About" data-md-level="1">
+        <label class="md-nav__title" for="__nav_7">
+          <span class="md-nav__icon md-icon"></span>
+          About
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../about/compatibility/" class="md-nav__link">
+        Compatibility
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../about/history/" class="md-nav__link">
+        Release notes
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../about/support/" class="md-nav__link">
+        Support
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../about/license/" class="md-nav__link">
+        License
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#common-command-features" class="md-nav__link">
+    Common command features
+  </a>
+  
+    <nav class="md-nav" aria-label="Common command features">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sqlcommanddescriptor-phase" class="md-nav__link">
+    SqlCommandDescriptor phase
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ocommandrequest-phase" class="md-nav__link">
+    OCommandRequest phase
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#extensions-lifecycle" class="md-nav__link">
+    Extensions lifecycle
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#command-parameters-context" class="md-nav__link">
+    Command parameters context
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#implementing-command-parameter-extension" class="md-nav__link">
+    Implementing command parameter extension
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#implementing-command-method-amend-extension" class="md-nav__link">
+    Implementing command method amend extension
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                  <a href="http://github.com/xvik/guice-persist-orient/edit/master/src/doc/docs/repository/commandinternals.md" title="Edit this page" class="md-content__button md-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
+                  </a>
+                
+                
+                <h1 id="command-methods-implementation-details">Command methods implementation details<a class="headerlink" href="#command-methods-implementation-details" title="Permanent link">&para;</a></h1>
+<p>Command method extensions applied to all command extensions (<code>@Query</code>, <code>@Function</code>, <code>@Script</code> etc.)</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Read <a href="../internals/">repository internals</a> first for better understanding</p>
+</div>
+<h2 id="common-command-features">Common command features<a class="headerlink" href="#common-command-features" title="Permanent link">&para;</a></h2>
+<p>Commands generally support:</p>
+<ul>
+<li>Positional parameters</li>
+<li>Named parameters</li>
+<li>Command string el variables</li>
+</ul>
+<p>Most commands use <code>CommandMethodDescriptor</code> as descriptor, except <code>@Script</code> which use <code>ScriptCommandMethodDescriptor</code> (to store script language). So when you target <code>CommandMethodDescriptor</code> (in generic), extension will be compatible with all command methods.</p>
+<p>All command extensions use <code>AbstractCommandExtension</code> as base class. It's very easy to add your own custom command annotation using it (look bundled extensions sources).</p>
+<p>Command extensions have three execution phases:</p>
+<ul>
+<li><code>SqlCommandDescriptor</code> composition</li>
+<li><code>OCommandRequest</code> composition (orient command)</li>
+<li>And command execution </li>
+</ul>
+<p>Amend extension shoudl implement <code>CommandExtension</code> insterface (to affect execution).</p>
+<h3 id="sqlcommanddescriptor-phase">SqlCommandDescriptor phase<a class="headerlink" href="#sqlcommanddescriptor-phase" title="Permanent link">&para;</a></h3>
+<p><code>SqlCommandDescriptor</code> contains query, prepared parameters (composed from method arguments) and el variables (also composed fro arguments). Extensions could modify query (for example, @Skip appends "SKIP" part to query string. Extensions could add (or modify) query parameters. And extensions could add/modify el variables.</p>
+<p>Positional parameters is a core feature (its parameters without any extension), anyway they could be modified too (for example, <code>@DynamicParams</code> modifies them).</p>
+<p>Named parameters covered with bundled extension <code>@Param</code>. It is not mandatory to use it: you can write your own extension to define named parameters.</p>
+<p>El variables defined with <code>@ElVar</code> extension, but again, its not mandatory - you can use your own extension to define variables.</p>
+<h3 id="ocommandrequest-phase">OCommandRequest phase<a class="headerlink" href="#ocommandrequest-phase" title="Permanent link">&para;</a></h3>
+<p>First of all, el variables replaced in query, producing target query string.
+Then command object created using prepared query.</p>
+<p>Extensions could modify resulted command object (for example, <code>@Timaout</code>, <code>@Listen</code>).</p>
+<p>After all command object wrapped with connection object (using selected RepositoryExecutor) and executed, using composed parameters.
+Command wrapping is required to bind command to specific connection type. This will affect resulting objects.</p>
+<h3 id="extensions-lifecycle">Extensions lifecycle<a class="headerlink" href="#extensions-lifecycle" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Create <code>SqlCommandDescriptor</code></li>
+<li>Run extensions to amend descriptor</li>
+<li>Apply el vars and create <code>OCommandRequest</code></li>
+<li>Run extensions to amend request object</li>
+<li>Wrap command with connection and execute with prepared parameters</li>
+</ul>
+<h3 id="command-parameters-context">Command parameters context<a class="headerlink" href="#command-parameters-context" title="Permanent link">&para;</a></h3>
+<p>Command extensions use <code>CommandParamsContext</code> during parameters processing.</p>
+<p>Parameter extensions are called after all parameters processing (to collect all parameters, marked with the same annotation)</p>
+<p>If you need to modify positional parameters, you can obtain them through <code>paramsContext.getOrdinals()</code>. Usually, there is no need to modify them, because if you need special parameter handling you'll define custom annotation.</p>
+<p>If your extension defines named parameter you may register it in context: <code>paramsContext.addNamedParam()</code>.
+After registration, it will be applied automatically. 
+You may omit registration if your parameter must be converted or something like this (in this case you'll use amend extension to manually apply parameter value).</p>
+<p>If your extension handles el variable you must declare it either as static <code>paramsContext.addStaticElVarValue()</code> if value is the same for all method executions, or declare it as dynamic <code>paramsContext.addDynamicElVarValue()</code>.
+In case of dynamic el var, you'll need to use amend extension to manually apply value during execution.</p>
+<p>Registration of el variables is required, because they are strictly checked and if some not declared variable found in query or declared variable not used in query error will be thrown to indicate method definition error. </p>
+<p>If you need access to method, type, know root repository type or use generics info, use <code>paramsContext.getDescriptorContext()</code>. 
+Note that if parameter type is generified, you will receive resolved generic in extension.</p>
+<h2 id="implementing-command-parameter-extension">Implementing command parameter extension<a class="headerlink" href="#implementing-command-parameter-extension" title="Permanent link">&para;</a></h2>
+<p>Suppose you want to implement <code>@MyCustomParam</code> parameter extension.</p>
+<p>Declaring annotation:</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@Target</span><span class="p">(</span><span class="n">PARAMETER</span><span class="p">)</span>
+<span class="nd">@Retention</span><span class="p">(</span><span class="n">RUNTIME</span><span class="p">)</span>
+<span class="nd">@MethodParam</span><span class="p">(</span><span class="n">MyCustomParamExtension</span><span class="p">.</span><span class="na">class</span><span class="p">)</span>
+<span class="kd">public</span> <span class="nd">@interface</span> <span class="n">MyCustomParam</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span>
+</code></pre></div>
+<p>If required, define extension options as annotation attributes. <code>@MethodParam</code> marks extension as parameter extension and it will be found and <code>MyCustomParamExtension</code> class obtained from guice context and executed.</p>
+<p>Now implement extension:</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@Singleton</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyCustomParamExtension</span> <span class="kd">implements</span> 
+        <span class="n">MethodParamExtension</span><span class="o">&lt;</span><span class="n">CommandMethodDescriptor</span><span class="p">,</span> <span class="n">CommandParamsContext</span><span class="p">,</span> <span class="n">MyCustomParam</span> <span class="o">&gt;</span><span class="p">{</span> 
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">processParameters</span><span class="p">(</span><span class="kd">final</span> <span class="n">CommandMethodDescriptor</span> <span class="n">descriptor</span><span class="p">,</span> <span class="kd">final</span> <span class="n">CommandParamsContext</span> <span class="n">context</span><span class="p">,</span>
+                                  <span class="kd">final</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">ParamInfo</span><span class="o">&lt;</span><span class="n">MyCustomParam</span><span class="o">&gt;&gt;</span> <span class="n">paramsInfo</span><span class="p">)</span> <span class="p">{</span>
+       <span class="p">...</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>This extension will be called once, during descriptor creation. Here you can validate parameters and, for example, register named parameter or el variable in paramsContext </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>We declare <code>MethodParamExtension&lt;CommandMethodDescriptor ...&gt;</code>, this means extension is compatible only with command descriptor and can't be used with delegate (or some other) method extensions. Also, because <code>@Script</code>'s <code>ScriptCommandMethodDescriptor</code> extends CommandMethodDescriptor, this extension is compatible with scripts too.</p>
+</div>
+<p>If you need some execution time modification, you'll need to implement amend extension interface:</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@Singleton</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyCustomParamExtension</span> <span class="kd">implements</span> 
+        <span class="n">MethodParamExtension</span><span class="o">&lt;</span><span class="n">CommandMethodDescriptor</span><span class="p">,</span> <span class="n">CommandParamsContext</span><span class="p">,</span> <span class="n">MyCustomParam</span><span class="o">&gt;</span><span class="p">,</span>
+        <span class="n">CommandExtension</span><span class="o">&lt;</span><span class="n">CommandMethodDescriptor</span><span class="o">&gt;</span> <span class="p">{</span> 
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">KEY</span> <span class="o">=</span> <span class="n">MyCustomParamExtension</span> <span class="p">.</span><span class="na">class</span><span class="p">.</span><span class="na">getName</span><span class="p">();</span>
+
+    <span class="p">...</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">amendCommandDescriptor</span><span class="p">(</span><span class="kd">final</span> <span class="n">SqlCommandDescriptor</span> <span class="n">sql</span><span class="p">,</span> <span class="kd">final</span> <span class="n">CommandMethodDescriptor</span> <span class="n">descriptor</span><span class="p">,</span>
+                                       <span class="kd">final</span> <span class="n">Object</span> <span class="n">instance</span><span class="p">,</span> <span class="kd">final</span> <span class="n">Object</span><span class="p">...</span> <span class="n">arguments</span><span class="p">)</span> <span class="p">{</span>
+        <span class="p">...</span>
+    <span class="p">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">amendCommand</span><span class="p">(</span><span class="kd">final</span> <span class="n">OCommandRequest</span> <span class="n">query</span><span class="p">,</span> <span class="kd">final</span> <span class="n">CommandMethodDescriptor</span> <span class="n">descriptor</span><span class="p">,</span>
+                             <span class="kd">final</span> <span class="n">Object</span> <span class="n">instance</span><span class="p">,</span> <span class="kd">final</span> <span class="n">Object</span><span class="p">...</span> <span class="n">arguments</span><span class="p">)</span> <span class="p">{</span>
+        <span class="p">...</span>
+    <span class="p">}</span>
+</code></pre></div>
+<p>By implementing <code>CommandExtension</code> we did our extension compatible with command methods amend extension. Now parameter extension will be registered as amend extension afeter parameters processing.</p>
+<p>Most likely you'll need some information from parameters processing method inside executino methods.
+If it's not a simple value (int, string etc), define your value object <code>MyCustomParamDescriptor</code>.
+Compose descriptor on processing phase and store inside main method descriptor:</p>
+<div class="highlight"><pre><span></span><code><span class="n">descriptor</span><span class="p">.</span><span class="na">extDescriptors</span><span class="p">.</span><span class="na">put</span><span class="p">(</span><span class="n">KEY</span><span class="p">,</span> <span class="n">yourCustomDescriptor</span><span class="p">);</span>
+</code></pre></div>
+<p>Now in execution method you can obtain it and use:</p>
+<div class="highlight"><pre><span></span><code><span class="n">MyCustomParamDescriptor</span> <span class="n">desc</span> <span class="o">=</span> <span class="p">(</span><span class="n">MyCustomParamDescriptor</span><span class="p">)</span> <span class="n">descriptor</span><span class="p">.</span><span class="na">extDescriptors</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="n">KEY</span><span class="p">);</span>
+</code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>KEY is public. This will allow you to use it in unit tests and possibly, other extensions also could use it (for example, <code>@AsyncQuery</code> must know about <code>@Listen</code> extension).</p>
+</div>
+<p>That's all, extension could be used in command method:</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@Query</span><span class="p">(</span><span class="s">&quot;select from Model&quot;</span><span class="p">)</span>
+<span class="n">List</span> <span class="nf">select</span><span class="p">(</span><span class="nd">@MyCustomParam</span> <span class="n">String</span> <span class="n">param</span><span class="p">);</span>
+</code></pre></div>
+<p>Look bundled extensions sources for advanced examples.</p>
+<h2 id="implementing-command-method-amend-extension">Implementing command method amend extension<a class="headerlink" href="#implementing-command-method-amend-extension" title="Permanent link">&para;</a></h2>
+<p>First of all, you can register custom amend extension globally:</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@Inject</span> <span class="n">AmendExtensionsService</span> <span class="n">amendExtensions</span><span class="p">;</span>
+<span class="p">...</span>
+<span class="n">amendExtensions</span><span class="p">.</span><span class="na">addGlobalExtension</span><span class="p">(</span><span class="k">new</span> <span class="n">CommandExtension</span><span class="p">()</span> <span class="p">{...});</span>
+</code></pre></div>
+<p>Or you can use custom annotation, for example:</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@Target</span><span class="p">({</span><span class="n">METHOD</span><span class="p">,</span> <span class="n">TYPE</span><span class="p">})</span>
+<span class="nd">@Retention</span><span class="p">(</span><span class="n">RUNTIME</span><span class="p">)</span>
+<span class="nd">@AmendMethod</span><span class="p">(</span><span class="n">MyCustomAmendExtension</span><span class="p">.</span><span class="na">class</span><span class="p">)</span>
+<span class="kd">public</span> <span class="nd">@interface</span> <span class="n">MyCustomAmend</span><span class="p">{</span> <span class="p">...</span> <span class="p">}</span>
+</code></pre></div>
+<p>Amend extensions are searched on method, on type and on root repository type. 
+You can limit usage scope with <code>@Target</code> annotation (e.g. allow usage only on methods).
+<code>@AmendMethod</code> marks annotation as amend annotation, now it will be resolved.</p>
+<p>As with parameters, you eaither implement just parsing interface, to apply extension in descriptor creation time, or implement also amend extension interface, to use extension during method call.</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@Singleton</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyCustomAmendExtension</span> <span class="kd">implements</span> 
+        <span class="n">AmendMethodExtension</span><span class="o">&lt;</span><span class="n">CommandMethodDescriptor</span><span class="p">,</span> <span class="n">MyCustomAmend</span><span class="o">&gt;</span><span class="p">,</span>
+        <span class="n">CommandExtension</span><span class="o">&lt;</span><span class="n">CommandMethodDescriptor</span><span class="o">&gt;</span> <span class="p">{</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">handleAnnotation</span><span class="p">(</span><span class="kd">final</span> <span class="n">CommandMethodDescriptor</span> <span class="n">descriptor</span><span class="p">,</span> <span class="kd">final</span> <span class="n">MyCustomAmend</span> <span class="n">annotation</span><span class="p">)</span> <span class="p">{</span>
+        <span class="p">...</span>
+    <span class="p">}</span>
+
+    <span class="p">...</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>Implementation guideline is the same as with params: use public KEY field and custom descriptor object.</p>
+<p>Extension could be used like this:</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@Query</span><span class="p">(</span><span class="s">&quot;select from Model&quot;</span><span class="p">)</span>
+<span class="nd">@MyCustomAmend</span>
+<span class="n">List</span> <span class="nf">select</span><span class="p">();</span>
+</code></pre></div>
+<p>See <a href="../command/amend/timeout/">@Timeout</a> as implementation example.</p>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <nav class="md-footer__inner md-grid" aria-label="Footer">
+      
+        <a href="../internals/" class="md-footer__link md-footer__link--prev" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              Implementation details
+            </div>
+          </div>
+        </a>
+      
+      
+        <a href="../delegateinternals/" class="md-footer__link md-footer__link--next" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              Delegate implementation
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+          <div class="md-footer-copyright__highlight">
+            Copyright &copy; 2014-2021 Vyacheslav Rusakov
+          </div>
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+        
+      </div>
+      
+  <div class="md-footer-social">
+    
+      
+      
+        
+        
+      
+      <a href="https://github.com/xvik" target="_blank" rel="noopener" title="github.com" class="md-footer-social__link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+      </a>
+    
+      
+      
+        
+        
+      
+      <a href="https://twitter.com/vyarus" target="_blank" rel="noopener" title="twitter.com" class="md-footer-social__link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg>
+      </a>
+    
+  </div>
+
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    <script id="__config" type="application/json">{"base": "../..", "features": [], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}, "search": "../../assets/javascripts/workers/search.fb4a9340.min.js", "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.a1c7c35e.min.js"></script>
+      
+    
+  </body>
+</html>
