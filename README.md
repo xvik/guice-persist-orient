@@ -19,7 +19,7 @@ Underlying format is almost the same for all database types, which allows us to 
 may be performed as object database (jpa style) and graph api may be used for creating relations.
 
 Features:
-* For orient 3.0
+* For orient 3.0 (java 8)
 * Integration through [guice-persist](https://github.com/google/guice/wiki/GuicePersist) (UnitOfWork, PersistService, @Transactional)
 * Support for [document](https://orientdb.com/docs/3.0.x/java/Document-Database.html), [object](https://orientdb.com/docs/3.0.x/java/Object-Database.html) and
 [graph](https://orientdb.com/docs/3.0.x/java/Graph-Database-Tinkerpop.html) databases
