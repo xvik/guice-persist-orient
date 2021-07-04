@@ -2,6 +2,8 @@ package ru.vyarus.guice.persist.orient.db.pool.object;
 
 import com.orientechnologies.orient.core.command.OCommandRequest;
 import com.orientechnologies.orient.core.db.ODatabaseDocumentInternal;
+import com.orientechnologies.orient.core.exception.ORecordNotFoundException;
+import com.orientechnologies.orient.core.id.ORID;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -36,5 +38,15 @@ public class OObjectDatabaseTxFixed extends OObjectDatabaseTx {
     @SuppressWarnings("PMD.UselessOverridingMethod")
     public void convertParameters(final Object... iArgs) {
         super.convertParameters(iArgs);
+    }
+
+    @Override
+    public <RET> RET load(final ORID iRecordId, final String iFetchPlan, final boolean iIgnoreCache) {
+        // fixing behaviour after record deletion under ongoing transaction (to unify with legacy behaviour)
+        try {
+           return super.load(iRecordId, iFetchPlan, iIgnoreCache);
+        } catch (ORecordNotFoundException ex) {
+            return null;
+        }
     }
 }
