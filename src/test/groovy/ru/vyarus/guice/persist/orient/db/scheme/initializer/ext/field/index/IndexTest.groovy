@@ -99,6 +99,6 @@ class IndexTest extends AbstractSchemeExtensionTest {
     }
 
     private Object id(OIndex index) {
-        return index.delegate instanceof OIndexRemote ? null : index.indexId
+        return index instanceof OIndexRemote ? null : index.indexId
     }
 }

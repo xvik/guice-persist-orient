@@ -46,7 +46,7 @@ public class LuceneIndexTypeExtension implements TypeExtension<CompositeLuceneIn
         Preconditions.checkArgument(name != null, "Index name required");
         final String model = descriptor.schemeClass;
         final OClass clazz = db.getMetadata().getSchema().getClass(model);
-        final OIndex<?> classIndex = clazz.getClassIndex(name);
+        final OIndex classIndex = clazz.getClassIndex(name);
         final OClass.INDEX_TYPE type = OClass.INDEX_TYPE.FULLTEXT;
         final String[] fields = annotation.fields();
         if (!descriptor.initialRegistration && classIndex != null) {

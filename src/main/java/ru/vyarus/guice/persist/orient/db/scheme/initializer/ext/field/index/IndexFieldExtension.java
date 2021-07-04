@@ -38,7 +38,7 @@ public class IndexFieldExtension implements FieldExtension<Index> {
         final String name = MoreObjects.firstNonNull(
                 Strings.emptyToNull(annotation.name().trim()), model + '.' + property);
         final OClass clazz = db.getMetadata().getSchema().getClass(model);
-        final OIndex<?> classIndex = clazz.getClassIndex(name);
+        final OIndex classIndex = clazz.getClassIndex(name);
         final OClass.INDEX_TYPE type = annotation.value();
         if (!descriptor.initialRegistration && classIndex != null) {
             final IndexValidationSupport support = new IndexValidationSupport(classIndex, logger);

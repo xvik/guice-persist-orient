@@ -2,6 +2,7 @@ package ru.vyarus.guice.persist.orient.repository.delegate;
 
 import com.google.common.base.Strings;
 import com.google.inject.Injector;
+import com.orientechnologies.orient.core.exception.ORecordNotFoundException;
 import ru.vyarus.guice.persist.orient.repository.core.ext.SpiService;
 import ru.vyarus.guice.persist.orient.repository.core.spi.DescriptorContext;
 import ru.vyarus.guice.persist.orient.repository.core.spi.method.RepositoryMethodExtension;
@@ -65,6 +66,10 @@ public class DelegateMethodExtension implements RepositoryMethodExtension<Delega
             final Object instance = descriptor.instanceProvider.get();
             return descriptor.method.invoke(instance, args);
         } catch (Throwable th) {
+            if (th.getCause() instanceof ORecordNotFoundException) {
+                // normal behaviour after record deletion under ongoing transaction
+                return null;
+            }
             throw new DelegateMethodException(String.format(
                     "Failed to invoke delegate method %s",
                     RepositoryUtils.methodToString(descriptor.target, descriptor.method)), th);

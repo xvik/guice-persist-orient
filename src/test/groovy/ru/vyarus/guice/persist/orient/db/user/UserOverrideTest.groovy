@@ -23,11 +23,6 @@ class UserOverrideTest extends AbstractTest {
     @Inject
     UserManager userManager
 
-    @Override
-    void setupSecurity() {
-        defaultSecurity()
-    }
-
     def "Test connecting with different user"() {
 
         context.doInTransaction({ db ->

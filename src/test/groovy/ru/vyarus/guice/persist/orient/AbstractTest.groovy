@@ -1,17 +1,12 @@
 package ru.vyarus.guice.persist.orient
 
 import com.google.inject.persist.PersistService
-import com.orientechnologies.orient.core.config.OGlobalConfiguration
 import com.orientechnologies.orient.core.db.object.ODatabaseObject
 import com.orientechnologies.orient.core.metadata.security.ORole
-import com.orientechnologies.orient.core.metadata.security.OSecurity
 import com.orientechnologies.orient.core.metadata.security.OUser
-import com.orientechnologies.orient.core.security.OSecurityFactory
-import com.orientechnologies.orient.core.security.OSecurityManager
+import ru.vyarus.guice.persist.orient.db.OrientDBFactory
 import ru.vyarus.guice.persist.orient.db.PersistentContext
 import ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxAction
-import ru.vyarus.guice.persist.orient.db.OrientDBFactory
-import ru.vyarus.guice.persist.orient.util.OSecurityNull
 import ru.vyarus.guice.persist.orient.util.uniquedb.UniqueDb
 import spock.lang.Specification
 
@@ -34,29 +29,7 @@ abstract class AbstractTest extends Specification {
     OrientDBFactory info
 
     void setup() {
-        setupSecurity()
         persist.start()
-    }
-
-    // could be overridden for different security config
-    // no security will work for most cases
-    void setupSecurity() {
-        // switch off orient security which is very time consuming since 2.2
-        OGlobalConfiguration.CREATE_DEFAULT_USERS.setValue(false)
-        // don't override security for remote tests
-        OSecurityManager.instance().securityFactory = new OSecurityFactory() {
-            @Override
-            OSecurity newSecurity() {
-                return new OSecurityNull()
-            }
-        }
-    }
-
-    // intended to be called from overridden setupSecurity
-    protected final void defaultSecurity() {
-        OGlobalConfiguration.CREATE_DEFAULT_USERS.setValue(true)
-        // reset default factory
-        OSecurityManager.instance().securityFactory = null
     }
 
     void cleanup() {

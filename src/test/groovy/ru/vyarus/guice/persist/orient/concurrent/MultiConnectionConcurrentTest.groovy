@@ -38,7 +38,7 @@ class MultiConnectionConcurrentTest extends AbstractTest {
 
     @Override
     void cleanup() {
-        executor.shutdown()
+        executor?.shutdown()
     }
 
     def "Check multi concurrency"() {

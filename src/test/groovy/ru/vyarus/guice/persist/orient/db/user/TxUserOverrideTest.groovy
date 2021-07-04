@@ -15,11 +15,6 @@ import spock.guice.UseModules
 @UseModules(PackageSchemeModule)
 class TxUserOverrideTest extends AbstractTest {
 
-    @Override
-    void setupSecurity() {
-        defaultSecurity()
-    }
-
     def "Check tx user change"() {
 
         context.doInTransaction({ db ->

@@ -39,7 +39,7 @@ public class IndexTypeExtension implements TypeExtension<CompositeIndex> {
         Preconditions.checkArgument(name != null, "Index name required");
         final String model = descriptor.schemeClass;
         final OClass clazz = db.getMetadata().getSchema().getClass(model);
-        final OIndex<?> classIndex = clazz.getClassIndex(name);
+        final OIndex classIndex = clazz.getClassIndex(name);
         final OClass.INDEX_TYPE type = annotation.type();
         final String[] fields = annotation.fields();
         if (!descriptor.initialRegistration && classIndex != null) {

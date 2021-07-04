@@ -102,6 +102,6 @@ class CompositeIndexTest extends AbstractSchemeExtensionTest {
     }
 
     private Object idxId(OIndex index) {
-        return index.delegate instanceof OIndexRemote ? null : index.indexId
+        return index instanceof OIndexRemote ? null : index.indexId
     }
 }

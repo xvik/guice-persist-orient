@@ -1,7 +1,7 @@
 package ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.type.index.lucene
 
 import com.orientechnologies.orient.core.index.OIndex
-import com.orientechnologies.orient.core.index.OIndexAbstractDelegate
+import com.orientechnologies.orient.core.index.OIndexRemote
 import com.orientechnologies.orient.core.metadata.schema.OClass
 import com.orientechnologies.orient.core.metadata.schema.OType
 import org.apache.lucene.analysis.en.EnglishAnalyzer
@@ -102,6 +102,6 @@ class CompositeLuceneIndexTest extends AbstractSchemeExtensionTest {
     }
 
     private Object idxId(OIndex index) {
-        return index instanceof OIndexAbstractDelegate ? null : index.indexId
+        return index instanceof OIndexRemote ? null : index.indexId
     }
 }
