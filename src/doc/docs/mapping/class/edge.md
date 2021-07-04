@@ -3,7 +3,7 @@
 !!! summary ""
     Scope: class
 
-Register class as [edge type](https://orientdb.com/docs/3.0.x/java/Graph-VE.html#edges). On scheme level it means root class must extend E
+Register class as [edge type](https://orientdb.org/docs/3.1.x/java/Graph-VE.html#edges). On scheme level it means root class must extend E
 
 So in simple case `YourModel extends E`, in hierarchy case `YourModel extends YourBaseModel extends E`
 

@@ -3,7 +3,7 @@
 !!! summary ""
     Command method param extension
 
-Marks parameter as [command variable](https://orientdb.com/docs/3.0.x/sql/SQL-Query.html#let-block).
+Marks parameter as [command variable](https://orientdb.org/docs/3.1.x/sql/SQL-Query.html#let-block).
 
 In contrast to [el vars](elvar.md), these variables are used during query execution:
 

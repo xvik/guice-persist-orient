@@ -17,15 +17,15 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * Also, this annotation will affect indexes on this field (will make them ci too). So to create case insensitive
  * index it is required to use this annotation together with
  * {@link ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.field.index.Index} (
- * <a href="https://orientdb.com/docs/3.0.x/indexing/Indexes.html#case-insensitive-matching-with-indexes">see doc</a>).
+ * <a href="https://orientdb.org/docs/3.1.x/indexing/Indexes.html#case-insensitive-matching-with-indexes">see doc</a>).
  * In orient ci marker always affects both property and index, so it's impossible to create default collate
  * property and ci index on it (because sql engine will
- * <a href="https://orientdb.com/docs/3.0.x/sql/SQL-Introduction.html#automatic-usage-of-indexes">use index
+ * <a href="https://orientdb.org/docs/3.1.x/sql/SQL-Introduction.html#automatic-usage-of-indexes">use index
  * automatically</a>).
  * Using field annotation for both cases should remove confusion.
  *
  * @author Vyacheslav Rusakov
- * @see <a href="https://orientdb.com/docs/3.0.x/sql/SQL-Alter-Property.html">docs</a>
+ * @see <a href="https://orientdb.org/docs/3.1.x/sql/SQL-Alter-Property.html">docs</a>
  * @since 09.06.2015
  */
 @Target(FIELD)

@@ -1,3 +1,6 @@
+### [4.1.0](https://xvik.github.io/guice-persist-orien/4.0.0) (2021-07-05)
+* Orient 3.1 compatibility (updated to 3.1.12)
+
 ### [4.0.0](https://xvik.github.io/guice-persist-orien/4.0.0) (2021-07-04)
 * Update to guice 5.0.1
 * (breaking) Update to Orient 3.0.38

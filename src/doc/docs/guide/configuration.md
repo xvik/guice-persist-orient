@@ -6,7 +6,7 @@ Core orient integration is provided by `OrientModule`:
 install(new OrientModule(url, user, password));
 ```
 
-See [orient documentation](https://orientdb.com/docs/3.0.x/datamodeling/Concepts.html#database-url) for supported db types.
+See [orient documentation](https://orientdb.org/docs/3.1.x/datamodeling/Concepts.html#database-url) for supported db types.
 In short:
 
 * `memory:dbname` to use in-memory database
@@ -79,13 +79,13 @@ Or globally (even before startup):
 OGlobalConfiguration.MVRBTREE_NODE_PAGE_SIZE.setValue(2048);
 ```
 
-Read about [all configuration options](https://orientdb.com/docs/3.0.x/admin/Configuration.html)
+Read about [all configuration options](https://orientdb.org/docs/3.1.x/admin/Configuration.html)
 
 
 ## Default transaction type
 
-Default [transactions](https://orientdb.com/docs/3.0.x/internals/Transactions.html) configuration may be specified as additional module parameter.
-By default, [OPTIMISTIC transactions](https://orientdb.com/docs/3.0.x/internals/Transactions.html#optimistic-transaction) used (use optimistic locking based on object version, same way as hibernate optimistic locking). 
+Default [transactions](https://orientdb.org/docs/3.1.x/internals/Transactions.html) configuration may be specified as additional module parameter.
+By default, [OPTIMISTIC transactions](https://orientdb.org/docs/3.1.x/internals/Transactions.html#optimistic-transaction) used (use optimistic locking based on object version, same way as hibernate optimistic locking). 
 NOTX mode disables transactions.
 
 For example, to switch off transactions use:
@@ -97,7 +97,7 @@ install(new OrientModule(url, user, password)
 
 ## Custom orient types
 
-You may need to use orient [custom types](https://orientdb.com/docs/3.0.x/java/Object-2-Record-Java-Binding.html)
+You may need to use orient [custom types](https://orientdb.org/docs/3.1.x/java/Object-2-Record-Java-Binding.html)
 (custom converter to/from object, used *only in object connection*).
 
 To register custom type:

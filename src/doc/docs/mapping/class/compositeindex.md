@@ -3,7 +3,7 @@
 !!! summary ""
     Scope: class
 
-Creates composite [index](https://orientdb.com/docs/3.0.x/indexing/Indexes.html) (index span multiple properties).
+Creates composite [index](https://orientdb.org/docs/3.1.x/indexing/Indexes.html) (index span multiple properties).
 
 ```java
 @CompositeIndex(name = "test", type = OClass.INDEX_TYPE.NOTUNIQUE, fields = ["foo", "bar"])

@@ -3,7 +3,7 @@
 !!! summary ""
     Command method extension
 
-Subscribe listener to orient [live query](https://orientdb.com/docs/3.0.x/java/Live-Query.html).
+Subscribe listener to orient [live query](https://orientdb.org/docs/3.1.x/java/Live-Query.html).
 
 Live query may use row orient listener interface:
 

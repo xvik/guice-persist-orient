@@ -20,8 +20,8 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * {@link ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.type.index.lucene.CompositeLuceneIndex}.
  *
  * @author Vyacheslav Rusakov
- * @see <a href="https://orientdb.com/docs/3.0.x/indexing/Indexes.html">docs</a>
- * @see <a href="https://orientdb.com/docs/3.0.x/sql/SQL-Create-Index.html">create index doc</a>
+ * @see <a href="https://orientdb.org/docs/3.1.x/indexing/Indexes.html">docs</a>
+ * @see <a href="https://orientdb.org/docs/3.1.x/sql/SQL-Create-Index.html">create index doc</a>
  * @since 09.03.2015
  */
 @Target(TYPE)
@@ -46,7 +46,7 @@ public @interface CompositeIndex {
 
     /**
      * @return false to allow null values, true (by default) to ignore null values
-     * @see <a href="https://orientdb.com/docs/3.0.x/sql/SQL-Create-Index.html">docs</a>
+     * @see <a href="https://orientdb.org/docs/3.1.x/sql/SQL-Create-Index.html">docs</a>
      */
     boolean ignoreNullValues() default true;
 

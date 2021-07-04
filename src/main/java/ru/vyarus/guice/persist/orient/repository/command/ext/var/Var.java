@@ -18,7 +18,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * Defined variable could be referenced in query as $name.
  *
  * @author Vyacheslav Rusakov
- * @see <a href="https://orientdb.com/docs/3.0.x/sql/SQL-Query.html#let-block">docs</a>
+ * @see <a href="https://orientdb.org/docs/3.1.x/sql/SQL-Query.html#let-block">docs</a>
  * @since 25.02.2015
  */
 @Documented

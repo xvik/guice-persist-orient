@@ -14,12 +14,12 @@ Maven:
 <dependency>
     <groupId>com.orientechnologies</groupId>
     <artifactId>orientdb-object</artifactId>
-    <version>3.0.38</version>
+    <version>3.1.12</version>
 </dependency>
 <dependency>
     <groupId>com.orientechnologies</groupId>
     <artifactId>orientdb-graphdb</artifactId>
-    <version>3.0.38</version>
+    <version>3.1.12</version>
 </dependency>-->
 ```
 
@@ -27,8 +27,8 @@ Gradle:
 
 ```groovy
 implementation 'ru.vyarus:guice-persist-orient:{{ gradle.version }}'
-//implementation "com.orientechnologies:orientdb-object:3.0.38"
-//implementation "com.orientechnologies:orientdb-graphdb:3.0.38"
+//implementation "com.orientechnologies:orientdb-object:3.1.12"
+//implementation "com.orientechnologies:orientdb-graphdb:3.1.12"
 ```
 
 !!! tip
@@ -47,7 +47,7 @@ implementation 'ru.vyarus:guice-persist-orient:{{ gradle.version }}'
 install(new OrientModule(url, user, password));
 ```    
 
-See [orient documentation](https://orientdb.com/docs/3.0.x/datamodeling/Concepts.html#database-url) for supported db types.
+See [orient documentation](https://orientdb.org/docs/3.1.x/datamodeling/Concepts.html#database-url) for supported db types.
 In short:
 
 * `memory:dbname` to use in-memory database
@@ -97,8 +97,8 @@ Assuming start and stop methods are called on application startup/shutdown.
 
 ### Connections
 
-[Document](https://orientdb.com/docs/3.0.x/java/Document-Database.html) (actually [multi-model](https://orientdb.com/docs/3.0.x/java/Java-MultiModel-API.html)) 
-is the core connection type. [Object](https://orientdb.com/docs/3.0.x/java/Object-Database.html) and [graph](https://orientdb.com/docs/3.0.x/java/Graph-Database-Tinkerpop.html) 
+[Document](https://orientdb.org/docs/3.1.x/java/Document-Database.html) (actually [multi-model](https://orientdb.org/docs/3.1.x/java/Java-MultiModel-API.html)) 
+is the core connection type. [Object](https://orientdb.org/docs/3.1.x/java/Object-Database.html) and [graph](https://orientdb.org/docs/3.1.x/java/Graph-Database-Tinkerpop.html) 
 apis use document connection internally.
 Connection object mainly defines the result of queries: 
 
@@ -156,7 +156,7 @@ But note that it would not work without external transaction.
 
 ### Transactions
 
-There are 3 ways to declare [transaction](https://orientdb.com/docs/3.0.x/internals/Transactions.html):
+There are 3 ways to declare [transaction](https://orientdb.org/docs/3.1.x/internals/Transactions.html):
 
 * `@Transactional` annotation on guice bean or single method (additional `@TxType` annotation allows to define different transaction type for specific unit of work)
 * Inject `PersistentContext` bean into your service and use its methods

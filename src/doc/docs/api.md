@@ -135,7 +135,7 @@ userManager.executeWithUser('user', 'password', new SpecificUserAction<Void>() {
 `SpecificUserAction` defines scope of user overriding. This will not implicitly start transaction, but simply
 binds different user to current thread.
 
-Overriding may be used in scheme initialization to use more powerful user or to use [orient security model](https://orientdb.com/docs/3.0.x/security/Security.html)
+Overriding may be used in scheme initialization to use more powerful user or to use [orient security model](https://orientdb.org/docs/3.1.x/security/Security.html)
 (in this case overriding may be done, for example in servlet filter).
 
 Nested user override is not allowed (to avoid confusion). But you can use user overriding inside transaction.
