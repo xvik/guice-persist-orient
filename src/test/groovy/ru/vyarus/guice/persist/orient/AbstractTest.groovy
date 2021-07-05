@@ -1,6 +1,7 @@
 package ru.vyarus.guice.persist.orient
 
 import com.google.inject.persist.PersistService
+import com.orientechnologies.orient.core.config.OGlobalConfiguration
 import com.orientechnologies.orient.core.db.object.ODatabaseObject
 import com.orientechnologies.orient.core.metadata.security.ORole
 import com.orientechnologies.orient.core.metadata.security.OUser
@@ -29,6 +30,10 @@ abstract class AbstractTest extends Specification {
     OrientDBFactory info
 
     void setup() {
+        // TODO for now reverted 3.2 behaviours, but no-users mode should be supported directly
+        OGlobalConfiguration.SCRIPT_POLYGLOT_USE_GRAAL.setValue(false)
+        OGlobalConfiguration.CREATE_DEFAULT_USERS.setValue(true)
+
         persist.start()
     }
 

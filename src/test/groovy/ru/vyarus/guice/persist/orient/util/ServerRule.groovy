@@ -33,7 +33,12 @@ class ServerRule extends ExternalResource {
         System.setProperty("ORIENTDB_HOME", folder.root.getAbsolutePath());
         System.setProperty("orientdb.www.path", "")
         OGlobalConfiguration.SERVER_SECURITY_FILE.setValue("src/test/resources/ru/vyarus/guice/persist/orient/security.json")
-        OGlobalConfiguration.SERVER_BACKWARD_COMPATIBILITY.setValue(false);
+        OGlobalConfiguration.SERVER_BACKWARD_COMPATIBILITY.setValue(false)
+
+        // TODO for now reverted 3.2 behaviours, but no-users mode should be supported directly
+        OGlobalConfiguration.SCRIPT_POLYGLOT_USE_GRAAL.setValue(false)
+        OGlobalConfiguration.CREATE_DEFAULT_USERS.setValue(true)
+
         OServerMain
         // have to use shutdownEngineOnExit=false and manually shutdown engine to prevent log manager shutdown (which is impossible to recover)
                 .create(false)

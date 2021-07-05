@@ -1,11 +1,11 @@
 {
-  "enabled": false,
+  "enabled": true,
   "debug": false,
   "server": {
-    "createDefaultUsers": false
+    "createDefaultUsers": true
   },
   "authentication": {
     "enabled": false,
-    "allowDefault": false
+    "allowDefault": true
   }
 }
