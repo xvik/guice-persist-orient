@@ -8,6 +8,7 @@ import ru.vyarus.guice.persist.orient.support.modules.BootstrapModule
 import ru.vyarus.guice.persist.orient.support.modules.RepositoryTestModule
 import spock.guice.UseModules
 
+import java.util.concurrent.Callable
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.Future
@@ -23,7 +24,7 @@ class ConcurrentFailuresTest extends AbstractTest {
     DangerUpdatesBean dao
     ExecutorService executor
 
-    int threads = 6
+    int threads = 2
     int operationsInThread = 20
 
     @Override
@@ -73,10 +74,10 @@ class ConcurrentFailuresTest extends AbstractTest {
     }
 
     boolean doTest(Closure action) {
-        boolean ok = true
-        List<Future<?>> executed = []
+        List<Future<Boolean>> executed = []
         threads.times({
             executed << executor.submit({
+                boolean ok = true
                 operationsInThread.times({
                     try {
                         action.call(UUID.randomUUID().toString())
@@ -85,10 +86,12 @@ class ConcurrentFailuresTest extends AbstractTest {
                         ok = false
                     }
                 })
-            })
+                return ok
+            } as Callable<Boolean>)
         })
+        boolean res = true
         // lock until finish
-        executed.each({ it.get() })
-        return ok
+        executed.each({res = res && it.get() })
+        return res
     }
 }
