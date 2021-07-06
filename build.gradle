@@ -111,6 +111,10 @@ test {
         events 'skipped', 'failed'
         exceptionFormat 'full'
     }
+    if (System.getenv("APPVEYOR")) {
+        // test run only on unix build due to unstable behaviour on appveyor
+        exclude "**/ConcurrentFailuresTest.class"
+    }
     maxHeapSize = '1g'
     // appveyor fix
     systemProperty 'jna.nosys', 'true'
