@@ -116,6 +116,10 @@ test {
         exclude "**/ConcurrentFailuresTest.class"
     }
     maxHeapSize = '1g'
+
+    jacoco {
+        excludes = ['com.orientechnologies.*']
+    }
     // appveyor fix
     systemProperty 'jna.nosys', 'true'
 }
