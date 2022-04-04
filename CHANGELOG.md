@@ -1,3 +1,5 @@
+* Update to guice 5.1.0
+
 ### 4.1.0 (2021-07-05)
 * Orient 3.1 compatibility (updated to 3.1.12)
 
