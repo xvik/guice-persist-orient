@@ -31,7 +31,7 @@ dependencies {
 
     implementation 'ru.vyarus:generics-resolver:3.0.3'
     implementation 'ru.vyarus:guice-ext-annotations:1.4.0'
-    implementation 'org.javassist:javassist:3.29.0-GA'
+    implementation 'org.javassist:javassist:3.29.1-GA'
     implementation "com.google.inject:guice:$guice"
     implementation "com.google.inject.extensions:guice-persist:$guice"
     implementation "com.orientechnologies:orientdb-core:$orient"
