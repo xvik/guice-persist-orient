@@ -27,7 +27,7 @@ repositories { mavenLocal(); mavenCentral() }
 dependencies {
     compileOnly 'com.github.spotbugs:spotbugs-annotations:4.7.2'
 
-    implementation 'org.slf4j:slf4j-api:1.7.36'
+    implementation 'org.slf4j:slf4j-api:2.0.3'
 
     implementation 'ru.vyarus:generics-resolver:3.0.3'
     implementation 'ru.vyarus:guice-ext-annotations:1.4.0'
