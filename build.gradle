@@ -12,10 +12,12 @@ plugins {
     id 'ru.vyarus.mkdocs' version '2.4.0'
 }
 
-sourceCompatibility = 1.8
+java {
+    sourceCompatibility = 1.8
+}
 
 wrapper {
-    gradleVersion = '6.9'
+    gradleVersion = '8.6'
 }
 
 ext {
@@ -111,7 +113,7 @@ afterReleaseBuild {
 }
 
 test {
-    //useJUnitPlatform()
+//    useJUnitPlatform()
     testLogging {
         events 'skipped', 'failed'
         exceptionFormat 'full'
