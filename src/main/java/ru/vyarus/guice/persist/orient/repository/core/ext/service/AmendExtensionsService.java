@@ -14,8 +14,8 @@ import ru.vyarus.guice.persist.orient.repository.core.spi.parameter.MethodParamE
 import ru.vyarus.guice.persist.orient.repository.core.spi.parameter.ParamsContext;
 import ru.vyarus.guice.persist.orient.db.util.OrderComparator;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Collections;

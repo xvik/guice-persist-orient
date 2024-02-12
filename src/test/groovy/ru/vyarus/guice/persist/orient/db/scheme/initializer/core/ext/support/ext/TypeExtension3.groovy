@@ -1,6 +1,6 @@
 package ru.vyarus.guice.persist.orient.db.scheme.initializer.core.ext.support.ext
 
-import javax.inject.Singleton
+import jakarta.inject.Singleton
 
 /**
  * @author Vyacheslav Rusakov 

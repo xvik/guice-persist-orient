@@ -12,8 +12,8 @@ import ru.vyarus.guice.persist.orient.repository.delegate.spi.DelegateExtension;
 import ru.vyarus.guice.persist.orient.repository.delegate.spi.DelegateMethodDescriptor;
 import ru.vyarus.java.generics.resolver.GenericsResolver;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 
 /**
  * {@link Delegate} repository method extension.

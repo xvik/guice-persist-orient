@@ -11,7 +11,7 @@ import ru.vyarus.guice.persist.orient.repository.command.core.spi.SqlCommandDesc
 import ru.vyarus.guice.persist.orient.repository.core.spi.parameter.MethodParamExtension;
 import ru.vyarus.guice.persist.orient.repository.core.spi.parameter.ParamInfo;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 import java.util.List;
 import java.util.Map;
 

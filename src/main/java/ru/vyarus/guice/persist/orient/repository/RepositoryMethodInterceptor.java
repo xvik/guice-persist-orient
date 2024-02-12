@@ -11,7 +11,7 @@ import ru.vyarus.guice.persist.orient.repository.core.spi.RepositoryMethodDescri
 import ru.vyarus.guice.persist.orient.repository.core.spi.method.RepositoryMethodExtension;
 import ru.vyarus.guice.persist.orient.repository.core.util.RepositoryUtils;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 

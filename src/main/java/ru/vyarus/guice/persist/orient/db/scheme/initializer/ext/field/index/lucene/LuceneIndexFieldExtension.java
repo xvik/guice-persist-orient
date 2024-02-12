@@ -15,7 +15,7 @@ import ru.vyarus.guice.persist.orient.db.scheme.initializer.core.spi.field.Field
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.core.util.SchemeUtils;
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.field.index.IndexValidationSupport;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 import java.lang.reflect.Field;
 
 /**

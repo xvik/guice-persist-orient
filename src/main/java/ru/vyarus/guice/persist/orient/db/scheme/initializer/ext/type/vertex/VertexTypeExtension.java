@@ -10,8 +10,8 @@ import ru.vyarus.guice.persist.orient.db.scheme.initializer.core.spi.SchemeDescr
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.core.spi.type.TypeExtension;
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.core.util.SchemeUtils;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 
 /**
  * {@link VertexType} scheme type extension.

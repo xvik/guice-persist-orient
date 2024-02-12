@@ -9,7 +9,7 @@ import ru.vyarus.guice.persist.orient.support.service.InsertTransactionalService
 import ru.vyarus.guice.persist.orient.support.service.SelectTransactionalService
 import spock.guice.UseModules
 
-import javax.inject.Inject
+import jakarta.inject.Inject
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.Future

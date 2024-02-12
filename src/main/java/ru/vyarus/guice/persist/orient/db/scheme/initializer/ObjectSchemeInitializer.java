@@ -14,9 +14,9 @@ import ru.vyarus.guice.persist.orient.db.scheme.initializer.core.spi.field.Field
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.core.spi.type.TypeExtension;
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.core.util.SchemeUtils;
 
-import javax.inject.Inject;
-import javax.inject.Provider;
-import javax.inject.Singleton;
+import jakarta.inject.Inject;
+import jakarta.inject.Provider;
+import jakarta.inject.Singleton;
 import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.Set;

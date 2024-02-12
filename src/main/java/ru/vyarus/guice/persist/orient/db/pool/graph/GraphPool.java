@@ -14,8 +14,8 @@ import ru.vyarus.guice.persist.orient.db.pool.PoolManager;
 import ru.vyarus.guice.persist.orient.db.transaction.TransactionManager;
 import ru.vyarus.guice.persist.orient.db.user.UserManager;
 
-import javax.inject.Inject;
-import javax.inject.Provider;
+import jakarta.inject.Inject;
+import jakarta.inject.Provider;
 
 /**
  * Graph pool implementation. Provides base graph connection (see additional providers for specific graph connections).

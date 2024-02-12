@@ -18,9 +18,9 @@ import ru.vyarus.guice.persist.orient.db.transaction.TxConfig;
 import ru.vyarus.guice.persist.orient.db.transaction.template.TxAction;
 import ru.vyarus.guice.persist.orient.db.transaction.template.TxTemplate;
 
-import javax.inject.Inject;
-import javax.inject.Provider;
-import javax.inject.Singleton;
+import jakarta.inject.Inject;
+import jakarta.inject.Provider;
+import jakarta.inject.Singleton;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;

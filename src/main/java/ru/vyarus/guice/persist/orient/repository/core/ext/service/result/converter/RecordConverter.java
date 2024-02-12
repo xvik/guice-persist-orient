@@ -15,8 +15,8 @@ import ru.vyarus.guice.persist.orient.repository.core.ext.util.ResultUtils;
 import ru.vyarus.guice.persist.orient.repository.core.result.ResultDescriptor;
 import ru.vyarus.guice.persist.orient.repository.core.result.ResultType;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 import java.util.Set;
 
 /**

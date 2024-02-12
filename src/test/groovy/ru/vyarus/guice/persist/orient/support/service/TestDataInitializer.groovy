@@ -8,14 +8,14 @@ import org.slf4j.LoggerFactory
 import ru.vyarus.guice.persist.orient.db.data.DataInitializer
 import ru.vyarus.guice.persist.orient.support.model.Model
 
-import javax.inject.Inject
+import jakarta.inject.Inject
 
 /**
  * Initialize database with test data.
  * @author Vyacheslav Rusakov 
  * @since 28.07.2014
  */
-@javax.inject.Singleton
+@jakarta.inject.Singleton
 class TestDataInitializer implements DataInitializer {
     Logger logger = LoggerFactory.getLogger(TestDataInitializer)
 

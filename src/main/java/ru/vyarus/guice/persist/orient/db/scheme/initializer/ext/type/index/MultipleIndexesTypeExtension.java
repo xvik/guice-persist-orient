@@ -4,8 +4,8 @@ import com.orientechnologies.orient.core.db.object.ODatabaseObject;
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.core.spi.SchemeDescriptor;
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.core.spi.type.TypeExtension;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 
 /**
  * {@link CompositeIndex.List} scheme model type extension.

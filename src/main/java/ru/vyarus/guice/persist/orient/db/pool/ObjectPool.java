@@ -10,8 +10,8 @@ import ru.vyarus.guice.persist.orient.db.DbType;
 import ru.vyarus.guice.persist.orient.db.pool.object.OObjectDatabaseTxFixed;
 import ru.vyarus.guice.persist.orient.db.user.UserManager;
 
-import javax.inject.Inject;
-import javax.inject.Provider;
+import jakarta.inject.Inject;
+import jakarta.inject.Provider;
 
 /**
  * Object pool implementation. Use document pool connection to merge object transaction with document transaction.

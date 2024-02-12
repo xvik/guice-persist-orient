@@ -8,7 +8,7 @@ import org.aopalliance.intercept.MethodInvocation;
 import ru.vyarus.guice.persist.orient.db.transaction.TransactionManager;
 import ru.vyarus.guice.persist.orient.repository.core.util.RepositoryUtils;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 
 /**
  * {@link Retry} annotation aop interceptor. Must be registered before {@link com.google.inject.persist.Transactional}.

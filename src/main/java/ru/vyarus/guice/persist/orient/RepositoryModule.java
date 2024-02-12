@@ -24,7 +24,7 @@ import ru.vyarus.guice.persist.orient.repository.core.ext.util.ExtUtils;
 import ru.vyarus.guice.persist.orient.repository.core.util.RepositoryUtils;
 import ru.vyarus.guice.persist.orient.repository.delegate.DelegateMethodExtension;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 import java.lang.reflect.Method;
 
 /**

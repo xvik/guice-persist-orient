@@ -6,7 +6,7 @@ import ru.vyarus.guice.persist.orient.repository.command.core.spi.CommandMethodD
 import ru.vyarus.guice.persist.orient.repository.core.spi.parameter.MethodParamExtension;
 import ru.vyarus.guice.persist.orient.repository.core.spi.parameter.ParamInfo;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 import java.util.List;
 
 import static ru.vyarus.guice.persist.orient.repository.core.MethodDefinitionException.check;

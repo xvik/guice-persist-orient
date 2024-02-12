@@ -13,8 +13,8 @@ import ru.vyarus.guice.persist.orient.db.util.RidUtils;
 import ru.vyarus.guice.persist.orient.repository.delegate.ext.generic.Generic;
 import ru.vyarus.guice.persist.orient.support.repository.mixin.crud.BaseObjectCrud;
 
-import javax.inject.Inject;
-import javax.inject.Provider;
+import jakarta.inject.Inject;
+import jakarta.inject.Provider;
 import java.util.Iterator;
 import java.util.List;
 

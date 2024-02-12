@@ -11,7 +11,7 @@ import ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxAction
 import ru.vyarus.guice.persist.orient.util.uniquedb.UniqueDb
 import spock.lang.Specification
 
-import javax.inject.Inject
+import jakarta.inject.Inject
 
 /**
  * NOTE: its normal to see logs like this (it will not be shown for plocal or remote connections):

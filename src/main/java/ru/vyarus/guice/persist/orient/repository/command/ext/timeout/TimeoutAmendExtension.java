@@ -8,7 +8,7 @@ import ru.vyarus.guice.persist.orient.repository.command.core.spi.SqlCommandDesc
 import ru.vyarus.guice.persist.orient.repository.core.MethodDefinitionException;
 import ru.vyarus.guice.persist.orient.repository.core.spi.amend.AmendMethodExtension;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 
 /**
  * {@link Timeout} amend annotation extension.

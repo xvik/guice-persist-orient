@@ -6,7 +6,7 @@ import ru.vyarus.guice.persist.orient.repository.delegate.param.DelegateParamsCo
 import ru.vyarus.guice.persist.orient.repository.delegate.spi.DelegateExtension;
 import ru.vyarus.guice.persist.orient.repository.delegate.spi.DelegateMethodDescriptor;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 import java.util.List;
 
 import static ru.vyarus.guice.persist.orient.repository.core.MethodDefinitionException.check;

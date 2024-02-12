@@ -17,7 +17,7 @@ import ru.vyarus.guice.persist.orient.support.model.Model
 import ru.vyarus.guice.persist.orient.support.modules.RepositoryTestModule
 import spock.guice.UseModules
 
-import javax.inject.Provider
+import jakarta.inject.Provider
 
 /**
  * Shows that changes during transaction are visible between all transaction types

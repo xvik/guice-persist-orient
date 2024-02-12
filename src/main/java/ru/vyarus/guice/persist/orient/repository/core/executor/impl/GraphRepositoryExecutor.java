@@ -8,8 +8,8 @@ import com.tinkerpop.blueprints.impls.orient.OrientBaseGraph;
 import ru.vyarus.guice.persist.orient.db.DbType;
 import ru.vyarus.guice.persist.orient.repository.core.executor.RepositoryExecutor;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 
 /**
  * Graph connection repository executor.

@@ -14,8 +14,8 @@ import ru.vyarus.guice.persist.orient.repository.command.live.listener.mapper.Li
 import ru.vyarus.guice.persist.orient.repository.core.ext.SpiService;
 import ru.vyarus.guice.persist.orient.repository.core.spi.DescriptorContext;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 
 import static ru.vyarus.guice.persist.orient.repository.core.MethodDefinitionException.check;
 

@@ -3,7 +3,7 @@ package ru.vyarus.guice.persist.orient.repository.core.ext.service.result.ext.of
 import ru.vyarus.guice.persist.orient.repository.core.spi.RepositoryMethodDescriptor;
 import ru.vyarus.guice.persist.orient.repository.core.spi.result.ResultExtension;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 
 /**
  * {@link NoConversion} result extension.

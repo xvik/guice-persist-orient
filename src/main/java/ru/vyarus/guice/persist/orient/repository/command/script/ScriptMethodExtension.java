@@ -8,7 +8,7 @@ import ru.vyarus.guice.persist.orient.repository.command.core.spi.SqlCommandDesc
 import ru.vyarus.guice.persist.orient.repository.core.ext.SpiService;
 import ru.vyarus.guice.persist.orient.repository.core.spi.DescriptorContext;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 
 /**
  * {@link Script} method extension.

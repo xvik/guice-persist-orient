@@ -10,7 +10,7 @@ import ru.vyarus.guice.persist.orient.support.modules.RepositoryTestModule
 import ru.vyarus.guice.persist.orient.util.transactional.TransactionalTest
 import spock.guice.UseModules
 
-import javax.inject.Inject
+import jakarta.inject.Inject
 
 /**
  * Checking that collate on field and specified on index are independent.

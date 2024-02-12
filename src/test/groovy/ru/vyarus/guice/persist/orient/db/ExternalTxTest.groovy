@@ -11,8 +11,8 @@ import ru.vyarus.guice.persist.orient.support.Config
 import ru.vyarus.guice.persist.orient.support.modules.PackageSchemeModule
 import spock.guice.UseModules
 
-import javax.inject.Inject
-import javax.inject.Provider
+import jakarta.inject.Inject
+import jakarta.inject.Provider
 
 /**
  * @author Vyacheslav Rusakov

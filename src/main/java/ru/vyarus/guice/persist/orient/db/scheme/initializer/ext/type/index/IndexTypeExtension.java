@@ -13,7 +13,7 @@ import ru.vyarus.guice.persist.orient.db.scheme.initializer.core.spi.SchemeDescr
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.core.spi.type.TypeExtension;
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.field.index.IndexValidationSupport;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 
 /**
  * {@link CompositeIndex} scheme model type extension.

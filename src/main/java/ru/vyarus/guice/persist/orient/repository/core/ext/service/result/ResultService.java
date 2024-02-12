@@ -6,8 +6,8 @@ import ru.vyarus.guice.persist.orient.repository.core.ext.util.ExtUtils;
 import ru.vyarus.guice.persist.orient.repository.core.spi.DescriptorContext;
 import ru.vyarus.guice.persist.orient.repository.core.spi.RepositoryMethodDescriptor;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 import java.lang.annotation.Annotation;
 
 /**

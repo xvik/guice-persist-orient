@@ -1,4 +1,4 @@
-* Update to guice 5.1.0
+* (BREAKING) Update to guice 7.0.0 (jakarta namespace)
 
 ### 4.1.0 (2021-07-05)
 * Orient 3.1 compatibility (updated to 3.1.12)

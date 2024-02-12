@@ -7,8 +7,8 @@ import com.orientechnologies.orient.core.id.ORID;
 import com.orientechnologies.orient.core.id.ORecordId;
 import ru.vyarus.guice.persist.orient.support.repository.mixin.crud.ObjectCrud;
 
-import javax.inject.Inject;
-import javax.inject.Provider;
+import jakarta.inject.Inject;
+import jakarta.inject.Provider;
 
 /**
  * Crud mixin object implementation.

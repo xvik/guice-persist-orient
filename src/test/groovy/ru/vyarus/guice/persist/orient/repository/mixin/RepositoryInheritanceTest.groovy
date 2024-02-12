@@ -8,7 +8,7 @@ import ru.vyarus.guice.persist.orient.support.model.Model
 import ru.vyarus.guice.persist.orient.support.modules.RepositoryTestModule
 import spock.guice.UseModules
 
-import javax.inject.Inject
+import jakarta.inject.Inject
 
 /**
  * @author Vyacheslav Rusakov 

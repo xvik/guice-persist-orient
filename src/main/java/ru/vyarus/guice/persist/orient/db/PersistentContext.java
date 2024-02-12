@@ -12,8 +12,8 @@ import ru.vyarus.guice.persist.orient.db.transaction.template.TxTemplate;
 import ru.vyarus.guice.persist.orient.db.user.SpecificUserAction;
 import ru.vyarus.guice.persist.orient.db.user.UserManager;
 
-import javax.inject.Provider;
-import javax.inject.Singleton;
+import jakarta.inject.Provider;
+import jakarta.inject.Singleton;
 
 /**
  * Combines most useful api together for simplified usage.

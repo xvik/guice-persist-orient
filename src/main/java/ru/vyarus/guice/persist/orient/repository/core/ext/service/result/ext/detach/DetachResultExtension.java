@@ -9,7 +9,7 @@ import ru.vyarus.guice.persist.orient.repository.core.ext.service.result.convert
 import ru.vyarus.guice.persist.orient.repository.core.spi.RepositoryMethodDescriptor;
 import ru.vyarus.guice.persist.orient.repository.core.spi.result.ResultExtension;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 import java.lang.reflect.Array;
 import java.util.Collection;
 import java.util.Iterator;

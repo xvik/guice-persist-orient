@@ -12,9 +12,9 @@ import org.slf4j.LoggerFactory;
 import ru.vyarus.guice.persist.orient.db.transaction.TransactionManager;
 import ru.vyarus.guice.persist.orient.db.OrientDBFactory;
 
-import javax.inject.Inject;
-import javax.inject.Provider;
-import javax.inject.Singleton;
+import jakarta.inject.Inject;
+import jakarta.inject.Provider;
+import jakarta.inject.Singleton;
 
 /**
  * User manager holds context user credentials. Using different user may be important

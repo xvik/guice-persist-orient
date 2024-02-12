@@ -9,8 +9,8 @@ import ru.vyarus.guice.persist.orient.repository.command.core.AbstractCommandExt
 import ru.vyarus.guice.persist.orient.repository.command.core.spi.CommandMethodDescriptor;
 import ru.vyarus.guice.persist.orient.repository.command.core.spi.SqlCommandDescriptor;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 
 /**
  * Function method extension. Defined by {@link Function} annotation.

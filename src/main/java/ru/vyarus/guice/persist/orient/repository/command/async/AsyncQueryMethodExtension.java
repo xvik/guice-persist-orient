@@ -14,8 +14,8 @@ import ru.vyarus.guice.persist.orient.repository.command.ext.listen.ListenParamE
 import ru.vyarus.guice.persist.orient.repository.core.ext.SpiService;
 import ru.vyarus.guice.persist.orient.repository.core.spi.DescriptorContext;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 import java.util.concurrent.Future;
 
 import static ru.vyarus.guice.persist.orient.repository.core.MethodDefinitionException.check;

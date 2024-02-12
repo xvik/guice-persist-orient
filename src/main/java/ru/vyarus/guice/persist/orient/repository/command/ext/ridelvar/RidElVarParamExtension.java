@@ -14,7 +14,7 @@ import ru.vyarus.guice.persist.orient.repository.core.MethodExecutionException;
 import ru.vyarus.guice.persist.orient.repository.core.spi.parameter.MethodParamExtension;
 import ru.vyarus.guice.persist.orient.repository.core.spi.parameter.ParamInfo;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 import java.lang.reflect.Array;
 import java.util.Iterator;
 import java.util.List;

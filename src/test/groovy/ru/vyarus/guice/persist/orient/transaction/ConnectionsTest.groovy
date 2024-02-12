@@ -6,7 +6,7 @@ import ru.vyarus.guice.persist.orient.support.modules.PackageSchemeModule
 import ru.vyarus.guice.persist.orient.transaction.support.AllConnectionsService
 import spock.guice.UseModules
 
-import javax.inject.Inject
+import jakarta.inject.Inject
 
 /**
  * @author Vyacheslav Rusakov 

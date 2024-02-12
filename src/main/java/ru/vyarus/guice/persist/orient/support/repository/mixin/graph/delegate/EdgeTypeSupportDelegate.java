@@ -6,7 +6,7 @@ import ru.vyarus.guice.persist.orient.repository.delegate.ext.generic.Generic;
 import ru.vyarus.guice.persist.orient.support.repository.mixin.graph.EdgeTypeSupport;
 import ru.vyarus.guice.persist.orient.support.repository.mixin.graph.EdgesSupport;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 /**
  * Edge type support mixin delegate implementation.

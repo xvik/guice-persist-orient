@@ -11,9 +11,9 @@ import ru.vyarus.guice.persist.orient.repository.core.spi.RepositoryMethodDescri
 import ru.vyarus.java.generics.resolver.GenericsResolver;
 import ru.vyarus.java.generics.resolver.context.GenericsInfoFactory;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.inject.Singleton;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashMap;

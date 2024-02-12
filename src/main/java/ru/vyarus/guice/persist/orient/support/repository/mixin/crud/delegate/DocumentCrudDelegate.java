@@ -9,8 +9,8 @@ import com.orientechnologies.orient.core.record.impl.ODocument;
 import ru.vyarus.guice.persist.orient.repository.delegate.ext.generic.Generic;
 import ru.vyarus.guice.persist.orient.support.repository.mixin.crud.DocumentCrud;
 
-import javax.inject.Inject;
-import javax.inject.Provider;
+import jakarta.inject.Inject;
+import jakarta.inject.Provider;
 import java.util.Iterator;
 
 /**

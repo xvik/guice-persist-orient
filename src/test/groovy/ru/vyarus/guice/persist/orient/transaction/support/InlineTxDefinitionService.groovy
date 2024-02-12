@@ -12,7 +12,7 @@ import com.orientechnologies.orient.core.db.object.ODatabaseObject
  * @author Vyacheslav Rusakov 
  * @since 01.08.2014
  */
-@javax.inject.Singleton
+@jakarta.inject.Singleton
 class InlineTxDefinitionService {
 
     @Inject

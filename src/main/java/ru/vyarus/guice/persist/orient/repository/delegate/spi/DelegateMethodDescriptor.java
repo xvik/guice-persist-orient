@@ -3,7 +3,7 @@ package ru.vyarus.guice.persist.orient.repository.delegate.spi;
 import ru.vyarus.guice.persist.orient.repository.core.spi.RepositoryMethodDescriptor;
 import ru.vyarus.guice.persist.orient.repository.delegate.param.DelegateParamsDescriptor;
 
-import javax.inject.Provider;
+import jakarta.inject.Provider;
 import java.lang.reflect.Method;
 
 /**

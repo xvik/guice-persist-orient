@@ -12,7 +12,7 @@ import ru.vyarus.guice.persist.orient.repository.core.spi.parameter.MethodParamE
 import ru.vyarus.guice.persist.orient.repository.core.spi.parameter.ParamInfo;
 import ru.vyarus.guice.persist.orient.db.util.Order;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.List;

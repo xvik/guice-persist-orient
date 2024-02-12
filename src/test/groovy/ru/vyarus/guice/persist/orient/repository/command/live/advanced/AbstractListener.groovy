@@ -5,7 +5,7 @@ import ru.vyarus.guice.persist.orient.db.PersistentContext
 import ru.vyarus.guice.persist.orient.repository.command.live.listener.mapper.LiveQueryListener
 import ru.vyarus.guice.persist.orient.repository.command.live.listener.mapper.RecordOperation
 
-import javax.inject.Inject
+import jakarta.inject.Inject
 
 /**
  * @author Vyacheslav Rusakov

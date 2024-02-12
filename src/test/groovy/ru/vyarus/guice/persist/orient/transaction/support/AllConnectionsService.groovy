@@ -10,13 +10,13 @@ import com.tinkerpop.blueprints.impls.orient.OrientGraph
 import com.tinkerpop.blueprints.impls.orient.OrientGraphNoTx
 import ru.vyarus.guice.persist.orient.db.transaction.TxType
 
-import javax.inject.Inject
+import jakarta.inject.Inject
 
 /**
  * @author Vyacheslav Rusakov 
  * @since 28.07.2014
  */
-@javax.inject.Singleton
+@jakarta.inject.Singleton
 class AllConnectionsService {
 
     //@formatter:off

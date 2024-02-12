@@ -12,9 +12,9 @@ import ru.vyarus.guice.persist.orient.repository.core.spi.method.RepositoryMetho
 import ru.vyarus.guice.persist.orient.repository.core.spi.method.RepositoryMethodExtension;
 import ru.vyarus.guice.persist.orient.repository.core.spi.parameter.ParamsContext;
 
-import javax.inject.Inject;
-import javax.inject.Provider;
-import javax.inject.Singleton;
+import jakarta.inject.Inject;
+import jakarta.inject.Provider;
+import jakarta.inject.Singleton;
 import java.lang.annotation.Annotation;
 
 /**

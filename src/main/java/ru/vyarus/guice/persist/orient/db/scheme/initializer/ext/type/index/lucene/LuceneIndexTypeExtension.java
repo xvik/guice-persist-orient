@@ -18,7 +18,7 @@ import ru.vyarus.guice.persist.orient.db.scheme.initializer.core.util.SchemeUtil
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.field.index.IndexValidationSupport;
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.field.index.lucene.LuceneIndexFieldExtension;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 
 /**
  * {@link CompositeLuceneIndex} scheme model type extension.

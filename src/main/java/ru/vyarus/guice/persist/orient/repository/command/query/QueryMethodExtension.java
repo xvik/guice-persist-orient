@@ -10,8 +10,8 @@ import ru.vyarus.guice.persist.orient.repository.command.core.spi.SqlCommandDesc
 import ru.vyarus.guice.persist.orient.repository.core.ext.SpiService;
 import ru.vyarus.guice.persist.orient.repository.core.spi.DescriptorContext;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 
 /**
  * Query method extension. Defined by {@link Query} annotation.

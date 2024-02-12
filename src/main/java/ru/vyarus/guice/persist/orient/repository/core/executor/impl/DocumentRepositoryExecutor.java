@@ -7,8 +7,8 @@ import com.orientechnologies.orient.core.record.ORecord;
 import ru.vyarus.guice.persist.orient.db.DbType;
 import ru.vyarus.guice.persist.orient.repository.core.executor.RepositoryExecutor;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 
 /**
  * Document connection repository executor.

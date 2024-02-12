@@ -25,11 +25,11 @@ import java.nio.file.AccessDeniedException
 @UseModules(MockPoolsModule)
 class PoolsTransactionTest extends Specification {
 
-    @javax.inject.Inject
+    @jakarta.inject.Inject
     PersistService persist
-    @javax.inject.Inject
+    @jakarta.inject.Inject
     TransactionManager transactionManager;
-    @javax.inject.Inject
+    @jakarta.inject.Inject
     SpecificTxTemplate<ODatabaseObject> template
 
     @Inject

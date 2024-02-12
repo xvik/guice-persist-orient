@@ -5,7 +5,7 @@ import ru.vyarus.guice.persist.orient.db.support.EmptyAutoScanModule
 import spock.guice.UseModules
 import spock.lang.Specification
 
-import javax.inject.Inject
+import jakarta.inject.Inject
 
 /**
  * @author Vyacheslav Rusakov 

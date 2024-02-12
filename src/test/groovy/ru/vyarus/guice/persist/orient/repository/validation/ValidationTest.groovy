@@ -5,7 +5,7 @@ import ru.vyarus.guice.persist.orient.AbstractTest
 import ru.vyarus.guice.persist.orient.support.modules.BootstrapModule
 import spock.guice.UseModules
 
-import javax.validation.ConstraintViolationException
+import jakarta.validation.ConstraintViolationException
 
 /**
  * @author Vyacheslav Rusakov 

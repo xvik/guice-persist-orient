@@ -4,8 +4,8 @@ import com.google.common.base.Throwables;
 import ru.vyarus.guice.persist.orient.db.transaction.TransactionManager;
 import ru.vyarus.guice.persist.orient.db.transaction.TxConfig;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 
 /**
  * Transaction template defines unit of work and properly inline all units of work during current unit scope.

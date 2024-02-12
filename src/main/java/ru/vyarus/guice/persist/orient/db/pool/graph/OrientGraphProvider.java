@@ -5,8 +5,8 @@ import com.google.inject.Provider;
 import com.tinkerpop.blueprints.impls.orient.OrientBaseGraph;
 import com.tinkerpop.blueprints.impls.orient.OrientGraph;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 
 /**
  * Specific provider for transactional graph connection. Connection is obtained from base pool (using provider)

@@ -2,7 +2,7 @@ package ru.vyarus.guice.persist.orient.db.scheme.initializer.core.ext.support.ex
 
 import ru.vyarus.guice.persist.orient.db.util.Order
 
-import javax.inject.Singleton
+import jakarta.inject.Singleton
 
 /**
  * @author Vyacheslav Rusakov 

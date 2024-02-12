@@ -10,7 +10,7 @@ import ru.vyarus.guice.persist.orient.db.transaction.TxConfig;
 import ru.vyarus.guice.persist.orient.db.transaction.template.TxAction;
 import ru.vyarus.guice.persist.orient.db.transaction.template.TxTemplate;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.lang.reflect.Method;
 
 /**

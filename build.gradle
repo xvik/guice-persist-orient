@@ -22,7 +22,7 @@ wrapper {
 
 ext {
     orient = '3.2.27'
-    guice = '5.1.0'
+    guice = '7.0.0'
 }
 
 repositories { mavenLocal(); mavenCentral() }
@@ -30,8 +30,8 @@ dependencies {
     implementation 'org.slf4j:slf4j-api:1.7.36'
 
     implementation 'ru.vyarus:generics-resolver:3.0.3'
-    implementation 'ru.vyarus:guice-ext-annotations:1.4.0'
-    implementation 'org.javassist:javassist:3.29.1-GA'
+    implementation 'ru.vyarus:guice-ext-annotations:2.0.1'
+    implementation 'org.javassist:javassist:3.30.2-GA'
     implementation "com.google.inject:guice:$guice"
     implementation "com.google.inject.extensions:guice-persist:$guice"
     implementation "com.orientechnologies:orientdb-core:$orient"
@@ -42,9 +42,9 @@ dependencies {
     testImplementation 'ch.qos.logback:logback-classic:1.3.14'
     testImplementation 'org.slf4j:jul-to-slf4j:1.7.36'
     testImplementation 'org.spockframework:spock-guice:1.3-groovy-2.5'
-    testImplementation 'ru.vyarus:guice-validator:2.0.0'
-    testImplementation 'org.hibernate:hibernate-validator:6.2.0.Final'
-    testImplementation 'org.glassfish:javax.el:3.0.1-b12'
+    testImplementation 'ru.vyarus:guice-validator:3.0.2'
+    testImplementation 'org.hibernate:hibernate-validator:7.0.1.Final'
+    testImplementation 'org.glassfish:jakarta.el:4.0.2'
     testImplementation "com.orientechnologies:orientdb-tools:$orient"
 }
 

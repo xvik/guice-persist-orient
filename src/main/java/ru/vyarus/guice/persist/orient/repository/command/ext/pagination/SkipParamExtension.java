@@ -7,7 +7,7 @@ import ru.vyarus.guice.persist.orient.repository.command.core.spi.CommandExtensi
 import ru.vyarus.guice.persist.orient.repository.command.core.spi.CommandMethodDescriptor;
 import ru.vyarus.guice.persist.orient.repository.command.core.spi.SqlCommandDescriptor;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 
 /**
  * {@link Skip} parameter annotation extension.

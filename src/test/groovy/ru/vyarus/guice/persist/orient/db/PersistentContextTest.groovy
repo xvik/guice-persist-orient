@@ -9,7 +9,7 @@ import ru.vyarus.guice.persist.orient.db.transaction.template.TxAction
 import ru.vyarus.guice.persist.orient.support.modules.DefaultModule
 import spock.guice.UseModules
 
-import javax.inject.Inject
+import jakarta.inject.Inject
 
 /**
  * @author Vyacheslav Rusakov 

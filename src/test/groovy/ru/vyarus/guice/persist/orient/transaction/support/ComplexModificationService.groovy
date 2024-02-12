@@ -8,13 +8,13 @@ import com.tinkerpop.blueprints.Vertex
 import com.tinkerpop.blueprints.impls.orient.OrientGraph
 import ru.vyarus.guice.persist.orient.support.model.VertexModel
 
-import javax.inject.Inject
+import jakarta.inject.Inject
 
 /**
  * @author Vyacheslav Rusakov 
  * @since 28.07.2014
  */
-@javax.inject.Singleton
+@jakarta.inject.Singleton
 class ComplexModificationService {
 
     // @formatter:off

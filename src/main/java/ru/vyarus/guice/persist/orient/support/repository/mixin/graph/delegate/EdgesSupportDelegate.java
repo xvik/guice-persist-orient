@@ -16,7 +16,7 @@ import com.tinkerpop.blueprints.impls.orient.OrientVertex;
 import ru.vyarus.guice.persist.orient.db.util.RidUtils;
 import ru.vyarus.guice.persist.orient.support.repository.mixin.graph.EdgesSupport;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.util.Iterator;
 
 /**

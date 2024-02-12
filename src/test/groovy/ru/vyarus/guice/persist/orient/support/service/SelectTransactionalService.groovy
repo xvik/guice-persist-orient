@@ -6,14 +6,14 @@ import com.orientechnologies.orient.core.db.object.ODatabaseObject
 import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery
 import ru.vyarus.guice.persist.orient.support.model.Model
 
-import javax.inject.Inject
+import jakarta.inject.Inject
 
 /**
  * Class level transactional annotation can't be used because of groovy.
  * @author Vyacheslav Rusakov 
  * @since 19.07.2014
  */
-@javax.inject.Singleton
+@jakarta.inject.Singleton
 class SelectTransactionalService {
 
     @Inject

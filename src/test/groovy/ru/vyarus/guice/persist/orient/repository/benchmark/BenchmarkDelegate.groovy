@@ -6,13 +6,13 @@ import com.orientechnologies.orient.core.db.object.ODatabaseObject
 import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery
 import ru.vyarus.guice.persist.orient.support.model.Model
 
-import javax.inject.Inject
+import jakarta.inject.Inject
 
 /**
  * @author Vyacheslav Rusakov 
  * @since 28.10.2014
  */
-@javax.inject.Singleton
+@jakarta.inject.Singleton
 @Transactional
 class BenchmarkDelegate {
     @Inject

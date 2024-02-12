@@ -6,9 +6,9 @@ import com.orientechnologies.orient.core.db.object.ODatabaseObject;
 import ru.vyarus.guice.persist.orient.db.scheme.annotation.Persistent;
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.ObjectSchemeInitializer;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.inject.Singleton;
 
 /**
  * Initialize model from classpath entities annotated with

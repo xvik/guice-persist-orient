@@ -30,7 +30,7 @@ import ru.vyarus.guice.persist.orient.db.transaction.TxConfig;
 import ru.vyarus.guice.persist.orient.db.transaction.internal.TransactionInterceptor;
 import ru.vyarus.guice.persist.orient.db.OrientDBFactory;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.LinkedHashSet;

@@ -9,8 +9,8 @@ import ru.vyarus.guice.persist.orient.db.scheme.initializer.core.spi.type.Scheme
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.core.spi.type.TypeExtension;
 import ru.vyarus.guice.persist.orient.db.util.OrderComparator;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.Collections;

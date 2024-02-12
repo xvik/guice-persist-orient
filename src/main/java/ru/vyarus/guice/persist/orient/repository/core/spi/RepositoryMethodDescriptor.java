@@ -8,7 +8,7 @@ import ru.vyarus.guice.persist.orient.repository.core.result.ResultDescriptor;
 import ru.vyarus.guice.persist.orient.repository.core.spi.amend.AmendExecutionExtension;
 import ru.vyarus.guice.persist.orient.repository.core.spi.method.RepositoryMethodExtension;
 
-import javax.inject.Provider;
+import jakarta.inject.Provider;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;

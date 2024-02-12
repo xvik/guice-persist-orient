@@ -15,8 +15,8 @@ import ru.vyarus.guice.persist.orient.support.AutoScanSchemeModule
 import ru.vyarus.guice.persist.orient.support.Config
 import spock.guice.UseModules
 
-import javax.inject.Inject
-import javax.inject.Singleton
+import jakarta.inject.Inject
+import jakarta.inject.Singleton
 
 /**
  * @author Vyacheslav Rusakov

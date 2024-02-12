@@ -2,7 +2,7 @@ package ru.vyarus.guice.persist.orient.repository.core.ext.service.result;
 
 import ru.vyarus.guice.persist.orient.repository.core.spi.result.ResultExtension;
 
-import javax.inject.Provider;
+import jakarta.inject.Provider;
 
 /**
  * Result conversion descriptor.

@@ -3,8 +3,8 @@ package ru.vyarus.guice.persist.orient.db.transaction.template;
 import com.google.inject.Provider;
 import ru.vyarus.guice.persist.orient.db.transaction.TxConfig;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 
 /**
  * Transaction template to be used with specific (single) connection type (reduce boilerplate, comparing to generic
