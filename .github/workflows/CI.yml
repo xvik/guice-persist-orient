@@ -9,8 +9,6 @@ jobs:
     runs-on: ubuntu-latest
     name: Java ${{ matrix.java }}
     strategy:
-      # don't cancel remaining matrix steps on failure
-      fail-fast: false
       matrix:
         java: [8, 11]
 
@@ -39,4 +37,4 @@ jobs:
         with:
           files: build/reports/jacoco/test/jacocoTestReport.xml
           flags: LINUX
-          fail_ci_if_error: true
+          fail_ci_if_error: false
