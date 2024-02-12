@@ -1,6 +1,7 @@
 package ru.vyarus.guice.persist.orient.support.repository;
 
 import com.tinkerpop.blueprints.impls.orient.OrientBaseGraph;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import ru.vyarus.guice.persist.orient.RepositoryModule;
 import ru.vyarus.guice.persist.orient.repository.core.executor.impl.GraphRepositoryExecutor;
 
@@ -13,6 +14,7 @@ import java.lang.reflect.Method;
  * @since 04.08.2014
  */
 public class GraphExecutorBinder {
+    @SuppressFBWarnings("CT_CONSTRUCTOR_THROW")
     public GraphExecutorBinder(final RepositoryModule module,
                                final Method bindExecutor) throws Exception {
         // explicit dependency on class required to fail

@@ -101,7 +101,7 @@ public class ExtensionsDescriptorFactory {
     /**
      * Extensions comparator.
      */
-    private static class ExtComparator implements Comparator<ExtensionsDescriptor.Ext<?, ?>> {
+    private static final class ExtComparator implements Comparator<ExtensionsDescriptor.Ext<?, ?>> {
         private final OrderComparator orderedComparator = new OrderComparator();
 
         @Override

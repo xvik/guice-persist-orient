@@ -4,6 +4,7 @@ import com.google.inject.Binder;
 import com.tinkerpop.blueprints.impls.orient.OrientBaseGraph;
 import com.tinkerpop.blueprints.impls.orient.OrientGraph;
 import com.tinkerpop.blueprints.impls.orient.OrientGraphNoTx;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import ru.vyarus.guice.persist.orient.OrientModule;
 import ru.vyarus.guice.persist.orient.db.pool.graph.GraphPool;
 import ru.vyarus.guice.persist.orient.db.pool.graph.OrientGraphNoTxProvider;
@@ -18,6 +19,7 @@ import java.lang.reflect.Method;
  * @since 27.07.2014
  */
 public class GraphPoolBinder {
+    @SuppressFBWarnings("CT_CONSTRUCTOR_THROW")
     public GraphPoolBinder(final OrientModule module, final Method bindPool, final Binder binder) throws Exception {
         binder.bind(OrientGraph.class).toProvider(OrientGraphProvider.class);
         binder.bind(OrientGraphNoTx.class).toProvider(OrientGraphNoTxProvider.class);

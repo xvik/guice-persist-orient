@@ -111,7 +111,7 @@ public class ParamsService {
      * Internal parameters processing context.
      */
     @SuppressWarnings("checkstyle:VisibilityModifier")
-    private static class ProcessingContext {
+    private static final class ProcessingContext {
         public Map<Class<? extends MethodParamExtension>, MethodParamExtension> extensionMap =
                 Maps.newLinkedHashMap();
         public Multimap<Class<? extends MethodParamExtension>, ParamInfo> extParams = LinkedHashMultimap.create();

@@ -73,6 +73,6 @@ public final class AnnotationTxConfigBuilder {
      */
     @Transactional
     @TxType(OTransaction.TXTYPE.OPTIMISTIC)
-    private static class Internal {
+    private static final class Internal {
     }
 }

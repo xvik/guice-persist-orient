@@ -2,6 +2,7 @@ package ru.vyarus.guice.persist.orient.support.pool;
 
 import com.google.inject.Binder;
 import com.orientechnologies.orient.core.db.object.ODatabaseObject;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import ru.vyarus.guice.persist.orient.OrientModule;
 import ru.vyarus.guice.persist.orient.db.pool.ObjectPool;
 
@@ -15,6 +16,7 @@ import java.lang.reflect.Method;
  */
 public class ObjectPoolBinder {
     @SuppressWarnings("PMD.UnusedFormalParameter")
+    @SuppressFBWarnings("CT_CONSTRUCTOR_THROW")
     public ObjectPoolBinder(final OrientModule module, final Method bindPool, final Binder binder) throws Exception {
         bindPool.invoke(module, ODatabaseObject.class, ObjectPool.class);
     }
