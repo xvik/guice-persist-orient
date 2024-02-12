@@ -188,6 +188,7 @@ public final class ResultUtils {
         return sourceType;
     }
 
+    @SuppressWarnings("PMD.CognitiveComplexity")
     private static Object convertPlainImpl(final Object result, final Class returnClass, final boolean projection) {
         Object converted = null;
         // only update query returns simple number
