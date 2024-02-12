@@ -114,6 +114,6 @@ class FulltextIndexTest extends AbstractSchemeExtensionTest {
     }
 
     private Object id(OIndex index) {
-        return index.delegate instanceof OIndexRemote ? null : index.indexId
+        return index.hasProperty("delegate") && index.delegate instanceof OIndexRemote ? null : index.indexId
     }
 }
