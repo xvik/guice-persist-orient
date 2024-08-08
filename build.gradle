@@ -27,7 +27,7 @@ ext {
 
 repositories { mavenLocal(); mavenCentral() }
 dependencies {
-    implementation 'org.slf4j:slf4j-api:1.7.36'
+    implementation 'org.slf4j:slf4j-api:2.0.15'
 
     implementation 'ru.vyarus:generics-resolver:3.0.3'
     implementation 'ru.vyarus:guice-ext-annotations:2.0.1'
