@@ -28,7 +28,7 @@ ext {
 
 repositories { mavenLocal(); mavenCentral() }
 dependencies {
-    compileOnly 'com.github.spotbugs:spotbugs-annotations:4.8.6'
+    compileOnly 'com.github.spotbugs:spotbugs-annotations:4.9.4'
 
     implementation 'org.slf4j:slf4j-api:1.7.36'
 
