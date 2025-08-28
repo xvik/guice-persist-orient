@@ -149,7 +149,7 @@ public abstract class AbstractCommandExtension<T extends CommandMethodDescriptor
             final OCommandRequest cmd = descriptor.executor.wrapCommand(query);
             final Object result;
             if (desc.useNamedParams) {
-                result = desc.namedParams.size() > 0
+                result = !desc.namedParams.isEmpty()
                         ? cmd.execute(desc.namedParams) : cmd.execute();
             } else {
                 result = desc.params.length > 0

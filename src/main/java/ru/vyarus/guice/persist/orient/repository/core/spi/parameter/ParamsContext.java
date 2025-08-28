@@ -16,6 +16,7 @@ import java.util.List;
  * @since 04.02.2015
  */
 public abstract class ParamsContext<T extends RepositoryMethodDescriptor> {
+    @SuppressWarnings("PMD.UseDiamondOperator")
     protected static final Function<ParamInfo, Integer> PARAM_INDEX_FUNCTION = new Function<ParamInfo, Integer>() {
         @Nonnull
         @Override

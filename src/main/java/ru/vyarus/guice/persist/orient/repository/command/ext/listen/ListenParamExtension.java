@@ -88,8 +88,7 @@ public class ListenParamExtension implements
     @SuppressWarnings("unchecked")
     public void amendCommand(final OCommandRequest query, final CommandMethodDescriptor descriptor,
                              final Object instance, final Object... arguments) {
-        final ListenParamDescriptor extDesc = (ListenParamDescriptor) descriptor
-                .extDescriptors.get(ListenParamExtension.KEY);
+        final ListenParamDescriptor extDesc = (ListenParamDescriptor) descriptor.extDescriptors.get(KEY);
         final Object listener = arguments[extDesc.position];
         // null listener makes no sense: method is void and results are not handled anywhere
         checkExec(listener != null, "Listener can't be null");

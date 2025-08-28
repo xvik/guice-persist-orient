@@ -38,7 +38,7 @@ public class OCommandSQLPojoWrapperFixed extends OCommandSQLPojoWrapper {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <RET> RET execute(final Object... iArgs) {
+    public <R> R execute(final Object... iArgs) {
         database.convertParameters(iArgs);
 
         Object result = command.execute(iArgs);
@@ -85,6 +85,6 @@ public class OCommandSQLPojoWrapperFixed extends OCommandSQLPojoWrapper {
             result = database.getUserObjectByRecord(((OResult) result).getIdentity().get(), getFetchPlan(), true);
         }
 
-        return (RET) result;
+        return (R) result;
     }
 }

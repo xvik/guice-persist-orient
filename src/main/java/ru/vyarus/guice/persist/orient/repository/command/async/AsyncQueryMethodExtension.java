@@ -62,9 +62,9 @@ public class AsyncQueryMethodExtension extends AbstractCommandExtension<CommandM
         final boolean blocking = (Boolean) descriptor.extDescriptors.get(EXT_BLOCKING);
         // correct listener will be set by @Listen extension
         if (blocking) {
-            return new OSQLAsynchQuery(desc.command);
+            return new OSQLAsynchQuery<>(desc.command);
         } else {
-            return new OSQLNonBlockingQuery(desc.command, null);
+            return new OSQLNonBlockingQuery<>(desc.command, null);
         }
     }
 

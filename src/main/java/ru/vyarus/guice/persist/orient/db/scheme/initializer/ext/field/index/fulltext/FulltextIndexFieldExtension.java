@@ -39,6 +39,7 @@ public class FulltextIndexFieldExtension implements FieldExtension<FulltextIndex
     }
 
     @Override
+    @SuppressWarnings("PMD.UnnecessaryVarargsArrayCreation")
     public void afterRegistration(final ODatabaseObject db, final SchemeDescriptor descriptor,
                                   final Field field, final FulltextIndex annotation) {
         final String property = field.getName();

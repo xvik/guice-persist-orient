@@ -372,6 +372,7 @@ public class OrientModule extends PersistModule {
     }
 
     @Override
+    @SuppressWarnings("PMD.UseDiamondOperator")
     protected void bindInterceptor(final Matcher<? super Class<?>> classMatcher,
                                    final Matcher<? super Method> methodMatcher,
                                    final MethodInterceptor... interceptors) {

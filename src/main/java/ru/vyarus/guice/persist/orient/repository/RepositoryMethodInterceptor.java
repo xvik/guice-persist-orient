@@ -60,7 +60,7 @@ public class RepositoryMethodInterceptor implements MethodInterceptor {
         return descriptor;
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "PMD.UnnecessaryCast"})
     private Object executeMethod(final RepositoryMethodDescriptor descriptor,
                                  final MethodInvocation methodInvocation) {
         final Method method = methodInvocation.getMethod();

@@ -1,10 +1,8 @@
 package ru.vyarus.guice.persist.orient.repository.delegate.method;
 
-import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 
-import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.List;
 
@@ -27,12 +25,7 @@ public final class MethodFilters {
     public static Collection<MatchedMethod> filterByMethodName(final Collection<MatchedMethod> possibilities,
                                                                final String method) {
         return method == null ? possibilities : Collections2.filter(possibilities,
-                new Predicate<MatchedMethod>() {
-                    @Override
-                    public boolean apply(@Nonnull final MatchedMethod input) {
-                        return input.method.getName().equals(method);
-                    }
-                });
+                input -> input.method.getName().equals(method));
     }
 
     /**
@@ -83,12 +76,7 @@ public final class MethodFilters {
      */
     public static MatchedMethod findSingleExtended(final Collection<MatchedMethod> possibilities) {
         final Collection<MatchedMethod> extended = Collections2.filter(possibilities,
-                new Predicate<MatchedMethod>() {
-                    @Override
-                    public boolean apply(@Nonnull final MatchedMethod input) {
-                        return input.extended;
-                    }
-                });
+                input -> input.extended);
         return extended.size() == 1 ? extended.iterator().next() : null;
     }
 }

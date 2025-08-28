@@ -23,7 +23,7 @@ public class AsyncResultMapper implements OCommandResultListener {
     private final AsyncQueryListener listener;
     private final Class<?> targetType;
     // collect results
-    private final List results = new ArrayList();
+    private final List results = new ArrayList<>();
 
     public AsyncResultMapper(final RecordConverter converter,
                              final AsyncQueryListener listener,
@@ -34,7 +34,7 @@ public class AsyncResultMapper implements OCommandResultListener {
     }
 
     @Override
-    @SuppressWarnings({"unchecked", "PMD.ConsecutiveLiteralAppends"})
+    @SuppressWarnings("unchecked")
     public boolean result(final Object rec) {
         // in all cases rec will be ORecord, but any other type would also be handled properly (just in case)
         try {

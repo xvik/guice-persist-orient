@@ -26,6 +26,6 @@ public abstract class PageSupportDelegate implements PageSupport {
                 page, pagesTotal);
         final int start = (page - 1) * pageSize;
         final List content = repository.getAll(start, pageSize);
-        return new Page(page, pagesTotal, count, pageSize, content);
+        return new Page<>(page, pagesTotal, count, pageSize, content);
     }
 }

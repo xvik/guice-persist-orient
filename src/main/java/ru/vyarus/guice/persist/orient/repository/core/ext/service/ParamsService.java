@@ -80,9 +80,9 @@ public class ParamsService {
                 final MethodParamExtension instance = injector.getInstance(extension);
                 context.extensionMap.put(extension, instance);
             }
-            context.extParams.put(extension, new ParamInfo(ext, pos, type));
+            context.extParams.put(extension, new ParamInfo<>(ext, pos, type));
         } else {
-            context.ordinal.add(new ParamInfo(pos, type));
+            context.ordinal.add(new ParamInfo<>(pos, type));
         }
     }
 
@@ -112,9 +112,9 @@ public class ParamsService {
      */
     @SuppressWarnings("checkstyle:VisibilityModifier")
     private static final class ProcessingContext {
-        public Map<Class<? extends MethodParamExtension>, MethodParamExtension> extensionMap =
+        public final Map<Class<? extends MethodParamExtension>, MethodParamExtension> extensionMap =
                 Maps.newLinkedHashMap();
-        public Multimap<Class<? extends MethodParamExtension>, ParamInfo> extParams = LinkedHashMultimap.create();
-        public List<ParamInfo> ordinal = Lists.newArrayList();
+        public final Multimap<Class<? extends MethodParamExtension>, ParamInfo> extParams = LinkedHashMultimap.create();
+        public final List<ParamInfo> ordinal = Lists.newArrayList();
     }
 }

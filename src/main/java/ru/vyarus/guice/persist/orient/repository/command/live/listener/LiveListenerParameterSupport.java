@@ -38,6 +38,7 @@ import static ru.vyarus.guice.persist.orient.repository.core.MethodExecutionExce
  */
 public class LiveListenerParameterSupport implements ListenerParameterSupport {
 
+    @SuppressWarnings("PMD.UseDiamondOperator")
     private static final Key<PersistentContext<ODatabaseDocument>> CONTEXT_KEY =
             Key.get(new TypeLiteral<PersistentContext<ODatabaseDocument>>() {
             });

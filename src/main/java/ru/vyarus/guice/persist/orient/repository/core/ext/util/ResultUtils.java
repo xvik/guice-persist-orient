@@ -104,7 +104,6 @@ public final class ResultUtils {
      * @param projection true to apply projection, false otherwise
      * @return converted result
      */
-    @SuppressWarnings("PMD.LooseCoupling")
     public static Object convertToArray(final Object result, final Class entityType, final boolean projection) {
         final Collection res = result instanceof Collection
                 // no projection because its applied later
@@ -129,7 +128,7 @@ public final class ResultUtils {
         }
         // "expensive" step, but will be executed only if projection is really required
         if (projection) {
-            final List tmp = new ArrayList();
+            final List tmp = new ArrayList<>();
             while (res.hasNext()) {
                 tmp.add(applyProjection(res.next(), targetEntity));
             }

@@ -5,7 +5,9 @@ import com.google.common.collect.Sets;
 import com.orientechnologies.orient.core.db.object.ODatabaseObject;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import com.orientechnologies.orient.object.metadata.schema.OSchemaProxyObject;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import jakarta.inject.Inject;
+import jakarta.inject.Provider;
+import jakarta.inject.Singleton;
 import ru.vyarus.guice.persist.orient.db.scheme.SchemeInitializationException;
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.core.ext.ExtensionsDescriptor;
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.core.ext.ExtensionsDescriptorFactory;
@@ -14,9 +16,6 @@ import ru.vyarus.guice.persist.orient.db.scheme.initializer.core.spi.field.Field
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.core.spi.type.TypeExtension;
 import ru.vyarus.guice.persist.orient.db.scheme.initializer.core.util.SchemeUtils;
 
-import jakarta.inject.Inject;
-import jakarta.inject.Provider;
-import jakarta.inject.Singleton;
 import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.Set;
@@ -46,7 +45,6 @@ import java.util.Set;
  * @since 04.03.2015
  */
 @Singleton
-@SuppressFBWarnings("URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
 public class ObjectSchemeInitializer {
     private final Set<Class<?>> processingCache = Sets.newHashSet();
 

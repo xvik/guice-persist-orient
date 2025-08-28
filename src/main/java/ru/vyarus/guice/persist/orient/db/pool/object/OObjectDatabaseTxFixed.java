@@ -29,19 +29,18 @@ public class OObjectDatabaseTxFixed extends OObjectDatabaseTx {
     }
 
     @Override
-    public <RET extends OCommandRequest> RET command(final OCommandRequest iCommand) {
-        return (RET) new OCommandSQLPojoWrapperFixed(this, underlying.command(iCommand));
+    public <R extends OCommandRequest> R command(final OCommandRequest iCommand) {
+        return (R) new OCommandSQLPojoWrapperFixed(this, underlying.command(iCommand));
     }
 
     @Override
     // changing access, required for fixed wrapper command
-    @SuppressWarnings("PMD.UselessOverridingMethod")
     public void convertParameters(final Object... iArgs) {
         super.convertParameters(iArgs);
     }
 
     @Override
-    public <RET> RET load(final ORID iRecordId, final String iFetchPlan, final boolean iIgnoreCache) {
+    public <R> R load(final ORID iRecordId, final String iFetchPlan, final boolean iIgnoreCache) {
         // fixing behaviour after record deletion under ongoing transaction (to unify with legacy behaviour)
         try {
            return super.load(iRecordId, iFetchPlan, iIgnoreCache);

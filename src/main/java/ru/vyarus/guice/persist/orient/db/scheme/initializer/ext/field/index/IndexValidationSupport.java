@@ -51,6 +51,7 @@ public class IndexValidationSupport {
      *
      * @param types allowed index types
      */
+    @SuppressWarnings("PMD.UseDiamondOperator")
     public void checkTypeCompatible(final OClass.INDEX_TYPE... types) {
         final Set<String> allowed = Sets.newHashSet(Iterables.transform(Arrays.asList(types),
                 new Function<OClass.INDEX_TYPE, String>() {

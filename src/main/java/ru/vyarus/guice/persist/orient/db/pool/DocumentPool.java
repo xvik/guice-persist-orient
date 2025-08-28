@@ -54,7 +54,6 @@ public class DocumentPool implements PoolManager<ODatabaseDocument> {
     }
 
     @Override
-    @SuppressWarnings("PMD.NullAssignment")
     public void stop() {
         if (pool != null) {
             pool.close();

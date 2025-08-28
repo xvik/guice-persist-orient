@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vyarus.guice.persist.orient.db.PersistentContext;
 import ru.vyarus.guice.persist.orient.db.transaction.TxConfig;
-import ru.vyarus.guice.persist.orient.db.transaction.template.TxAction;
 
 /**
  * Wraps {@link OCommandResultListener} with an external transaction (allows using thread bound connection
@@ -48,12 +47,7 @@ public class TransactionalAsyncAdapter implements OCommandResultListener {
             return safeResult(iRecord);
         } else {
             // wrapping in external transaction (non blocking case)
-            return context.doInTransaction(TxConfig.external(), new TxAction<Boolean>() {
-                @Override
-                public Boolean execute() throws Throwable {
-                    return safeResult(iRecord);
-                }
-            });
+            return context.doInTransaction(TxConfig.external(), () -> safeResult(iRecord));
         }
     }
 

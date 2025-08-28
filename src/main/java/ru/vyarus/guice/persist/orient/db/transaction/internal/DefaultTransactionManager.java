@@ -149,7 +149,7 @@ public class DefaultTransactionManager implements TransactionManager {
      * @param e      The exception to test for rollback
      */
     private boolean canRecover(final TxConfig config, final Throwable e) {
-        boolean commit = config.getRollbackOn().size() > 0;
+        boolean commit = !config.getRollbackOn().isEmpty();
 
         //check rollback clauses
         for (Class<? extends Exception> rollBackOn : config.getRollbackOn()) {

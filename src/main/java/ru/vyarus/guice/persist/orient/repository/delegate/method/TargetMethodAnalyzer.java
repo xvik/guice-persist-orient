@@ -11,7 +11,6 @@ import ru.vyarus.guice.persist.orient.repository.core.util.RepositoryUtils;
 import ru.vyarus.java.generics.resolver.GenericsResolver;
 import ru.vyarus.java.generics.resolver.context.GenericsContext;
 
-import javax.annotation.Nonnull;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -75,7 +74,7 @@ public final class TargetMethodAnalyzer {
         return possibilities;
     }
 
-    @SuppressWarnings({"unchecked", "PMD.AvoidInstantiatingObjectsInLoops"})
+    @SuppressWarnings("unchecked")
     private static MatchedMethod analyzeMethod(final Method method, final List<Class<?>> params,
                                                final GenericsContext targetGenerics) {
         final List<ParamInfo> ordinalParamsInfo = Lists.newArrayList();
@@ -86,7 +85,7 @@ public final class TargetMethodAnalyzer {
             // ignore extensions (they always add value)
             try {
                 if (ExtUtils.findParameterExtension(annotations[i]) == null) {
-                    ordinalParamsInfo.add(new ParamInfo(i, types.get(i)));
+                    ordinalParamsInfo.add(new ParamInfo<>(i, types.get(i)));
                 } else {
                     extended = true;
                 }
@@ -154,7 +153,6 @@ public final class TargetMethodAnalyzer {
      * @return descriptor if guessing was successful
      * @throws ru.vyarus.guice.persist.orient.repository.core.MethodDefinitionException if method guess fails
      */
-    @SuppressWarnings("PMD.AvoidLiteralsInIfCondition")
     private static Method resolveMethod(final String name, final List<Class<?>> params,
                                         final List<MatchedMethod> possibilities) {
         MatchedMethod result;
@@ -190,11 +188,7 @@ public final class TargetMethodAnalyzer {
                 "Can't detect exact target delegate method. Try to rename repository method to "
                         + "match repository method name or specify exact method using annotation."
                         + "Found possibilities: %s",
-                Joiner.on(",").join(Collections2.transform(possibilities, new Function<MatchedMethod, Object>() {
-                    @Override
-                    public Object apply(@Nonnull final MatchedMethod input) {
-                        return RepositoryUtils.methodToString(input.method);
-                    }
-                })));
+                Joiner.on(",").join(Collections2.transform(possibilities,
+                        (Function<MatchedMethod, Object>) input -> RepositoryUtils.methodToString(input.method))));
     }
 }

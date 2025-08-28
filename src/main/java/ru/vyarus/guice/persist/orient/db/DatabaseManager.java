@@ -67,12 +67,7 @@ public class DatabaseManager implements PersistService, Provider<OrientDB> {
         this.dataInitializer = dataInitializer;
         this.txTemplate = txTemplate;
         // sort pools to correct startup order
-        Collections.sort(this.pools, new Comparator<PoolManager>() {
-            @Override
-            public int compare(final PoolManager o1, final PoolManager o2) {
-                return o1.getType().compareTo(o2.getType());
-            }
-        });
+        Collections.sort(this.pools, Comparator.comparing(PoolManager::getType));
     }
 
     @Override

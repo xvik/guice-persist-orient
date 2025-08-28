@@ -119,7 +119,7 @@ public class AmendExtensionsService {
         return res;
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "PMD.UnnecessaryCast"})
     private List<AmendExecutionExtension> getParameterExtensions(final ParamsContext paramsContext) {
         final List<AmendExecutionExtension> extensions = Lists.newArrayList();
         for (MethodParamExtension ext : (List<MethodParamExtension>) paramsContext.getExtensions()) {

@@ -57,6 +57,6 @@ public class GenericParamExtension implements MethodParamExtension<DelegateMetho
 
         final Class<?> type = generics.generic(generic);
         check(type != null, "Generic type name '%s' not found in %s", generic, generics.currentClass());
-        return new ParamInfo(paramInfo.position, type);
+        return new ParamInfo<>(paramInfo.position, type);
     }
 }

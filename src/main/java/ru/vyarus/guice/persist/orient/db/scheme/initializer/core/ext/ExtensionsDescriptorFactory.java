@@ -67,7 +67,7 @@ public class ExtensionsDescriptorFactory {
         final Class<? extends TypeExtension> ext = ann.annotationType()
                 .getAnnotation(SchemeTypeInit.class).value();
         try {
-            return new ExtensionsDescriptor.Ext<TypeExtension, Class>(injector.getInstance(ext), ann, model);
+            return new ExtensionsDescriptor.Ext<>(injector.getInstance(ext), ann, model);
         } catch (Throwable th) {
             throw new SchemeInitializationException(String.format(
                     "Failed to create extension %s declared by annotation @%s on class %s",
@@ -89,7 +89,7 @@ public class ExtensionsDescriptorFactory {
         final Class<? extends FieldExtension> ext = ann.annotationType()
                 .getAnnotation(SchemeFieldInit.class).value();
         try {
-            return new ExtensionsDescriptor.Ext<FieldExtension, Field>(injector.getInstance(ext), ann, field);
+            return new ExtensionsDescriptor.Ext<>(injector.getInstance(ext), ann, field);
         } catch (Throwable th) {
             throw new SchemeInitializationException(String.format(
                     "Failed to create extension %s declared by annotation @%s on field %s#%s",

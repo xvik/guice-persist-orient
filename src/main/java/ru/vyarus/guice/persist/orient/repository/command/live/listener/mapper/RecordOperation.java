@@ -31,7 +31,7 @@ public enum RecordOperation {
      */
     LOADED(ORecordOperation.LOADED);
 
-    private byte otype;
+    private final byte otype;
 
     RecordOperation(final byte otype) {
         this.otype = otype;
@@ -49,7 +49,7 @@ public enum RecordOperation {
      * @return relative enum type
      */
     public static RecordOperation forType(final byte otype) {
-        for (RecordOperation op : RecordOperation.values()) {
+        for (RecordOperation op : values()) {
             if (op.otype == otype) {
                 return op;
             }

@@ -105,6 +105,7 @@ public class RepositoryModule extends AbstractModule {
     /**
      * Configures repository annotations interceptor.
      */
+    @SuppressWarnings("PMD.UseDiamondOperator")
     protected void configureAop() {
         final RepositoryMethodInterceptor proxy = new RepositoryMethodInterceptor();
         requestInjection(proxy);

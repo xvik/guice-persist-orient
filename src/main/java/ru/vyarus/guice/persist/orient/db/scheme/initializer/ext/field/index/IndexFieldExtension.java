@@ -31,6 +31,7 @@ public class IndexFieldExtension implements FieldExtension<Index> {
     }
 
     @Override
+    @SuppressWarnings("PMD.UnnecessaryVarargsArrayCreation")
     public void afterRegistration(final ODatabaseObject db, final SchemeDescriptor descriptor,
                                   final Field field, final Index annotation) {
         final String property = field.getName();

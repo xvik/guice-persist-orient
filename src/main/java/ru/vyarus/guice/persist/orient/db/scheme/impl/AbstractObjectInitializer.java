@@ -65,12 +65,7 @@ public abstract class AbstractObjectInitializer implements SchemeInitializer {
      */
     private List<Class<?>> scan() {
         final List<Class<?>> modelClasses = Lists.newArrayList();
-        final Predicate<Class<?>> predicate = new Predicate<Class<?>>() {
-            @Override
-            public boolean apply(final Class<?> input) {
-                return classMatcher.matches(input);
-            }
-        };
+        final Predicate<Class<?>> predicate = classMatcher::matches;
         for (String pkg : packages) {
             try {
                 final List<Class<?>> classes = OReflectionHelper

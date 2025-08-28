@@ -91,7 +91,7 @@ public class CommandParamsContext extends ParamsContext<CommandMethodDescriptor>
                 "Ordinal and named parameters can't be used together");
         if (named.isEmpty()) {
             desc.parametersIndex = Lists.transform(getOrdinals(), PARAM_INDEX_FUNCTION)
-                    .toArray(new Integer[getOrdinals().size()]);
+                    .toArray(new Integer[0]);
         } else {
             desc.useNamedParameters = true;
             desc.namedParametersIndex = Maps.transformValues(named, PARAM_INDEX_FUNCTION);

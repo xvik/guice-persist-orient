@@ -5,7 +5,6 @@ import com.google.common.collect.Lists;
 import com.orientechnologies.orient.core.db.object.ODatabaseObject;
 import com.orientechnologies.orient.core.metadata.schema.OClass;
 import com.orientechnologies.orient.core.sql.OCommandSQL;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.slf4j.Logger;
 
 import java.util.List;
@@ -90,7 +89,6 @@ public final class SchemeUtils {
      * @param indexName index name
      * @see com.orientechnologies.orient.core.index.OIndexManagerProxy#dropIndex(java.lang.String)
      */
-    @SuppressFBWarnings("RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT")
     public static void dropIndex(final ODatabaseObject db, final String indexName) {
         // Separated to overcome findbugs false positive "RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT" for dropIndex method.
         db.getMetadata().getIndexManager().dropIndex(indexName);

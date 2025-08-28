@@ -15,23 +15,14 @@ public final class Converters {
      * Uses object toString method.
      * If value is null, null returned.
      */
-    public static final ValueConverter<Object> DEFAULT = new ValueConverter<Object>() {
-        @Override
-        public String convert(final Object value) {
-            return value == null ? null : Strings.emptyToNull(value.toString());
-        }
-    };
+    public static final ValueConverter<Object> DEFAULT = value -> value == null
+            ? null : Strings.emptyToNull(value.toString());
 
     /**
      * Class value converter.
      * Returns class name or null if null provided.
      */
-    public static final ValueConverter<Class> CLASS = new ValueConverter<Class>() {
-        @Override
-        public String convert(final Class value) {
-            return value == null ? "" : value.getSimpleName();
-        }
-    };
+    public static final ValueConverter<Class> CLASS = value -> value == null ? "" : value.getSimpleName();
 
     private Converters() {
     }

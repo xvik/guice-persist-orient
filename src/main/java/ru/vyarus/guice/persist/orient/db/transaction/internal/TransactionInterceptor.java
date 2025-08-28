@@ -1,16 +1,15 @@
 package ru.vyarus.guice.persist.orient.db.transaction.internal;
 
 
+import jakarta.inject.Inject;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vyarus.guice.persist.orient.db.transaction.TransactionManager;
 import ru.vyarus.guice.persist.orient.db.transaction.TxConfig;
-import ru.vyarus.guice.persist.orient.db.transaction.template.TxAction;
 import ru.vyarus.guice.persist.orient.db.transaction.template.TxTemplate;
 
-import jakarta.inject.Inject;
 import java.lang.reflect.Method;
 
 /**
@@ -38,12 +37,7 @@ public class TransactionInterceptor implements MethodInterceptor {
             final TxConfig config = AnnotationTxConfigBuilder
                     .buildConfig(invocation.getThis().getClass(), method, true);
             logger.trace("Starting transaction for annotated method {}", method.getName());
-            res = template.doInTransaction(config, new TxAction<Object>() {
-                @Override
-                public Object execute() throws Throwable {
-                    return invocation.proceed();
-                }
-            });
+            res = template.doInTransaction(config, invocation::proceed);
         }
         return res;
     }

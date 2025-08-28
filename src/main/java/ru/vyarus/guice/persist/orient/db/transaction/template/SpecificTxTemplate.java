@@ -49,11 +49,6 @@ public class SpecificTxTemplate<C> {
      */
     public <T> T doInTransaction(final TxConfig config,
                                  final SpecificTxAction<T, C> action) {
-        return template.doInTransaction(config, new TxAction<T>() {
-            @Override
-            public T execute() throws Throwable {
-                return action.execute(provider.get());
-            }
-        });
+        return template.doInTransaction(config, () -> action.execute(provider.get()));
     }
 }

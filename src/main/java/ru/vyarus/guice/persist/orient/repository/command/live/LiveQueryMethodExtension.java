@@ -58,6 +58,6 @@ public class LiveQueryMethodExtension extends AbstractCommandExtension<CommandMe
     protected OCommandRequest createQueryCommand(final CommandMethodDescriptor descriptor,
                                                  final SqlCommandDescriptor desc) {
         // live listener will be applied by @Listen extension
-        return new OLiveQuery<Object>(desc.command, null);
+        return new OLiveQuery<>(desc.command, null);
     }
 }

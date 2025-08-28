@@ -1,7 +1,6 @@
 package ru.vyarus.guice.persist.orient.repository.core.ext.util;
 
 import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import org.slf4j.Logger;
@@ -55,6 +54,7 @@ public final class ExtCompatibilityUtils {
      * @param descriptorType method descriptor type
      * @param extensions     amend extension annotations
      */
+    @SuppressWarnings("PMD.UseDiamondOperator")
     public static void checkAmendExtensionsCompatibility(
             final Class<? extends RepositoryMethodDescriptor> descriptorType,
             final List<Annotation> extensions) {
@@ -103,17 +103,14 @@ public final class ExtCompatibilityUtils {
         final Class<? extends AmendExecutionExtension> supportedExtension =
                 (Class<? extends AmendExecutionExtension>) GenericsResolver.resolve(descriptorType)
                         .type(RepositoryMethodDescriptor.class).generic("E");
-        return Lists.newArrayList(Iterables.filter(extensions, new Predicate<AmendExecutionExtension>() {
-            @Override
-            public boolean apply(@Nonnull final AmendExecutionExtension ext) {
-                final Class<?> rawExtType = RepositoryUtils.resolveRepositoryClass(ext);
-                final boolean compatible = supportedExtension.isAssignableFrom(rawExtType);
-                if (!compatible) {
-                    LOGGER.debug("Extension {} ignored, because it doesn't implement required extension "
-                            + "interface {}", rawExtType.getSimpleName(), supportedExtension.getSimpleName());
-                }
-                return compatible;
+        return Lists.newArrayList(Iterables.filter(extensions, ext -> {
+            final Class<?> rawExtType = RepositoryUtils.resolveRepositoryClass(ext);
+            final boolean compatible = supportedExtension.isAssignableFrom(rawExtType);
+            if (!compatible) {
+                LOGGER.debug("Extension {} ignored, because it doesn't implement required extension "
+                        + "interface {}", rawExtType.getSimpleName(), supportedExtension.getSimpleName());
             }
+            return compatible;
         }));
     }
 }

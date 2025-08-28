@@ -32,6 +32,7 @@ public final class ExtUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ExtUtils.class);
 
+    @SuppressWarnings("PMD.UseDiamondOperator")
     private static final Function<Annotation, Class> ANNOTATION_CLASS_FUNCTION = new Function<Annotation, Class>() {
         @Nonnull
         @Override
