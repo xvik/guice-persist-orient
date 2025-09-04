@@ -28,8 +28,6 @@ ext {
 
 repositories { mavenLocal(); mavenCentral() }
 dependencies {
-    compileOnly 'com.github.spotbugs:spotbugs-annotations:4.8.6'
-
     implementation 'org.slf4j:slf4j-api:1.7.36'
 
     implementation 'ru.vyarus:generics-resolver:3.0.3'
