@@ -28,7 +28,7 @@ ext {
 
 repositories { mavenLocal(); mavenCentral() }
 dependencies {
-    implementation 'org.slf4j:slf4j-api:1.7.36'
+    implementation 'org.slf4j:slf4j-api:2.0.17'
 
     implementation 'ru.vyarus:generics-resolver:3.0.3'
     implementation 'ru.vyarus:guice-ext-annotations:2.0.1'
@@ -40,8 +40,8 @@ dependencies {
     provided "com.orientechnologies:orientdb-graphdb:$orient"
     provided "com.orientechnologies:orientdb-lucene:$orient"
 
-    testImplementation 'ch.qos.logback:logback-classic:1.3.14'
-    testImplementation 'org.slf4j:jul-to-slf4j:1.7.36'
+    testImplementation 'ch.qos.logback:logback-classic:1.5.21'
+    testImplementation 'org.slf4j:jul-to-slf4j:2.0.17'
     testImplementation 'org.spockframework:spock-guice:1.3-groovy-2.5'
     testImplementation 'ru.vyarus:guice-validator:3.0.2'
     testImplementation 'org.hibernate:hibernate-validator:7.0.1.Final'
