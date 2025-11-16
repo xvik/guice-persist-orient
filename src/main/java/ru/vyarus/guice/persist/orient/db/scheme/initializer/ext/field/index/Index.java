@@ -21,13 +21,13 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * {@link ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.field.index.lucene.LuceneIndex}.
  * <p>
  * To make index
- * <a href="https://orientdb.org/docs/3.1.x/indexing/Indexes.html#case-insensitive-matching-with-indexes">
+ * <a href="https://orientdb.dev/docs/3.1.x/indexing/Indexes.html#case-insensitive-matching-with-indexes">
  * case insensitive</a> use {@link ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.field.ci.CaseInsensitive}
  * annotation on field (in orient index ci and property ci flags are the same).
  *
  * @author Vyacheslav Rusakov
- * @see <a href="https://orientdb.org/docs/3.1.x/indexing/Indexes.html">docs</a>
- * @see <a href="https://orientdb.org/docs/3.1.x/sql/SQL-Create-Index.html">create index doc</a>
+ * @see <a href="https://orientdb.dev/docs/3.1.x/indexing/Indexes.html">docs</a>
+ * @see <a href="https://orientdb.dev/docs/3.1.x/sql/SQL-Create-Index.html">create index doc</a>
  * @since 09.03.2015
  */
 @Target(FIELD)
@@ -47,7 +47,7 @@ public @interface Index {
 
     /**
      * @return false to allow null values, true (by default) to ignore null values
-     * @see <a href="https://orientdb.org/docs/3.1.x/sql/SQL-Create-Index.html">docs</a>
+     * @see <a href="https://orientdb.dev/docs/3.1.x/sql/SQL-Create-Index.html">docs</a>
      */
     boolean ignoreNullValues() default true;
 

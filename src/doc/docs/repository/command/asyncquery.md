@@ -3,7 +3,7 @@
 !!! summary ""
     Command method extension
 
-Executes query [asynchronously](https://orientdb.org/docs/3.1.x/java/Document-API-Documents.html#asynchronous-queries). 
+Executes query [asynchronously](https://orientdb.dev/docs/3.1.x/java/Document-API-Documents.html#asynchronous-queries). 
 By default, async query execution is blocking: method is blocking while listener is called (and listener is executed at the same thread). Such query is useful for dynamic filtering: results are analyzed one by one and you can manually stop further results processing.
 
 Example: 

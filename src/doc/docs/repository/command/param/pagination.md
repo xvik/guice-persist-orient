@@ -3,7 +3,7 @@
 !!! summary ""
     Command method param extension
 
-Annotates [pagination](https://orientdb.org/docs/3.1.x/sql/Pagination.html) parameters (of course, may be used separately). 
+Annotates [pagination](https://orientdb.dev/docs/3.1.x/sql/Pagination.html) parameters (of course, may be used separately). 
 
 ```java
 @Query("select from Model")

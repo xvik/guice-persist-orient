@@ -3,7 +3,7 @@
 !!! summary ""
     Scope: property
 
-Marks property as [mandatory](https://orientdb.org/docs/3.1.x/sql/SQL-Alter-Property.html) (orient scheme marker)
+Marks property as [mandatory](https://orientdb.dev/docs/3.1.x/sql/SQL-Alter-Property.html) (orient scheme marker)
 
 ```java
 public class MyModel {

@@ -35,7 +35,7 @@ import java.lang.annotation.Target;
  * {@link ru.vyarus.guice.persist.orient.repository.command.ext.elvar.ElVar}).
  *
  * @author Vyacheslav Rusakov
- * @see <a href="https://orientdb.org/docs/3.1.x/java/Document-API-Documents.html#asynchronous-queries">docs</a>
+ * @see <a href="https://orientdb.dev/docs/3.1.x/java/Document-API-Documents.html#asynchronous-queries">docs</a>
  * @see ru.vyarus.guice.persist.orient.repository.command.async.listener.mapper.AsyncQueryListener
  * @see com.orientechnologies.orient.core.command.OCommandResultListener
  * @see ru.vyarus.guice.persist.orient.repository.command.ext.listen.Listen
@@ -74,7 +74,7 @@ public @interface AsyncQuery {
      * not to use connection inside listener at all (async listener should be fast).
      *
      * @return true to wait for query while listener process results, false to call listener in separate threads
-     * @see <a href="https://orientdb.org/docs/3.1.x/java/Document-API-Documents.html#non-blocking-queries">doc</a>
+     * @see <a href="https://orientdb.dev/docs/3.1.x/java/Document-API-Documents.html#non-blocking-queries">doc</a>
      */
     boolean blocking() default true;
 }

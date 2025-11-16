@@ -14,7 +14,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * Sample sql: alter property Model.name mandatory true.
  *
  * @author Vyacheslav Rusakov
- * @see <a href="https://orientdb.org/docs/3.1.x/sql/SQL-Alter-Property.html">docs</a>
+ * @see <a href="https://orientdb.dev/docs/3.1.x/sql/SQL-Alter-Property.html">docs</a>
  * @since 08.03.2015
  */
 @Target(FIELD)

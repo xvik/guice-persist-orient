@@ -19,7 +19,7 @@ import jakarta.inject.Singleton;
 /**
  * User manager holds context user credentials. Using different user may be important
  * for scheme initialization (when user with higher rights may be required) or to
- * rely on <a href="https://orientdb.org/docs/3.1.x/security/Security.html">orient security model</a>.
+ * rely on <a href="https://orientdb.dev/docs/3.1.x/security/Security.html">orient security model</a>.
  * <p>
  * By default, configured user and password returned. To use specific user use
  * {@code executeWithUser} method. Specific user binds to current thread. Most likely,

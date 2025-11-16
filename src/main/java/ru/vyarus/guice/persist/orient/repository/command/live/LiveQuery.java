@@ -29,7 +29,7 @@ import java.lang.annotation.Target;
  * {@link ru.vyarus.guice.persist.orient.repository.command.ext.elvar.ElVar}).
  *
  * @author Vyacheslav Rusakov
- * @see <a href="https://orientdb.org/docs/3.1.x/java/Live-Query.html">docs</a>
+ * @see <a href="https://orientdb.dev/docs/3.1.x/java/Live-Query.html">docs</a>
  * @see ru.vyarus.guice.persist.orient.repository.command.ext.listen.Listen
  * @see com.orientechnologies.orient.core.sql.query.OLiveResultListener
  * @see ru.vyarus.guice.persist.orient.repository.command.live.listener.mapper.LiveQueryListener

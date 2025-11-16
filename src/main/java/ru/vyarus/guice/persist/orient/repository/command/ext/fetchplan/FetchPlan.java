@@ -19,7 +19,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * If parameter value is empty (null) and no default value specified, fetch plan is not set at all.
  *
  * @author Vyacheslav Rusakov
- * @see <a href="https://orientdb.org/docs/3.1.x/java/Fetching-Strategies.html">docs</a>
+ * @see <a href="https://orientdb.dev/docs/3.1.x/java/Fetching-Strategies.html">docs</a>
  * @since 23.02.2015
  */
 @Documented

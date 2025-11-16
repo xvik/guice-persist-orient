@@ -3,7 +3,7 @@
 !!! summary ""
     Command method extension
 
-Allows you to write small scripts in [sql](https://orientdb.org/docs/3.1.x/sql/SQL-batch.html), [javascript](https://orientdb.org/docs/3.1.x/js/Javascript-Command.html) or any other scripting language.
+Allows you to write small scripts in [sql](https://orientdb.dev/docs/3.1.x/sql/SQL-batch.html), [javascript](https://orientdb.dev/docs/3.1.x/js/Javascript-Command.html) or any other scripting language.
 
 For example:
 

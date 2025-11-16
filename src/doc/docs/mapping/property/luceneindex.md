@@ -3,7 +3,7 @@
 !!! summary ""
     Scope: property
 
-Creates [lucene fulltext index](https://orientdb.org/docs/3.1.x/indexing/FullTextIndex.html) for annotated field.
+Creates [lucene fulltext index](https://orientdb.dev/docs/3.1.x/indexing/FullTextIndex.html) for annotated field.
 
 `com.orientechnologies:orientdb-lucene:2.2.33` dependency must be installed to use lucene index.
 

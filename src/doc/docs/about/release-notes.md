@@ -10,7 +10,7 @@
 
 Release targets orient 3.1 compatibility. No api or behaviour changes.
 
-[Orient 3.1 release notes](https://orientdb.org/docs/3.1.x/release/3.1/What-is-new-in-OrientDB-3.1.html)
+[Orient 3.1 release notes](https://orientdb.dev/docs/3.1.x/release/3.1/What-is-new-in-OrientDB-3.1.html)
 
 Also, see guice-persist-orient [4.0.0 release notes](http://xvik.github.io/guice-persist-orient/4.0.0/about/release-notes/) 
 for orient 3 related updates.
@@ -25,7 +25,7 @@ for orient 3 related updates.
 Remains the same from version 4.0.0 (due to not migrated repositories):
 
 - Conversion for new OVertex and OEdge objects not supported
-- [Streaming api](https://orientdb.org/docs/3.1.x/java/Java-Query-API.html#streamin-api) not supported
+- [Streaming api](https://orientdb.dev/docs/3.1.x/java/Java-Query-API.html#streamin-api) not supported
 - Live queries unsubscription method might not be called on remote connection in some cases (looks like a bug)
 - Functions, executed through object api, might produce incorrect results (with nulls).
   Marker exception would be thrown to indicate this case.

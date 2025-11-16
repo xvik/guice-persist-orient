@@ -21,7 +21,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * one created.
  *
  * @author Vyacheslav Rusakov
- * @see <a href="https://orientdb.org/docs/3.1.x/indexing/Full-Text-Index.html">docs</a>
+ * @see <a href="https://orientdb.dev/docs/3.1.x/indexing/Full-Text-Index.html">docs</a>
  * @since 20.06.2015
  */
 @Target(TYPE)
