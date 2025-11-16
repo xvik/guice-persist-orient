@@ -35,9 +35,22 @@ Features:
 * Basic crud mixins with ability to use object api for graphs
 * [Compatible with Play framework](https://github.com/xvik/guice-persist-orient-play-example)
 
-### Thanks to
+### The state of OrientDB
 
-* [Derric Gilling](https://github.com/dgilling) for help with playframework compatibility
+OrientDB was bought by SAP, which stopped paid support but continued supporting a tiny team 
+working on it. As a consequence, previously enterprise features (profiler) are open-sourced now. 
+
+**OrientDB is alive**:
+bugfix releases are made [every few months](https://github.com/orientechnologies/orientdb/releases), 
+new features are added (very slowly).
+[OrientDB 4](https://github.com/orientechnologies/orientdb/discussions/10339) is also in work (will not release soon).
+
+The original author of OrientDB Luca Garulli [has started](https://github.com/orientechnologies/orientdb/issues/9734) a 
+new db https://arcadedb.com/ (only query engine was forked - overall it's a different project) 
+
+In 2024, one of the core developers Andrii Lomakin has forked orient as https://youtrackdb.io/. 
+Work in progress, no releases yet but looks very promising - this db should be 
+[used inside](https://youtrack.jetbrains.com/articles/YTDB-A-3/Project-roadmap) JetBrains YouTrack    
 
 ### Setup
 
