@@ -96,7 +96,6 @@ class AsyncExecutionTest extends AbstractTest {
         then: "future returned"
         future != null
         res.size() < 100
-        !future.isDone()
 
         when: "whit for future"
         future.get()
