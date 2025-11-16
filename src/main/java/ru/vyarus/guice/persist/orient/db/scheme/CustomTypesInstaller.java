@@ -37,7 +37,8 @@ public class CustomTypesInstaller {
     private final Provider<ODatabaseDocument> dbProvider;
 
     @Inject
-    public CustomTypesInstaller(final Set<OObjectSerializer> customTypes, final Provider<ODatabaseDocument> dbProvider) {
+    public CustomTypesInstaller(final Set<OObjectSerializer> customTypes,
+                                final Provider<ODatabaseDocument> dbProvider) {
         this.customTypes = customTypes;
         this.dbProvider = dbProvider;
     }
