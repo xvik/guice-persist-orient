@@ -12,4 +12,6 @@ class User extends VersionedEntity {
     String name
     // custom type
     SecurityRole role
+    // custom non-enum type
+    CustomClass type;
 }

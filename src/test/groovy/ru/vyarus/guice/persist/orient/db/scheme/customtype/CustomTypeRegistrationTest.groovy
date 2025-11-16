@@ -5,7 +5,9 @@ import com.orientechnologies.orient.core.metadata.schema.OType
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx
 import ru.vyarus.guice.persist.orient.AbstractTest
 import ru.vyarus.guice.persist.orient.OrientModule
+import ru.vyarus.guice.persist.orient.db.scheme.customtype.support.CustomClassSerializer
 import ru.vyarus.guice.persist.orient.db.scheme.customtype.support.SecurityRoleSerializer
+import ru.vyarus.guice.persist.orient.db.scheme.customtype.support.model.CustomClass
 import ru.vyarus.guice.persist.orient.db.scheme.customtype.support.model.SecurityRole
 import ru.vyarus.guice.persist.orient.db.scheme.customtype.support.model.User
 import ru.vyarus.guice.persist.orient.db.transaction.template.SpecificTxAction
@@ -33,11 +35,12 @@ class CustomTypeRegistrationTest extends AbstractTest {
             assert db.entityManager.registeredEntities.contains(User)
             assert db.metadata.schema.getClass(User).getProperty('role').type == OType.STRING
 
-            db.save(new User(name: 'secured', role: SecurityRole.ADMIN))
+            db.save(new User(name: 'secured', role: SecurityRole.ADMIN, type: new CustomClass('val')))
             User res = db.browseClass(User).next()
 
             assert res.name == 'secured'
             assert res.role == SecurityRole.ADMIN
+            assert res.type.value == 'val'
 
             true
         } as SpecificTxAction<Boolean, OObjectDatabaseTx>)
@@ -50,7 +53,8 @@ class CustomTypeRegistrationTest extends AbstractTest {
 
         @Override
         protected void configure() {
-            install(new OrientModule(Config.DB, Config.USER, Config.PASS).withCustomTypes(SecurityRoleSerializer))
+            install(new OrientModule(Config.DB, Config.USER, Config.PASS)
+                    .withCustomTypes(SecurityRoleSerializer, CustomClassSerializer))
             install(new AutoScanSchemeModule(User.package.name))
         }
     }

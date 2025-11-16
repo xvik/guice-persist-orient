@@ -82,12 +82,13 @@ public class DatabaseManager implements PersistService, Provider<OrientDB> {
         startPools();
         logger.debug("Registered types: {}", supportedTypes);
         logger.debug("Initializing database: '{}'", factory.getUri());
-        customTypesInstaller.install(factory.getUri());
         // no tx (because of schema update - orient requirement)
         try {
             txTemplate.doInTransaction(new TxConfig(OTransaction.TXTYPE.NOTX), new TxAction<Void>() {
                 @Override
                 public Void execute() throws Throwable {
+                    // custom types are global, but in case of custom class it deregisters type in the current schema
+                    customTypesInstaller.install();
                     modelInitializer.initialize();
                     return null;
                 }

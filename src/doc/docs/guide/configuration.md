@@ -97,7 +97,7 @@ install(new OrientModule(url, user, password)
 
 ## Custom orient types
 
-You may need to use orient [custom types](https://orientdb.dev/docs/3.1.x/java/Object-2-Record-Java-Binding.html)
+You may need to use orient [custom types](https://orientdb.dev/docs/3.1.x/java/Object-2-Record-Java-Binding.html#custom-types)
 (custom converter to/from object, used *only in object connection*).
 
 To register custom type:
