@@ -34,7 +34,7 @@ import java.util.Collection;
  * (look wrapper objects api to know available methods).
  *
  * @author Vyacheslav Rusakov
- * @see <a href="https://orientdb.dev/docs/3.1.x/sql/SQL-batch.html">docs</a>
+ * @see <a href="https://orientdb.dev/docs/3.2.x/sql/SQL-batch.html">docs</a>
  * @since 25.02.2015
  */
 @Target(ElementType.METHOD)

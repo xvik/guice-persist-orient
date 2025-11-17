@@ -3,7 +3,7 @@
 !!! summary ""
     Scope: property
 
-Creates [fulltext index](https://orientdb.dev/docs/3.1.x/indexing/FullTextIndex.html) for annotated field.
+Creates [fulltext index](https://orientdb.dev/docs/3.2.x/indexing/FullTextIndex.html) for annotated field.
 
 ```java
 public class MyModel {

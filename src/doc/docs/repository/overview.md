@@ -122,7 +122,7 @@ public abstract class MyDao {
 
 ## Usage examples
 
-[Function](https://orientdb.dev/docs/3.1.x/admin/Functions.html) call:
+[Function](https://orientdb.dev/docs/3.2.x/admin/Functions.html) call:
 
 ```java
 @Function("function1")
@@ -143,7 +143,7 @@ Named parameters:
 List<Model> parametersNamed(@Param("name") String name, @Param("nick") String nick)
 ```
 
-[Pagination](https://orientdb.dev/docs/3.1.x/sql/Pagination.html):
+[Pagination](https://orientdb.dev/docs/3.2.x/sql/Pagination.html):
 
 ```java
 @Query("select from Model where name=? and nick=?")
@@ -157,14 +157,14 @@ List<Model> parametersPaged(String name, String nick, @Skip int skip, @Limit int
 List<Model> findBy(@ElVar("prop") String prop, String value)
 ```
 
-[Fetch plan](https://orientdb.dev/docs/3.1.x/java/Fetching-Strategies.html) parameter:
+[Fetch plan](https://orientdb.dev/docs/3.2.x/java/Fetching-Strategies.html) parameter:
 
 ```java
 @Query("select from Model")
 List<Model> selectAll(@FetchPlan("*:0") String plan);
 ```
 
-[Sql](https://orientdb.dev/docs/3.1.x/sql/SQL-batch.html) script:
+[Sql](https://orientdb.dev/docs/3.2.x/sql/SQL-batch.html) script:
 
 ```java
 @Script("begin" +
@@ -176,7 +176,7 @@ List<Model> selectAll(@FetchPlan("*:0") String plan);
 Edge linkCity(@Param("name") String name, @Param("city") String city)
 ```
 
-[Js](https://orientdb.dev/docs/3.1.x/js/Javascript-Command.html) script:
+[Js](https://orientdb.dev/docs/3.2.x/js/Javascript-Command.html) script:
 
 ```java
 @Script(language = "javascript", value =
@@ -186,7 +186,7 @@ Edge linkCity(@Param("name") String name, @Param("city") String city)
 void jsScript()
 ```
 
-[Async](https://orientdb.dev/docs/3.1.x/java/Document-API-Documents.html#asynchronous-queries) query:
+[Async](https://orientdb.dev/docs/3.2.x/java/Document-API-Documents.html#asynchronous-queries) query:
 
 ```java
 @AsyncQuery("select from Model")
@@ -234,7 +234,7 @@ public class SomeBean {
 List getAll();
 ```
 
-[Live](https://orientdb.dev/docs/3.1.x/java/Live-Query.html) query:
+[Live](https://orientdb.dev/docs/3.2.x/java/Live-Query.html) query:
 
 ```java
 @LiveQuery("select from Model")

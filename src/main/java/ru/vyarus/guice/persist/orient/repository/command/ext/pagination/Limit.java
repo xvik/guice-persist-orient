@@ -14,7 +14,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * For pagination ise it with {@link Skip} annotation.
  *
  * @author Vyacheslav Rusakov
- * @see <a href="https://orientdb.dev/docs/3.1.x/sql/Pagination.html">docs</a>
+ * @see <a href="https://orientdb.dev/docs/3.2.x/sql/Pagination.html">docs</a>
  * @since 06.02.2015
  */
 @Documented

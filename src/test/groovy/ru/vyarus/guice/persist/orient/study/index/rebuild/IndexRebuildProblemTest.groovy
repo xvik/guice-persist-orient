@@ -15,7 +15,7 @@ import jakarta.inject.Inject
 /**
  * https://github.com/xvik/guice-persist-orient/issues/16 reproduction test.
  * I was not able to reproduce, but changed index creation to officially supported way:
- * https://orientdb.dev/docs/3.1.x/indexing/Indexes.html#indexes-and-null-values
+ * https://orientdb.dev/docs/3.2.x/indexing/Indexes.html#indexes-and-null-values
  *
  * @author Vyacheslav Rusakov
  * @since 10.01.2018

@@ -24,8 +24,8 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * Sample sql: alter class Model superclass E, create class Model extends E.
  *
  * @author Vyacheslav Rusakov
- * @see <a href="https://orientdb.dev/docs/3.1.x/sql/SQL-Alter-Class.html">alter docs</a>
- * @see <a href="https://orientdb.dev/docs/3.1.x/sql/SQL-Create-Class.html">create docs</a>
+ * @see <a href="https://orientdb.dev/docs/3.2.x/sql/SQL-Alter-Class.html">alter docs</a>
+ * @see <a href="https://orientdb.dev/docs/3.2.x/sql/SQL-Create-Class.html">create docs</a>
  * @since 03.08.2014
  */
 @Documented

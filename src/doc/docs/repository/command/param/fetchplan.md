@@ -3,7 +3,7 @@
 !!! summary ""
     Command method param extension
 
-Annotates parameter as [fetch plan](https://orientdb.dev/docs/3.1.x/java/Fetching-Strategies.html) value. 
+Annotates parameter as [fetch plan](https://orientdb.dev/docs/3.2.x/java/Fetching-Strategies.html) value. 
 This is useful for universal queries to use different fetch plans with different calls.
 
 ```java

@@ -30,11 +30,11 @@ Internally `OSQLSynchQuery` used for selects and `OCommandSQL` for updates and i
 
 Documentation links:
 
-* [SQL](https://orientdb.dev/docs/3.1.x/sql/)
-* [functions](https://orientdb.dev/docs/3.1.x/sql/SQL-Functions.html)
-* [methods](https://orientdb.dev/docs/3.1.x/sql/SQL-Methods.html)
-* [document api](https://orientdb.dev/docs/3.1.x/java/Document-Database.html)
-* [attributes](https://orientdb.dev/docs/3.1.x/sql/SQL-Where.html#record-attributes)
-* [default variables](https://orientdb.dev/docs/3.1.x/sql/SQL-Where.html#variables)
-* [traverse](https://orientdb.dev/docs/3.1.x/sql/SQL-Traverse.html)
-* [query indexes](https://orientdb.dev/docs/3.1.x/sql/SQL-Introduction.html#automatic-usage-of-indexes)
+* [SQL](https://orientdb.dev/docs/3.2.x/sql/)
+* [functions](https://orientdb.dev/docs/3.2.x/sql/SQL-Functions.html)
+* [methods](https://orientdb.dev/docs/3.2.x/sql/SQL-Methods.html)
+* [document api](https://orientdb.dev/docs/3.2.x/java/Document-Database.html)
+* [attributes](https://orientdb.dev/docs/3.2.x/sql/SQL-Where.html#record-attributes)
+* [default variables](https://orientdb.dev/docs/3.2.x/sql/SQL-Where.html#variables)
+* [traverse](https://orientdb.dev/docs/3.2.x/sql/SQL-Traverse.html)
+* [query indexes](https://orientdb.dev/docs/3.2.x/sql/SQL-Introduction.html#automatic-usage-of-indexes)

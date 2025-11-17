@@ -23,7 +23,7 @@ import java.util.Collection;
  * {@code @Function("function1")}
  *
  * @author Vyacheslav Rusakov
- * @see <a href="https://orientdb.dev/docs/3.1.x/admin/Functions.html">docs</a>
+ * @see <a href="https://orientdb.dev/docs/3.2.x/admin/Functions.html">docs</a>
  * @since 02.02.2015
  */
 @Target(ElementType.METHOD)

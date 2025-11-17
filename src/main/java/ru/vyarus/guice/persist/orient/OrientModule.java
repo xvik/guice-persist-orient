@@ -257,7 +257,7 @@ public class OrientModule extends PersistModule {
      * @param serializers custom type serializers
      * @return module itself for chained calls
      * @see CustomTypesInstaller
-     * @see <a href="https://orientdb.dev/docs/3.1.x/java/Object-2-Record-Java-Binding.html#custom-types">
+     * @see <a href="https://orientdb.dev/docs/3.2.x/java/Object-2-Record-Java-Binding.html#custom-types">
      *     custom types</a>
      */
     public OrientModule withCustomTypes(final Class<? extends OObjectSerializer>... serializers) {

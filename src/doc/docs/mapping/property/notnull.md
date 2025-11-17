@@ -3,7 +3,7 @@
 !!! summary ""
     Scope: property
 
-Marks property as [not null](https://orientdb.dev/docs/3.1.x/sql/SQL-Alter-Property.html) (orient scheme marker)
+Marks property as [not null](https://orientdb.dev/docs/3.2.x/sql/SQL-Alter-Property.html) (orient scheme marker)
 
 ```java
 public class MyModel {
