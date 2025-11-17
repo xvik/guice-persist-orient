@@ -37,12 +37,15 @@ dependencies {
     implementation "com.google.inject.extensions:guice-persist:$guice"
     implementation "com.orientechnologies:orientdb-core:$orient"
     provided "com.orientechnologies:orientdb-object:$orient"
-    provided "com.orientechnologies:orientdb-graphdb:$orient"
+    provided ("com.orientechnologies:orientdb-graphdb:$orient") {
+        exclude group: "org.codehaus.groovy"
+    }
     provided "com.orientechnologies:orientdb-lucene:$orient"
 
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.14.1'
     testImplementation 'ch.qos.logback:logback-classic:1.3.16'
     testImplementation 'org.slf4j:jul-to-slf4j:2.0.17'
-    testImplementation 'org.spockframework:spock-guice:1.3-groovy-2.5'
+    testImplementation 'org.spockframework:spock-guice:2.4-M6-groovy-4.0'
     testImplementation 'ru.vyarus:guice-validator:3.0.2'
     testImplementation 'org.hibernate:hibernate-validator:7.0.1.Final'
     testImplementation 'org.glassfish:jakarta.el:4.0.2'
@@ -51,6 +54,8 @@ dependencies {
     if (JavaVersion.current() >= JavaVersion.VERSION_15) {
         testImplementation 'org.openjdk.nashorn:nashorn-core:15.7'
     }
+
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.14.1'
 }
 
 group = 'ru.vyarus'
@@ -120,7 +125,7 @@ afterReleaseBuild {
 }
 
 test {
-//    useJUnitPlatform()
+    useJUnitPlatform()
     testLogging {
         events 'skipped', 'failed'
         exceptionFormat = 'full'

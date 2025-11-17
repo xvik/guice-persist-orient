@@ -1,26 +1,58 @@
-package ru.vyarus.guice.persist.orient.support.model
+package ru.vyarus.guice.persist.orient.support.model;
 
-import ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.type.edge.EdgeType
+import ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.type.edge.EdgeType;
 
-import javax.persistence.Id
-import javax.persistence.Version
+import javax.persistence.Id;
+import javax.persistence.Version;
 
 /**
  * Model should be registered in graph compatible way (extend E), meaning edges of this type could be created through graph api.
  * Generally model has no difference with not annotated model and could be used for all connections.
- *
+ * <p>
  * Drawback: because object entity mapper will reproduce hierarchy, VersionedEntity can't be used as base class
  * (if both entities for edge and vertexes extends it, base entity can extend only one type (V or E))
  *
- * @author Vyacheslav Rusakov 
+ * @author Vyacheslav Rusakov
  * @since 03.08.2014
  */
 @EdgeType
-class EdgeModel {
-    String name
-    String nick
+public class EdgeModel {
+    private String name;
+    private String nick;
     @Id
-    String id;
+    private String id;
     @Version
-    Long version;
+    private Long version;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getNick() {
+        return nick;
+    }
+
+    public void setNick(String nick) {
+        this.nick = nick;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
+    }
 }

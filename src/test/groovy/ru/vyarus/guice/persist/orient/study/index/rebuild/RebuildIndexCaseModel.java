@@ -1,14 +1,22 @@
-package ru.vyarus.guice.persist.orient.study.index.rebuild
+package ru.vyarus.guice.persist.orient.study.index.rebuild;
 
-import com.orientechnologies.orient.core.metadata.schema.OClass
-import ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.field.index.Index
+import com.orientechnologies.orient.core.metadata.schema.OClass;
+import ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.field.index.Index;
 
 /**
  * @author Vyacheslav Rusakov
  * @since 10.01.2018
  */
-class RebuildIndexCaseModel {
+public class RebuildIndexCaseModel {
 
     @Index(OClass.INDEX_TYPE.NOTUNIQUE)
-    String foo
+    private String foo;
+
+    public String getFoo() {
+        return foo;
+    }
+
+    public void setFoo(String foo) {
+        this.foo = foo;
+    }
 }

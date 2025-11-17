@@ -4,10 +4,11 @@ import com.orientechnologies.common.log.OLogManager
 import com.orientechnologies.orient.core.config.OGlobalConfiguration
 import com.orientechnologies.orient.core.db.ODatabaseType
 import com.orientechnologies.orient.server.OServerMain
-import org.junit.rules.ExternalResource
-import org.junit.rules.TemporaryFolder
 import ru.vyarus.guice.persist.orient.db.OrientDBFactory
 import ru.vyarus.guice.persist.orient.support.Config
+
+import java.nio.file.Files
+import java.nio.file.Path
 
 /**
  * Supposed to be used as @ClassRule. To switch to remote db call initRemoteDb() in setup() (to re-create db before each test)
@@ -16,21 +17,16 @@ import ru.vyarus.guice.persist.orient.support.Config
  * @author Vyacheslav Rusakov 
  * @since 02.05.2015
  */
-class ServerRule extends ExternalResource {
+class ServerRule {
 
-    TemporaryFolder folder = new TemporaryFolder()
+    Path folder
 
     static String remoteUrl = "remote:localhost/test"
     static String memoryUrl = "memory:test"
 
-    @Override
-    protected void before() throws Throwable {
-        startServer()
-    }
-
     public void startServer() {
-        folder.create()
-        System.setProperty("ORIENTDB_HOME", folder.root.getAbsolutePath());
+        folder = Files.createTempDirectory("server")
+        System.setProperty("ORIENTDB_HOME", folder.toFile().getAbsolutePath())
         System.setProperty("orientdb.www.path", "")
         OGlobalConfiguration.SERVER_SECURITY_FILE.setValue("src/test/resources/ru/vyarus/guice/persist/orient/security.json")
         OGlobalConfiguration.SERVER_BACKWARD_COMPATIBILITY.setValue(false)
@@ -47,16 +43,10 @@ class ServerRule extends ExternalResource {
         println 'remote server started'
     }
 
-    @Override
-    protected void after() {
-        stopServer()
-    }
-
     public void stopServer() {
         OServerMain.server().shutdown()
         // no way to reset shutdown state properly
         OLogManager.instance.shutdownFlag.set(false)
-        folder.delete()
         // re-init engines, without it following in memory tests will fail
         reset()
         println 'remote server shut down'

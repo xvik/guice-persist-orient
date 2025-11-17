@@ -1,25 +1,27 @@
-package ru.vyarus.guice.persist.orient.repository.delegate.ext.repository.support
+package ru.vyarus.guice.persist.orient.repository.delegate.ext.repository.support;
 
-import com.google.inject.ProvidedBy
-import com.google.inject.internal.DynamicSingletonProvider
-import com.google.inject.persist.Transactional
-import ru.vyarus.guice.persist.orient.repository.delegate.Delegate
-import ru.vyarus.guice.persist.orient.support.model.Model
+import com.google.inject.ProvidedBy;
+import com.google.inject.internal.DynamicSingletonProvider;
+import com.google.inject.persist.Transactional;
+import ru.vyarus.guice.persist.orient.repository.delegate.Delegate;
+import ru.vyarus.guice.persist.orient.support.model.Model;
+
+import java.util.List;
 
 /**
- * @author Vyacheslav Rusakov 
+ * @author Vyacheslav Rusakov
  * @since 23.02.2015
  */
 @Transactional
-@Delegate(RepositoryDelegate)
-@ProvidedBy(DynamicSingletonProvider)
-interface RepositoryRoot extends CustomMixin {
+@Delegate(RepositoryDelegate.class)
+@ProvidedBy(DynamicSingletonProvider.class)
+public interface RepositoryRoot extends CustomMixin {
 
-    List<Model> repo()
+    List<Model> repo();
 
-    List<Model> repoCustom()
+    List<Model> repoCustom();
 
-    List<Model> badType()
+    List<Model> badType();
 
-    List<Model> duplicate()
+    List<Model> duplicate();
 }

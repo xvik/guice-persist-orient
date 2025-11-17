@@ -1,26 +1,28 @@
-package ru.vyarus.guice.persist.orient.repository.benchmark
+package ru.vyarus.guice.persist.orient.repository.benchmark;
 
-import com.google.inject.ProvidedBy
-import com.google.inject.internal.DynamicClassProvider
-import com.google.inject.persist.Transactional
-import ru.vyarus.guice.persist.orient.repository.command.query.Query
-import ru.vyarus.guice.persist.orient.repository.delegate.Delegate
-import ru.vyarus.guice.persist.orient.support.model.Model
+import com.google.inject.ProvidedBy;
+import com.google.inject.internal.DynamicClassProvider;
+import com.google.inject.persist.Transactional;
+import ru.vyarus.guice.persist.orient.repository.command.query.Query;
+import ru.vyarus.guice.persist.orient.repository.delegate.Delegate;
+import ru.vyarus.guice.persist.orient.support.model.Model;
+
+import java.util.List;
 
 /**
  * Compares performance of raw query execution, repository call and delegated call.
  * Ofc it's not accurate, but to get raw estimation.
  *
- * @author Vyacheslav Rusakov 
+ * @author Vyacheslav Rusakov
  * @since 28.10.2014
  */
 @Transactional
-@ProvidedBy(DynamicClassProvider)
-interface RepositoryBenchmark {
+@ProvidedBy(DynamicClassProvider.class)
+public interface RepositoryBenchmark {
 
     @Query("select from Model")
-    List<Model> findAll()
+    List<Model> findAll();
 
-    @Delegate(BenchmarkDelegate)
-    List<Model> findAllDelegate()
+    @Delegate(BenchmarkDelegate.class)
+    List<Model> findAllDelegate();
 }

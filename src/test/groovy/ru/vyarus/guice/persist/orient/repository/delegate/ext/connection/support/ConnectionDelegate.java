@@ -1,35 +1,47 @@
-package ru.vyarus.guice.persist.orient.repository.delegate.ext.connection.support
+package ru.vyarus.guice.persist.orient.repository.delegate.ext.connection.support;
 
-import com.orientechnologies.orient.core.db.ODatabase
-import com.orientechnologies.orient.core.db.object.ODatabaseObject
-import com.tinkerpop.blueprints.impls.orient.OrientGraph
-import ru.vyarus.guice.persist.orient.repository.delegate.ext.connection.Connection
-import ru.vyarus.guice.persist.orient.support.model.Model
+import com.orientechnologies.orient.core.db.ODatabase;
+import com.orientechnologies.orient.core.db.object.ODatabaseObject;
+import com.tinkerpop.blueprints.impls.orient.OrientGraph;
+import ru.vyarus.guice.persist.orient.repository.delegate.ext.connection.Connection;
+import ru.vyarus.guice.persist.orient.support.model.Model;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
- * @author Vyacheslav Rusakov 
+ * @author Vyacheslav Rusakov
  * @since 23.02.2015
  */
-class ConnectionDelegate {
+public class ConnectionDelegate {
 
-
-    List<Model> rawConnection(@Connection Object db) {
-        [new Model(name: 'rawConnection')]
+    public List<Model> rawConnection(@Connection Object db) {
+        Model model = new Model();
+        model.setName("rawConnection");
+        return new ArrayList<Model>(Arrays.asList(model));
     }
 
-    List<Model> subtypeMatch(@Connection ODatabase db) {
-        [new Model(name: 'subtypeMatch')]
+    public List<Model> subtypeMatch(@Connection ODatabase db) {
+        Model model = new Model();
+        model.setName("subtypeMatch");
+        return new ArrayList<Model>(Arrays.asList(model));
     }
 
-    List<Model> exactConnection(@Connection ODatabaseObject db) {
-        [new Model(name: 'exactConnection')]
+    public List<Model> exactConnection(@Connection ODatabaseObject db) {
+        Model model = new Model();
+        model.setName("exactConnection");
+        return new ArrayList<Model>(Arrays.asList(model));
     }
 
     // error: incompatible type
-    List<Model> incompatible(@Connection OrientGraph db) {
+    public List<Model> incompatible(@Connection OrientGraph db) {
+        return null;
     }
 
     // error: duplicate definition
-    List<Model> duplicate(@Connection ODatabaseObject db, @Connection ODatabaseObject db2) {
+    public List<Model> duplicate(@Connection ODatabaseObject db, @Connection ODatabaseObject db2) {
+        return null;
     }
+
 }

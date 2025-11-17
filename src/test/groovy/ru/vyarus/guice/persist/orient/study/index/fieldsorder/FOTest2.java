@@ -1,8 +1,8 @@
-package ru.vyarus.guice.persist.orient.study.index.fieldsorder
+package ru.vyarus.guice.persist.orient.study.index.fieldsorder;
 
-import com.orientechnologies.orient.core.metadata.schema.OClass
-import ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.type.index.CompositeIndex
-import ru.vyarus.guice.persist.orient.model.VersionedEntity
+import com.orientechnologies.orient.core.metadata.schema.OClass;
+import ru.vyarus.guice.persist.orient.db.scheme.initializer.ext.type.index.CompositeIndex;
+import ru.vyarus.guice.persist.orient.model.VersionedEntity;
 
 /**
  * This is the same as FOTest but null values are not ignored.
@@ -13,10 +13,27 @@ import ru.vyarus.guice.persist.orient.model.VersionedEntity
  * @since 10.01.2018
  */
 @CompositeIndex(name = "test2",
-        fields = ["foo", "bar"],
+        fields = {"foo", "bar"},
         type = OClass.INDEX_TYPE.NOTUNIQUE,
         ignoreNullValues = false)
-class FOTest2 extends VersionedEntity {
-    String foo
-    String bar
+public class FOTest2 extends VersionedEntity {
+
+    private String foo;
+    private String bar;
+
+    public String getFoo() {
+        return foo;
+    }
+
+    public void setFoo(String foo) {
+        this.foo = foo;
+    }
+
+    public String getBar() {
+        return bar;
+    }
+
+    public void setBar(String bar) {
+        this.bar = bar;
+    }
 }

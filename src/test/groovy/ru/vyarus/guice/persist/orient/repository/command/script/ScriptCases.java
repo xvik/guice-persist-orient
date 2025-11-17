@@ -1,39 +1,35 @@
-package ru.vyarus.guice.persist.orient.repository.command.script
+package ru.vyarus.guice.persist.orient.repository.command.script;
 
-import com.google.inject.ProvidedBy
-import com.google.inject.internal.DynamicSingletonProvider
-import com.google.inject.persist.Transactional
+import com.google.inject.ProvidedBy;
+import com.google.inject.internal.DynamicSingletonProvider;
+import com.google.inject.persist.Transactional;
 
 /**
- * @author Vyacheslav Rusakov 
+ * @author Vyacheslav Rusakov
  * @since 25.02.2015
  */
 @Transactional
-@ProvidedBy(DynamicSingletonProvider)
-interface ScriptCases {
+@ProvidedBy(DynamicSingletonProvider.class)
+public interface ScriptCases {
 
-    @Script("""let model = select from Model where name='first'
-            return \$model.nick""")
-    String nick()
+    @Script("let model = select from Model where name='first'\n" +
+            "            return $model.nick")
+    String nick();
 
     // positional parameters not supported before 2.0.7, but they could be referenced as named (':0')
-    @Script("""
-        update model set name = ?
-        """)
-    void positional(String name)
+    @Script("update model set name = ?")
+    void positional(String name);
 
-    @Script("""
-            begin
-            let model = select from Model where name='first'
-            commit retry 100
-            return \$model.nick""")
-    String nickUnderTransaction()
+    @Script(" begin\n" +
+            " let model = select from Model where name='first'\n" +
+            " commit retry 100\n" +
+            " return $model.nick")
+    String nickUnderTransaction();
 
-
-    @Script(language = "javascript", value = """
-            for( i = 0; i < 1000; i++ ){
-                db.command('insert into Model(name) values ("test'+i+'")');
-            }
-            """)
-    void jsScript()
+    @Script(language = "javascript", value =
+            " for( i = 0; i < 1000; i++ ){\n" +
+            "     db.command('insert into Model(name) values (\"test'+i+'\")');\n" +
+            " }\n" +
+            "            ")
+    void jsScript();
 }

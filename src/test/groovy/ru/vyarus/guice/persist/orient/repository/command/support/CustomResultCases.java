@@ -1,28 +1,30 @@
-package ru.vyarus.guice.persist.orient.repository.command.support
+package ru.vyarus.guice.persist.orient.repository.command.support;
 
-import com.google.inject.ProvidedBy
-import com.google.inject.internal.DynamicSingletonProvider
-import com.google.inject.persist.Transactional
-import com.orientechnologies.orient.core.record.impl.ODocument
-import ru.vyarus.guice.persist.orient.repository.command.query.Query
+import com.google.inject.ProvidedBy;
+import com.google.inject.internal.DynamicSingletonProvider;
+import com.google.inject.persist.Transactional;
+import com.orientechnologies.orient.core.record.impl.ODocument;
+import ru.vyarus.guice.persist.orient.repository.command.query.Query;
+
+import java.util.List;
 
 /**
- * @author Vyacheslav Rusakov 
+ * @author Vyacheslav Rusakov
  * @since 14.02.2015
  */
 @Transactional
-@ProvidedBy(DynamicSingletonProvider)
-interface CustomResultCases {
+@ProvidedBy(DynamicSingletonProvider.class)
+public interface CustomResultCases {
 
     // returns result wrapped in document
     @Query("select count(@rid) from Model")
-    ODocument getCount()
+    ODocument getCount();
 
     // returns names wrapped in documents
     @Query("select name from Model")
-    List<ODocument> getNames()
+    List<ODocument> getNames();
 
     // returns names wrapped in documents
     @Query("select name from Model")
-    ODocument[] getNamesArray()
+    ODocument[] getNamesArray();
 }
