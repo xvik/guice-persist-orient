@@ -14,12 +14,12 @@ Maven:
 <dependency>
     <groupId>com.orientechnologies</groupId>
     <artifactId>orientdb-object</artifactId>
-    <version>3.1.12</version>
+    <version>3.2.46</version>
 </dependency>
 <dependency>
     <groupId>com.orientechnologies</groupId>
     <artifactId>orientdb-graphdb</artifactId>
-    <version>3.1.12</version>
+    <version>3.2.46</version>
 </dependency>-->
 ```
 
@@ -27,8 +27,8 @@ Gradle:
 
 ```groovy
 implementation 'ru.vyarus:guice-persist-orient:{{ gradle.version }}'
-//implementation "com.orientechnologies:orientdb-object:3.1.12"
-//implementation "com.orientechnologies:orientdb-graphdb:3.1.12"
+//implementation "com.orientechnologies:orientdb-object:3.2.46"
+//implementation "com.orientechnologies:orientdb-graphdb:3.2.46"
 ```
 
 !!! tip

@@ -1,24 +1,24 @@
 # {{ gradle.version }} Release Notes
 
-!!! warning 
+!!! important 
     The release is completely working, but repositories part was not migrated to the new api
-    and use commands api as before (now deprecated). I started repositories refactor  (long ago) 
-    but have no time to finish it for now. Releasing current state as "better deprecated apis than nothing". 
+    and use commands api as before (now deprecated).
 
-    If possible 3.2 compatible versions would be released with current apis
-    and then repositories refactor would be done (when I would have time for it).
+    Manual indexes creation was deprecated (assumed to be completely removed), but 
+    index creation extensions are completely working now.
 
-Release targets orient 3.1 compatibility. No api or behaviour changes.
+    Overall, orientdb is going to drop object database support (most likely in version 4),
+    so all related features will have to be removed. I hope [youtrackdb](https://youtrackdb.io/) 
+    would be already released at that time providing new object api (and so most object-related
+    features could be ported to a new youtrackdb integration module).
 
-[Orient 3.1 release notes](https://orientdb.dev/docs/3.2.x/release/3.1/What-is-new-in-OrientDB-3.1.html)
+Release targets orientdb 3.2 compatibility and guice 7 (jakarta.inject).   
+No api or behavior changes.
 
-Also, see guice-persist-orient [4.0.0 release notes](http://xvik.github.io/guice-persist-orient/4.0.0/about/release-notes/) 
+[Orient 3.2 release notes](https://orientdb.dev/docs/3.2.x/release/3.2/What-is-new-in-OrientDB-3.2.html))
+
+If migrating from orinetdb 2.x, see guice-persist-orient [4.0.0 release notes](http://xvik.github.io/guice-persist-orient/4.0.0/about/release-notes/) 
 for orient 3 related updates.
-
-!!! note
-    Orient docs mention `ODatabaseSession` type for pessimistic locs, but
-    required methods are available in `ODatabaseDocument` (and `ODatabaseObject`)
-    provided as connections (ofc you can cast document connection to session, but it's not required).
 
 ## Known issues
 
@@ -29,4 +29,10 @@ Remains the same from version 4.0.0 (due to not migrated repositories):
 - Live queries unsubscription method might not be called on remote connection in some cases (looks like a bug)
 - Functions, executed through object api, might produce incorrect results (with nulls).
   Marker exception would be thrown to indicate this case.
-  
+
+Also, there is a known problem that OrientModule is using object db classes and so it's
+not possible to use it without orientdb-object jar.
+
+## Migration
+
+Replace `javax.inject` usages with `jakarta.inject`.

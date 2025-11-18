@@ -14,12 +14,12 @@ Support: [Gitter chat](https://gitter.im/xvik/guice-persist-orient)
 
 ### About
 
-[OrientDB](http://orientdb.com/orientdb/) is document, graph and object database (see [intro](https://www.youtube.com/watch?v=o_7NCiTLVis) and [starter course](http://orientdb.com/getting-started/)).
+[OrientDB](https://orientdb.dev/) is document, graph and object database (see [intro](https://www.youtube.com/watch?v=o_7NCiTLVis).
 Underlying format is almost the same for all database types, which allows us to use single database in any way. For example, schema creation and updates
 may be performed as object database (jpa style) and graph api may be used for creating relations.
 
 Features:
-* For orient 3.1 (java 8)
+* For orient 3.2 (java 8)
 * Integration through [guice-persist](https://github.com/google/guice/wiki/GuicePersist) (UnitOfWork, PersistService, @Transactional)
 * Support for [document](https://orientdb.dev/docs/3.2.x/java/Document-Database.html), [object](https://orientdb.dev/docs/3.2.x/java/Object-Database.html) and
 [graph](https://orientdb.dev/docs/3.2.x/java/Graph-Database-Tinkerpop.html) databases
@@ -62,33 +62,34 @@ Maven:
 <dependency>
     <groupId>ru.vyarus</groupId>
     <artifactId>guice-persist-orient</artifactId>
-    <version>4.1.0</version>
+    <version>5.0.0</version>
 </dependency>
 <!--
 <dependency>
     <groupId>com.orientechnologies</groupId>
     <artifactId>orientdb-object</artifactId>
-    <version>3.1.12</version>
+    <version>3.2.46</version>
 </dependency>
 <dependency>
     <groupId>com.orientechnologies</groupId>
     <artifactId>orientdb-graphdb</artifactId>
-    <version>3.1.12</version>
+    <version>3.2.46</version>
 </dependency>-->
 ```
 
 Gradle:
 
 ```groovy
-implementation 'ru.vyarus:guice-persist-orient:4.1.0'
-//implementation "com.orientechnologies:orientdb-object:3.1.12"
-//implementation "com.orientechnologies:orientdb-graphdb:3.1.12"
+implementation 'ru.vyarus:guice-persist-orient:5.0.0'
+//implementation "com.orientechnologies:orientdb-object:3.2.46"
+//implementation "com.orientechnologies:orientdb-graphdb:3.2.46"
 ```
 
 Commented imports required to enable object and graph db support.
 
 OrientDB | Guice | guice-persist-orient
-----------|---|------
+----------|-------|------
+3.2 | 7.0.0 | [5.0.0](http://xvik.github.io/guice-persist-orient/5.0.0)
 3.1 | 5.0.1 | [4.1.0](http://xvik.github.io/guice-persist-orient/4.1.0)
 3.0 | 5.0.1 | [4.0.0](http://xvik.github.io/guice-persist-orient/4.0.0)
 2.2 | 4.2.0 | [3.3.2](http://xvik.github.io/guice-persist-orient/3.3.2)

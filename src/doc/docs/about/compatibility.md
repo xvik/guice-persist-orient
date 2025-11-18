@@ -1,7 +1,8 @@
 # OrientDB compatibility
 
 OrientDB | Guice | guice-persist-orient
-----------|---|------
+----------|-------|------
+3.2 | 7.0.0 | [5.0.0](http://xvik.github.io/guice-persist-orient/5.0.0)
 3.1 | 5.0.1 | [4.1.0](http://xvik.github.io/guice-persist-orient/4.1.0)
 3.0 | 5.0.1 | [4.0.0](http://xvik.github.io/guice-persist-orient/4.0.0)
 2.2 | 4.2.0 | [3.3.2](http://xvik.github.io/guice-persist-orient/3.3.2)

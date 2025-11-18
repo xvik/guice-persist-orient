@@ -1,3 +1,4 @@
+### 5.0.0 (2025-11-18)
 * (BREAKING) Update to guice 7.0.0 (jakarta namespace)
 * (BREAKING) Upgrade to OrientDB 3.2.x ([what's new](https://orientdb.dev/docs/3.2.x/release/3.2/What-is-new-in-OrientDB-3.2.html))
 

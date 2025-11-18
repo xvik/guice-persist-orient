@@ -1,7 +1,7 @@
 # Welcome to guice-persist-orient
 
 !!! summary ""
-    [Guice](https://github.com/google/guice) integration for [OrientDB](https://orientdb.com/).
+    [Guice](https://github.com/google/guice) integration for [OrientDB](https://orientdb.dev/).
 
 **[Release notes](about/release-notes.md)** - [Support](about/support.md) - [License](about/license.md)
 

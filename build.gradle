@@ -68,11 +68,11 @@ github {
 
 mkdocs {
     publish {
-        docPath = '4.1.0'
+        docPath = '5.0.0'
         rootRedirect = true
     }
     extras = [
-            'version': '4.1.0'
+            'version': '5.0.0'
     ]
 }
 
