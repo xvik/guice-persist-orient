@@ -55,7 +55,7 @@ dependencies {
         testImplementation 'org.openjdk.nashorn:nashorn-core:15.7'
     }
 
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.14.1'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher:6.0.1'
 }
 
 group = 'ru.vyarus'
