@@ -2,10 +2,10 @@ package ru.vyarus.guice.persist.orient;
 
 import com.google.common.base.MoreObjects;
 import com.google.inject.AbstractModule;
-import com.google.inject.matcher.AbstractMatcher;
 import com.google.inject.matcher.Matchers;
 import com.google.inject.multibindings.Multibinder;
 import com.google.inject.name.Names;
+import jakarta.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vyarus.guice.ext.core.generator.anchor.GeneratorAnchorModule;
@@ -18,13 +18,12 @@ import ru.vyarus.guice.persist.orient.repository.core.ext.SpiService;
 import ru.vyarus.guice.persist.orient.repository.core.ext.service.AmendExtensionsService;
 import ru.vyarus.guice.persist.orient.repository.core.ext.service.ParamsService;
 import ru.vyarus.guice.persist.orient.repository.core.ext.service.result.ResultService;
-import ru.vyarus.guice.persist.orient.repository.core.ext.service.result.converter.ResultConverter;
 import ru.vyarus.guice.persist.orient.repository.core.ext.service.result.converter.RecordConverter;
+import ru.vyarus.guice.persist.orient.repository.core.ext.service.result.converter.ResultConverter;
 import ru.vyarus.guice.persist.orient.repository.core.ext.util.ExtUtils;
 import ru.vyarus.guice.persist.orient.repository.core.util.RepositoryUtils;
 import ru.vyarus.guice.persist.orient.repository.delegate.DelegateMethodExtension;
 
-import jakarta.inject.Singleton;
 import java.lang.reflect.Method;
 
 /**
@@ -105,21 +104,17 @@ public class RepositoryModule extends AbstractModule {
     /**
      * Configures repository annotations interceptor.
      */
-    @SuppressWarnings("PMD.UseDiamondOperator")
     protected void configureAop() {
         final RepositoryMethodInterceptor proxy = new RepositoryMethodInterceptor();
         requestInjection(proxy);
         // repository specific method annotations (query, function, delegate, etc.)
-        bindInterceptor(Matchers.any(), new AbstractMatcher<Method>() {
-            @Override
-            public boolean matches(final Method method) {
-                // this will throw error if two or more annotations specified (fail fast)
-                try {
-                    return ExtUtils.findMethodAnnotation(method) != null;
-                } catch (Exception ex) {
-                    throw new MethodDefinitionException(String.format("Error declaration on method %s",
-                            RepositoryUtils.methodToString(method)), ex);
-                }
+        bindInterceptor(Matchers.any(), method -> {
+            // this will throw error if two or more annotations specified (fail fast)
+            try {
+                return ExtUtils.findMethodAnnotation(method) != null;
+            } catch (Exception ex) {
+                throw new MethodDefinitionException(String.format("Error declaration on method %s",
+                        RepositoryUtils.methodToString(method)), ex);
             }
         }, proxy);
     }

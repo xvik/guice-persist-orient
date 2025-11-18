@@ -1,7 +1,6 @@
 package ru.vyarus.guice.persist.orient;
 
 import com.google.inject.Binder;
-import com.google.inject.matcher.AbstractMatcher;
 import com.google.inject.matcher.Matcher;
 import com.google.inject.matcher.Matchers;
 import com.google.inject.multibindings.Multibinder;
@@ -16,10 +15,12 @@ import com.orientechnologies.orient.core.db.document.ODatabaseDocument;
 import com.orientechnologies.orient.core.serialization.serializer.object.OObjectSerializer;
 import com.orientechnologies.orient.object.serialization.OObjectSerializerContext;
 import com.orientechnologies.orient.object.serialization.OObjectSerializerHelper;
+import jakarta.inject.Singleton;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vyarus.guice.persist.orient.db.DatabaseManager;
+import ru.vyarus.guice.persist.orient.db.OrientDBFactory;
 import ru.vyarus.guice.persist.orient.db.pool.DocumentPool;
 import ru.vyarus.guice.persist.orient.db.pool.PoolManager;
 import ru.vyarus.guice.persist.orient.db.retry.Retry;
@@ -28,9 +29,7 @@ import ru.vyarus.guice.persist.orient.db.scheme.CustomTypesInstaller;
 import ru.vyarus.guice.persist.orient.db.transaction.TransactionManager;
 import ru.vyarus.guice.persist.orient.db.transaction.TxConfig;
 import ru.vyarus.guice.persist.orient.db.transaction.internal.TransactionInterceptor;
-import ru.vyarus.guice.persist.orient.db.OrientDBFactory;
 
-import jakarta.inject.Singleton;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
@@ -260,7 +259,8 @@ public class OrientModule extends PersistModule {
      * @see <a href="https://orientdb.dev/docs/3.2.x/java/Object-2-Record-Java-Binding.html#custom-types">
      *     custom types</a>
      */
-    public OrientModule withCustomTypes(final Class<? extends OObjectSerializer>... serializers) {
+    @SafeVarargs
+    public final OrientModule withCustomTypes(final Class<? extends OObjectSerializer>... serializers) {
         customTypes.addAll(Arrays.asList(serializers));
         return this;
     }
@@ -373,19 +373,15 @@ public class OrientModule extends PersistModule {
     }
 
     @Override
-    @SuppressWarnings("PMD.UseDiamondOperator")
     protected void bindInterceptor(final Matcher<? super Class<?>> classMatcher,
                                    final Matcher<? super Method> methodMatcher,
                                    final MethodInterceptor... interceptors) {
         // hack to correctly bind @Transactional annotation for java8:
         // aop tries to intercept synthetic methods which cause a lot of warnings
         // (and generally not correct)
-        super.bindInterceptor(classMatcher, new AbstractMatcher<Method>() {
-            @Override
-            public boolean matches(final Method method) {
-                return !method.isSynthetic() && !method.isBridge() && methodMatcher.matches(method);
-            }
-        }, interceptors);
+        super.bindInterceptor(classMatcher, method -> !method.isSynthetic()
+                && !method.isBridge()
+                && methodMatcher.matches(method), interceptors);
     }
 
     @Override
