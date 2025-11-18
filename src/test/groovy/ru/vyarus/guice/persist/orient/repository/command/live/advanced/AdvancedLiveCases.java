@@ -4,6 +4,7 @@ import com.google.inject.ProvidedBy;
 import com.google.inject.internal.DynamicSingletonProvider;
 import com.google.inject.persist.Transactional;
 import com.orientechnologies.orient.core.sql.query.OLiveResultListener;
+import com.tinkerpop.blueprints.Vertex;
 import ru.vyarus.guice.persist.orient.repository.command.ext.elvar.ElVar;
 import ru.vyarus.guice.persist.orient.repository.command.ext.listen.Listen;
 import ru.vyarus.guice.persist.orient.repository.command.live.LiveQuery;
@@ -11,7 +12,6 @@ import ru.vyarus.guice.persist.orient.repository.command.live.listener.mapper.Li
 import ru.vyarus.guice.persist.orient.repository.command.query.Query;
 import ru.vyarus.guice.persist.orient.support.model.Model;
 import ru.vyarus.guice.persist.orient.support.repository.mixin.crud.ObjectCrud;
-import sun.security.provider.certpath.Vertex;
 
 /**
  * @author Vyacheslav Rusakov
