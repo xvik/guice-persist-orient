@@ -166,6 +166,7 @@ nav:
             - Pagination: repository/mixin/pagination.md
     - About:
         - Compatibility: about/compatibility.md
-        - Release notes: about/history.md
+        - Release notes: about/release-notes.md
+        - Version history: about/history.md
         - Support: about/support.md
         - License: about/license.md
