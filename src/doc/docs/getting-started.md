@@ -69,6 +69,45 @@ install(new OrientModule(url, user, password).withConfig(config));
 ```
 
 Where `config` is `OrientDBConfig`. By default, `OrientDBConfig.defaultConfig()` is used.
+
+### Database creation
+
+Since orient 3.2 default database users (like admin/admin) are [NOT created](https://orientdb.dev/docs/3.2.x/release/3.2/What-is-new-in-OrientDB-3.2.html) 
+by default. This will affect tests, which usually use memory databases.
+
+It would be simpler to revert old behavior at least for tests.
+Modify guice module to create default users for memory databases:
+
+```java
+    final OrientModule orient = new OrientModule(db.getUri(), db.getUser(), db.getPass());
+    // enable default users creation for memory db (for tests)
+    // real database users would be created either manually or in DbLifecycle
+    if (DBUriUtils.isMemory(db.getUri())) {
+        orient.withConfig(OrientDBConfig.builder()
+                .addConfig(OGlobalConfiguration.CREATE_DEFAULT_USERS, true)
+                .build());
+    }
+    install(orient);
+```
+
+You can also enable old behavior for all cases to always create local database users
+(when `OrientModule#autoCreateLocalDatabase(true)` is used).
+
+Otherwise, create database manually BEFORE starting persistence service:
+
+```java
+        // dbPath is a path to databases directory (/tmp/db/databases/) WITHOUT database name
+        // for remote connection it should be server host (localhost)
+        try (OrientDB orientDB = new OrientDB(dbPath, OrientDBConfig.defaultConfig())) {
+            if (!orientDB.exists(dbName)) {
+                log.info("Creating database {}");
+
+                orientDB.execute("create database " + dbName 
+                                 + " plocal users ( admin identified by 'adminpwd' role admin)");
+                log.info("Database {} created", dbName);
+            }
+        }
+```
     
 ### Lifecycle
 
