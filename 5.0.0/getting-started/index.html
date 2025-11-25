@@ -355,6 +355,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#database-creation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Database creation
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#lifecycle" class="md-nav__link">
     <span class="md-ellipsis">
       Lifecycle
@@ -2335,6 +2344,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#database-creation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Database creation
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#lifecycle" class="md-nav__link">
     <span class="md-ellipsis">
       Lifecycle
@@ -2491,6 +2509,36 @@ In short:</p>
 <div class="highlight"><pre><span></span><code><span class="n">install</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">OrientModule</span><span class="p">(</span><span class="n">url</span><span class="p">,</span><span class="w"> </span><span class="n">user</span><span class="p">,</span><span class="w"> </span><span class="n">password</span><span class="p">).</span><span class="na">withConfig</span><span class="p">(</span><span class="n">config</span><span class="p">));</span>
 </code></pre></div>
 <p>Where <code>config</code> is <code>OrientDBConfig</code>. By default, <code>OrientDBConfig.defaultConfig()</code> is used.</p>
+<h3 id="database-creation">Database creation<a class="headerlink" href="#database-creation" title="Permanent link">&para;</a></h3>
+<p>Since orient 3.2 default database users (like admin/admin) are <a href="https://orientdb.dev/docs/3.2.x/release/3.2/What-is-new-in-OrientDB-3.2.html">NOT created</a> 
+by default. This will affect tests, which usually use memory databases.</p>
+<p>It would be simpler to revert old behavior at least for tests.
+Modify guice module to create default users for memory databases:</p>
+<div class="highlight"><pre><span></span><code><span class="w">    </span><span class="kd">final</span><span class="w"> </span><span class="n">OrientModule</span><span class="w"> </span><span class="n">orient</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">OrientModule</span><span class="p">(</span><span class="n">db</span><span class="p">.</span><span class="na">getUri</span><span class="p">(),</span><span class="w"> </span><span class="n">db</span><span class="p">.</span><span class="na">getUser</span><span class="p">(),</span><span class="w"> </span><span class="n">db</span><span class="p">.</span><span class="na">getPass</span><span class="p">());</span>
+<span class="w">    </span><span class="c1">// enable default users creation for memory db (for tests)</span>
+<span class="w">    </span><span class="c1">// real database users would be created either manually or in DbLifecycle</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">DBUriUtils</span><span class="p">.</span><span class="na">isMemory</span><span class="p">(</span><span class="n">db</span><span class="p">.</span><span class="na">getUri</span><span class="p">()))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">orient</span><span class="p">.</span><span class="na">withConfig</span><span class="p">(</span><span class="n">OrientDBConfig</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span>
+<span class="w">                </span><span class="p">.</span><span class="na">addConfig</span><span class="p">(</span><span class="n">OGlobalConfiguration</span><span class="p">.</span><span class="na">CREATE_DEFAULT_USERS</span><span class="p">,</span><span class="w"> </span><span class="kc">true</span><span class="p">)</span>
+<span class="w">                </span><span class="p">.</span><span class="na">build</span><span class="p">());</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="n">install</span><span class="p">(</span><span class="n">orient</span><span class="p">);</span>
+</code></pre></div>
+<p>You can also enable old behavior for all cases to always create local database users
+(when <code>OrientModule#autoCreateLocalDatabase(true)</code> is used).</p>
+<p>Otherwise, create database manually BEFORE starting persistence service:</p>
+<div class="highlight"><pre><span></span><code><span class="w">        </span><span class="c1">// dbPath is a path to databases directory (/tmp/db/databases/) WITHOUT database name</span>
+<span class="w">        </span><span class="c1">// for remote connection it should be server host (localhost)</span>
+<span class="w">        </span><span class="k">try</span><span class="w"> </span><span class="p">(</span><span class="n">OrientDB</span><span class="w"> </span><span class="n">orientDB</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">OrientDB</span><span class="p">(</span><span class="n">dbPath</span><span class="p">,</span><span class="w"> </span><span class="n">OrientDBConfig</span><span class="p">.</span><span class="na">defaultConfig</span><span class="p">()))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">orientDB</span><span class="p">.</span><span class="na">exists</span><span class="p">(</span><span class="n">dbName</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="n">log</span><span class="p">.</span><span class="na">info</span><span class="p">(</span><span class="s">&quot;Creating database {}&quot;</span><span class="p">);</span>
+
+<span class="w">                </span><span class="n">orientDB</span><span class="p">.</span><span class="na">execute</span><span class="p">(</span><span class="s">&quot;create database &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">dbName</span><span class="w"> </span>
+<span class="w">                                 </span><span class="o">+</span><span class="w"> </span><span class="s">&quot; plocal users ( admin identified by &#39;adminpwd&#39; role admin)&quot;</span><span class="p">);</span>
+<span class="w">                </span><span class="n">log</span><span class="p">.</span><span class="na">info</span><span class="p">(</span><span class="s">&quot;Database {} created&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">dbName</span><span class="p">);</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+</code></pre></div>
 <h3 id="lifecycle">Lifecycle<a class="headerlink" href="#lifecycle" title="Permanent link">&para;</a></h3>
 <p>You need to manually start/stop persist service in your code (because only you can control application lifecycle).
 On start connection pools will be initialized, database created (if required) and scheme/data initializers called. Stop will shutdown
