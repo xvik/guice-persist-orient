@@ -14,6 +14,7 @@ import java.lang.reflect.Method;
  * @since 04.08.2014
  */
 public class GraphExecutorBinder {
+    @SuppressWarnings("PMD.UselessPureMethodCall")
     @SuppressFBWarnings("CT_CONSTRUCTOR_THROW")
     public GraphExecutorBinder(final RepositoryModule module,
                                final Method bindExecutor) throws Exception {

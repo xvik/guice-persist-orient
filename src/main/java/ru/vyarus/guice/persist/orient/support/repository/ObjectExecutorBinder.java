@@ -14,6 +14,7 @@ import java.lang.reflect.Method;
  * @since 04.08.2014
  */
 public class ObjectExecutorBinder {
+    @SuppressWarnings("PMD.UselessPureMethodCall")
     @SuppressFBWarnings("CT_CONSTRUCTOR_THROW")
     public ObjectExecutorBinder(final RepositoryModule module,
                                 final Method bindExecutor) throws Exception {

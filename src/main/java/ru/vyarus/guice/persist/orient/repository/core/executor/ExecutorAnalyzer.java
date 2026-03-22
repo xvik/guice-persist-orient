@@ -76,11 +76,11 @@ public final class ExecutorAnalyzer {
     private static void validateHint(final RepositoryExecutor executor, final DbType connectionHint) {
         if (executor != null) {
             final DbType autoType = executor.getType();
-            if (autoType.equals(DbType.DOCUMENT) && connectionHint.equals(DbType.OBJECT)) {
+            if (autoType == DbType.DOCUMENT && connectionHint == DbType.OBJECT) {
                 // it's ok to use object connection for document selection
                 return;
             }
-            check(autoType.equals(connectionHint),
+            check(autoType == connectionHint,
                     "Bad connection hint %s specified, when %s expected (according to return type).",
                     connectionHint, autoType);
         }
@@ -89,7 +89,7 @@ public final class ExecutorAnalyzer {
     private static RepositoryExecutor find(final DbType type, final Set<RepositoryExecutor> executors) {
         RepositoryExecutor res = null;
         for (RepositoryExecutor executor : executors) {
-            if (executor.getType().equals(type)) {
+            if (executor.getType() == type) {
                 res = executor;
                 break;
             }

@@ -127,7 +127,7 @@ public class MethodDescriptorFactory {
     private RepositoryExecutor find(final DbType type) {
         RepositoryExecutor res = null;
         for (RepositoryExecutor executor : executors) {
-            if (executor.getType().equals(type)) {
+            if (executor.getType() == type) {
                 res = executor;
                 break;
             }

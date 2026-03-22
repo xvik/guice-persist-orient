@@ -24,7 +24,7 @@ public class DefaultResultConverter implements ResultConverter {
         final Class<?> returnClass = desc.expectType;
 
         Object res = null;
-        if (result != null && !ResultType.VOID.equals(desc.returnType)) {
+        if (result != null && ResultType.VOID != desc.returnType) {
             res = isCompatible(result, returnClass, desc)
                     ? result : convertResult(
                     desc.returnType,

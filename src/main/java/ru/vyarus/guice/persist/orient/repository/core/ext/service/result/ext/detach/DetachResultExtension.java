@@ -33,7 +33,7 @@ public class DetachResultExtension implements ResultExtension<DetachResult> {
 
     @Override
     public Object convert(final RepositoryMethodDescriptor descriptor, final Object result) {
-        checkExec(DbType.OBJECT.equals(descriptor.executor.getType()), "Detach may be performed only on "
+        checkExec(DbType.OBJECT == descriptor.executor.getType(), "Detach may be performed only on "
                         + "objects from OBJECT connection, but current connection is %s",
                 descriptor.executor.getType());
         final ODatabaseObject connection = (ODatabaseObject) descriptor.executor.getConnection();
